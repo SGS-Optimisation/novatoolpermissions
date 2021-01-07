@@ -1,0 +1,46 @@
+models:
+  ClientAccount:
+    name: string
+    alias: nullable longtext
+    image: nullable string
+    relationships:
+      hasMany: Taxonomy, Term
+
+  Job:
+    job_number: string
+    designation: nullable string
+    metadata: nullable json
+    softDeletes
+    relationships:
+      belongsTo: ClientAccount
+
+  Taxonomy:
+    name: string
+    parent_id: nullable id foreign:taxonomy
+    config: nullable json
+    softDeletes
+    relationships:
+      belongsTo: Taxonomy
+      hasMany: Taxonomy, Term
+      belongsToMany: ClientAccount
+
+  Term:
+    client_account_id: nullable id foreign:client_account
+    #taxonomy_id: id foreign:taxonomy
+    name: string
+    config: nullable json
+    relationships:
+      belongsTo: Taxonomy, ClientAccount
+
+  Rule:
+    name: string
+    content: nullable longtext
+    metadata: nullable json
+    flagged: boolean
+    softDeletes
+    relationships:
+      belongsTo: ClientAccount
+      belongsToMany: Term
+
+controllers:
+  # ...
