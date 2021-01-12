@@ -12,6 +12,7 @@
         "ext-json": "*",
         "awobaz/compoships": "^2.0",
         "barryvdh/laravel-ide-helper": "^2.9",
+        "ek0519/quilljs": "^0.3.1",
         "eminiarts/nova-tabs": "^1.3",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",

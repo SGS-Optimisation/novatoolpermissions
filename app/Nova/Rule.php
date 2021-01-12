@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use Ek0519\Quilljs\Quilljs;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\ID;
@@ -10,7 +11,6 @@ use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Trix;
 use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\DateTime;
 
 
 class Rule extends Resource
@@ -85,8 +85,11 @@ class Rule extends Resource
                 ->rules('required')
                 ->sortable()
             ,
-            Trix::make(__('Content'), 'content')
+            Quilljs::make(__('Content'), 'content')
+                ->paddingBottom(30)
                 ->withFiles('public')
+                ->placeholder('please enter here')
+                ->height(300)
             ,
             Code::make(__('Metadata'), 'metadata')
                 ->sortable()
