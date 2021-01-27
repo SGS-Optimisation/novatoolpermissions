@@ -4,6 +4,7 @@ created:
     - database/factories/TaxonomyFactory.php
     - database/factories/TermFactory.php
     - database/factories/RuleFactory.php
+    - database/migrations/2021_01_27_055431_create_client_account_term_table.php
     - app/Models/ClientAccount.php
     - app/Models/Job.php
     - app/Models/Taxonomy.php
@@ -21,8 +22,8 @@ models:
     Models\Membership: {  }
     Models\Team: {  }
     Models\User: {  }
-    ClientAccount: { name: string, alias: 'nullable longtext', image: 'nullable string', relationships: { hasMany: 'Taxonomy, Term' } }
+    ClientAccount: { name: string, alias: 'nullable longtext', image: 'nullable string', relationships: { hasMany: Taxonomy, belongsToMany: Term } }
     Job: { job_number: string, designation: 'nullable string', metadata: 'nullable json', softdeletes: softDeletes, relationships: { belongsTo: ClientAccount } }
-    Taxonomy: { name: string, config: 'nullable json', softdeletes: softDeletes, relationships: { belongsTo: Taxonomy, hasMany: 'Taxonomy, Term', belongsToMany: ClientAccount } }
-    Term: { client_account_id: 'id foreign:client_account', taxonomy_id: 'id foreign:taxonomy', name: string, config: 'nullable json', relationships: { belongsTo: 'Taxonomy, ClientAccount' } }
-    Rule: { name: string, content: 'nullable longtext', metadata: 'nullable json', flagged: boolean, softdeletes: softDeletes, relationships: { belongsTo: ClientAccount, belongsToMany: Term } }
+    Taxonomy: { name: string, parent_id: 'nullable id foreign:taxonomy', config: 'nullable json', softdeletes: softDeletes, relationships: { belongsTo: Taxonomy, hasMany: 'Taxonomy, Term', belongsToMany: ClientAccount } }
+    Term: { taxonomy_id: 'id foreign:taxonomy', name: string, config: 'nullable json', relationships: { belongsTo: Taxonomy, belongsToMany: ClientAccount } }
+    Rule: { client_account_id: 'id foreign:client_account', name: string, content: 'nullable longtext', metadata: 'nullable json', flagged: boolean, softdeletes: softDeletes, relationships: { belongsToMany: Term } }

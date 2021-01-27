@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Awobaz\Compoships\Compoships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -42,7 +41,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Taxonomy extends Model
 {
-    use HasFactory, SoftDeletes, Compoships;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that aren't mass assignable.

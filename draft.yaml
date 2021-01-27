@@ -4,7 +4,7 @@ models:
     alias: nullable longtext
     image: nullable string
     relationships:
-      hasMany: Taxonomy, Term
+      belongsToMany: Taxonomy, Term
 
   Job:
     job_number: string
@@ -25,21 +25,23 @@ models:
       belongsToMany: ClientAccount
 
   Term:
-    client_account_id: nullable id foreign:client_account
-    #taxonomy_id: id foreign:taxonomy
+    #client_account_id: nullable id foreign:client_account
+    taxonomy_id: id foreign:taxonomy
     name: string
     config: nullable json
     relationships:
-      belongsTo: Taxonomy, ClientAccount
+      belongsTo: Taxonomy
+      belongsToMany: ClientAccount
 
   Rule:
+    client_account_id: id foreign:client_account
     name: string
     content: nullable longtext
     metadata: nullable json
     flagged: boolean
     softDeletes
     relationships:
-      belongsTo: ClientAccount
+      #belongsTo: ClientAccount
       belongsToMany: Term
 
 controllers:

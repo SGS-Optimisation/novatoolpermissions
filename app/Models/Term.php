@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $config
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ClientAccount[] $client_accounts
+ * @property-read int|null $client_accounts_count
  * @property-read \App\Models\Taxonomy $taxonomy
  * @method static \Illuminate\Database\Eloquent\Builder|Term newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Term newQuery()
@@ -55,5 +57,13 @@ class Term extends Model
     public function taxonomy()
     {
         return $this->belongsTo(\App\Models\Taxonomy::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function client_accounts()
+    {
+        return $this->belongsToMany(\App\Models\ClientAccount::class);
     }
 }

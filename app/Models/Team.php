@@ -30,6 +30,8 @@ use Laravel\Jetstream\Team as JetstreamTeam;
  * @method static \Illuminate\Database\Eloquent\Builder|Team whereUserId($value)
  * @mixin \Eloquent
  * @property-read \App\Models\ClientAccount $clientAccount
+ * @property int $client_account_id
+ * @method static \Illuminate\Database\Eloquent\Builder|Team whereClientAccountId($value)
  */
 class Team extends JetstreamTeam
 {
