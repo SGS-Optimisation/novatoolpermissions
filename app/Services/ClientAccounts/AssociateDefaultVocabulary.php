@@ -7,16 +7,8 @@ namespace App\Services\ClientAccounts;
 use App\Models\ClientAccount;
 use App\Models\Taxonomy;
 
-class AssociateDefaultVocabulary
+class AssociateDefaultVocabulary extends BaseClientAccountService
 {
-    public ClientAccount $clientAccount;
-
-
-    public function __construct(ClientAccount $clientAccount)
-    {
-        $this->clientAccount = $clientAccount;
-    }
-
 
     public function handle(){
         $vocabularies = Taxonomy::whereJsonContains('config', ['default' => true])->get();

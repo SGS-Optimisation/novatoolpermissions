@@ -17,16 +17,19 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
 
+        if (app()->environment() === 'local') {
+
+            $admin = User::firstOrCreate([
+                'name' => 'Admin\'s Team',
+                'email' => 'admin@sgsco.com',
+                'password' => bcrypt('letmein'),
+            ]);
+        }
+
         $this->call(TaxonomySeeder::class);
         $this->call(ClientAccountSeeder::class);
 
         if (app()->environment() === 'local') {
-
-            $admin = User::firstOrCreate([
-                'name' => 'admin',
-                'email' => 'admin@sgsco.com',
-                'password' => bcrypt('letmein'),
-            ]);
 
             $admin->teams()->create([
                 'name' => $admin->name,

@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\ClientAccount;
 use App\Services\ClientAccounts\AssociateDefaultVocabulary;
+use App\Services\ClientAccounts\MakeTeam;
 
 class ClientAccountObserver
 {
@@ -16,6 +17,7 @@ class ClientAccountObserver
     public function created(ClientAccount $clientAccount)
     {
         (new AssociateDefaultVocabulary($clientAccount))->handle();
+        (new MakeTeam($clientAccount))->handle();
     }
 
     /**

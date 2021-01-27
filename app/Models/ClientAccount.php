@@ -65,4 +65,9 @@ class ClientAccount extends Model
     {
         return $this->belongsToMany(\App\Models\Term::class);
     }
+
+    public function team()
+    {
+        return $this->hasOne(Team::class);
+    }
 }
