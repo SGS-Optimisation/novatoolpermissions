@@ -92,31 +92,32 @@ class TaxonomySeeder extends Seeder
             ]
         ];
 
-        $default_config = ['default' => true];
+        $default_vocab_config = ['default' => true];
+        $default_term_config = ['default' => true];
 
-        static::processTaxonomies($taxonomies, $default_config);
+        static::processTaxonomies($taxonomies, $default_vocab_config, $default_term_config);
     }
 
-    protected static function processTaxonomies($list, $config, $parent = null)
+    protected static function processTaxonomies($list, $vocab_config, $term_config, $parent = null)
     {
         if (Arr::isAssoc($list)) {
             foreach ($list as $name => $items) {
-                $taxonomy = static::buildTaxonomy($name, $config, $parent);
+                $taxonomy = static::buildTaxonomy($name, $vocab_config, $parent);
 
                 if (Arr::has($items, 'children')) {
-                    static::processTaxonomies($items['children'], $config, $taxonomy);
+                    static::processTaxonomies($items['children'], $vocab_config, $term_config, $taxonomy);
                 }
 
                 if (Arr::has($items, 'terms')) {
                     foreach ($items['terms'] as $term) {
-                        static::buildTerm($term, $taxonomy);
+                        static::buildTerm($term, $taxonomy, $term_config);
                     }
                 }
 
             }
         } else {
             foreach ($list as $name) {
-                static::buildTaxonomy($name, $config, $parent);
+                static::buildTaxonomy($name, $vocab_config, $parent);
             }
         }
 
@@ -147,8 +148,8 @@ class TaxonomySeeder extends Seeder
      * @param $name
      * @param  Taxonomy  $taxonomy
      */
-    protected static function buildTerm($name, $taxonomy)
+    protected static function buildTerm($name, $taxonomy, $config = [])
     {
-        $taxonomy->terms()->create(['name' => $name]);
+        $taxonomy->terms()->create(['name' => $name, 'config' => $config]);
     }
 }
