@@ -3,9 +3,13 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Laravel\Nova\Fields\BelongsToMany;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Line;
+use Laravel\Nova\Fields\Stack;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\DateTime;
@@ -69,8 +73,12 @@ class Taxonomy extends Resource
                 ->rules('required')
                 ->sortable()
             ,
-            BelongsTo::make('Taxonomy', 'parent')
+            BelongsTo::make(__('Taxonomy'), 'parent')
                 ->searchable()
+                ->singularLabel('Parent Taxonomy')
+                ->sortable()
+            ,
+            HasMany::make('Taxonomies', 'taxonomies')
                 ->sortable()
             ,
             Text::make(__('Name'), 'name')
@@ -80,7 +88,30 @@ class Taxonomy extends Resource
             Code::make(__('Config'), 'config')
                 ->sortable()
             ,
-            BelongsToMany::make('Client Accounts'),
+            BelongsToMany::make('Client Accounts')
+            ,
+            HasMany::make('Terms', 'terms')
+            ,
+            //Stack::make('Stacked Terms', $terms_stack),
+            Stack::make('Taxonomies', (function(){
+                $stack_items = [];
+                foreach($this->taxonomies as $vocabulary) {
+                    $stack_items[] = Line::make('Anonymous')->resolveUsing(function() use ($vocabulary){
+                        return $vocabulary->name;
+                    })->asSmall();
+                }
+                return $stack_items;
+            })()),
+
+            Stack::make('Terms', (function(){
+                $terms_stack = [];
+                foreach($this->terms as $term) {
+                    $terms_stack[] = Line::make('Anonymous')->resolveUsing(function() use ($term){
+                        return $term->name;
+                    })->asSmall();
+                }
+                return $terms_stack;
+            })()),
         ];
     }
 

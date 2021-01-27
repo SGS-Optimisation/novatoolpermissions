@@ -9,18 +9,15 @@ use Illuminate\Database\Eloquent\Model;
  * App\Models\Term
  *
  * @property int $id
- * @property int $client_account_id
  * @property int $taxonomy_id
  * @property string $name
  * @property string $config
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property-read \App\Models\ClientAccount|null $clientAccount
  * @property-read \App\Models\Taxonomy $taxonomy
  * @method static \Illuminate\Database\Eloquent\Builder|Term newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Term newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Term query()
- * @method static \Illuminate\Database\Eloquent\Builder|Term whereClientAccountId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Term whereConfig($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Term whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Term whereId($value)
@@ -47,7 +44,6 @@ class Term extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'client_account_id' => 'integer',
         'taxonomy_id' => 'integer',
         'config' => 'array',
     ];
@@ -59,13 +55,5 @@ class Term extends Model
     public function taxonomy()
     {
         return $this->belongsTo(\App\Models\Taxonomy::class);
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function clientAccount()
-    {
-        return $this->belongsTo(\App\Models\ClientAccount::class);
     }
 }

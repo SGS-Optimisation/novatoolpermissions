@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Text;
@@ -73,6 +74,10 @@ class Rule extends Resource
             ,
             BelongsTo::make('ClientAccount')
                 ->rules('required')
+                ->searchable()
+                ->sortable()
+            ,
+            BelongsToMany::make('Terms')
                 ->searchable()
                 ->sortable()
             ,

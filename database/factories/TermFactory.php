@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use App\Models\ClientAccount;
 use App\Models\Taxonomy;
 use App\Models\Term;
 
@@ -25,7 +24,6 @@ class TermFactory extends Factory
     public function definition()
     {
         return [
-            'client_account_id' => ClientAccount::factory(),
             'taxonomy_id' => Taxonomy::factory(),
             'name' => $this->faker->name,
             'config' => '{}',

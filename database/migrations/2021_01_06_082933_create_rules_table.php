@@ -17,16 +17,13 @@ class CreateRulesTable extends Migration
 
         Schema::create('rules', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('client_account_id');
+            $table->foreignId('client_account_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->longText('content')->nullable();
             $table->json('metadata')->nullable();
             $table->boolean('flagged');
             $table->softDeletes();
             $table->timestamps();
-
-            $table->foreign('client_account_id')->references('id')->on('client_accounts')
-                ->cascadeOnDelete();
         });
 
         Schema::enableForeignKeyConstraints();

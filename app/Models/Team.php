@@ -29,6 +29,7 @@ use Laravel\Jetstream\Team as JetstreamTeam;
  * @method static \Illuminate\Database\Eloquent\Builder|Team whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Team whereUserId($value)
  * @mixin \Eloquent
+ * @property-read \App\Models\ClientAccount $clientAccount
  */
 class Team extends JetstreamTeam
 {
@@ -61,4 +62,12 @@ class Team extends JetstreamTeam
         'updated' => TeamUpdated::class,
         'deleted' => TeamDeleted::class,
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function clientAccount()
+    {
+        return $this->belongsTo(\App\Models\ClientAccount::class);
+    }
 }

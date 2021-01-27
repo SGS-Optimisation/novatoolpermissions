@@ -17,7 +17,6 @@ class CreateTermsTable extends Migration
 
         Schema::create('terms', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_account_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('taxonomy_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->json('config')->nullable();

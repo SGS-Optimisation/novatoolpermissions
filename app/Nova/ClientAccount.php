@@ -3,6 +3,8 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Image;
@@ -31,7 +33,8 @@ class ClientAccount extends Resource
      * @var  array
      */
     public static $search = [
-        'name', 'alias'
+        'name',
+        'alias'
     ];
 
     /**
@@ -45,10 +48,10 @@ class ClientAccount extends Resource
     }
 
     /**
-    * Get the displayable singular label of the resource.
-    *
-    * @return  string
-    */
+     * Get the displayable singular label of the resource.
+     *
+     * @return  string
+     */
     public static function singularLabel()
     {
         return __('Client Account');
@@ -57,32 +60,36 @@ class ClientAccount extends Resource
     /**
      * Get the fields displayed by the resource.
      *
-     * @param    \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return  array
      */
     public function fields(Request $request)
     {
         return [
-                                                ID::make( __('Id'),  'id')
-->rules('required')
-->sortable()
-,
-                                                                Text::make( __('Name'),  'name')
-->rules('required')
-->sortable()
-,
-                                                                Text::make( __('Alias'),  'alias')
-->hideFromIndex()
-,
-                                                                Image::make( __('Image'),  'image')
-,
-                                                                                            ];
+            ID::make(__('Id'), 'id')
+                ->rules('required')
+                ->sortable()
+            ,
+            Text::make(__('Name'), 'name')
+                ->rules('required')
+                ->sortable()
+            ,
+            Text::make(__('Alias'), 'alias')
+                ->hideFromIndex()
+            ,
+            Image::make(__('Image'), 'image')
+            ,
+            BelongsToMany::make('Taxonomy', 'taxonomies')
+                ->rules('required')
+                ->searchable()
+                ->sortable()
+        ];
     }
 
     /**
      * Get the cards available for the request.
      *
-     * @param    \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return  array
      */
     public function cards(Request $request)
@@ -93,7 +100,7 @@ class ClientAccount extends Resource
     /**
      * Get the filters available for the resource.
      *
-     * @param    \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return  array
      */
     public function filters(Request $request)
@@ -104,7 +111,7 @@ class ClientAccount extends Resource
     /**
      * Get the lenses available for the resource.
      *
-     * @param    \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return  array
      */
     public function lenses(Request $request)
@@ -115,7 +122,7 @@ class ClientAccount extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param    \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return  array
      */
     public function actions(Request $request)

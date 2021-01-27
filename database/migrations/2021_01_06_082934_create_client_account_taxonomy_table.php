@@ -13,10 +13,14 @@ class CreateClientAccountTaxonomyTable extends Migration
      */
     public function up()
     {
+        Schema::disableForeignKeyConstraints();
+
         Schema::create('client_account_taxonomy', function (Blueprint $table) {
             $table->foreignId('client_account_id');
             $table->foreignId('taxonomy_id');
         });
+
+        Schema::enableForeignKeyConstraints();
     }
 
     /**

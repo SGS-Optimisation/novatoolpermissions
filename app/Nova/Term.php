@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Text;
@@ -31,7 +32,9 @@ class Term extends Resource
      * @var  array
      */
     public static $search = [
-        'name', 'taxonomy_id', 'client_account_id'
+        'name',
+        'taxonomy_id',
+        'client_account_id'
     ];
 
     /**
@@ -45,10 +48,10 @@ class Term extends Resource
     }
 
     /**
-    * Get the displayable singular label of the resource.
-    *
-    * @return  string
-    */
+     * Get the displayable singular label of the resource.
+     *
+     * @return  string
+     */
     public static function singularLabel()
     {
         return __('Term');
@@ -57,41 +60,35 @@ class Term extends Resource
     /**
      * Get the fields displayed by the resource.
      *
-     * @param    \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return  array
      */
     public function fields(Request $request)
     {
         return [
-                                                ID::make( __('Id'),  'id')
-->rules('required')
-->sortable()
-,
-                                                                BelongsTo::make('ClientAccount')
-
-->searchable()
-->sortable()
-,
-                                                                BelongsTo::make('Taxonomy')
-
-->rules('required')
-->searchable()
-->sortable()
-,
-                                                                Text::make( __('Name'),  'name')
-->rules('required')
-->sortable()
-,
-                                                                Text::make( __('Config'),  'config')
-->sortable()
-,
-                                                                                            ];
+            ID::make(__('Id'), 'id')
+                ->rules('required')
+                ->sortable()
+            ,
+            BelongsTo::make('Taxonomy')
+                ->rules('required')
+                ->searchable()
+                ->sortable()
+            ,
+            Text::make(__('Name'), 'name')
+                ->rules('required')
+                ->sortable()
+            ,
+            Text::make(__('Config'), 'config')
+                ->sortable()
+            ,
+        ];
     }
 
     /**
      * Get the cards available for the request.
      *
-     * @param    \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return  array
      */
     public function cards(Request $request)
@@ -102,7 +99,7 @@ class Term extends Resource
     /**
      * Get the filters available for the resource.
      *
-     * @param    \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return  array
      */
     public function filters(Request $request)
@@ -113,7 +110,7 @@ class Term extends Resource
     /**
      * Get the lenses available for the resource.
      *
-     * @param    \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return  array
      */
     public function lenses(Request $request)
@@ -124,7 +121,7 @@ class Term extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param    \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return  array
      */
     public function actions(Request $request)

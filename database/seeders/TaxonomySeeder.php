@@ -101,7 +101,7 @@ class TaxonomySeeder extends Seeder
     {
         if (Arr::isAssoc($list)) {
             foreach ($list as $name => $items) {
-                $taxonomy = static::buildTaxonomy($name, $config);
+                $taxonomy = static::buildTaxonomy($name, $config, $parent);
 
                 if (Arr::has($items, 'children')) {
                     static::processTaxonomies($items['children'], $config, $taxonomy);
@@ -116,7 +116,7 @@ class TaxonomySeeder extends Seeder
             }
         } else {
             foreach ($list as $name) {
-                static::buildTaxonomy($name, $config);
+                static::buildTaxonomy($name, $config, $parent);
             }
         }
 
@@ -135,11 +135,11 @@ class TaxonomySeeder extends Seeder
             'config' => $config
         ];
 
-        if ($parent) {
-            return $parent->taxonomies()->create($taxonomy_data);
-        } else {
-            return Taxonomy::create($taxonomy_data);
+        if($parent) {
+            $taxonomy_data['parent_id'] = $parent->id;
         }
+
+        return Taxonomy::firstOrCreate($taxonomy_data);
     }
 
 

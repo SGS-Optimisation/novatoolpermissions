@@ -17,14 +17,11 @@ class CreateTaxonomiesTable extends Migration
 
         Schema::create('taxonomies', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('parent_id')->nullable();
             $table->string('name');
+            $table->foreignId('parent_id')->nullable()->constrained('taxonomies')->cascadeOnDelete();
             $table->json('config')->nullable();
             $table->softDeletes();
             $table->timestamps();
-
-            $table->foreign('parent_id')->references('id')->on('taxonomies')
-                ->cascadeOnDelete();
         });
 
         Schema::enableForeignKeyConstraints();

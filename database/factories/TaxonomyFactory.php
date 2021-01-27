@@ -24,6 +24,7 @@ class TaxonomyFactory extends Factory
     {
         return [
             'name' => $this->faker->name,
+            'parent_id' => Taxonomy::factory(),
             'config' => '{}',
         ];
     }

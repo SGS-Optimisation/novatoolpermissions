@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Awobaz\Compoships\Compoships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,16 +12,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property int $id
  * @property string $name
+ * @property int $parent_id
  * @property string $config
  * @property \Carbon\Carbon $deleted_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property int|null $parent_id
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ClientAccount[] $clientAccounts
  * @property-read int|null $client_accounts_count
  * @property-read Taxonomy|null $parent
  * @property-read \Illuminate\Database\Eloquent\Collection|Taxonomy[] $taxonomies
  * @property-read int|null $taxonomies_count
+ * @property-read Taxonomy $taxonomy
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Term[] $terms
  * @property-read int|null $terms_count
  * @method static \Illuminate\Database\Eloquent\Builder|Taxonomy newModelQuery()
@@ -40,7 +42,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Taxonomy extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Compoships;
 
     /**
      * The attributes that aren't mass assignable.
@@ -56,6 +58,7 @@ class Taxonomy extends Model
      */
     protected $casts = [
         'id' => 'integer',
+        'parent_id' => 'integer',
         'config' => 'array',
     ];
 
@@ -87,7 +90,7 @@ class Taxonomy extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function clientAccounts()
+    public function client_accounts()
     {
         return $this->belongsToMany(\App\Models\ClientAccount::class);
     }

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * App\Models\Rule
  *
  * @property int $id
+ * @property int $client_account_id
  * @property string $name
  * @property string $content
  * @property string $metadata
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Rule newQuery()
  * @method static \Illuminate\Database\Query\Builder|Rule onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Rule query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Rule whereClientAccountId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Rule whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Rule whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Rule whereDeletedAt($value)
@@ -54,18 +56,11 @@ class Rule extends Model
      */
     protected $casts = [
         'id' => 'integer',
+        'client_account_id' => 'integer',
         'metadata' => 'array',
         'flagged' => 'boolean',
     ];
 
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function clientAccount()
-    {
-        return $this->belongsTo(\App\Models\ClientAccount::class);
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -73,5 +68,13 @@ class Rule extends Model
     public function terms()
     {
         return $this->belongsToMany(\App\Models\Term::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function clientAccount()
+    {
+        return $this->belongsTo(\App\Models\ClientAccount::class);
     }
 }

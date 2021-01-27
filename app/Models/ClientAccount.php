@@ -16,8 +16,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Taxonomy[] $taxonomies
  * @property-read int|null $taxonomies_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Term[] $terms
- * @property-read int|null $terms_count
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount query()
@@ -51,18 +49,10 @@ class ClientAccount extends Model
 
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function taxonomies()
     {
-        return $this->hasMany(\App\Models\Taxonomy::class);
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function terms()
-    {
-        return $this->hasMany(\App\Models\Term::class);
+        return $this->belongsToMany(\App\Models\Taxonomy::class);
     }
 }
