@@ -17,6 +17,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+/*Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return Inertia\Inertia::render('Dashboard');
-})->name('dashboard');
+})->name('dashboard');*/
+
+Route::middleware(['auth:sanctum', 'verified'])
+    ->get('/dashboard', [\App\Http\Controllers\PMs\DashboardController::class, 'show'])
+    ->name('dashboard');

@@ -70,4 +70,9 @@ class ClientAccount extends Model
     {
         return $this->hasOne(Team::class);
     }
+
+    public function rules()
+    {
+        return $this->hasMany(Rule::class);
+    }
 }

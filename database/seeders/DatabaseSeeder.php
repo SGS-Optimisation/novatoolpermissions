@@ -19,8 +19,14 @@ class DatabaseSeeder extends Seeder
 
         if (app()->environment() === 'local') {
 
+            $user = User::firstOrCreate([
+                'name' => 'Quidam',
+                'email' => 'quidam@sgsco.com',
+                'password' => bcrypt('letmein'),
+            ]);
+
             $admin = User::firstOrCreate([
-                'name' => 'Admin\'s Team',
+                'name' => 'Admin',
                 'email' => 'admin@sgsco.com',
                 'password' => bcrypt('letmein'),
             ]);
@@ -32,8 +38,15 @@ class DatabaseSeeder extends Seeder
         if (app()->environment() === 'local') {
 
             $admin->teams()->create([
-                'name' => $admin->name,
+                'name' => 'Admin\'s Team',
                 'user_id' => $admin->id,
+                'client_account_id' => ClientAccount::first()->id,
+                'personal_team' => true,
+            ]);
+
+            $user->teams()->create([
+                'name' => 'Quidam\'s Team',
+                'user_id' => $user->id,
                 'client_account_id' => ClientAccount::first()->id,
                 'personal_team' => true,
             ]);
