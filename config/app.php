@@ -178,6 +178,10 @@ return [
         App\Providers\FortifyServiceProvider::class,
         App\Providers\JetstreamServiceProvider::class,
 
+        /*
+         * MongoDB service provider
+         */
+        Jenssegers\Mongodb\MongodbServiceProvider::class,
     ],
 
     /*

@@ -3,11 +3,16 @@
 namespace Database\Seeders;
 
 use App\Models\Taxonomy;
+use App\Services\Taxonomy\LegacyImport;
+use App\Services\Taxonomy\Traits\TaxonomyHelper;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 
 class TaxonomySeeder extends Seeder
 {
+
+    use TaxonomyHelper;
+
     /**
      * Run the database seeds.
      *
@@ -46,48 +51,39 @@ class TaxonomySeeder extends Seeder
                             'Generic Content',
                         ]
                     ],
-                    /*'Header' => [
-                        'terms' => [
-                            'Bouty Code',
-                            'Color sequence',
-                            'Fogra',
-                            'Manufacturing site',
-                            'Production Site',
-                            'Reference MKT',
-                            'Site Component Code',
-                        ]
-                    ],*/
                 ]
             ],
 
             'Account Structure' => [
-                'Brands' => [
-                    'terms' => [
-                        'ANY'
-                    ]
-                ],
-                'Market' => [
-                    'terms' => [
-                        'ANY'
-                    ]
-                ],
-                'Production Site' => [
-                    'terms' => [
-                        'ANY'
-                    ]
-                ],
-                'Category/BU' => [
-                    'terms' => [
-                        'ANY'
-                    ]
-                ],
-                'Pack Type' => [
-                    'terms' => [
-                        'ANY',
-                        'Back Label',
-                        'Front Label',
-                        'Shipper'
-                    ]
+                'children' => [
+                    'Brands' => [
+                        'terms' => [
+                            'ANY'
+                        ]
+                    ],
+                    'Market' => [
+                        'terms' => [
+                            'ANY'
+                        ]
+                    ],
+                    'Production Site' => [
+                        'terms' => [
+                            'ANY'
+                        ]
+                    ],
+                    'Category/BU' => [
+                        'terms' => [
+                            'ANY'
+                        ]
+                    ],
+                    'Pack Type' => [
+                        'terms' => [
+                            'ANY',
+                            'Back Label',
+                            'Front Label',
+                            'Shipper'
+                        ]
+                    ],
                 ],
             ]
         ];
@@ -96,60 +92,10 @@ class TaxonomySeeder extends Seeder
         $default_term_config = ['default' => true];
 
         static::processTaxonomies($taxonomies, $default_vocab_config, $default_term_config);
-    }
 
-    protected static function processTaxonomies($list, $vocab_config, $term_config, $parent = null)
-    {
-        if (Arr::isAssoc($list)) {
-            foreach ($list as $name => $items) {
-                $taxonomy = static::buildTaxonomy($name, $vocab_config, $parent);
-
-                if (Arr::has($items, 'children')) {
-                    static::processTaxonomies($items['children'], $vocab_config, $term_config, $taxonomy);
-                }
-
-                if (Arr::has($items, 'terms')) {
-                    foreach ($items['terms'] as $term) {
-                        static::buildTerm($term, $taxonomy, $term_config);
-                    }
-                }
-
-            }
-        } else {
-            foreach ($list as $name) {
-                static::buildTaxonomy($name, $vocab_config, $parent);
-            }
-        }
-
-    }
-
-    /**
-     * @param $name
-     * @param $config
-     * @param  Taxonomy|null  $parent
-     * @return Taxonomy|\Illuminate\Database\Eloquent\Model
-     */
-    protected static function buildTaxonomy($name, $config, $parent = null)
-    {
-        $taxonomy_data = [
-            'name' => $name,
-            'config' => $config
-        ];
-
-        if($parent) {
-            $taxonomy_data['parent_id'] = $parent->id;
-        }
-
-        return Taxonomy::firstOrCreate($taxonomy_data);
-    }
-
-
-    /**
-     * @param $name
-     * @param  Taxonomy  $taxonomy
-     */
-    protected static function buildTerm($name, $taxonomy, $config = [])
-    {
-        $taxonomy->terms()->create(['name' => $name, 'config' => $config]);
+        /*
+         * importing legacy data from mongo dump
+         */
+        LegacyImport::handle();
     }
 }
