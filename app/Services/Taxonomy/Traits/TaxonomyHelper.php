@@ -5,16 +5,26 @@ namespace App\Services\Taxonomy\Traits;
 
 
 use App\Models\Taxonomy;
+use App\Services\Term\Traits\TermHelper;
 use Illuminate\Support\Arr;
 
 trait TaxonomyHelper
 {
+    use TermHelper;
 
+    /**
+     * @param $list
+     * @param bool[] $vocab_config
+     * @param bool[] $term_config
+     * @param null $parent
+     * @param null $client_account
+     */
     protected static function processTaxonomies(
         $list,
         $vocab_config = ['default' => true],
         $term_config = ['default' => true],
-        $parent = null
+        $parent = null,
+        $client_account = null
     ) {
         if ($list) {
             if (Arr::isAssoc($list)) {
@@ -31,10 +41,18 @@ trait TaxonomyHelper
                         }
                     }
 
+                    if($client_account){
+                        $taxonomy->client_accounts()->syncWithoutDetaching($client_account);
+                    }
+
                 }
             } else {
                 foreach ($list as $name) {
-                    static::buildTaxonomy($name, $vocab_config, $parent);
+                    $taxonomy = static::buildTaxonomy($name, $vocab_config, $parent);
+
+                    if($client_account){
+                        $taxonomy->client_accounts()->syncWithoutDetaching($client_account);
+                    }
                 }
             }
         }
@@ -64,15 +82,6 @@ trait TaxonomyHelper
         }
 
         return $taxonomy;
-    }
-
-    /**
-     * @param $name
-     * @param Taxonomy $taxonomy
-     */
-    protected static function buildTerm($name, $taxonomy, $config = [])
-    {
-        $taxonomy->terms()->create(['name' => $name, 'config' => $config]);
     }
 
 }

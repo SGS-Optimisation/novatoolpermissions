@@ -32,8 +32,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        $this->call(TaxonomySeeder::class);
+
         $this->call(ClientAccountSeeder::class);
+        $this->call(TaxonomySeeder::class);
 
         if (app()->environment() === 'local') {
 
@@ -53,7 +54,6 @@ class DatabaseSeeder extends Seeder
         }
 
         // \App\Models\User::factory(10)->create();
-
 
         $this->call(RuleSeeder::class);
 

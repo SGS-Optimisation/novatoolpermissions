@@ -18,6 +18,7 @@ class CreateClientAccountsTable extends Migration
             $table->string('name');
             $table->longText('alias')->nullable();
             $table->string('image')->nullable();
+            $table->string('legacy_id')->nullable();
             $table->timestamps();
         });
     }

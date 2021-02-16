@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\ClientAccount;
+use App\Services\ClientAccounts\LegacyImport;
 use Illuminate\Database\Seeder;
 
 class ClientAccountSeeder extends Seeder
@@ -14,12 +15,17 @@ class ClientAccountSeeder extends Seeder
      */
     public function run()
     {
-        ClientAccount::create([
-            'name' => 'Unilever',
-        ]);
 
-        ClientAccount::create([
-            'name' => 'Nestle Purina',
-        ]);
+//        if(app()->environment() === 'production') {
+              LegacyImport::handle();
+//        } else {
+//            ClientAccount::create([
+//                'name' => 'Unilever',
+//            ]);
+//
+//            ClientAccount::create([
+//                'name' => 'Nestle Purina',
+//            ]);
+//        }
     }
 }

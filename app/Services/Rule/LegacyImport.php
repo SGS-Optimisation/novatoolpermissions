@@ -1,25 +1,37 @@
 <?php
 
 
-namespace App\Services\Taxonomy;
+namespace App\Services\Rule;
 
 
-use App\Legacy\Models\Projet;
+use App\Legacy\Models\Specification;
 use App\Models\ClientAccount;
+use App\Models\Rule;
 use App\Services\Taxonomy\Traits\TaxonomyHelper;
 
 class LegacyImport
 {
+
     use TaxonomyHelper;
 
     public static function handle()
     {
+        Specification::select([
+            "Project",
+            "RuleCategorization",
+            "SubRuleCategorization",
+            "Description",
+            "JobDesignations"
+        ])->get()->each(function ($item) {
+            $client_account = ClientAccount::whereLegacyId($item->Project)->first();
 
-        Projet::select(['Designations', 'Categorizations'])->get()->each(function ($projet) {
 
-            $client_account = ClientAccount::whereLegacyId($projet->_id)->first();
+            Rule::firstOrCreate([
+                'client_account_id' => $client_account->id,
+                'content' => $item->Description
+            ]);
 
-            collect($projet->Designations)->each(function ($designation) use ($client_account) {
+            collect($item->JobDesignations)->each(function ($designation) use ($client_account) {
 
                 static::processTaxonomies([
                         'Account Structure' => [
@@ -38,13 +50,12 @@ class LegacyImport
 
             });
 
-            collect($projet->Categorizations)->each(function ($categorizations) use ($client_account) {
-
+            if ($item->RuleCategorization) {
                 static::processTaxonomies([
                         'Job Categorizations' => [
                             'children' => [
-                                $categorizations['Title'] => [
-                                    'terms' => $categorizations['Subcategories'] ? $categorizations['Subcategories'] : []
+                                $item->RuleCategorization => [
+                                    'terms' => $item->SubRuleCategorization ? [ $item->SubRuleCategorization ] : []
                                 ]
                             ]
                         ]
@@ -54,10 +65,9 @@ class LegacyImport
                     $parent = null,
                     $client_account
                 );
+            }
 
-            });
         });
-
     }
 
 }
