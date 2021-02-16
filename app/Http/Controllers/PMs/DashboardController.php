@@ -25,8 +25,9 @@ class DashboardController extends Controller
         //dd($client_account->rules);
 
         return Jetstream::inertia()->render($request, 'Dashboard', [
+            'team' => $request->user()->currentTeam,
             'clientAccount' => $client_account,
-            'rules' => $client_account->rules,
+            'rules' => $client_account->rules ?? [],
         ]);
     }
 }

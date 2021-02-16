@@ -23,7 +23,7 @@ class ClientAccountController extends Controller
         return Jetstream::inertia()->render($request, 'ClientAccount/Dashboard', [
             'sessions' => $this->sessions($request)->all(),
             'client_account' => $client_account,
-            'rules' => $client_account->rules,
+            'rules' => $client_account->rules ?? collect(),
         ]);
     }
 
