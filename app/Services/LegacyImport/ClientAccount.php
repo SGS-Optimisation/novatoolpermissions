@@ -1,17 +1,17 @@
 <?php
 
 
-namespace App\Services\ClientAccounts;
+namespace App\Services\LegacyImport;
 
 
 use App\Legacy\Models\Projet;
-use App\Models\ClientAccount;
+use App\Services\BaseService;
 
-class LegacyImport
+class ClientAccount extends BaseService
 {
 
-    public static function handle(){
-        ClientAccount::insert(
+    public function handle(){
+        \App\Models\ClientAccount::insert(
             Projet::select(['Name', 'Logo', 'Designations', 'Categorizations'])->get()->map(function($item){
                 return [
                     'name' => $item->Name,

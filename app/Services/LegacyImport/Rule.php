@@ -1,20 +1,20 @@
 <?php
 
 
-namespace App\Services\Rule;
+namespace App\Services\LegacyImport;
 
 
 use App\Legacy\Models\Specification;
 use App\Models\ClientAccount;
-use App\Models\Rule;
+use App\Services\BaseService;
 use App\Services\Taxonomy\Traits\TaxonomyHelper;
 
-class LegacyImport
+class Rule extends BaseService
 {
 
     use TaxonomyHelper;
 
-    public static function handle()
+    public function handle()
     {
         Specification::select([
             "Project",
@@ -26,28 +26,13 @@ class LegacyImport
             $client_account = ClientAccount::whereLegacyId($item->Project)->first();
 
 
-            Rule::firstOrCreate([
+            \App\Models\Rule::firstOrCreate([
                 'client_account_id' => $client_account->id,
                 'content' => $item->Description
             ]);
 
             collect($item->JobDesignations)->each(function ($designation) use ($client_account) {
-
-                static::processTaxonomies([
-                        'Account Structure' => [
-                            'children' => [
-                                $designation['Title'] => [
-                                    'terms' => $designation['Subjobs']
-                                ]
-                            ]
-                        ]
-                    ],
-                    $vocab_config = ['default' => true],
-                    $term_config = ['default' => true],
-                    $parent = null,
-                    $client_account
-                );
-
+                static::createAccountStructureTaxonomy($designation, $client_account);
             });
 
             if ($item->RuleCategorization) {
@@ -55,14 +40,14 @@ class LegacyImport
                         'Job Categorizations' => [
                             'children' => [
                                 $item->RuleCategorization => [
-                                    'terms' => $item->SubRuleCategorization ? [ $item->SubRuleCategorization ] : []
+                                    'terms' => $item->SubRuleCategorization ? [$item->SubRuleCategorization] : []
                                 ]
                             ]
                         ]
                     ],
-                    $vocab_config = ['default' => true],
-                    $term_config = ['default' => true],
-                    $parent = null,
+                    ['default' => false],
+                    ['default' => false],
+                    null,
                     $client_account
                 );
             }

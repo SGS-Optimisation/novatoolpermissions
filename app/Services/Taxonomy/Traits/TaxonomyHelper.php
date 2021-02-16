@@ -84,4 +84,38 @@ trait TaxonomyHelper
         return $taxonomy;
     }
 
+    protected static function createAccountStructureTaxonomy($designation, $client_account){
+        static::processTaxonomies([
+            'Account Structure' => [
+                'children' => [
+                    $designation['Title'] => [
+                        'terms' => $designation['Subjobs']
+                    ]
+                ]
+            ]
+        ],
+            ['default' => false],
+            ['default' => false],
+            null,
+            $client_account
+        );
+    }
+
+    protected static function createJobCategorizationTaxonomy($categorizations, $client_account){
+        static::processTaxonomies([
+            'Job Categorizations' => [
+                'children' => [
+                    $categorizations['Title'] => [
+                        'terms' => $categorizations['Subcategories'] ? $categorizations['Subcategories'] : []
+                    ]
+                ]
+            ]
+        ],
+            ['default' => false],
+            ['default' => false],
+            null,
+            $client_account
+        );
+    }
+
 }

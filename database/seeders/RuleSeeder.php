@@ -17,17 +17,17 @@ class RuleSeeder extends Seeder
      */
     public function run()
     {
-        if (app()->environment() === 'production') {
+//        if (app()->environment() === 'production') {
             /**
              * importing legacy data from mongo dump
              */
-            LegacyImport::handle();
-        } else {
-            Rule::factory()->count(5)->create([
-                'client_account_id' => ClientAccount::query()->inRandomOrder()->first(),
-            ])->each(function (Rule $rule) {
-                $rule->terms()->attach(Term::inRandomOrder()->take(2)->get()->pluck('id')->all());
-            });
-        }
+            (new \App\Services\LegacyImport\Rule())->handle();
+//        } else {
+//            Rule::factory()->count(5)->create([
+//                'client_account_id' => ClientAccount::query()->inRandomOrder()->first(),
+//            ])->each(function (Rule $rule) {
+//                $rule->terms()->attach(Term::inRandomOrder()->take(2)->get()->pluck('id')->all());
+//            });
+//        }
     }
 }
