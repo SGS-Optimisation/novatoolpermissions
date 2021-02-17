@@ -24,9 +24,9 @@ class Rule extends BaseService
             "JobDesignations"
         ])->get()->each(function ($item) {
             $client_account = ClientAccount::whereLegacyId($item->Project)->first();
-
+            $name = preg_replace('/^\s+\n/', '',  strip_tags(html_entity_decode($item->Description)));
             \App\Models\Rule::firstOrCreate([
-                'name' => trim(html_entity_decode(strip_tags(strtok($item->Description, "\n"))), "\ "),
+                'name' => $name ? $name : $item->_id,
                 'client_account_id' => $client_account->id,
                 'content' => $item->Description
             ]);
