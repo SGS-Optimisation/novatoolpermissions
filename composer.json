@@ -32,9 +32,7 @@
         "ext-json": "*"
     },
     "require-dev": {
-        "beyondcode/laravel-er-diagram-generator": "^1.5",
         "cloudstudio/resource-generator": "9999999-dev",
-        "doctrine/dbal": "9999999-dev",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laracademy/generators": "^3.0",

@@ -38,19 +38,25 @@ class DatabaseSeeder extends Seeder
 
         if (app()->environment() === 'local') {
 
+            /** @var ClientAccount $unilever */
+            $unilever = ClientAccount::where('name', 'Unilever')->first();
+            $gsk = ClientAccount::where('name', 'GSK')->first();
+
             $admin->teams()->create([
                 'name' => 'Admin\'s Team',
                 'user_id' => $admin->id,
-                'client_account_id' => ClientAccount::first()->id,
+                'client_account_id' => null,
                 'personal_team' => true,
             ]);
 
             $user->teams()->create([
                 'name' => 'Quidam\'s Team',
                 'user_id' => $user->id,
-                'client_account_id' => ClientAccount::first()->id,
+                'client_account_id' => null,
                 'personal_team' => true,
             ]);
+
+            $admin->teams()->sync([$unilever->team->id, $gsk->team->id]);
         }
 
         // \App\Models\User::factory(10)->create();

@@ -21,6 +21,8 @@ class TaxonomySeeder extends Seeder
     public function run()
     {
 
+
+
         if (app()->environment() === 'production') {
             /**
              * importing legacy data from mongo dump
@@ -100,6 +102,8 @@ class TaxonomySeeder extends Seeder
 
             static::processTaxonomies($taxonomies, $default_vocab_config, $default_term_config);
         }
+
+        (new \App\Services\LegacyImport\Taxonomy)->handle();
 
     }
 }
