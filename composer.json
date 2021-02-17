@@ -16,6 +16,7 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^6.3",
         "inertiajs/inertia-laravel": "^0.2.4",
+        "jenssegers/mongodb": "^3.8",
         "laravel/framework": "^8.12",
         "laravel/jetstream": "^1.6",
         "laravel/nova": "~3.0",
@@ -27,7 +28,8 @@
         "silvanite/brandenburg": "^1.4",
         "silvanite/novatoolpermissions": "^1.0",
         "socialiteproviders/microsoft-azure": "^3.0",
-        "tightenco/ziggy": "^0.9.4"
+        "tightenco/ziggy": "^0.9.4",
+        "ext-json": "*"
     },
     "require-dev": {
         "beyondcode/laravel-er-diagram-generator": "^1.5",
