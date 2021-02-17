@@ -3,7 +3,7 @@
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 <span v-if="clientAccount != null">
-                    Client: {{ clientAccount.name }}
+                    Client:  {{ clientAccount.name }}
                 </span>
                 <span v-else>
                     {{ team.name }}
@@ -18,8 +18,9 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg" v-if="clientAccount != null">
-                    <client-account-overview :client-account="clientAccount" :rules="rules"/>
+                <div v-for="rule in rules">
+                    <view-rule :rule="rule"></view-rule>
+
                 </div>
             </div>
         </div>
@@ -31,6 +32,7 @@ import AppLayout from '@/Layouts/AppLayout'
 import Welcome from '@/Jetstream/Welcome'
 import ClientAccountOverview from '@/Pages/ClientAccount/Overview'
 import ClientMenu from '@/Components/PM/ClientMenu'
+import ViewRule from '@/Components/PM/Rules/View'
 
 export default {
     props: [
@@ -43,7 +45,8 @@ export default {
         ClientMenu,
         AppLayout,
         Welcome,
-        ClientAccountOverview
+        ClientAccountOverview,
+        ViewRule
     },
 }
 </script>

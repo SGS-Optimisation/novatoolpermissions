@@ -61,13 +61,19 @@ class Rule extends Model
         'flagged' => 'boolean',
     ];
 
+    protected $with = ['terms'];
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function terms()
     {
-        return $this->belongsToMany(\App\Models\Term::class);
+        return $this->belongsToMany(\App\Models\Term::class)->with(['taxonomy' => function($query){
+            $query->orderBy('name', 'asc');
+        }]);
+
+        //orderBy('name');
     }
 
     /**
