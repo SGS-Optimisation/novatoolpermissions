@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereImage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereLegacyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereUpdatedAt($value)
  * @mixin \Eloquent
  */
