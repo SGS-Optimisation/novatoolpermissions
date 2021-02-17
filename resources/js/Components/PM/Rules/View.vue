@@ -1,6 +1,6 @@
 <template>
     <div class="shadow-md m-8 p-6 rounded" x-data="{open: false}">
-        <div class="flex items-center">
+        <div class="flex items-center justify-between">
             <div class="description">
                 <h2 class="text-xl font-bold">{{ rule.name }}</h2>
                 <div class="flex flex-shrink-0">
