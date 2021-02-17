@@ -14,16 +14,39 @@ class ClientAccountController extends Controller
      *
      * @return \Inertia\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $client_account_id = null)
     {
-        /** @var ClientAccount $client_account */
-        $client_account = $request->user()->currentTeam()->clientAccount;
+        \Log::debug('client account: '.$client_account_id);
 
+        $client_account = ClientAccount::find($client_account_id) ?? $request->user()->currentTeam->clientAccount;
 
+        if ($client_account && (!$client_account_id || $client_account_id == 'dashboard')) {
+            return redirect(route('dashboard', ['clientAccount' => $client_account->id]));
+        }
+
+        if (!$client_account) {
+            \Log::debug('displaying user team');
+            return Jetstream::inertia()->render($request, 'Dashboard', [
+                'team' => $request->user()->currentTeam,
+            ]);
+        }
+
+        \Log::debug('displaying client account team');
         return Jetstream::inertia()->render($request, 'ClientAccount/Dashboard', [
-            'sessions' => $this->sessions($request)->all(),
-            'client_account' => $client_account,
-            'rules' => $client_account->rules ?? collect(),
+            'team' => $request->user()->currentTeam,
+            'clientAccount' => $client_account,
+            'rules' => $client_account->rules ?? [],
+        ]);
+    }
+
+    public function rules(Request $request, $client_account_id)
+    {
+        $client_account = ClientAccount::find($client_account_id);
+
+        return Jetstream::inertia()->render($request, 'ClientAccount/Rules', [
+            'team' => $request->user()->currentTeam,
+            'clientAccount' => $client_account,
+            'rules' => $client_account->rules ?? [],
         ]);
     }
 

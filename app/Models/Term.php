@@ -50,6 +50,7 @@ class Term extends Model
         'config' => 'array',
     ];
 
+    protected $with = ['taxonomy'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

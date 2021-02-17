@@ -24,3 +24,6 @@ new Vue({
             },
         }),
 }).$mount(app);
+
+//Object.defineProperty(Vue.prototype, '$_', { value: _ });
+Vue.set(Vue.prototype, '_', _);
