@@ -16,19 +16,19 @@ class ClientAccountSeeder extends Seeder
     public function run()
     {
 
-//        if (app()->environment() === 'production') {
+        if (app()->environment() === 'production') {
             /**
              * importing legacy data from mongo dump
              */
             (new \App\Services\LegacyImport\ClientAccount())->handle();
-//        } else {
-//            ClientAccount::create([
-//                'name' => 'Unilever',
-//            ]);
-//
-//            ClientAccount::create([
-//                'name' => 'Nestle Purina',
-//            ]);
-//        }
+        } else {
+            ClientAccount::create([
+                'name' => 'Unilever',
+            ]);
+
+            ClientAccount::create([
+                'name' => 'Nestle Purina',
+            ]);
+        }
     }
 }

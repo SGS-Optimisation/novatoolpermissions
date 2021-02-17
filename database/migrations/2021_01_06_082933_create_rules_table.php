@@ -18,7 +18,7 @@ class CreateRulesTable extends Migration
         Schema::create('rules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_account_id')->constrained()->cascadeOnDelete();
-            $table->string('name')->nullable();
+            $table->longText('name');
             $table->longText('content')->nullable();
             $table->json('metadata')->nullable();
             $table->boolean('flagged')->default(false);

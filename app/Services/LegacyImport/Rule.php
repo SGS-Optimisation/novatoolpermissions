@@ -25,8 +25,8 @@ class Rule extends BaseService
         ])->get()->each(function ($item) {
             $client_account = ClientAccount::whereLegacyId($item->Project)->first();
 
-
             \App\Models\Rule::firstOrCreate([
+                'name' => strip_tags(substr($item->Description, 0, strpos($item->Description, "<br />" ) )),
                 'client_account_id' => $client_account->id,
                 'content' => $item->Description
             ]);
