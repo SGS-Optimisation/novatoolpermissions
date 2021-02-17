@@ -26,7 +26,7 @@ class Rule extends BaseService
             $client_account = ClientAccount::whereLegacyId($item->Project)->first();
 
             \App\Models\Rule::firstOrCreate([
-                'name' => strip_tags(substr($item->Description, 0, strpos($item->Description, "<br />" ) )),
+                'name' => trim(html_entity_decode(strip_tags(strtok($item->Description, "\n"))), "\ "),
                 'client_account_id' => $client_account->id,
                 'content' => $item->Description
             ]);
