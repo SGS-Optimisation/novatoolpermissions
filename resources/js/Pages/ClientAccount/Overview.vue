@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p>Number of rules: {{ rules.length }}</p>
+        <p>Number of rules: {{ rulesCount }}</p>
     </div>
 </template>
 
@@ -9,7 +9,7 @@ export default {
     name: "Overview",
     "props": [
         "clientAccount",
-        "rules"
+        "rulesCount"
     ]
 }
 </script>

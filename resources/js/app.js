@@ -7,6 +7,7 @@ import Vue from 'vue';
 import { InertiaApp } from '@inertiajs/inertia-vue';
 import { InertiaForm } from 'laravel-jetstream';
 import PortalVue from 'portal-vue';
+import moment from "moment";
 
 Vue.mixin({ methods: { route } });
 Vue.use(InertiaApp);
@@ -27,3 +28,4 @@ new Vue({
 
 //Object.defineProperty(Vue.prototype, '$_', { value: _ });
 Vue.set(Vue.prototype, '_', _);
+Vue.set(Vue.prototype, 'moment', moment);

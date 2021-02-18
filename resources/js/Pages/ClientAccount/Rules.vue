@@ -18,7 +18,7 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div v-for="rule in rules">
+                <div v-for="rule in _.orderBy(rules, 'created_at', 'desc')">
                     <view-rule :rule="rule"></view-rule>
 
                 </div>

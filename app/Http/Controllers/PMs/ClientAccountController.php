@@ -35,7 +35,7 @@ class ClientAccountController extends Controller
         return Jetstream::inertia()->render($request, 'ClientAccount/Dashboard', [
             'team' => $request->user()->currentTeam,
             'clientAccount' => $client_account,
-            'rules' => $client_account->rules ?? [],
+            'rulesCount' => $client_account->rules()->count(),
         ]);
     }
 
