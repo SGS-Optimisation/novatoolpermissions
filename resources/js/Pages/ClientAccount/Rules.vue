@@ -18,10 +18,14 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+<!--                <simple-pagination :data="rules"></simple-pagination>-->
+
                 <div v-for="rule in _.orderBy(rules, 'created_at', 'desc')">
                     <view-rule :rule="rule"></view-rule>
 
                 </div>
+
+<!--                <simple-pagination :data="rules"></simple-pagination>-->
             </div>
         </div>
     </app-layout>
@@ -33,6 +37,7 @@ import Welcome from '@/Jetstream/Welcome'
 import ClientAccountOverview from '@/Pages/ClientAccount/Overview'
 import ClientMenu from '@/Components/PM/ClientMenu'
 import ViewRule from '@/Components/PM/Rules/View'
+import SimplePagination from "@/Components/SimplePagination";
 
 export default {
     props: [
@@ -46,7 +51,8 @@ export default {
         AppLayout,
         Welcome,
         ClientAccountOverview,
-        ViewRule
+        ViewRule,
+        SimplePagination
     },
 }
 </script>

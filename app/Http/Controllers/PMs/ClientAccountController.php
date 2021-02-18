@@ -5,6 +5,7 @@ namespace App\Http\Controllers\PMs;
 use App\Http\Controllers\Controller;
 use App\Models\ClientAccount;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Laravel\Jetstream\Jetstream;
 
 class ClientAccountController extends Controller
@@ -43,10 +44,18 @@ class ClientAccountController extends Controller
     {
         $client_account = ClientAccount::find($client_account_id);
 
+        $rules = Cache::remember('rules-' . $client_account_id, 3600, function() use ($client_account){
+            $rules = $client_account->rules->each(function($rule){
+                $rule->content = str_replace('<img', '<img loading="lazy"', $rule->content);
+            });
+
+            return $rules;
+        });
+
         return Jetstream::inertia()->render($request, 'ClientAccount/Rules', [
             'team' => $request->user()->currentTeam,
             'clientAccount' => $client_account,
-            'rules' => $client_account->rules ?? [],
+            'rules' => $rules //()->orderBy('updated_at', 'DESC')->paginate(50) ?? [],
         ]);
     }
 

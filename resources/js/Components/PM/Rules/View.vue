@@ -11,7 +11,7 @@
                         <div class="flex flex-shrink-0 text-sm items-center px-2">
                             <div class="bg-gray-300 text-gray-600 px-2 py-1 rounded-l-md">{{ taxonomy }}</div>
                             <div v-for="term in taxonomyTerms"
-                                 class="bg-green-200 text-green-700 px-2 py-1 rounded-r-md">
+                                 class="bg-blue-200 text-green-800 px-2 py-1 rounded-r-md">
                                 {{ term.name }}
                             </div>
 
