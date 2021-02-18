@@ -26,12 +26,15 @@ class Rule extends BaseService
             'UpdatedAt'
         ])->get()->each(function ($item) {
             $client_account = ClientAccount::whereLegacyId($item->Project)->first();
+
             $name = strtok(preg_replace('/^\s+\n/', '', strip_tags(html_entity_decode(preg_replace("/&nbsp;/",'',$item->Description)))), "\n");
 
+            $content = (new ExtractImages($item->Description))->handle()->updated_content;
+
             $rule = \App\Models\Rule::create([
-                'name' => $name ? $name : $item->_id,
                 'client_account_id' => $client_account->id,
-                'content' => $item->Description,
+                'name' => $name ? $name : $item->_id,
+                'content' => $content,
                 'created_at' => $item->CreatedAt->toDateTime(),
                 'updated_at' => $item->UpdatedAt->toDateTime(),
             ]);

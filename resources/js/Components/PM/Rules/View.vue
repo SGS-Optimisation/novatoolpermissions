@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-md m-8 p-6 rounded" x-data="{open: false}">
+    <div class="shadow-md m-8 p-6 rounded"  :data-rule-id="rule.id">
         <div class="flex items-center justify-between">
             <div class="description">
                 <h2 @click="open = !open;" class="cursor-pointer text-xl font-bold">{{ rule.name }}</h2>
