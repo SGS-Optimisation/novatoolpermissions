@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property string $name
+ * @property string $slug
  * @property string $alias
  * @property string $image
  * @property \Carbon\Carbon $created_at
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereImage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereLegacyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereUpdatedAt($value)
  * @mixin \Eloquent

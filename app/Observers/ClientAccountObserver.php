@@ -5,9 +5,23 @@ namespace App\Observers;
 use App\Models\ClientAccount;
 use App\Services\ClientAccounts\AssociateDefaultVocabulary;
 use App\Services\ClientAccounts\MakeTeam;
+use Illuminate\Support\Str;
 
 class ClientAccountObserver
 {
+    /**
+     * Handle the ClientAccount "creating" event.
+     *
+     * @param  \App\Models\ClientAccount  $clientAccount
+     * @return void
+     */
+    public function creating(ClientAccount $clientAccount)
+    {
+        if(empty($clientAccount->slug)) {
+            $clientAccount->slug = Str::slug($clientAccount->name);
+        }
+    }
+
     /**
      * Handle the ClientAccount "created" event.
      *

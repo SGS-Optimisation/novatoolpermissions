@@ -1,17 +1,17 @@
 <template>
     <div class="bg-white">
         <nav class="flex flex-col sm:flex-row">
-            <sub-nav-link :href="route('dashboard', {clientAccount: clientAccount ? clientAccount.id : ''})"
+            <sub-nav-link :href="route('dashboard', {clientAccount: clientAccount ? clientAccount.slug : ''})"
                           :active="route().current('dashboard')">
                 Overview
             </sub-nav-link>
 
-            <sub-nav-link :href="route('rules', {clientAccount: clientAccount.id })"
+            <sub-nav-link :href="route('rules', {clientAccount: clientAccount.slug })"
                           :active="route().current('rules')">
                 Rules
             </sub-nav-link>
 
-            <sub-nav-link :href="route('configuration', {clientAccount: clientAccount.id })"
+            <sub-nav-link :href="route('configuration', {clientAccount: clientAccount.slug })"
                           :active="route().current('configuration')">
                 Configuration
             </sub-nav-link>

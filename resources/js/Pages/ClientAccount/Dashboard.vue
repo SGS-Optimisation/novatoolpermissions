@@ -1,19 +1,13 @@
 <template>
     <app-layout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                <span v-if="clientAccount != null">
-                    Client: {{ clientAccount.name }}
-                </span>
-                <span v-else>
-                    {{ team.name }}
-                </span>
-            </h2>
+            <div class="flex flex-row">
+                <client-header :client-account="clientAccount"></client-header>
 
-            <div v-if="clientAccount != null">
-                <client-menu :client-account="clientAccount"></client-menu>
+                <div v-if="clientAccount != null">
+                    <client-menu :client-account="clientAccount"></client-menu>
+                </div>
             </div>
-
         </template>
 
         <div class="py-12">
@@ -31,6 +25,7 @@ import AppLayout from '@/Layouts/AppLayout'
 import Welcome from '@/Jetstream/Welcome'
 import ClientAccountOverview from '@/Pages/ClientAccount/Overview'
 import ClientMenu from '@/Components/PM/ClientMenu'
+import ClientHeader from "@/Components/PM/ClientHeader";
 
 export default {
     props: [
@@ -44,7 +39,8 @@ export default {
         ClientMenu,
         AppLayout,
         Welcome,
-        ClientAccountOverview
+        ClientAccountOverview,
+        ClientHeader
     },
 }
 </script>

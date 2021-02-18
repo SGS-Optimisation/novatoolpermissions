@@ -1,31 +1,23 @@
 <template>
     <app-layout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                <span v-if="clientAccount != null">
-                    Client:  {{ clientAccount.name }}
-                </span>
-                <span v-else>
-                    {{ team.name }}
-                </span>
-            </h2>
+            <div class="flex flex-row">
+                <client-header :client-account="clientAccount"></client-header>
 
-            <div v-if="clientAccount != null">
                 <client-menu :client-account="clientAccount"></client-menu>
             </div>
-
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-<!--                <simple-pagination :data="rules"></simple-pagination>-->
+                <!--                <simple-pagination :data="rules"></simple-pagination>-->
 
                 <div v-for="rule in _.orderBy(rules, 'created_at', 'desc')">
                     <view-rule :rule="rule"></view-rule>
 
                 </div>
 
-<!--                <simple-pagination :data="rules"></simple-pagination>-->
+                <!--                <simple-pagination :data="rules"></simple-pagination>-->
             </div>
         </div>
     </app-layout>
@@ -36,8 +28,9 @@ import AppLayout from '@/Layouts/AppLayout'
 import Welcome from '@/Jetstream/Welcome'
 import ClientAccountOverview from '@/Pages/ClientAccount/Overview'
 import ClientMenu from '@/Components/PM/ClientMenu'
-import ViewRule from '@/Components/PM/Rules/View'
+import ViewRule from '@/Components/PM/Rules/ListView'
 import SimplePagination from "@/Components/SimplePagination";
+import ClientHeader from "@/Components/PM/ClientHeader";
 
 export default {
     props: [
@@ -52,7 +45,8 @@ export default {
         Welcome,
         ClientAccountOverview,
         ViewRule,
-        SimplePagination
+        SimplePagination,
+        ClientHeader
     },
 }
 </script>

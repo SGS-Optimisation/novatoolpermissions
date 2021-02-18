@@ -13,16 +13,18 @@ class ClientAccountController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Inertia\Response
+     * @param  Request  $request
+     * @param  null  $client_account_slug
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Inertia\Response
      */
-    public function index(Request $request, $client_account_id = null)
+    public function index(Request $request, $client_account_slug = null)
     {
-        \Log::debug('client account: '.$client_account_id);
+        \Log::debug('client account: '.$client_account_slug);
 
-        $client_account = ClientAccount::find($client_account_id) ?? $request->user()->currentTeam->clientAccount;
+        $client_account = ClientAccount::whereSlug($client_account_slug)->first() ?? $request->user()->currentTeam->clientAccount;
 
-        if ($client_account && (!$client_account_id || $client_account_id == 'dashboard')) {
-            return redirect(route('dashboard', ['clientAccount' => $client_account->id]));
+        if ($client_account && (!$client_account_slug || $client_account_slug == 'dashboard')) {
+            return redirect(route('dashboard', ['clientAccount' => $client_account->slug]));
         }
 
         if (!$client_account) {
@@ -40,11 +42,17 @@ class ClientAccountController extends Controller
         ]);
     }
 
-    public function rules(Request $request, $client_account_id)
-    {
-        $client_account = ClientAccount::find($client_account_id);
 
-        $rules = Cache::remember('rules-' . $client_account_id, 3600, function() use ($client_account){
+    /**
+     * @param  Request  $request
+     * @param $client_account_id
+     * @return \Inertia\Response
+     */
+    public function rules(Request $request, $client_account_slug)
+    {
+        $client_account = ClientAccount::whereSlug($client_account_slug)->first();
+
+        $rules = Cache::remember('rules-' . $client_account_slug, 3600, function() use ($client_account){
             $rules = $client_account->rules->each(function($rule){
                 $rule->content = str_replace('<img', '<img loading="lazy"', $rule->content);
             });
