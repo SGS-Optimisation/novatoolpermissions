@@ -44,19 +44,19 @@ class ExtractImages
 
         $search_pattern = '/src="(data:image\/[^;]+;base64[^"]+)"/i';
 
-        preg_match($search_pattern, $this->original_content, $this->matches);
+        preg_match_all($search_pattern, $this->original_content, $this->matches);
 
         //array_shift($this->matches); // eliminate string
+        if(empty($this->matches)) {
+            return $this;
+        }
 
-        for ($i = 0; $i < count($this->matches); $i += 2) {
-            $matched = $this->matches[$i];
-            $captured = $this->matches[$i + 1];
+        for ($i = 0; $i < count($this->matches[0]); $i++) {
+
+            $matched = $this->matches[0][$i];
+            $captured = $this->matches[1][$i];
 
             $this->to_replace[] = $matched;
-
-            //foreach ($this->matches as $matchData) {
-
-            //$base64_data = $matchData[0];
 
             $base64_data_parts = explode(',', $captured);
 
@@ -76,7 +76,6 @@ class ExtractImages
                 );
 
             $this->replacements[] = 'src="'.Storage::disk('public')->url($image_path).'"';
-
         }
 
 
