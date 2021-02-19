@@ -78,4 +78,9 @@ class ClientAccount extends Model
     {
         return $this->hasMany(Rule::class);
     }
+
+    /*public function getImageAttribute()
+    {
+        return'/' . $this->attributes['image'];
+    }*/
 }
