@@ -5,8 +5,11 @@ namespace App\Providers;
 use Anaseqal\NovaImport\NovaImport;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Cards\Help;
+use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
+use OptimistDigital\NovaSettings\NovaSettings;
 use Silvanite\NovaToolPermissions\NovaToolPermissions;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
@@ -19,6 +22,20 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function boot()
     {
         parent::boot();
+
+        NovaSettings::addSettingsFields([
+
+            Text::make('Api Base Path', 'api_base_path')->required(),
+
+            Text::make('Api Version', 'api_version')->required(),
+
+            Text::make('Api App Id', 'api_app_id')->required(),
+
+            Text::make('Api App Key', 'api_app_key')->required(),
+
+            Text::make('Subscription Key', 'subscription_key')->required()
+
+        ]);
     }
 
     /**
