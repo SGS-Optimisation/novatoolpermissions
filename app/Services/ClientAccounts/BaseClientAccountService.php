@@ -11,8 +11,16 @@ abstract class BaseClientAccountService extends BaseService
 {
     public ClientAccount $clientAccount;
 
-    public function __construct(ClientAccount $clientAccount)
+    /**
+     * BaseClientAccountService constructor.
+     * @param ClientAccount|int $clientAccount
+     */
+    public function __construct($clientAccount)
     {
+        if(is_int($clientAccount)) {
+            $clientAccount = ClientAccount::find($clientAccount);
+        }
+
         $this->clientAccount = $clientAccount;
     }
 }

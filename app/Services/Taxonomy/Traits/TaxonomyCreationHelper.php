@@ -10,7 +10,7 @@ use App\Models\Taxonomy;
 use App\Services\Term\Traits\TermHelper;
 use Illuminate\Support\Arr;
 
-trait TaxonomyHelper
+trait TaxonomyCreationHelper
 {
     use TermHelper;
 

@@ -67,4 +67,9 @@ class Term extends Model
     {
         return $this->belongsToMany(\App\Models\ClientAccount::class);
     }
+
+    public function getNameAttribute()
+    {
+        return trim($this->attributes['name']);
+    }
 }

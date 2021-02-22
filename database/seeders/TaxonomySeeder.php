@@ -4,14 +4,14 @@ namespace Database\Seeders;
 
 use App\Models\Taxonomy;
 use App\Services\Taxonomy\LegacyImport;
-use App\Services\Taxonomy\Traits\TaxonomyHelper;
+use App\Services\Taxonomy\Traits\TaxonomyCreationHelper;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 
 class TaxonomySeeder extends Seeder
 {
 
-    use TaxonomyHelper;
+    use TaxonomyCreationHelper;
 
     /**
      * Run the database seeds.

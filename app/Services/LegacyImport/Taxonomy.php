@@ -7,12 +7,12 @@ namespace App\Services\LegacyImport;
 use App\Legacy\Models\Projet;
 use App\Models\ClientAccount;
 use App\Services\BaseService;
-use App\Services\Taxonomy\Traits\TaxonomyHelper;
+use App\Services\Taxonomy\Traits\TaxonomyCreationHelper;
 
 class Taxonomy extends BaseService
 {
 
-    use TaxonomyHelper;
+    use TaxonomyCreationHelper;
 
     public function handle()
     {

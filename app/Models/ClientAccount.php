@@ -61,6 +61,12 @@ class ClientAccount extends Model
         return $this->belongsToMany(\App\Models\Taxonomy::class);
     }
 
+
+    public function root_taxonomies()
+    {
+        return $this->taxonomies()->whereNull('parent_id');
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

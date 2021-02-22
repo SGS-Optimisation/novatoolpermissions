@@ -1,13 +1,6 @@
 <template>
-    <app-layout>
-        <template #header>
-            <div class="flex flex-row">
-                <client-header :client-account="clientAccount"></client-header>
-
-                <client-menu :client-account="clientAccount"></client-menu>
-            </div>
-        </template>
-
+    <client-layout :client-account="clientAccount">
+        <template #body>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <!--                <simple-pagination :data="rules"></simple-pagination>-->
@@ -20,17 +13,13 @@
                 <!--                <simple-pagination :data="rules"></simple-pagination>-->
             </div>
         </div>
-    </app-layout>
+        </template>
+    </client-layout>
 </template>
 
 <script>
-import AppLayout from '@/Layouts/AppLayout'
-import Welcome from '@/Jetstream/Welcome'
-import ClientAccountOverview from '@/Pages/ClientAccount/Overview'
-import ClientMenu from '@/Components/PM/ClientMenu'
+import ClientLayout from '@/Layouts/ClientAccount'
 import ViewRule from '@/Components/PM/Rules/ListView'
-import SimplePagination from "@/Components/SimplePagination";
-import ClientHeader from "@/Components/PM/ClientHeader";
 
 export default {
     props: [
@@ -40,13 +29,8 @@ export default {
     ],
 
     components: {
-        ClientMenu,
-        AppLayout,
-        Welcome,
-        ClientAccountOverview,
+        ClientLayout,
         ViewRule,
-        SimplePagination,
-        ClientHeader
     },
 }
 </script>

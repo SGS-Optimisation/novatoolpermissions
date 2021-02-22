@@ -45,7 +45,7 @@ class ClientAccountController extends Controller
 
     /**
      * @param  Request  $request
-     * @param $client_account_id
+     * @param $client_account_slug
      * @return \Inertia\Response
      */
     public function rules(Request $request, $client_account_slug)
