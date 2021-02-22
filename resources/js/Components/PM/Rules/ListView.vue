@@ -3,7 +3,11 @@
         <div class="flex items-center justify-between">
             <div class="description">
                 <h2 @click="open = !open;" class="cursor-pointer text-xl font-bold">{{ rule.name }}</h2>
-                <div class="align-bottom text-xs">Last updated: {{ moment(rule.updated_at).format('MMM DD YYYY, HH:mm:ss') }}</div>
+                <div class="flex">
+                    <div class="flex-shrink cursor-default align-bottom text-xs border-dashed border-b border-gray-500" :title="date()">
+                        Last updated {{humanDate()}}
+                    </div>
+                </div>
                 <div class="flex flex-shrink-0">
                     <div v-for="(taxonomyTerms, taxonomy) in _.groupBy(rule.terms, function(item){
                             return item.taxonomy.name
@@ -61,6 +65,9 @@
 </template>
 
 <script>
+
+const moment = require('moment');
+
 export default {
     name: "Rule",
     props: ['rule'],
@@ -70,6 +77,17 @@ export default {
             open: false,
         }
     },
+
+    methods: {
+        date: function(){
+            return moment(this.rule.updated_at).format('MMM DD YYYY, HH:mm:ss');
+        },
+
+        humanDate: function(){
+            return moment(this.rule.updated_at).fromNow();
+
+        },
+    }
 
 }
 </script>
