@@ -44,8 +44,16 @@ Route::group([
         Route::get('/{clientAccount}/rules/create', [\App\Http\Controllers\PMs\RuleController::class, 'create'])
             ->name('rules.create');
 
-        Route::get('/{clientAccount}/rules/{$id}/update', [\App\Http\Controllers\PMs\RuleController::class, 'update'])
+        Route::post('/{clientAccount}/rules/store', [\App\Http\Controllers\PMs\RuleController::class, 'store'])
+            ->name('rules.store');
+
+        Route::get('/{clientAccount}/rules/{id}/edit', [\App\Http\Controllers\PMs\RuleController::class, 'edit'])
             ->name('rules.edit');
+
+        Route::put('/{clientAccount}/rules/{id}/update', [\App\Http\Controllers\PMs\RuleController::class, 'update'])
+            ->name('rules.update');
+
+
 
 
         Route::get('/{clientAccount}/configuration',

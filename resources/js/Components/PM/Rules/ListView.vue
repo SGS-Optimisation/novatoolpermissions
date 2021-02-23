@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-md m-8 p-6 rounded"  :data-rule-id="rule.id">
+    <div class="bg-white shadow-md m-2 p-3 rounded"  :data-rule-id="rule.id">
         <div class="flex items-center justify-between">
             <div class="description">
                 <h2 @click="open = !open;" class="cursor-pointer text-xl font-bold">{{ rule.name }}</h2>
@@ -7,6 +7,9 @@
                     <div class="flex-shrink cursor-default align-bottom text-xs border-dashed border-b border-gray-500" :title="date()">
                         Last updated {{humanDate()}}
                     </div>
+                    <nav-link :href="route('rules.edit',  {clientAccount: clientAccount.slug, id: rule.id })">
+                        <i class="fa fa-pen"></i>
+                    </nav-link>
                 </div>
                 <rule-tags :rule="rule" />
             </div>
@@ -41,10 +44,16 @@
 import RuleTags from "@/Components/PM/Rules/RuleTags";
 const moment = require('moment');
 
+import NavLink from "@/Jetstream/NavLink";
+
 export default {
     name: "Rule",
-    components: {RuleTags},
-    props: ['rule'],
+    props: ['rule', 'clientAccount'],
+
+    components: {
+        RuleTags,
+        NavLink,
+    },
 
     data() {
         return {

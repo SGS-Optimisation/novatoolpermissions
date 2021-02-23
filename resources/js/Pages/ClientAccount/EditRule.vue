@@ -2,7 +2,7 @@
     <client-layout :client-account="clientAccount">
         <template #body>
             <div class="mx-auto sm:px-6 lg:px-8">
-                <h1>Creating rule in {{ clientAccount.name }}</h1>
+                <h1>Updating rule {{ rule.name }}</h1>
 
                 <rule-form :rule="rule"
                            :client-account="clientAccount"
@@ -25,7 +25,7 @@ export default {
 
     components: {
         ClientLayout,
-        RuleForm
+        RuleForm,
     },
 
     props: [
@@ -35,6 +35,7 @@ export default {
         'topTaxonomies',
         'rule'
     ],
+
 
 }
 </script>

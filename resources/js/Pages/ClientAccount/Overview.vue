@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="p-4">
         <p>Number of rules: {{ rulesCount }}</p>
     </div>
 </template>

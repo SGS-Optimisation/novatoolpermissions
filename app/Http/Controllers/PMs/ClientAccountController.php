@@ -52,7 +52,7 @@ class ClientAccountController extends Controller
     {
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
 
-        $rules = Cache::remember('rules-' . $client_account_slug, 3600, function() use ($client_account){
+        $rules = Cache::tags(['rules'])->remember('rules-' . $client_account_slug, 3600, function() use ($client_account){
             $rules = $client_account->rules->each(function($rule){
                 $rule->content = str_replace('<img', '<img loading="lazy"', $rule->content);
             });
