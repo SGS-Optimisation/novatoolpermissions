@@ -4,9 +4,9 @@
 namespace App\Services\Taxonomy;
 
 
-use App\Services\Taxonomy\Traits\TaxonomyHelper;
+use App\Services\Taxonomy\Traits\TaxonomyCreationHelper;
 
 class StandAloneTaxonomyHelper
 {
-    use TaxonomyHelper;
+    use TaxonomyCreationHelper;
 }

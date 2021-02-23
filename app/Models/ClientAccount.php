@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property string $name
+ * @property string $slug
  * @property string $alias
  * @property string $image
  * @property \Carbon\Carbon $created_at
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereImage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereLegacyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -59,6 +61,12 @@ class ClientAccount extends Model
         return $this->belongsToMany(\App\Models\Taxonomy::class);
     }
 
+
+    public function root_taxonomies()
+    {
+        return $this->taxonomies()->whereNull('parent_id');
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -76,4 +84,9 @@ class ClientAccount extends Model
     {
         return $this->hasMany(Rule::class);
     }
+
+    /*public function getImageAttribute()
+    {
+        return'/' . $this->attributes['image'];
+    }*/
 }

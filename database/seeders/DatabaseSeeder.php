@@ -41,6 +41,7 @@ class DatabaseSeeder extends Seeder
             /** @var ClientAccount $unilever */
             $unilever = ClientAccount::where('name', 'Unilever')->first();
             $gsk = ClientAccount::where('name', 'GSK')->first();
+            $npp = ClientAccount::where('name', 'CASINO ALIMENTAIRE')->first();
 
             $admin->teams()->create([
                 'name' => 'Admin\'s Team',
@@ -56,7 +57,7 @@ class DatabaseSeeder extends Seeder
                 'personal_team' => true,
             ]);
 
-            $admin->teams()->sync([$unilever->team->id, $gsk->team->id]);
+            $admin->teams()->sync([$unilever->team->id, $gsk->team->id, $npp->team->id]);
         }
 
         // \App\Models\User::factory(10)->create();

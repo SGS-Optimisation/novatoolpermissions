@@ -41,6 +41,13 @@ Route::group([
         Route::get('/{clientAccount}/rules', [\App\Http\Controllers\PMs\ClientAccountController::class, 'rules'])
             ->name('rules');
 
+        Route::get('/{clientAccount}/rules/create', [\App\Http\Controllers\PMs\RuleController::class, 'create'])
+            ->name('rules.create');
+
+        Route::get('/{clientAccount}/rules/{$id}/update', [\App\Http\Controllers\PMs\RuleController::class, 'update'])
+            ->name('rules.edit');
+
+
         Route::get('/{clientAccount}/configuration',
             [\App\Http\Controllers\PMs\ClientAccountController::class, 'configuration'])
             ->name('configuration');

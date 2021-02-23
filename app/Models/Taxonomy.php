@@ -61,6 +61,8 @@ class Taxonomy extends Model
         'config' => 'array',
     ];
 
+    protected $with = ['parent'];
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
