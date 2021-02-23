@@ -27,8 +27,8 @@ class RuleController extends Controller
         return Jetstream::inertia()->render($request, 'ClientAccount/CreateRule', [
             'team' => $request->user()->currentTeam,
             'clientAccount' => $client_account,
-            'taxonomy_hierarchy' => $taxonomy_builder->taxonomy_hierarchy,
-            'top_taxonomies' => $taxonomy_builder->top_taxonomies,
+            'taxonomyHierarchy' => $taxonomy_builder->taxonomy_hierarchy,
+            'topTaxonomies' => $taxonomy_builder->top_taxonomies,
         ]);
     }
 
@@ -40,7 +40,7 @@ class RuleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
     }
 
     /**

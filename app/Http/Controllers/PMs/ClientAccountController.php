@@ -60,7 +60,7 @@ class ClientAccountController extends Controller
             return $rules;
         });
 
-        return Jetstream::inertia()->render($request, 'ClientAccount/Rules', [
+        return Jetstream::inertia()->render($request, 'ClientAccount/ListRules', [
             'team' => $request->user()->currentTeam,
             'clientAccount' => $client_account,
             'rules' => $rules //()->orderBy('updated_at', 'DESC')->paginate(50) ?? [],

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-row mr-4">
+    <div class="mr-4">
         <div v-if="clientAccount != null && clientAccount.image !== ''">
             <img  :src="'/'+clientAccount.image" style="max-width: 80px">
         </div>
