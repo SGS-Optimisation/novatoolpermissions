@@ -28,7 +28,7 @@
                         <jet-label for="content" value="Content"/>
                         <vue-editor id="editor" v-model="form.content"
                                     useCustomImageHandler
-                                    @imageAdded="handleImageAdded"/>
+                                    @image-added="handleImageAdded"/>
                     </div>
                 </template>
 
@@ -107,7 +107,7 @@ export default {
             }
         },
 
-        handleImageAdded: function (file, Editor, cursorLocation) {
+        handleImageAdded: function(file, Editor, cursorLocation, resetUploader) {
             // An example of using FormData
             // NOTE: Your key could be different such as:
             // formData.append('file', file)
@@ -122,13 +122,14 @@ export default {
                 method: "POST",
                 data: formData,
             })
-                .then(result => {
-                    let url = result.data.url; // Get url from response
-                    Editor.insertEmbed(cursorLocation, "image", url);
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+            .then(result => {
+                console.log(result)
+                let url = result.data.url; // Get url from response
+                Editor.insertEmbed(cursorLocation, "image", url);
+            })
+            .catch(err => {
+                console.log(err);
+            });
         }
     },
 
