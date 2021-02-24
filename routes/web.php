@@ -53,3 +53,19 @@ Route::group([
             ->name('configuration');
     });
 
+
+Route::group([
+    'middleware' => [
+        'auth:sanctum',
+        'verified',
+        'cache.headers:public;max_age=3600;etag',
+    ],
+    'prefix' => 'op/'
+],
+    function () {
+        Route::get('/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'index'])
+            ->name('op_home');
+    });
+
+
+

@@ -39,9 +39,9 @@ class DatabaseSeeder extends Seeder
         if (app()->environment() === 'local') {
 
             /** @var ClientAccount $unilever */
-            $unilever = ClientAccount::where('name', 'Unilever')->first();
-            $gsk = ClientAccount::where('name', 'GSK')->first();
-            $npp = ClientAccount::where('name', 'CASINO ALIMENTAIRE')->first();
+            $unilever = ClientAccount::whereRaw('LOWER(alias) LIKE "%unilever%"')->first();
+            $gsk = ClientAccount::whereRaw('LOWER(alias) LIKE "%gsk%"')->first();
+            $npp = ClientAccount::whereRaw('LOWER(alias) LIKE "%nestle%"')->first();
 
             $admin->teams()->create([
                 'name' => 'Admin\'s Team',
@@ -60,9 +60,6 @@ class DatabaseSeeder extends Seeder
             $admin->teams()->sync([$unilever->team->id, $gsk->team->id, $npp->team->id]);
         }
 
-        // \App\Models\User::factory(10)->create();
-
         $this->call(RuleSeeder::class);
-
     }
 }

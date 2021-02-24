@@ -10,6 +10,7 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <p>Well hello there</p>
+                <input v-model="searchJobKey" />
             </div>
         </div>
     </app-layout>
@@ -17,18 +18,23 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout'
-import Welcome from '@/Jetstream/Welcome'
-import ClientAccountOverview from './ClientAccount/Overview'
-import ClientMenu from '@/Components/PM/ClientMenu'
+import Input from "@/Jetstream/Input";
 
 export default {
     props: [
         'team',
+        'jobNumber'
     ],
 
+    data(){
+        return {
+            searchJobKey : this.jobNumber
+        }
+    },
+
     components: {
+        Input,
         AppLayout,
-        Welcome,
     },
 }
 </script>

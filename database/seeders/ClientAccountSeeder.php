@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\ClientAccount;
-use App\Services\ClientAccounts\LegacyImport;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Arr;
+
 
 class ClientAccountSeeder extends Seeder
 {
@@ -15,13 +16,21 @@ class ClientAccountSeeder extends Seeder
      */
     public function run()
     {
-        /*ClientAccount::create([
-            'name' => 'Unilever',
-        ]);
+        $customers = arrayGroupBy(csvToArray(
+            storage_path('seed/ClientAccount.csv')),
+            'Simplified Group Name'
+        );
 
-        ClientAccount::create([
-            'name' => 'Nestle Purina',
-        ]);*/
+        // removing first element
+
+        Arr::forget($customers, '---------------------');
+
+        foreach ($customers as $customerNmae => $customer) {
+            ClientAccount::firstOrCreate([
+                'name' => $customerNmae,
+                'alias' => implode(PHP_EOL, array_unique(Arr::pluck($customer, 'Customer Name')))
+            ]);
+        }
 
         (new \App\Services\LegacyImport\ClientAccount())->handle();
 

@@ -20,7 +20,14 @@ class ClientAccount extends BaseService
         })->toArray();
 
         foreach($projets as $projet){
-            \App\Models\ClientAccount::create($projet);
+            $client = \App\Models\ClientAccount::whereRaw('LOWER(alias) LIKE "%'.$projet['name'].'%"')->first();
+            if($client) {
+                $client->image = $projet['image'];
+                $client->legacy_id = $projet['legacy_id'];
+                $client->save();
+            } else {
+                \App\Models\ClientAccount::firstOrCreate($projet);
+            }
         }
     }
 
