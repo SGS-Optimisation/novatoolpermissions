@@ -2,13 +2,15 @@
     <client-layout :client-account="clientAccount">
         <template #body>
             <div class="mx-auto sm:px-6 lg:px-8">
-                <h1>Updating rule {{ rule.name }}</h1>
 
                 <rule-form :rule="rule"
                            :client-account="clientAccount"
                            :taxonomy-hierarchy="taxonomyHierarchy"
                            :top-taxonomies="topTaxonomies"
                 >
+                    <template #title>
+                        Updating rule {{ rule.name }}
+                    </template>
                 </rule-form>
 
             </div>
@@ -35,7 +37,6 @@ export default {
         'topTaxonomies',
         'rule'
     ],
-
 
 }
 </script>

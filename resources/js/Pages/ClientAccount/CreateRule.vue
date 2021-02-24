@@ -2,13 +2,15 @@
     <client-layout :client-account="clientAccount">
         <template #body>
             <div class="mx-auto sm:px-6 lg:px-8">
-                <h1>Creating rule in {{ clientAccount.name }}</h1>
 
                 <rule-form :rule="rule"
                            :client-account="clientAccount"
                            :taxonomy-hierarchy="taxonomyHierarchy"
                            :top-taxonomies="topTaxonomies"
                 >
+                    <template #title>
+                        Creating rule in {{ clientAccount.name }}
+                    </template>
                 </rule-form>
 
             </div>

@@ -1,7 +1,13 @@
 <template>
     <div class="mx-auto sm:px-6 lg:px-8">
 
-        <div class="p-4">
+        <template>
+            <h1 class="text-lg">
+                <slot name="title"></slot>
+            </h1>
+        </template>
+
+        <div class="pt-4">
             <jet-form-section @submitted="pushRuleData">
                 <template #title>
                     Rule definition
@@ -80,7 +86,7 @@ export default {
                 name: this.rule.name,
                 content: this.rule.content,
             }, {
-                bag: 'createRule',
+                bag: 'pushRuleData',
                 resetOnSuccess: false,
             }),
         }
@@ -92,16 +98,12 @@ export default {
             if (this.rule.id) {
                 this.form.put(route('rules.update', {clientAccount: this.clientAccount.slug, id: this.rule.id}), {
                     preserveScroll: true
-                }).then((response) => {
-                    console.log('created', response);
-                });
-
-            } else {
+                })
+            }
+            else {
                 this.form.post(route('rules.store', {clientAccount: this.clientAccount.slug}), {
                     preserveScroll: true
-                }).then((response) => {
-                    console.log('updated', response);
-                });;
+                });
             }
         },
 
