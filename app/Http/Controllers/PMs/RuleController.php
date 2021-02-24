@@ -119,12 +119,19 @@ class RuleController extends Controller
      */
     public function edit(Request $request, $client_account_slug, $id)
     {
-
         $request->session()->flash('status', 'Task was successful!');
+
+        $rule = Rule::find($id);
+
+        $rule->content = str_replace(
+            ['\n', '<div>&nbsp;</div>', '<div>', '</div>', '<span>', '</span>', '<p></p>', '<p><br></p>'],
+            ['', '', '', '', '', '', '', ''],
+            nl2br($rule->content)
+        );
 
         return Jetstream::inertia()->render($request, 'ClientAccount/EditRule', array_merge([
             'team' => $request->user()->currentTeam,
-            'rule' => Rule::find($id),
+            'rule' => $rule,
         ],
             $this->buildData($request, $client_account_slug)
         ));
