@@ -240,6 +240,9 @@
 
         <!-- Page Content -->
         <main>
+            <div v-if="$page.jetstream.flash.message" class="alert">
+                {{ $page.jetstream.flash.message }}
+            </div>
             <slot></slot>
         </main>
 

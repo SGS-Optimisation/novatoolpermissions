@@ -26,10 +26,14 @@
 
                     <div class="col-span-6 sm:col-span-8">
                         <jet-label for="content" value="Content"/>
-                        <vue-editor id="editor" v-model="form.content"
+                        <vue-editor id="editor"
+                                    :editorOptions="editorSettings"
+                                    v-model="form.content"
                                     useCustomImageHandler
                                     @image-added="handleImageAdded"/>
                     </div>
+
+                    <input type="hidden" v-model="form.ContentDraftId">
                 </template>
 
                 <template #actions>
@@ -48,7 +52,8 @@
 </template>
 
 <script>
-import {VueEditor} from "vue2-editor";
+import {Quill, VueEditor} from "vue2-editor";
+import ImageResize from 'quill-image-resize';
 
 import JetButton from '@/Jetstream/Button'
 import JetFormSection from '@/Jetstream/FormSection'
@@ -57,6 +62,8 @@ import JetInputError from '@/Jetstream/InputError'
 import JetLabel from '@/Jetstream/Label'
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+
+Quill.register("modules/imageResize", ImageResize);
 
 export default {
     name: "RuleForm",
@@ -82,9 +89,16 @@ export default {
 
     data() {
         return {
+            editorSettings: {
+                modules: {
+                    imageResize: {}
+                }
+            },
+
             form: this.$inertia.form({
                 name: this.rule.name,
                 content: this.rule.content,
+                ContentDraftId: uuidv4()
             }, {
                 bag: 'pushRuleData',
                 resetOnSuccess: false,
@@ -115,7 +129,8 @@ export default {
             console.log('handling image upload');
 
             var formData = new FormData();
-            formData.append("attachment", file);
+            formData.append('attachment', file);
+            formData.append('draftId', this.form.ContentDraftId);
 
             axios({
                 url: "http://dagobah.test/nova-api/rules/trix-attachment/content",
@@ -134,5 +149,14 @@ export default {
     },
 
 
+}
+
+function uuidv4() {
+    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+        (
+            c ^
+            (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+        ).toString(16)
+    )
 }
 </script>

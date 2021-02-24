@@ -11,6 +11,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Jetstream\Jetstream;
+use Laravel\Nova\Fields\Trix;
+use Laravel\Nova\Trix\PendingAttachment;
 
 class RuleController extends Controller
 {
@@ -31,6 +33,26 @@ class RuleController extends Controller
                     'topTaxonomies' => $taxonomy_builder->top_taxonomies,
                 ];
             });
+    }
+
+
+    /**
+     * TODO: Fix attachments not created in db
+     *
+     * @param $request
+     * @param $rule
+     */
+    protected function parseContent($request, $rule)
+    {
+        if ($request->ContentDraftId) {
+            $callbacks[] = function () use ($request, $rule) {
+                PendingAttachment::persistDraft(
+                    $request->ContentDraftId,
+                    (new Trix('Content'))->withFiles(),
+                    $rule
+                );
+            };
+        }
     }
 
     /**
@@ -62,14 +84,18 @@ class RuleController extends Controller
 
         $rule_fields = $request->only(['name', 'content', 'flagged', 'metadata']);
         $rule = $client_account->rules()->create($rule_fields);
+        $this->parseContent($request, $rule);
 
         Cache::tags(['rules'])->clear();
 
         logger('rule added: ' . $rule->id);
 
+        $request->session()->flash('success', 'Rule successfully created!');
+
         return $request->wantsJson()
             ? new JsonResponse(['id' => $rule->id], 200)
-            : redirect(route('rules.edit', [$client_account_slug, $rule->id]));
+            : redirect(route('rules.edit', [$client_account_slug, $rule->id]))
+                ->with('success', 'Rule successfully created!');
     }
 
     /**
@@ -94,6 +120,8 @@ class RuleController extends Controller
     public function edit(Request $request, $client_account_slug, $id)
     {
 
+        $request->session()->flash('status', 'Task was successful!');
+
         return Jetstream::inertia()->render($request, 'ClientAccount/EditRule', array_merge([
             'team' => $request->user()->currentTeam,
             'rule' => Rule::find($id),
@@ -115,6 +143,7 @@ class RuleController extends Controller
 
         $rule = Rule::find($id);
         $rule->update($rule_fields);
+        $this->parseContent($request, $rule);
 
         Cache::tags(['rules'])->clear();
 
