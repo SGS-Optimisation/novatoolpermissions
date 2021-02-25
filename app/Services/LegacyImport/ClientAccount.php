@@ -26,7 +26,7 @@ class ClientAccount extends BaseService
                 $client->legacy_id = $projet['legacy_id'];
                 $client->save();
             } else {
-                \App\Models\ClientAccount::firstOrCreate($projet);
+                \App\Models\ClientAccount::create($projet);
             }
         }
     }

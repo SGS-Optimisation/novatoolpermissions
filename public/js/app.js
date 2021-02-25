@@ -3959,10 +3959,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['team', 'jobNumber'],
+  props: ['team', 'jobNumber', 'customerName', 'rules'],
   data: function data() {
     return {
       searchJobKey: this.jobNumber
@@ -49640,6 +49642,10 @@ var render = function() {
       _c("div", { staticClass: "py-12" }, [
         _c("div", { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" }, [
           _c("p", [_vm._v("Well hello there")]),
+          _vm._v(" "),
+          _c("p", [_vm._v(_vm._s(_vm.customerName))]),
+          _vm._v(" "),
+          _c("p", [_vm._v(_vm._s(_vm.rules))]),
           _vm._v(" "),
           _c("input", {
             directives: [

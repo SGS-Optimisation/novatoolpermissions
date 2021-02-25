@@ -10,6 +10,8 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <p>Well hello there</p>
+                <p>{{ customerName }}</p>
+                <p>{{ rules }}</p>
                 <input v-model="searchJobKey" />
             </div>
         </div>
@@ -23,7 +25,9 @@ import Input from "@/Jetstream/Input";
 export default {
     props: [
         'team',
-        'jobNumber'
+        'jobNumber',
+        'customerName',
+        'rules'
     ],
 
     data(){

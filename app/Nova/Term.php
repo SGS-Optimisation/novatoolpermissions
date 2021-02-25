@@ -34,7 +34,6 @@ class Term extends Resource
     public static $search = [
         'name',
         'taxonomy_id',
-        'client_account_id'
     ];
 
     /**
