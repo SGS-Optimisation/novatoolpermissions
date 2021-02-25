@@ -33,6 +33,7 @@
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.15.2",
         "quill-image-resize": "^3.0.9",
+        "vue-select": "^3.11.2",
         "vue2-editor": "^2.10.2"
     }
 }

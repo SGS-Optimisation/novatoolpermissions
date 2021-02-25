@@ -13,6 +13,13 @@
                     </template>
                 </rule-form>
 
+                <div class="mt-5">
+                    <metadata-form :rule="rule"
+                                   :client-account="clientAccount"
+                                   :taxonomy-hierarchy="taxonomyHierarchy"
+                                   :top-taxonomies="topTaxonomies">
+                    </metadata-form>
+                </div>
             </div>
         </template>
     </client-layout>
@@ -21,6 +28,7 @@
 <script>
 import ClientLayout from '@/Layouts/ClientAccount'
 import RuleForm from '@/Components/PM/Rules/Form'
+import MetadataForm from '@/Components/PM/Rules/Meta'
 
 export default {
     name: "CreateRule",
@@ -28,6 +36,7 @@ export default {
     components: {
         ClientLayout,
         RuleForm,
+        MetadataForm
     },
 
     props: [

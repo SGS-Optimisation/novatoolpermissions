@@ -58,6 +58,12 @@ class BuildTaxonomyLists extends BaseClientAccountService
             foreach ($taxonomy->terms as $term) {
                 $data[$taxonomy->name]['terms'][] = $term->name;
             }
+
+            $cleanTerms = collect($data[$taxonomy->name]['terms'])->unique()->sort();
+
+            $data[$taxonomy->name]['terms'] = $cleanTerms->values()->all();
+
+
         }
 
         return $data;
