@@ -28,7 +28,6 @@ export default {
     props: [
         'team',
         'jobNumber',
-        'customerName',
         'rules'
     ],
 

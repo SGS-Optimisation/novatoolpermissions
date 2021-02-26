@@ -3967,7 +3967,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['team', 'jobNumber', 'customerName', 'rules'],
+  props: ['team', 'jobNumber', 'rules'],
   data: function data() {
     return {
       searchJobKey: this.jobNumber
