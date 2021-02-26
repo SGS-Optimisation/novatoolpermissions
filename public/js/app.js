@@ -3941,6 +3941,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Layouts/AppLayout */ "./resources/js/Layouts/AppLayout.vue");
 /* harmony import */ var _Jetstream_Input__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Jetstream/Input */ "./resources/js/Jetstream/Input.vue");
+/* harmony import */ var _Components_PM_Rules_ListView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Components/PM/Rules/ListView */ "./resources/js/Components/PM/Rules/ListView.vue");
 //
 //
 //
@@ -3961,6 +3962,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3972,7 +3975,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   components: {
     Input: _Jetstream_Input__WEBPACK_IMPORTED_MODULE_1__["default"],
-    AppLayout: _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__["default"]
+    AppLayout: _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__["default"],
+    ViewRule: _Components_PM_Rules_ListView__WEBPACK_IMPORTED_MODULE_2__["default"]
   }
 });
 
@@ -49640,33 +49644,40 @@ var render = function() {
     [
       _vm._v(" "),
       _c("div", { staticClass: "py-12" }, [
-        _c("div", { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" }, [
-          _c("p", [_vm._v("Well hello there")]),
-          _vm._v(" "),
-          _c("p", [_vm._v(_vm._s(_vm.customerName))]),
-          _vm._v(" "),
-          _c("p", [_vm._v(_vm._s(_vm.rules))]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.searchJobKey,
-                expression: "searchJobKey"
-              }
-            ],
-            domProps: { value: _vm.searchJobKey },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
+        _c(
+          "div",
+          { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" },
+          [
+            _c("p", [_vm._v("Well hello there")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.searchJobKey,
+                  expression: "searchJobKey"
                 }
-                _vm.searchJobKey = $event.target.value
+              ],
+              domProps: { value: _vm.searchJobKey },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.searchJobKey = $event.target.value
+                }
               }
-            }
-          })
-        ])
+            }),
+            _vm._v(" "),
+            _vm._l(_vm._.orderBy(_vm.rules, "created_at", "desc"), function(
+              rule
+            ) {
+              return _c("div", [_c("view-rule", { attrs: { rule: rule } })], 1)
+            })
+          ],
+          2
+        )
       ])
     ]
   )

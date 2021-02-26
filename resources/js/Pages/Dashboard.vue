@@ -10,9 +10,10 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <p>Well hello there</p>
-                <p>{{ customerName }}</p>
-                <p>{{ rules }}</p>
                 <input v-model="searchJobKey" />
+                <div v-for="rule in _.orderBy(rules, 'created_at', 'desc')">
+                    <view-rule :rule="rule"></view-rule>
+                </div>
             </div>
         </div>
     </app-layout>
@@ -21,6 +22,7 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout'
 import Input from "@/Jetstream/Input";
+import ViewRule from '@/Components/PM/Rules/ListView'
 
 export default {
     props: [
@@ -39,6 +41,7 @@ export default {
     components: {
         Input,
         AppLayout,
+        ViewRule,
     },
 }
 </script>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\OPs;
 use App\Http\Controllers\Controller;
 use App\Models\ClientAccount;
 use App\Services\MySgs\Api\JobApi;
+use App\Services\MySgs\Mapping\Mapper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Laravel\Jetstream\Jetstream;
@@ -28,38 +29,49 @@ class JobController extends Controller
 
         $clientRules = [];
 
-        $client->rules->each(function ($rule) use ($clientRules) {
+        foreach ($client->rules as $rule) {
             $matched = false;
             foreach ($rule->terms as $term) {
-                if ('Account Structure' === trim($term->taxonomy->parent->name)) {
+
+                if (Str::lower($term->name) === 'any') {
+                    $matched = true;
+                    continue;
+                }
+
+                if ($term->taxonomy->mapping) {
                     /**
                      * retrieve value from mysgs response with help of taxonomy
                      * some mapping logic here
                      */
-                    $term->taxonomy->name;
+
+                    $mysgsValue = Str::lower(Mapper::getMetaValue([
+                        'jobVersionId' => $jobNumber
+                    ], $term->taxonomy->mapping));
+
+                    $termValue = Str::lower($term->name);
 
                     /**
                      * compare retrieved value with this term
                      */
-                    $term->name;
-
-                    if ($term->taxonomy->name === $term->name) {
+                    if (Str::contains($termValue, $mysgsValue) || Str::contains($mysgsValue, $termValue)) {
                         $matched = true;
                     }
+
+                    \Log::debug($mysgsValue . '===' . $term->name);
                 }
+
             }
+            \Log::debug('matched: '.(int) $matched);
             if ($matched) {
                 $clientRules[] = $rule;
             }
-        });
-
-        //\Log::debug(print_r($clientRules, true));
+        }
 
         return Jetstream::inertia()->render($request, 'Dashboard', [
             'team' => $request->user()->currentTeam,
             'jobNumber' => $jobNumber,
             'customerName' => $client->name,
-            'rules' => []
+            'rules' => $clientRules
         ]);
     }
 }

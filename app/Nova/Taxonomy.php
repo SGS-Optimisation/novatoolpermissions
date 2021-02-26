@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Line;
@@ -91,6 +92,8 @@ class Taxonomy extends Resource
             BelongsToMany::make('Client Accounts')
             ,
             HasMany::make('Terms', 'terms')
+            ,
+            HasOne::make('Field Mapping', 'mapping')
             ,
             //Stack::make('Stacked Terms', $terms_stack),
             Stack::make('Taxonomies', (function(){
