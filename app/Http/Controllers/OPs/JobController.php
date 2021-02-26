@@ -26,7 +26,19 @@ class JobController extends Controller
         return Jetstream::inertia()->render($request, 'Dashboard', [
             'team' => $request->user()->currentTeam,
             'jobNumber' => $jobNumber,
-            'rules' => Filter::handle($jobNumber)
+            'rules' => $jobNumber ? Filter::handle($jobNumber) : []
         ]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param Request $request
+     * @param null $jobNumber
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function search(Request $request, $jobNumber)
+    {
+        return response()->json(Filter::handle($jobNumber));
     }
 }

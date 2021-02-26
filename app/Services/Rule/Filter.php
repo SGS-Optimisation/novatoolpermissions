@@ -18,6 +18,7 @@ class Filter
      */
     public static function handle($jobNumber): array
     {
+
         $jobDetails = JobApi::basicDetails($jobNumber);
 
         $client = ClientAccount::whereRaw('LOWER(alias) LIKE "%' . Str::lower($jobDetails->retailer->customerName) . '%"')->first();

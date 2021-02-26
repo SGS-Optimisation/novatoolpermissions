@@ -3942,6 +3942,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Layouts/AppLayout */ "./resources/js/Layouts/AppLayout.vue");
 /* harmony import */ var _Jetstream_Input__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Jetstream/Input */ "./resources/js/Jetstream/Input.vue");
 /* harmony import */ var _Components_PM_Rules_ListView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Components/PM/Rules/ListView */ "./resources/js/Components/PM/Rules/ListView.vue");
+/* harmony import */ var _Jetstream_Button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Jetstream/Button */ "./resources/js/Jetstream/Button.vue");
 //
 //
 //
@@ -3963,6 +3964,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+
 
 
 
@@ -3973,7 +3979,22 @@ __webpack_require__.r(__webpack_exports__);
       searchJobKey: this.jobNumber
     };
   },
+  methods: {
+    search: function search() {
+      var _this = this;
+
+      axios({
+        url: "https://dagobah.test/api/rule/search/" + this.searchJobKey,
+        method: "GET"
+      }).then(function (result) {
+        _this.rules = result.data;
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    }
+  },
   components: {
+    Button: _Jetstream_Button__WEBPACK_IMPORTED_MODULE_3__["default"],
     Input: _Jetstream_Input__WEBPACK_IMPORTED_MODULE_1__["default"],
     AppLayout: _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__["default"],
     ViewRule: _Components_PM_Rules_ListView__WEBPACK_IMPORTED_MODULE_2__["default"]
@@ -49650,25 +49671,29 @@ var render = function() {
           [
             _c("p", [_vm._v("Well hello there")]),
             _vm._v(" "),
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.searchJobKey,
-                  expression: "searchJobKey"
-                }
-              ],
-              domProps: { value: _vm.searchJobKey },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
+            _c("label", [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.searchJobKey,
+                    expression: "searchJobKey"
                   }
-                  _vm.searchJobKey = $event.target.value
+                ],
+                domProps: { value: _vm.searchJobKey },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.searchJobKey = $event.target.value
+                  }
                 }
-              }
-            }),
+              }),
+              _vm._v(" "),
+              _c("button", { on: { click: _vm.search } }, [_vm._v("search")])
+            ]),
             _vm._v(" "),
             _vm._l(_vm._.orderBy(_vm.rules, "created_at", "desc"), function(
               rule

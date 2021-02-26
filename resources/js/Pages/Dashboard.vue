@@ -10,7 +10,11 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <p>Well hello there</p>
-                <input v-model="searchJobKey" />
+                <label>
+                    <input v-model="searchJobKey"/>
+                    <button @click="search">search</button>
+                </label>
+
                 <div v-for="rule in _.orderBy(rules, 'created_at', 'desc')">
                     <view-rule :rule="rule"></view-rule>
                 </div>
@@ -23,6 +27,7 @@
 import AppLayout from '@/Layouts/AppLayout'
 import Input from "@/Jetstream/Input";
 import ViewRule from '@/Components/PM/Rules/ListView'
+import Button from "@/Jetstream/Button";
 
 export default {
     props: [
@@ -31,13 +36,29 @@ export default {
         'rules'
     ],
 
-    data(){
+    data() {
         return {
-            searchJobKey : this.jobNumber
+            searchJobKey: this.jobNumber
+        }
+    },
+
+    methods: {
+        search() {
+            axios({
+                url: "https://dagobah.test/api/rule/search/"+this.searchJobKey,
+                method: "GET",
+            })
+            .then(result => {
+                this.rules = result.data
+            })
+            .catch(err => {
+                console.log(err);
+            });
         }
     },
 
     components: {
+        Button,
         Input,
         AppLayout,
         ViewRule,
