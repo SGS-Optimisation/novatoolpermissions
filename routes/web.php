@@ -32,34 +32,44 @@ Route::group([
 ],
     function () {
 
-        Route::get('/{clientAccount?}', [\App\Http\Controllers\PMs\ClientAccountController::class, 'index'])
-            ->name('home');
+        Route::group(['prefix' => '{clientAccount?}'], function(){
 
-        Route::get('/{clientAccount?}/dashboard', [\App\Http\Controllers\PMs\ClientAccountController::class, 'index'])
-            ->name('dashboard');
+            Route::get('/', [\App\Http\Controllers\PMs\ClientAccountController::class, 'index'])
+                ->name('home');
 
-        Route::get('/{clientAccount}/rules', [\App\Http\Controllers\PMs\ClientAccountController::class, 'rules'])
-            ->name('rules');
+            Route::get('/dashboard', [\App\Http\Controllers\PMs\ClientAccountController::class, 'index'])
+                ->name('dashboard');
 
-        Route::get('/{clientAccount}/rules/create', [\App\Http\Controllers\PMs\RuleController::class, 'create'])
-            ->name('rules.create');
+            Route::get('/configuration',
+                [\App\Http\Controllers\PMs\ClientAccountController::class, 'configuration'])
+                ->name('configuration');
 
-        Route::post('/{clientAccount}/rules/store', [\App\Http\Controllers\PMs\RuleController::class, 'store'])
-            ->name('rules.store');
+            /*
+             * Rules section
+             */
+            Route::group(['prefix' => '/rules'], function(){
 
-        Route::get('/{clientAccount}/rules/{id}/edit', [\App\Http\Controllers\PMs\RuleController::class, 'edit'])
-            ->name('rules.edit');
+                Route::get('/', [\App\Http\Controllers\PMs\ClientAccountController::class, 'rules'])
+                    ->name('rules');
 
-        Route::put('/{clientAccount}/rules/{id}/update', [\App\Http\Controllers\PMs\RuleController::class, 'update'])
-            ->name('rules.update');
+                Route::get('/create', [\App\Http\Controllers\PMs\RuleController::class, 'create'])
+                    ->name('rules.create');
 
+                Route::post('/store', [\App\Http\Controllers\PMs\RuleController::class, 'store'])
+                    ->name('rules.store');
 
+                Route::get('/{id}/edit', [\App\Http\Controllers\PMs\RuleController::class, 'edit'])
+                    ->name('rules.edit');
 
+                Route::put('/{id}/update', [\App\Http\Controllers\PMs\RuleController::class, 'update'])
+                    ->name('rules.update');
 
-        Route::get('/{clientAccount}/configuration',
-            [\App\Http\Controllers\PMs\ClientAccountController::class, 'configuration'])
-            ->name('configuration');
+                Route::put('/{id}/taxonomy/update', [\App\Http\Controllers\PMs\TaxonomyController::class, 'update'])
+                    ->name('rules.taxonomy.update');
+            });
+
     });
+});
 
 
 Route::group([

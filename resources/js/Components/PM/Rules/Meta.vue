@@ -13,7 +13,7 @@
                         <div>
                             <h3 class="text-xs uppercase font-bold">{{ topTaxonomy.name }}</h3>
 
-                            <div class="flex flex-col"
+                            <div class="flex flex-col py-2"
                                  v-for="(taxonomyGroup, index) in taxonomyHierarchy[topTaxonomy.name].children">
                                 <template v-for="(taxonomyData, name) in taxonomyGroup">
                                     <term :terms="taxonomyData.terms"
@@ -76,11 +76,11 @@ export default {
     data() {
         return {
 
-            taxonomy:  {
+            taxonomy: {},
 
-            },
-
-            form: this.$inertia.form({}, {
+            form: this.$inertia.form({
+                taxonomy: this.taxonomy
+            }, {
                 bag: 'pushRuleMeta',
                 resetOnSuccess: false,
             }),
@@ -98,7 +98,11 @@ export default {
         },
 
         pushRuleMeta: function () {
+            this.form.taxonomy = this.taxonomy;
 
+            this.form.put(route('rules.taxonomy.update', {clientAccount: this.clientAccount.slug, id: this.rule.id}), {
+                preserveScroll: true
+            })
         },
     }
 }
