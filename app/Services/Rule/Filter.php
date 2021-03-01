@@ -5,7 +5,7 @@ namespace App\Services\Rule;
 
 
 use App\Models\ClientAccount;
-use App\Services\Job\ApiHandler;
+use App\Services\Job\JobApiHandler;
 use App\Services\MySgs\Api\JobApi;
 use App\Services\MySgs\Mapping\Mapper;
 use Illuminate\Support\Str;
@@ -20,7 +20,7 @@ class Filter
     public static function handle($jobNumber): array
     {
 
-        $job = ApiHandler::handle($jobNumber);
+        $job = JobApiHandler::handle($jobNumber, 'basicDetails');
 
         if($job) {
 

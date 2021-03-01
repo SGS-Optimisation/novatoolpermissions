@@ -7,13 +7,14 @@ namespace App\Services\Job;
 use App\Models\Job;
 use App\Services\MySgs\Api\JobApi;
 
-class ApiHandler
+class JobApiHandler
 {
     /**
      * @param $jobNumber
+     * @param $apiName
      * @return Job
      */
-    public static function handle($jobNumber){
+    public static function handle($jobNumber, $apiName){
 
         $job = Job::whereJobNumber($jobNumber)->first();
 
@@ -21,7 +22,7 @@ class ApiHandler
             return $job;
         }
 
-        $jobDetails = JobApi::basicDetails($jobNumber);
+        $jobDetails = JobApi::$apiName($jobNumber);
 
         Job::create([
             'job_number' => $jobNumber,
