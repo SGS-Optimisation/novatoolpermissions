@@ -64,8 +64,5 @@ Route::group([
 ],
     function () {
         Route::get('/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'index'])
-            ->name('op_home');
+            ->name('op.home');
     });
-
-
-

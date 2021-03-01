@@ -3,12 +3,8 @@
 namespace App\Http\Controllers\OPs;
 
 use App\Http\Controllers\Controller;
-use App\Models\ClientAccount;
-use App\Services\MySgs\Api\JobApi;
-use App\Services\MySgs\Mapping\Mapper;
 use App\Services\Rule\Filter;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Laravel\Jetstream\Jetstream;
 
 class JobController extends Controller

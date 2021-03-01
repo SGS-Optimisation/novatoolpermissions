@@ -21,47 +21,52 @@ class Filter
 
         $jobDetails = JobApi::basicDetails($jobNumber);
 
-        $client = ClientAccount::whereRaw('LOWER(alias) LIKE "%' . Str::lower($jobDetails->retailer->customerName) . '%"')->first();
+        if($jobDetails) {
 
-        $clientRules = [];
+            $client = ClientAccount::whereRaw('LOWER(alias) LIKE "%' . Str::lower($jobDetails->retailer->customerName) . '%"')->first();
 
-        foreach ($client->rules as $rule) {
-            $matched = false;
-            foreach ($rule->terms as $term) {
+            $clientRules = [];
 
-                if (Str::lower($term->name) === 'any') {
-                    $matched = true;
-                    continue;
-                }
+            foreach ($client->rules as $rule) {
+                $matched = true;
+                foreach ($rule->terms as $term) {
 
-                if ($term->taxonomy->mapping) {
-                    /**
-                     * retrieve value from mysgs response with help of taxonomy
-                     * some mapping logic here
-                     */
-
-                    $mysgsValue = Str::lower(Mapper::getMetaValue([
-                        'jobVersionId' => $jobNumber
-                    ], $term->taxonomy->mapping));
-
-                    $termValue = Str::lower($term->name);
-
-                    /**
-                     * compare retrieved value with this term
-                     */
-                    if (Str::contains($termValue, $mysgsValue) || Str::contains($mysgsValue, $termValue)) {
+                    if (Str::lower($term->name) === 'any') {
                         $matched = true;
+                        continue;
                     }
+
+                    if ($term->taxonomy->mapping) {
+                        /**
+                         * retrieve value from mysgs response with help of taxonomy
+                         * some mapping logic here
+                         */
+
+                        $mysgsValue = Str::lower(Mapper::getMetaValue([
+                            'jobVersionId' => $jobNumber
+                        ], $term->taxonomy->mapping));
+
+                        $termValue = Str::lower($term->name);
+
+                        /**
+                         * compare retrieved value with this term
+                         */
+                        if (Str::contains($termValue, $mysgsValue) || Str::contains($mysgsValue, $termValue)) {
+                            $matched = true;
+                        }
+                    }
+
                 }
 
+                if ($matched) {
+                    $clientRules[] = $rule;
+                }
             }
 
-            if ($matched) {
-                $clientRules[] = $rule;
-            }
+            return $clientRules;
         }
 
-        return $clientRules;
+        return [];
     }
 
 }
