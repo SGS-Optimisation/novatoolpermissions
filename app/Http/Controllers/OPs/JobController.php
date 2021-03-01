@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\OPs;
 
 use App\Http\Controllers\Controller;
-use App\Services\Rule\Filter;
+use App\Services\Job\JobApiHandler;
+use App\Services\Rule\RuleFilter;
 use Illuminate\Http\Request;
 use Laravel\Jetstream\Jetstream;
 
@@ -19,10 +20,17 @@ class JobController extends Controller
      */
     public function index(Request $request, $jobNumber = null)
     {
+        $rules = [];
+        if($jobNumber){
+            $job = JobApiHandler::handle($jobNumber, 'basicDetails');
+            if ($job) {
+                $rules = RuleFilter::handle($job);
+            }
+        }
         return Jetstream::inertia()->render($request, 'Dashboard', [
             'team' => $request->user()->currentTeam,
             'jobNumber' => $jobNumber,
-            'rules' => $jobNumber ? Filter::handle($jobNumber) : []
+            'rules' => $rules
         ]);
     }
 
@@ -35,6 +43,13 @@ class JobController extends Controller
      */
     public function search(Request $request, $jobNumber)
     {
-        return response()->json(Filter::handle($jobNumber));
+        $rules = [];
+        if($jobNumber) {
+            $job = JobApiHandler::handle($jobNumber, 'basicDetails');
+            if ($job) {
+                $rules = RuleFilter::handle($job);
+            }
+        }
+        return response()->json($rules);
     }
 }

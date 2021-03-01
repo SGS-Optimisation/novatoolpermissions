@@ -4138,6 +4138,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       currentRule: null
     };
   },
+  mounted: function mounted() {
+    window.Echo.channel("rulesFiltered.".concat(this.jobNumber)).listen('rules-updated', function (e) {
+      console.log("HEHEHEEHEHEEHEH");
+      console.log(e);
+    });
+  },
   methods: {
     openModal: function openModal(rule) {
       this.currentRule = rule;

@@ -93,6 +93,14 @@ export default {
         }
     },
 
+    mounted() {
+        window.Echo.channel(`rulesFiltered.${this.jobNumber}`)
+        .listen('rules-updated', (e) => {
+            console.log("HEHEHEEHEHEEHEH");
+            console.log(e);
+        });
+    },
+
     methods: {
         openModal(rule){
             this.currentRule = rule;
