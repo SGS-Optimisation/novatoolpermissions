@@ -5,41 +5,42 @@ namespace App\Services\MySgs\Mapping;
 
 
 use App\Models\FieldMapping;
+use App\Models\Job;
 use Illuminate\Support\Str;
 
 class Mapper
 {
 
     /**
-     * @param array $job
+     * @param Job $job
      * @param FieldMapping $mapping
      * @return array|\ArrayAccess|mixed|void
      */
-    public static function getMetaValue(array $job, FieldMapping $mapping)
+    public static function getMetaValue(Job $job, FieldMapping $mapping)
     {
 
         /*
          * Build the appropriate Api object
          */
-        $apiclass = 'App\Services\MySgs\Api\\' . $mapping->api_name;
-        $api = new $apiclass;
+        $apiClass = 'App\Services\MySgs\Api\\' . $mapping->api_name;
+        $api = new $apiClass;
         $function = $mapping->api_action;
 
         /*
          * Check which parameter is expected from the api function
          */
-        $signature = get_func_argNames($function, $api);
+        //        $signature = get_func_argNames($function, $api);
+        //
+        //        if (array_keys($signature)[0] == 'jobVersionId') {
+        //            if (!is_array($job)) {
+        //                $job = json_decode($job);
+        //            }
+        //            $param = $job['jobVersionId'];
+        //        } else {
+        //            $param = $job['job_number'];
+        //        }
 
-        if (array_keys($signature)[0] == 'jobVersionId') {
-            if (!is_array($job)) {
-                $job = json_decode($job);
-            }
-            $param = $job['jobVersionId'];
-        } else {
-            $param = $job['job_number'];
-        }
-
-        $response = $api::$function($param);
+        $response = $api::$function($job->job_number);
 
         return static::parseMapping($mapping, $response);
     }

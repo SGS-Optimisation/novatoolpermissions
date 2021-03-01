@@ -19,4 +19,13 @@ class Job extends Model
         'designation',
         'metadata'
     ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'metadata' => 'object',
+    ];
 }
