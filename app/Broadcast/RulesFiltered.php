@@ -30,16 +30,7 @@ class RulesFiltered implements ShouldBroadcast
     public function __construct($jobItem)
     {
         $this->jobItem = $jobItem;
-    }
-
-    /**
-     * @return array
-     */
-    public function broadcastWith(): array
-    {
-        return [
-            'rules' => $this->rules
-        ];
+        $this->rules = RuleFilter::handle($this->jobItem);
     }
 
     /**
@@ -55,8 +46,6 @@ class RulesFiltered implements ShouldBroadcast
      */
     public function broadcastOn(): Channel
     {
-        $this->rules = RuleFilter::handle($this->jobItem);
-
-        return new Channel('rulesFiltered.' . $this->jobItem->job_number);
+        return new Channel('rules-filtered.'.$this->jobItem->job_number);
     }
 }

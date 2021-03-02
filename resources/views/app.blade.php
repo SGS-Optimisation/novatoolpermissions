@@ -15,11 +15,7 @@
 
         <!-- Scripts -->
         @routes
-        <script>
-            window.laravel_echo_port='{{env("LARAVEL_ECHO_PORT")}}';
-        </script>
         <script src="{{ mix('js/app.js') }}" defer></script>
-        <script src="//{{ Request::getHost() }}:{{env('LARAVEL_ECHO_PORT')}}/socket.io/socket.io.js"></script>
     </head>
     <body class="font-sans antialiased">
         @inertia

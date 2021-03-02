@@ -93,12 +93,15 @@ export default {
         }
     },
 
-    mounted() {
-        window.Echo.channel(`rulesFiltered.${this.jobNumber}`)
-        .listen('rules-updated', (e) => {
-            console.log("HEHEHEEHEHEEHEH");
-            console.log(e);
-        });
+    watch:{
+        searchJobKey(){
+            if(this.searchJobKey){
+                Echo.channel(`rules-filtered.${this.searchJobKey}`)
+                    .listen('.rules-updated', (e) => {
+                        window.location = window.location+'/'+this.searchJobKey;
+                    });
+            }
+        }
     },
 
     methods: {
