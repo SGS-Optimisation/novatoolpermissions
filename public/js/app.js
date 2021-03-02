@@ -4120,6 +4120,17 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -4135,7 +4146,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       searching: false,
       searchedRules: _toConsumableArray(this.rules),
       isOpen: false,
-      currentRule: null
+      currentRule: null,
+      rulesUpdated: false
     };
   },
   watch: {
@@ -4144,12 +4156,15 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
       if (this.searchJobKey) {
         Echo.channel("rules-filtered.".concat(this.searchJobKey)).listen('.rules-updated', function (e) {
-          window.location = window.location + '/' + _this.searchJobKey;
+          _this.rulesUpdated = true;
         });
       }
     }
   },
   methods: {
+    reloadPage: function reloadPage() {
+      window.location = window.location + this.searchJobKey;
+    },
     openModal: function openModal(rule) {
       this.currentRule = rule;
       this.isOpen = true;
@@ -56109,6 +56124,40 @@ var render = function() {
     [
       _vm._v(" "),
       _c("div", { staticClass: "p-2" }, [
+        _vm.rulesUpdated
+          ? _c(
+              "div",
+              {
+                staticClass:
+                  "text-white px-6 py-4 border-0 rounded relative mb-4 bg-green-300"
+              },
+              [
+                _c(
+                  "span",
+                  { staticClass: "text-xl inline-block mr-5 align-middle" },
+                  [_c("i", { staticClass: "fas fa-bell" })]
+                ),
+                _vm._v(" "),
+                _c("span", { staticClass: "inline-block align-middle mr-8" }, [
+                  _c("b", { staticClass: "capitalize" }, [_vm._v("Hello!")]),
+                  _vm._v(
+                    " Rules list updated do you want to check?\n            "
+                  )
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass:
+                      "absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none",
+                    on: { click: _vm.reloadPage }
+                  },
+                  [_vm._v("\n                Reload\n            ")]
+                )
+              ]
+            )
+          : _vm._e(),
+        _vm._v(" "),
         _c(
           "div",
           { staticClass: "col-span-6 sm:col-span-4 flex" },

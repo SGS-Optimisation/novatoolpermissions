@@ -7,6 +7,17 @@
         </template>
 
         <div class="p-2">
+            <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-green-300" v-if="rulesUpdated" >
+                <span class="text-xl inline-block mr-5 align-middle">
+                    <i class="fas fa-bell" />
+                </span>
+                <span class="inline-block align-middle mr-8">
+                    <b class="capitalize">Hello!</b> Rules list updated do you want to check?
+                </span>
+                <button class="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none" @click="reloadPage">
+                    Reload
+                </button>
+            </div>
             <div class="col-span-6 sm:col-span-4 flex">
                 <jet-input id="name" type="text" class="flex-initial block w-full " v-model="searchJobKey" autofocus/>
                 <jet-button v-if="!searching" class="flex-initial ml-1" @click.native="search">
@@ -89,7 +100,8 @@ export default {
             searching: false,
             searchedRules: [...this.rules],
             isOpen: false,
-            currentRule: null
+            currentRule: null,
+            rulesUpdated: false
         }
     },
 
@@ -98,13 +110,16 @@ export default {
             if(this.searchJobKey){
                 Echo.channel(`rules-filtered.${this.searchJobKey}`)
                     .listen('.rules-updated', (e) => {
-                        window.location = window.location+'/'+this.searchJobKey;
+                        this.rulesUpdated = true;
                     });
             }
         }
     },
 
     methods: {
+        reloadPage(){
+            window.location = window.location+this.searchJobKey;
+        },
         openModal(rule){
             this.currentRule = rule;
             this.isOpen = true
