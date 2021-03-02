@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @param  string  $filename
- * @param  string  $delimiter
+ * @param string $filename
+ * @param string $delimiter
  * @return array|bool
  */
 if (!function_exists('csvToArray')) {
@@ -55,7 +55,7 @@ if (!function_exists('arrayGroupBy')) {
 /**
  * Obfuscate a string to prevent spam-bots from sniffing it.
  *
- * @param  string  $value
+ * @param string $value
  *
  * @return string
  */
@@ -74,11 +74,11 @@ if (!function_exists('obfuscate')) {
             // the randomly obfuscated letters out of the string on the responses.
             switch (rand(1, 3)) {
                 case 1:
-                    $safe .= '&#'.ord($letter).';';
+                    $safe .= '&#' . ord($letter) . ';';
                     break;
 
                 case 2:
-                    $safe .= '&#x'.dechex(ord($letter)).';';
+                    $safe .= '&#x' . dechex(ord($letter)) . ';';
                     break;
 
                 case 3:
@@ -128,4 +128,41 @@ function get_defined_functions_info($arr = false)
         }
     }
     return $arr;
+}
+
+function obj_to_array_recursive(stdClass $obj)
+{
+    foreach ($obj as &$element) {
+        if ($element instanceof stdClass) {
+            obj_to_array_recursive($element);
+            $element = (array)$element;
+        }
+    }
+    $obj = (array)$obj;
+    return $obj;
+}
+
+/**
+ * @param $array1
+ * @param $array2
+ * @return bool
+ */
+function compareTwoArrays($array1, $array2): bool
+{
+    foreach ($array1 as $key => $element) {
+        \Log::debug('KEY: '.$key);
+        if (!is_array($element) && !is_array($array2[$key])) {
+            \Log::debug('KEY: '.$key.' value1: '.$element.' value2: '.$array2[$key]);
+            if ($array2[$key] != $element) {
+                return false;
+            }
+        } else if (is_array($element) && is_array($array2[$key])) {
+            if (!compareTwoArrays($element, $array2[$key])) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+    return true;
 }

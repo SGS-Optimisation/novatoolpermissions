@@ -47,14 +47,27 @@ class JobApiRequest implements ShouldQueue
     {
         $job = Job::whereJobNumber($this->jobNumber)->first();
 
-        if($job){
+        if ($job) {
             $jobDetails = JobApi::{$this->apiName}($this->jobNumber);
-            $jobMetadata = $job->metadata;
-            $jobMetadata->{$this->apiName} = $jobDetails;
-            $job->metadata = $jobMetadata;
-            $job->save();
 
-            event(new RulesFiltered($job));
+            /**
+             * checking whether saved and retrieved metadata is same
+             * if not we will broadcast event for update frontend
+             */
+            $saved = obj_to_array_recursive($job->metadata->{$this->apiName});
+            $fetched = obj_to_array_recursive($jobDetails);
+
+            \Log::debug(print_r($saved, true));
+            \Log::debug(print_r($fetched, true));
+
+            if (!compareTwoArrays($saved, $fetched)) {
+                $jobMetadata = $job->metadata;
+                $jobMetadata->{$this->apiName} = $jobDetails;
+                $job->metadata = $jobMetadata;
+                $job->save();
+
+                event(new RulesFiltered($job));
+            }
         }
     }
 }
