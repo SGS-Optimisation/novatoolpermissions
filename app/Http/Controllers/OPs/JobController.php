@@ -27,7 +27,7 @@ class JobController extends Controller
                 $rules = RuleFilter::handle($job);
             }
         }
-        return Jetstream::inertia()->render($request, 'Dashboard', [
+        return Jetstream::inertia()->render($request, 'RuleFinder', [
             'team' => $request->user()->currentTeam,
             'jobNumber' => $jobNumber,
             'rules' => $rules
