@@ -6,6 +6,7 @@ use App\Models\ClientAccount;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use OptimistDigital\NovaSettings\NovaSettings;
 
 class DatabaseSeeder extends Seeder
 {
@@ -30,18 +31,46 @@ class DatabaseSeeder extends Seeder
                 'email' => 'admin@sgsco.com',
                 'password' => bcrypt('letmein'),
             ]);
+
+            $settings = [
+                [
+                    'key' => 'api_app_id',
+                    'value' => '3CCE21AF-BF21-4B74-9E60-0D1B6BDD6597'
+                ],
+                [
+                    'key' => 'api_app_key',
+                    'value' => '&a+!a9t6*&N*Xs%5Q&Qz7_^B3=y-JB2h7&NuLtLaafhuA-TN_p^9^=gYzhsDyp4KkWDykNLn+aW+SZ@X5!PV-V#mSNXpj=&j?aAvtg8q6y-FPHLztdwkn$!E*W@NvW&Xsj7*zQN#+cDsa9#FtMa8yaqs8vzFjY8XwpdhJ6SXgRgu_wytgu=6Jsgad9=uT7=g^QFKMCQzjv9Y7Pgh6bFTP?mayuZArWHk$cq+b=j8uwywDJX8H^dN44NUTeZ^NzeD'
+                ],
+                [
+                    'key' => 'api_base_path',
+                    'value' => 'https://sgscoapimanagement.azure-api.net/{api_name}/api/v{version}/'
+                ],
+                [
+                    'key' => 'api_version',
+                    'value' => '1.0'
+                ],
+                [
+                    'key' => 'subscription_key',
+                    'value' => '0a5af6485db34ed490ca01b314028d61'
+                ]
+            ];
+
+            foreach ($settings as $setting){
+                NovaSettings::setSettingValue($setting['key'], $setting['value']);
+            }
         }
 
 
         $this->call(ClientAccountSeeder::class);
         $this->call(TaxonomySeeder::class);
+        $this->call(FieldMappingSeeder::class);
 
         if (app()->environment() === 'local') {
 
             /** @var ClientAccount $unilever */
-            $unilever = ClientAccount::where('name', 'Unilever')->first();
-            $gsk = ClientAccount::where('name', 'GSK')->first();
-            $npp = ClientAccount::where('name', 'CASINO ALIMENTAIRE')->first();
+            $unilever = ClientAccount::whereRaw('LOWER(alias) LIKE "%unilever%"')->first();
+            $gsk = ClientAccount::whereRaw('LOWER(alias) LIKE "%gsk%"')->first();
+            $npp = ClientAccount::whereRaw('LOWER(alias) LIKE "%nestle%"')->first();
 
             $admin->teams()->create([
                 'name' => 'Admin\'s Team',
@@ -60,9 +89,6 @@ class DatabaseSeeder extends Seeder
             $admin->teams()->sync([$unilever->team->id, $gsk->team->id, $npp->team->id]);
         }
 
-        // \App\Models\User::factory(10)->create();
-
         $this->call(RuleSeeder::class);
-
     }
 }

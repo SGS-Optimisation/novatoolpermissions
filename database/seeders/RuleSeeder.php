@@ -17,21 +17,20 @@ class RuleSeeder extends Seeder
      */
     public function run()
     {
-        (new \App\Services\LegacyImport\Rule())->handle();
 
-        if (app()->environment() === 'production') {
+//        if (app()->environment() === 'production') {
             /**
              * importing legacy data from mongo dump
              */
             (new \App\Services\LegacyImport\Rule())->handle();
-        } else {
-
-            Rule::factory()->count(5)->create([
-                'client_account_id' => ClientAccount::where('name', 'Unilever')->first()->id,
-            ])->each(function (Rule $rule) {
-                $rule->terms()->attach(Term::inRandomOrder()->take(2)->get()->pluck('id')->all());
-            });
-
-        }
+//        } else {
+//
+//            Rule::factory()->count(5)->create([
+//                'client_account_id' => ClientAccount::where('name', 'Unilever')->first()->id,
+//            ])->each(function (Rule $rule) {
+//                $rule->terms()->attach(Term::inRandomOrder()->take(2)->get()->pluck('id')->all());
+//            });
+//
+//        }
     }
 }

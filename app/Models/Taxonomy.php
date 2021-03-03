@@ -95,4 +95,12 @@ class Taxonomy extends Model
     {
         return $this->belongsToMany(\App\Models\ClientAccount::class);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function mapping()
+    {
+        return $this->hasOne(FieldMapping::class);
+    }
 }

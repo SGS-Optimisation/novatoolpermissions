@@ -27,24 +27,27 @@ class Rule extends BaseService
         ])->get()->each(function ($item) {
             $client_account = ClientAccount::whereLegacyId($item->Project)->first();
 
-            $name = strtok(preg_replace('/^\s+\n/', '', strip_tags(html_entity_decode(preg_replace("/&nbsp;/",'',$item->Description)))), "\n");
+            if ($client_account) {
 
-            $content = (new ExtractImages($item->Description))->handle()->updated_content;
+                $name = strtok(preg_replace('/^\s+\n/', '',
+                    strip_tags(html_entity_decode(preg_replace("/&nbsp;/", '', $item->Description)))), "\n");
 
-            $rule = \App\Models\Rule::create([
-                'client_account_id' => $client_account->id,
-                'name' => $name ? $name : $item->_id,
-                'content' => $content,
-                'created_at' => $item->CreatedAt->toDateTime(),
-                'updated_at' => $item->UpdatedAt->toDateTime(),
-            ]);
+                $content = (new ExtractImages($item->Description))->handle()->updated_content;
 
-            collect($item->JobDesignations)->each(function ($designation) use ($client_account, $rule) {
-                static::createAccountStructureTaxonomy($designation, $client_account, $rule);
-            });
+                $rule = \App\Models\Rule::create([
+                    'client_account_id' => $client_account->id,
+                    'name' => $name ? $name : $item->_id,
+                    'content' => $content,
+                    'created_at' => $item->CreatedAt->toDateTime(),
+                    'updated_at' => $item->UpdatedAt->toDateTime(),
+                ]);
 
-            if ($item->RuleCategorization) {
-                static::processTaxonomies([
+                collect($item->JobDesignations)->each(function ($designation) use ($client_account, $rule) {
+                    static::createAccountStructureTaxonomy($designation, $client_account, $rule);
+                });
+
+                if ($item->RuleCategorization) {
+                    static::processTaxonomies([
                         'Job Categorizations' => [
                             'children' => [
                                 $item->RuleCategorization => [
@@ -53,12 +56,16 @@ class Rule extends BaseService
                             ]
                         ]
                     ],
-                    ['default' => false],
-                    ['default' => false],
-                    null,
-                    $client_account,
-                    $rule
-                );
+                        ['default' => false],
+                        ['default' => false],
+                        null,
+                        $client_account,
+                        $rule
+                    );
+                }
+            } else {
+                // if client is not present log it inside
+                \Log::debug("No Client Available: " . $item->Project);
             }
 
         });

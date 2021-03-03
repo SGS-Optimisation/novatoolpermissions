@@ -17,3 +17,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::group([
+    'auth',
+    'prefix' => 'rule/'
+], function () {
+    Route::get('search/{jobNumber}', [\App\Http\Controllers\OPs\JobController::class, 'search'])
+        ->name('rule_search');
+});
