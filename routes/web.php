@@ -1,5 +1,12 @@
 <?php
 
+use App\Http\Controllers\CurrentTeamController;
+use App\Http\Controllers\PMs\ClientAccountController;
+use App\Http\Controllers\PMs\ClientAccountTaxonomyController;
+use App\Http\Controllers\PMs\HomeController;
+use App\Http\Controllers\PMs\RuleController;
+use App\Http\Controllers\PMs\RuleTaxonomyController;
+use App\Http\Controllers\PMs\TermController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,7 +29,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         return redirect(route('home'));
     })->name('dashboard');
 
-    Route::put('/current-team', [\App\Http\Controllers\CurrentTeamController::class, 'update'])
+    Route::put('/current-team', [CurrentTeamController::class, 'update'])
         ->name('current-team.update');
 });
 
@@ -34,28 +41,26 @@ Route::name('pm.')
         'cache.headers:public;max_age=3600;etag',
     ])->group(function () {
 
-        Route::get('/', [\App\Http\Controllers\PMs\HomeController::class, 'index'])
+        Route::get('/', [HomeController::class, 'index'])
             ->name('landing');
 
         Route::name('client-account.')
             ->prefix('/{clientAccount:slug}')
             ->group(function () {
 
-                Route::get('/', [\App\Http\Controllers\PMs\ClientAccountController::class, 'index']);
+                Route::get('/', [ClientAccountController::class, 'index']);
 
-                Route::get('/dashboard', [\App\Http\Controllers\PMs\ClientAccountController::class, 'index'])
+                Route::get('/dashboard', [ClientAccountController::class, 'index'])
                     ->name('dashboard');
 
                 /*
                  * Configuration section
                  */
                 Route::group(['prefix' => '/configuration'], function () {
-                    Route::get('/',
-                        [\App\Http\Controllers\PMs\ClientAccountTaxonomyController::class, 'show'])
+                    Route::get('/', [ClientAccountTaxonomyController::class, 'show'])
                         ->name('configuration');
 
-                    Route::put('/',
-                        [\App\Http\Controllers\PMs\ClientAccountTaxonomyController::class, 'update'])
+                    Route::put('/', [ClientAccountTaxonomyController::class, 'update'])
                         ->name('configuration.update');
                 });
 
@@ -64,23 +69,22 @@ Route::name('pm.')
                  */
                 Route::group(['prefix' => '/rules'], function () {
 
-                    Route::get('/', [\App\Http\Controllers\PMs\ClientAccountController::class, 'rules'])
+                    Route::get('/', [ClientAccountController::class, 'rules'])
                         ->name('rules');
 
-                    Route::get('/create', [\App\Http\Controllers\PMs\RuleController::class, 'create'])
+                    Route::get('/create', [RuleController::class, 'create'])
                         ->name('rules.create');
 
-                    Route::post('/store', [\App\Http\Controllers\PMs\RuleController::class, 'store'])
+                    Route::post('/store', [RuleController::class, 'store'])
                         ->name('rules.store');
 
-                    Route::get('/{id}/edit', [\App\Http\Controllers\PMs\RuleController::class, 'edit'])
+                    Route::get('/{id}/edit', [RuleController::class, 'edit'])
                         ->name('rules.edit');
 
-                    Route::put('/{id}/update', [\App\Http\Controllers\PMs\RuleController::class, 'update'])
+                    Route::put('/{id}/update', [RuleController::class, 'update'])
                         ->name('rules.update');
 
-                    Route::put('/{id}/taxonomy/update',
-                        [\App\Http\Controllers\PMs\RuleTaxonomyController::class, 'update'])
+                    Route::put('/{id}/taxonomy/update', [RuleTaxonomyController::class, 'update'])
                         ->name('rules.taxonomy.update');
                 });
             });
@@ -88,9 +92,11 @@ Route::name('pm.')
         Route::name('terms.')
             ->prefix('/terms')
             ->group(function () {
-                Route::put('/{id}', [\App\Http\Controllers\PMs\TermController::class, 'update'])->name('update');
+                Route::put('/{id}', [TermController::class, 'update'])
+                    ->name('update');
 
-                Route::delete('/{id}', [\App\Http\Controllers\PMs\TermController::class, 'destroy'])->name('destroy');
+                Route::delete('/{id}', [TermController::class, 'destroy'])
+                    ->name('destroy');
             });
     });
 

@@ -24,7 +24,7 @@
                     </span>
 
                     <span class="text-xs px-3 bg-red-200 text-red-800 rounded-full">
-                        <jet-nav-link href="todo">
+                        <jet-nav-link :href="route('pm.client-account.rules', {clientAccount: clientAccount.slug }) + `?term=${termData.id}`">
                             <span title="Number of rules using this term. Click to view rules.">
                                 {{termData.rulesCount }}
                             </span>
@@ -119,6 +119,7 @@ export default {
         'taxonomyName',
         'terms',
         'taxonomyId',
+        'clientAccount'
     ],
     components: {
         JetActionMessage,

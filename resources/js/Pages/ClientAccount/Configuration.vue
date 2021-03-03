@@ -14,7 +14,8 @@
                                     :selected="index == 0"
                                 >
                                     <taxonomy-definition :parent-taxonomy="topTaxonomy"
-                                                         :taxonomy-hierarchy="taxonomyHierarchy">
+                                                         :taxonomy-hierarchy="taxonomyHierarchy"
+                                                         :client-account="clientAccount">
                                     </taxonomy-definition>
                                 </tab>
                             </tabs>

@@ -7,6 +7,7 @@
                 <term-definition :terms="taxonomyData.terms"
                                  :taxonomy-name="name"
                                  :taxonomy-id="taxonomyData.id"
+                                 :client-account="clientAccount"
                 >
                 </term-definition>
             </template>
@@ -28,7 +29,7 @@ export default {
     props: [
         'parentTaxonomy',
         'taxonomyHierarchy',
-
+        'clientAccount'
     ],
 }
 </script>
