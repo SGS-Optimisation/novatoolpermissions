@@ -20,9 +20,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+/*Route::get('/', function () {
     return view('welcome');
-})->name('home');
+})->name('home');*/
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
@@ -107,9 +107,9 @@ Route::group([
         'verified',
         'cache.headers:public;max_age=3600;etag',
     ],
-    'prefix' => 'op/'
+    //'prefix' => 'op/'
 ],
     function () {
-        Route::get('/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'index'])
-            ->name('op.home');
+        Route::match(['get', 'post'],'/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'index'])
+            ->name('home');
     });

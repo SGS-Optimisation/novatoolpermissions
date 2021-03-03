@@ -21,15 +21,18 @@ class JobController extends Controller
     public function index(Request $request, $jobNumber = null)
     {
         $rules = [];
+        $job = null;
+
         if($jobNumber){
             $job = JobApiHandler::handle($jobNumber, 'basicDetails');
             if ($job) {
                 $rules = RuleFilter::handle($job);
             }
         }
-        return Jetstream::inertia()->render($request, 'RuleFinder', [
+        return Jetstream::inertia()->render($request, ($job ? 'OP/JobRules' : 'Dashboard'), [
             'team' => $request->user()->currentTeam,
             'jobNumber' => $jobNumber,
+            'job' => $job,
             'rules' => $rules
         ]);
     }

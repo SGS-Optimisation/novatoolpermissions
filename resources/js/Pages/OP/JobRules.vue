@@ -1,37 +1,50 @@
 <template>
     <app-layout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ team.name }}
-            </h2>
+            <div class="flex justify-between align-middle">
+
+                <div class="flex-grow">
+                    <h2 v-if="job" class="pt-2 font-semibold text-xl text-gray-800 leading-tight">
+                        Rules for job {{ job.job_number }}
+                    </h2>
+                </div>
+
+                <div class="flex-grow">
+                    <job-search @loaded="newJobLoaded"
+                                classes="bg-white flex shadow"
+                                placeholder="Search another job">
+                    </job-search>
+<!--                    <jet-input  type="text" class="flex-initial block w-full " v-model="searchJobKey" autofocus/>
+                    <jet-button v-if="!searching" class="flex-initial ml-1" @click.native="search">
+                        Search
+                    </jet-button>
+                    <jet-button v-else class="flex-initial ml-1">
+                        Searching
+                    </jet-button>-->
+                </div>
+            </div>
         </template>
 
         <div class="p-2">
-            <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-green-300" v-if="rulesUpdated" >
+            <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-green-300" v-if="rulesUpdated">
                 <span class="text-xl inline-block mr-5 align-middle">
-                    <i class="fas fa-bell" />
+                    <i class="fas fa-bell"/>
                 </span>
                 <span class="inline-block align-middle mr-8">
                     <b class="capitalize">Hello!</b> Rules list updated do you want to check?
                 </span>
-                <button class="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none" @click="reloadPage">
+                <button
+                    class="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none"
+                    @click="reloadPage">
                     Reload
                 </button>
-            </div>
-            <div class="col-span-6 sm:col-span-4 flex">
-                <jet-input id="name" type="text" class="flex-initial block w-full " v-model="searchJobKey" autofocus/>
-                <jet-button v-if="!searching" class="flex-initial ml-1" @click.native="search">
-                    Search
-                </jet-button>
-                <jet-button v-else class="flex-initial ml-1">
-                    Searching
-                </jet-button>
             </div>
 
             <div class="flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mt-1">
 
-                <div v-for="rule in _.orderBy(searchedRules, 'created_at', 'desc')" class="w-full overflow-hidden sm:my-px sm:px-px sm:w-full md:my-px md:px-px md:w-full lg:my-px lg:px-px lg:w-1/3 xl:my-px xl:px-px xl:w-1/3 shadow-md p-3 rounded">
-                    <view-rule-item :rule="rule" @on-click-view="openModal" />
+                <div v-for="rule in _.orderBy(searchedRules, 'created_at', 'desc')"
+                     class="w-full overflow-hidden sm:my-px sm:px-px sm:w-full md:my-px md:px-px md:w-full lg:my-px lg:px-px lg:w-1/3 xl:my-px xl:px-px xl:w-1/3 shadow-md p-3 rounded">
+                    <view-rule-item :rule="rule" @on-click-view="openModal"/>
                 </div>
 
             </div>
@@ -47,14 +60,17 @@
                 </div>
 
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
-                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl w-full" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+                <div
+                    class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl w-full"
+                    role="dialog" aria-modal="true" aria-labelledby="modal-headline">
                     <form>
 
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <div class="">
                                 <div class="mb-4">
-                                    <view-rule :rule="currentRule" >
-                                        <button @click="closeModal()" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                                    <view-rule :rule="currentRule">
+                                        <button @click="closeModal()" type="button"
+                                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
                                             Close
                                         </button>
                                     </view-rule>
@@ -64,7 +80,8 @@
 
                         <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                             <span class="mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
-                                <button @click="closeModal()" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                                <button @click="closeModal()" type="button"
+                                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
                                     Close
                                 </button>
                             </span>
@@ -87,9 +104,12 @@ import JetButton from '@/Jetstream/Button'
 import JetInput from '@/Jetstream/Input'
 import ViewRule from '@/Components/PM/Rules/ViewRule'
 import ViewRuleItem from "@/Components/PM/Rules/ViewRuleItem";
+import JobSearch from "@/Components/OP/JobSearchForm";
+
 export default {
     props: [
         'team',
+        'job',
         'jobNumber',
         'rules'
     ],
@@ -105,9 +125,9 @@ export default {
         }
     },
 
-    watch:{
-        searchJobKey(){
-            if(this.searchJobKey){
+    watch: {
+        searchJobKey() {
+            if (this.searchJobKey) {
                 Echo.channel(`rules-filtered.${this.searchJobKey}`)
                     .listen('.rules-updated', (e) => {
                         this.rulesUpdated = true;
@@ -117,14 +137,17 @@ export default {
     },
 
     methods: {
-        reloadPage(){
-            window.location = window.location+this.searchJobKey;
+        newJobLoaded() {
+            this.searchedRules= [...this.rules];
         },
-        openModal(rule){
+        reloadPage() {
+            window.location = window.location + this.searchJobKey;
+        },
+        openModal(rule) {
             this.currentRule = rule;
             this.isOpen = true
         },
-        closeModal(){
+        closeModal() {
             this.currentRule = null;
             this.isOpen = false;
         },
@@ -155,6 +178,7 @@ export default {
         JetButton,
         JetInput,
         ViewRule,
+        JobSearch
     },
 }
 </script>
