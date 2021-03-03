@@ -27,7 +27,7 @@ class JobApiHandler
 
         $jobDetails = JobApi::$apiName($jobNumber);
 
-        Job::create([
+        $job = Job::create([
             'job_number' => $jobNumber,
             'metadata' => [ $apiName => $jobDetails ]
         ]);
