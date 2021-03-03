@@ -23,5 +23,6 @@ Route::group([
     'auth',
     'prefix' => 'rule/'
 ], function () {
-    Route::get('search/{jobNumber}', [\App\Http\Controllers\OPs\JobController::class, 'search'])->name('rule_search');
+    Route::get('search/{jobNumber}', [\App\Http\Controllers\OPs\JobController::class, 'search'])
+        ->name('rule_search');
 });

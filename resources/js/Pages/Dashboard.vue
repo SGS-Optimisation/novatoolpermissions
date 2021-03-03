@@ -132,7 +132,7 @@ export default {
             if (this.searchJobKey && this.searchJobKey !== '') {
                 this.searching = true;
                 axios({
-                    url: "https://dagobah.test/api/rule/search/" + this.searchJobKey,
+                    url: route("rule_search", this.searchJobKey),
                     method: "GET",
                 })
                     .then(result => {
