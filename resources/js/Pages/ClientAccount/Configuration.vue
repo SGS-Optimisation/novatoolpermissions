@@ -1,49 +1,68 @@
 <template>
-    <app-layout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                <span v-if="clientAccount != null">
-                    Client: {{ clientAccount.name }}
-                </span>
-                <span v-else>
-                    {{ team.name }}
-                </span>
-            </h2>
+    <client-layout :client-account="clientAccount">
 
-            <div v-if="clientAccount != null">
-                <client-menu :client-account="clientAccount"></client-menu>
-            </div>
+        <template #body>
+            <div class="py-12">
+                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg" v-if="clientAccount != null">
+                        <div class="mx-auto sm:px-6 lg:px-8">
+                            <tabs>
+                                <tab
+                                    v-for="(topTaxonomy, index) in topTaxonomies"
+                                    :key="topTaxonomy.name"
+                                    :name="topTaxonomy.name"
+                                    :selected="index == 0"
+                                >
+                                    <taxonomy-definition :parent-taxonomy="topTaxonomy"
+                                                         :taxonomy-hierarchy="taxonomyHierarchy"
+                                                         :client-account="clientAccount">
+                                    </taxonomy-definition>
+                                </tab>
+                            </tabs>
 
-        </template>
-
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg" v-if="clientAccount != null">
-                    <client-account-overview :client-account="clientAccount" :rules="rules"/>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </app-layout>
+        </template>
+    </client-layout>
 </template>
 
+
 <script>
-import AppLayout from '@/Layouts/AppLayout'
-import Welcome from '@/Jetstream/Welcome'
-import ClientAccountOverview from '@/Pages/ClientAccount/Overview'
-import ClientMenu from '@/Components/PM/ClientMenu'
+import ClientLayout from '@/Layouts/ClientAccount'
+import TermDefinition from "@/Components/PM/ClientAccount/TermDefinition";
+import JetButton from '@/Jetstream/Button'
+import JetFormSection from '@/Jetstream/FormSectionNoGrid'
+import JetInput from '@/Jetstream/Input'
+import JetInputError from '@/Jetstream/InputError'
+import JetLabel from '@/Jetstream/Label'
+import JetActionMessage from '@/Jetstream/ActionMessage'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import Tabs from "@/Components/Tabs";
+import Tab from "@/Components/Tab";
+import TaxonomyDefinition from "@/Components/PM/ClientAccount/TaxonomyDefinition";
 
 export default {
     props: [
         'clientAccount',
         'team',
-        'rules',
+        'taxonomyHierarchy',
+        'topTaxonomies',
     ],
 
     components: {
-        ClientMenu,
-        AppLayout,
-        Welcome,
-        ClientAccountOverview
+        ClientLayout,
+        TermDefinition,
+        JetActionMessage,
+        JetButton,
+        JetFormSection,
+        JetInput,
+        JetInputError,
+        JetLabel,
+        Tabs,
+        Tab,
+        TaxonomyDefinition
     },
 }
 </script>

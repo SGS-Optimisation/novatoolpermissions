@@ -13,28 +13,20 @@ class ClientAccountController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  Request  $request
-     * @param  null  $client_account_slug
+     * @param Request $request
+     * @param $client_account_slug
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Inertia\Response
      */
-    public function index(Request $request, $client_account_slug = null)
+    public function index(Request $request, $client_account_slug)
     {
-        \Log::debug('client account: '.$client_account_slug);
+        \Log::debug('client account: ' . $client_account_slug);
 
         $client_account = ClientAccount::whereSlug($client_account_slug)->first() ?? $request->user()->currentTeam->clientAccount;
 
-        if ($client_account && (!$client_account_slug || $client_account_slug == 'dashboard')) {
+        /*if ($client_account && (!$client_account_slug || $client_account_slug == 'dashboard')) {
             return redirect(route('dashboard', ['clientAccount' => $client_account->slug]));
-        }
+        }*/
 
-        if (!$client_account) {
-            \Log::debug('displaying user team');
-            return Jetstream::inertia()->render($request, 'Dashboard', [
-                'team' => $request->user()->currentTeam,
-            ]);
-        }
-
-        \Log::debug('displaying client account team');
         return Jetstream::inertia()->render($request, 'ClientAccount/Dashboard', [
             'team' => $request->user()->currentTeam,
             'clientAccount' => $client_account,
@@ -44,7 +36,7 @@ class ClientAccountController extends Controller
 
 
     /**
-     * @param  Request  $request
+     * @param Request $request
      * @param $client_account_slug
      * @return \Inertia\Response
      */
@@ -52,8 +44,26 @@ class ClientAccountController extends Controller
     {
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
 
-        $rules = Cache::remember('rules-' . $client_account_slug, 3600, function() use ($client_account){
-            $rules = $client_account->rules->each(function($rule){
+        $term = $request->query('term');
+
+        $cacheTag = 'rules-' . $client_account_slug;
+        $tags = ['rules'];
+
+        if ($term) {
+            $cacheTag .=  '-' . $term;
+        }
+
+        $rules = Cache::tags($tags)->remember($cacheTag, 3600, function () use ($client_account, $term) {
+
+            $rules = $client_account->rules();
+
+            if($term){
+                $rules = $rules->whereHas('terms', function ($query) use ($term) {
+                    return $query->where('id', '=', $term);
+                });
+            }
+
+            $rules = $rules->get()->each(function ($rule) {
                 $rule->content = str_replace('<img', '<img loading="lazy"', $rule->content);
             });
 
@@ -80,7 +90,7 @@ class ClientAccountController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -91,7 +101,7 @@ class ClientAccountController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\ClientAccount  $clientAccount
+     * @param \App\Models\ClientAccount $clientAccount
      * @return \Illuminate\Http\Response
      */
     public function show(ClientAccount $clientAccount)
@@ -102,7 +112,7 @@ class ClientAccountController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\ClientAccount  $clientAccount
+     * @param \App\Models\ClientAccount $clientAccount
      * @return \Illuminate\Http\Response
      */
     public function edit(ClientAccount $clientAccount)
@@ -113,8 +123,8 @@ class ClientAccountController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ClientAccount  $clientAccount
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\ClientAccount $clientAccount
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, ClientAccount $clientAccount)
@@ -125,7 +135,7 @@ class ClientAccountController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\ClientAccount  $clientAccount
+     * @param \App\Models\ClientAccount $clientAccount
      * @return \Illuminate\Http\Response
      */
     public function destroy(ClientAccount $clientAccount)

@@ -7,7 +7,7 @@
                 </button>
             </template>
             <template #content>
-                <jet-dropdown-link :href="route('rules.create', {clientAccount: clientAccount.slug })">
+                <jet-dropdown-link :href="route('pm.client-account.rules.create', {clientAccount: clientAccount.slug })">
                     New rule
                 </jet-dropdown-link>
             </template>

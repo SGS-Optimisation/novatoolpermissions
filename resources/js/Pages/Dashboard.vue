@@ -1,25 +1,21 @@
 <template>
     <app-layout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ team.name }}
-            </h2>
 
-        </template>
+        <div class="flex lg:pt-36">
+            <div class="m-auto w-2/3">
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <p>Well hello there</p>
+                    <job-search></job-search>
+
             </div>
         </div>
+
     </app-layout>
 </template>
 
 <script>
 import AppLayout from '@/Layouts/AppLayout'
-import Welcome from '@/Jetstream/Welcome'
-import ClientAccountOverview from './ClientAccount/Overview'
-import ClientMenu from '@/Components/PM/ClientMenu'
+
+import JobSearch from "@/Components/OP/JobSearchForm";
 
 export default {
     props: [
@@ -28,7 +24,7 @@ export default {
 
     components: {
         AppLayout,
-        Welcome,
+        JobSearch
     },
 }
 </script>

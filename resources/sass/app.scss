@@ -6,3 +6,9 @@
 @import '~@fortawesome/fontawesome-free/scss/regular';
 @import '~@fortawesome/fontawesome-free/scss/solid';
 @import '~@fortawesome/fontawesome-free/scss/brands';
+
+@import '~vue-select/src/scss/vue-select';
+
+.vs__selected {
+    font-size:12px;
+}

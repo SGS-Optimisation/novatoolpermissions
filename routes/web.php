@@ -1,5 +1,12 @@
 <?php
 
+use App\Http\Controllers\CurrentTeamController;
+use App\Http\Controllers\PMs\ClientAccountController;
+use App\Http\Controllers\PMs\ClientAccountTaxonomyController;
+use App\Http\Controllers\PMs\HomeController;
+use App\Http\Controllers\PMs\RuleController;
+use App\Http\Controllers\PMs\RuleTaxonomyController;
+use App\Http\Controllers\PMs\TermController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,44 +20,84 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+/*Route::get('/', function () {
     return view('welcome');
+})->name('home');*/
+
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::get('/dashboard', function () {
+        return redirect(route('home'));
+    })->name('dashboard');
+
+    Route::put('/current-team', [CurrentTeamController::class, 'update'])
+        ->name('current-team.update');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    //return Inertia\Inertia::render('Dashboard');
-    return redirect(route('home'));
-})->name('dashboard');
-
-Route::group([
-    'middleware' => [
+Route::name('pm.')
+    ->prefix('pm/')
+    ->middleware([
         'auth:sanctum',
         'verified',
         'cache.headers:public;max_age=3600;etag',
-    ],
-    'prefix' => 'pm/'
-],
-    function () {
+    ])->group(function () {
 
-        Route::get('/{clientAccount?}', [\App\Http\Controllers\PMs\ClientAccountController::class, 'index'])
-            ->name('home');
+        Route::get('/', [HomeController::class, 'index'])
+            ->name('landing');
 
-        Route::get('/{clientAccount?}/dashboard', [\App\Http\Controllers\PMs\ClientAccountController::class, 'index'])
-            ->name('dashboard');
+        Route::name('client-account.')
+            ->prefix('/{clientAccount:slug}')
+            ->group(function () {
 
-        Route::get('/{clientAccount}/rules', [\App\Http\Controllers\PMs\ClientAccountController::class, 'rules'])
-            ->name('rules');
+                Route::get('/', [ClientAccountController::class, 'index']);
 
-        Route::get('/{clientAccount}/rules/create', [\App\Http\Controllers\PMs\RuleController::class, 'create'])
-            ->name('rules.create');
+                Route::get('/dashboard', [ClientAccountController::class, 'index'])
+                    ->name('dashboard');
 
-        Route::get('/{clientAccount}/rules/{$id}/update', [\App\Http\Controllers\PMs\RuleController::class, 'update'])
-            ->name('rules.edit');
+                /*
+                 * Configuration section
+                 */
+                Route::group(['prefix' => '/configuration'], function () {
+                    Route::get('/', [ClientAccountTaxonomyController::class, 'show'])
+                        ->name('configuration');
 
+                    Route::put('/', [ClientAccountTaxonomyController::class, 'update'])
+                        ->name('configuration.update');
+                });
 
-        Route::get('/{clientAccount}/configuration',
-            [\App\Http\Controllers\PMs\ClientAccountController::class, 'configuration'])
-            ->name('configuration');
+                /*
+                 * Rules section
+                 */
+                Route::group(['prefix' => '/rules'], function () {
+
+                    Route::get('/', [ClientAccountController::class, 'rules'])
+                        ->name('rules');
+
+                    Route::get('/create', [RuleController::class, 'create'])
+                        ->name('rules.create');
+
+                    Route::post('/store', [RuleController::class, 'store'])
+                        ->name('rules.store');
+
+                    Route::get('/{id}/edit', [RuleController::class, 'edit'])
+                        ->name('rules.edit');
+
+                    Route::put('/{id}/update', [RuleController::class, 'update'])
+                        ->name('rules.update');
+
+                    Route::put('/{id}/taxonomy/update', [RuleTaxonomyController::class, 'update'])
+                        ->name('rules.taxonomy.update');
+                });
+            });
+
+        Route::name('terms.')
+            ->prefix('/terms')
+            ->group(function () {
+                Route::put('/{id}', [TermController::class, 'update'])
+                    ->name('update');
+
+                Route::delete('/{id}', [TermController::class, 'destroy'])
+                    ->name('destroy');
+            });
     });
 
 
@@ -60,9 +107,9 @@ Route::group([
         'verified',
         'cache.headers:public;max_age=3600;etag',
     ],
-    'prefix' => 'op/'
+    //'prefix' => 'op/'
 ],
     function () {
-        Route::get('/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'index'])
-            ->name('op.home');
+        Route::match(['get', 'post'],'/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'index'])
+            ->name('home');
     });

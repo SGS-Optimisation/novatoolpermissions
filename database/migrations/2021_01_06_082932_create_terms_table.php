@@ -21,6 +21,7 @@ class CreateTermsTable extends Migration
             $table->string('name');
             $table->json('config')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();
