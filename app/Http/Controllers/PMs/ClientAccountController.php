@@ -46,13 +46,24 @@ class ClientAccountController extends Controller
 
         $term = $request->query('term');
 
-        $cacheTag = 'rules-' . $client_account_slug . ($term ? $term : '');
+        $cacheTag = 'rules-' . $client_account_slug;
+        $tags = ['rules'];
 
-        $rules = Cache::tags(['rules'])->remember($cacheTag, 3600, function () use ($client_account, $term) {
+        if ($term) {
+            $cacheTag .=  '-' . $term;
+        }
 
-            $rules = $client_account->rules()->orWhereHas('terms', function ($query) use ($term) {
-                return $term ? $query->where('id', '=', $term) : $query;
-            })->get()->each(function ($rule) {
+        $rules = Cache::tags($tags)->remember($cacheTag, 3600, function () use ($client_account, $term) {
+
+            $rules = $client_account->rules();
+
+            if($term){
+                $rules = $rules->whereHas('terms', function ($query) use ($term) {
+                    return $query->where('id', '=', $term);
+                });
+            }
+
+            $rules = $rules->get()->each(function ($rule) {
                 $rule->content = str_replace('<img', '<img loading="lazy"', $rule->content);
             });
 
