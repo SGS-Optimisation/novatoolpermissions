@@ -20,8 +20,8 @@ class CreateTaxonomiesTable extends Migration
             $table->string('name');
             $table->foreignId('parent_id')->nullable()->constrained('taxonomies')->cascadeOnDelete();
             $table->json('config')->nullable();
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

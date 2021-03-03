@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-class TaxonomyController extends Controller
+class RuleTaxonomyController extends Controller
 {
     /**
      * Update the specified resource in storage.

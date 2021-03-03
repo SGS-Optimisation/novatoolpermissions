@@ -2,18 +2,18 @@
     <div class="bg-white">
         <div class="flex justify-between">
             <nav class="flex flex-col sm:flex-row">
-                <sub-nav-link :href="route('dashboard', {clientAccount: clientAccount ? clientAccount.slug : ''})"
-                              :active="route().current('dashboard')">
+                <sub-nav-link :href="route('pm.client-account.dashboard', {clientAccount: clientAccount ? clientAccount.slug : ''})"
+                              :active="route().current('pm.client-account.dashboard')">
                     Overview
                 </sub-nav-link>
 
-                <sub-nav-link :href="route('rules', {clientAccount: clientAccount.slug })"
-                              :active="route().current('rules')">
+                <sub-nav-link :href="route('pm.client-account.rules', {clientAccount: clientAccount.slug })"
+                              :active="route().current('pm.client-account.rules')">
                     Rules
                 </sub-nav-link>
 
-                <sub-nav-link :href="route('configuration', {clientAccount: clientAccount.slug })"
-                              :active="route().current('configuration')">
+                <sub-nav-link :href="route('pm.client-account.configuration', {clientAccount: clientAccount.slug })"
+                              :active="route().current('pm.client-account.configuration')">
                     Configuration
                 </sub-nav-link>
             </nav>

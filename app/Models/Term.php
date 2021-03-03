@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\SoftDeletes;
 
 /**
  * App\Models\Term
@@ -30,7 +31,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Term extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that aren't mass assignable.
@@ -66,6 +67,15 @@ class Term extends Model
     public function client_accounts()
     {
         return $this->belongsToMany(\App\Models\ClientAccount::class);
+    }
+
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function rules()
+    {
+        return $this->belongsToMany(\App\Models\Rule::class);
     }
 
     public function getNameAttribute()

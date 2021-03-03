@@ -7,8 +7,12 @@ use App\Http\Requests\CreateRuleRequest;
 use App\Models\ClientAccount;
 use App\Models\Rule;
 use App\Services\ClientAccounts\BuildTaxonomyLists;
+use App\Services\Taxonomy\Traits\TaxonomyBuilder;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Jetstream\Jetstream;
 use Laravel\Nova\Fields\Trix;
@@ -17,24 +21,7 @@ use Laravel\Nova\Trix\PendingAttachment;
 class RuleController extends Controller
 {
 
-    protected function buildData($request, $client_account_slug)
-    {
-        return Cache::remember(
-            $client_account_slug.'-rules-data',
-            3600,
-            function () use ($request, $client_account_slug) {
-                $client_account = ClientAccount::whereSlug($client_account_slug)->first();
-
-                $taxonomy_builder = (new BuildTaxonomyLists($client_account))->handle();
-
-                return [
-                    'clientAccount' => $client_account,
-                    'taxonomyHierarchy' => $taxonomy_builder->taxonomy_hierarchy,
-                    'topTaxonomies' => $taxonomy_builder->top_taxonomies,
-                ];
-            });
-    }
-
+    use TaxonomyBuilder;
 
     /**
      * TODO: Fix attachments not created in db
@@ -68,7 +55,7 @@ class RuleController extends Controller
             'team' => $request->user()->currentTeam,
             'rule' => new Rule(['content' => '<p>taki taki</p>'])
         ],
-            $this->buildData($request, $client_account_slug)
+            $this->buildTaxonomyLists($client_account_slug)
         ));
     }
 
@@ -76,7 +63,7 @@ class RuleController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Contracts\Foundation\Application|JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return Application|JsonResponse|RedirectResponse|Redirector
      */
     public function store(CreateRuleRequest $request, $client_account_slug)
     {
@@ -115,7 +102,7 @@ class RuleController extends Controller
      * @param  Request  $request
      * @param $client_account_slug
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function edit(Request $request, $client_account_slug, $id)
     {
@@ -133,7 +120,7 @@ class RuleController extends Controller
             'team' => $request->user()->currentTeam,
             'rule' => $rule,
         ],
-            $this->buildData($request, $client_account_slug)
+            $this->buildTaxonomyLists($client_account_slug)
         ));
     }
 
@@ -142,7 +129,7 @@ class RuleController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse|RedirectResponse
      */
     public function update(Request $request, $client_account_slug, $id)
     {

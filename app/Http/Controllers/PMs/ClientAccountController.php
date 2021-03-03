@@ -14,27 +14,19 @@ class ClientAccountController extends Controller
      * Display a listing of the resource.
      *
      * @param  Request  $request
-     * @param  null  $client_account_slug
+     * @param $client_account_slug
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Inertia\Response
      */
-    public function index(Request $request, $client_account_slug = null)
+    public function index(Request $request, $client_account_slug)
     {
         \Log::debug('client account: '.$client_account_slug);
 
         $client_account = ClientAccount::whereSlug($client_account_slug)->first() ?? $request->user()->currentTeam->clientAccount;
 
-        if ($client_account && (!$client_account_slug || $client_account_slug == 'dashboard')) {
+        /*if ($client_account && (!$client_account_slug || $client_account_slug == 'dashboard')) {
             return redirect(route('dashboard', ['clientAccount' => $client_account->slug]));
-        }
+        }*/
 
-        if (!$client_account) {
-            \Log::debug('displaying user team');
-            return Jetstream::inertia()->render($request, 'Dashboard', [
-                'team' => $request->user()->currentTeam,
-            ]);
-        }
-
-        \Log::debug('displaying client account team');
         return Jetstream::inertia()->render($request, 'ClientAccount/Dashboard', [
             'team' => $request->user()->currentTeam,
             'clientAccount' => $client_account,

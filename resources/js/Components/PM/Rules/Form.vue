@@ -110,12 +110,12 @@ export default {
         pushRuleData: function () {
 
             if (this.rule.id) {
-                this.form.put(route('rules.update', {clientAccount: this.clientAccount.slug, id: this.rule.id}), {
+                this.form.put(route('pm.client-account.rules.update', {clientAccount: this.clientAccount.slug, id: this.rule.id}), {
                     preserveScroll: true
                 })
             }
             else {
-                this.form.post(route('rules.store', {clientAccount: this.clientAccount.slug}), {
+                this.form.post(route('pm.client-account.rules.store', {clientAccount: this.clientAccount.slug}), {
                     preserveScroll: true
                 });
             }

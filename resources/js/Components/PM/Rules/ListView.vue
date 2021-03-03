@@ -7,7 +7,7 @@
                     <div class="flex-shrink cursor-default align-bottom text-xs border-dashed border-b border-gray-500" :title="date()">
                         Last updated {{humanDate()}}
                     </div>
-                    <nav-link :href="route('rules.edit',  {clientAccount: clientAccount.slug, id: rule.id })">
+                    <nav-link :href="route('pm.client-account.rules.edit',  {clientAccount: clientAccount.slug, id: rule.id })">
                         <i class="fa fa-pen"></i>
                     </nav-link>
                 </div>

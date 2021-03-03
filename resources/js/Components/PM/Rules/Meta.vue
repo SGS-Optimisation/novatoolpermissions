@@ -50,7 +50,6 @@ import JetInputError from '@/Jetstream/InputError'
 import JetLabel from '@/Jetstream/Label'
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
-import {VueEditor} from "vue2-editor";
 import Term from "@/Components/PM/Rules/Term";
 
 export default {
@@ -100,7 +99,7 @@ export default {
         pushRuleMeta: function () {
             this.form.taxonomy = this.taxonomy;
 
-            this.form.put(route('rules.taxonomy.update', {clientAccount: this.clientAccount.slug, id: this.rule.id}), {
+            this.form.put(route('pm.client-account.rules.taxonomy.update', {clientAccount: this.clientAccount.slug, id: this.rule.id}), {
                 preserveScroll: true
             })
         },
