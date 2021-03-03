@@ -25,11 +25,11 @@ class RuleFilter
             $client = ClientAccount::whereRaw('LOWER(alias) LIKE "%' . Str::lower($job->metadata->basicDetails->retailer->customerName) . '%"')->first();
 
             foreach ($client->rules as $rule) {
-                $matched = false;
+                $matched = true;
                 foreach ($rule->terms as $term) {
 
-                    if (Str::lower($term->name) === 'any') {
-                        $matched = true;
+                    if (Str::lower($term->name) === 'any' || Str::lower($term->name) === 'all') {
+
                         continue;
                     }
 
@@ -46,8 +46,8 @@ class RuleFilter
                         /**
                          * compare retrieved value with this term
                          */
-                        if (Str::contains($termValue, $mysgsValue) || Str::contains($mysgsValue, $termValue)) {
-                            $matched = true;
+                        if (! (Str::contains($termValue, $mysgsValue) || Str::contains($mysgsValue, $termValue)) ) {
+                            $matched = false;
                         }
                     }
 
