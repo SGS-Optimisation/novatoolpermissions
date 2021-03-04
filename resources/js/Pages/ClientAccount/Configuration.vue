@@ -5,22 +5,20 @@
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg" v-if="clientAccount != null">
-                        <div class="mx-auto sm:px-6 lg:px-8">
-                            <tabs>
-                                <tab
-                                    v-for="(topTaxonomy, index) in topTaxonomies"
-                                    :key="topTaxonomy.name"
-                                    :name="topTaxonomy.name"
-                                    :selected="index == 0"
-                                >
-                                    <taxonomy-definition :parent-taxonomy="topTaxonomy"
-                                                         :taxonomy-hierarchy="taxonomyHierarchy"
-                                                         :client-account="clientAccount">
-                                    </taxonomy-definition>
-                                </tab>
-                            </tabs>
+                        <tabs>
+                            <tab
+                                v-for="(topTaxonomy, index) in topTaxonomies"
+                                :key="topTaxonomy.name"
+                                :name="topTaxonomy.name"
+                                :selected="index == 0"
+                            >
+                                <taxonomy-definition :parent-taxonomy="topTaxonomy"
+                                                     :taxonomy-hierarchy="taxonomyHierarchy"
+                                                     :client-account="clientAccount">
+                                </taxonomy-definition>
+                            </tab>
+                        </tabs>
 
-                        </div>
                     </div>
                 </div>
             </div>

@@ -42,6 +42,7 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
     protected function processTaxonomy(Taxonomy $taxonomy)
     {
         $data = [];
+        $data[$taxonomy->name]['taxonomy'] = $taxonomy;
 
         if ($taxonomy->taxonomies()->count()) {
 

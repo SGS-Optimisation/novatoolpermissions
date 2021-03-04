@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\PMs;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateTermRequest;
 use App\Models\ClientAccount;
+use App\Models\Taxonomy;
 use App\Models\Term;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -18,8 +20,20 @@ class TermController extends Controller
      * @param  Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(CreateTermRequest $request)
     {
+
+        $taxonomy = Taxonomy::find($request->taxonomyId);
+        $client_account = ClientAccount::find($request->clientAccountId);
+
+        /** @var Term $term */
+        $term = $taxonomy->terms()->withTrashed()->firstOrCreate(['name' => $request->name]);
+
+        if($term->deleted_at) {
+            $term->restore();
+        }
+
+        $client_account->terms()->syncWithoutDetaching($term);
 
         Cache::tags(['taxonomy'])->clear();
 

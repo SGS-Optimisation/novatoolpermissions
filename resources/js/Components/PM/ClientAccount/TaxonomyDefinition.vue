@@ -1,9 +1,12 @@
 <template>
-    <div>
+    <div class="px-5">
         <div class="flex flex-col py-2"
              v-for="(taxonomyGroup, index) in taxonomyHierarchy[parentTaxonomy.name].children">
 
             <template v-for="(taxonomyData, name) in taxonomyGroup">
+
+
+
                 <term-definition :terms="taxonomyData.terms"
                                  :taxonomy-name="name"
                                  :taxonomy-id="taxonomyData.id"

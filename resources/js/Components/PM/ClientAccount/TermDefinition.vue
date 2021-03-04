@@ -19,22 +19,26 @@
                        class="text-red-600 fa fa-times cursor-pointer hover:bg-red-800 p-1 rounded-xl">
                     </i>
 
-                    <span @click="editTerm(termData.id, termData.name)">
+                    <span @click="editTerm(termData.id, termData.name)"
+                          class="mt-2 cursor-pointer
+                          border-b-2 border-dashed border-transparent hover:border-gray-300
+                          transition duration-150 ease-in-out">
                         {{ termData.name }}
                     </span>
 
-                    <span class="text-xs px-3 bg-red-200 text-red-800 rounded-full">
+                    <span v-if="termData.rulesCount" class="text-xs px-2 bg-red-200 text-red-800 rounded-full">
 
-                        <jet-nav-link v-if="termData.rulesCount" :href="route('pm.client-account.rules', {clientAccount: clientAccount.slug }) + `?term=${termData.id}`">
+                        <jet-nav-link  :href="route('pm.client-account.rules', {clientAccount: clientAccount.slug }) + `?term=${termData.id}`">
                             <span title="Number of rules using this term. Click to view rules.">
                                 {{termData.rulesCount }}
                             </span>
                         </jet-nav-link>
-                        <span v-else title="Number of rules using this term. Click to view rules.">
-                            {{termData.rulesCount }}
-                        </span>
                     </span>
                 </div>
+
+                <i @click="creatingTerm=true"
+                   class="cursor-pointer pt-3 align-middle text-blue-400 hover:text-blue-700 fa fa-plus-circle">
+                </i>
             </div>
 
             <jet-action-message :on="editTermForm.recentlySuccessful" class="mt-3">
@@ -48,6 +52,36 @@
                     <span class="p-1">Deleted.</span>
                 </div>
             </jet-action-message>
+
+
+
+            <!--  Create Term Modal -->
+            <jet-dialog-modal :show="creatingTerm" @close="cancelCreateTerm">
+                <template #title>
+                    New Term in {{taxonomyName}}
+                </template>
+
+                <template #content>
+                    <div class="mt-4">
+                        <jet-input type="text" class="mt-1 block w-3/4"
+                                   :value="createTermForm.name"
+                                   v-model="createTermForm.name" />
+
+                    </div>
+                </template>
+
+                <template #footer>
+                    <jet-secondary-button @click.native="cancelCreateTerm">
+                        Nevermind
+                    </jet-secondary-button>
+
+                    <jet-button class="ml-2" @click.native="storeTerm"
+                                :class="{ 'opacity-25': createTermForm.processing }"
+                                :disabled="createTermForm.processing">
+                        Save
+                    </jet-button>
+                </template>
+            </jet-dialog-modal>
 
 
             <!-- Edit Term Modal -->
@@ -141,6 +175,8 @@ export default {
 
     data() {
         return {
+            creatingTerm: false,
+
             confirmingTermDeletion: false,
             deletingTermId: null,
             deletingTermName: null,
@@ -150,8 +186,13 @@ export default {
             editingTermId: null,
             editingTermName: null,
 
-            deleteTermForm: this.$inertia.form({}, {
-                bag: 'deleteTerm'
+            createTermForm: this.$inertia.form({
+                clientAccountId: this.clientAccount.id,
+                taxonomyId: this.taxonomyId,
+                name: "",
+
+            }, {
+                bag: 'createTerm'
             }),
 
             editTermForm: this.$inertia.form({
@@ -160,7 +201,12 @@ export default {
 
             }, {
                 bag: 'editTerm'
-            })
+            }),
+
+
+            deleteTermForm: this.$inertia.form({}, {
+                bag: 'deleteTerm'
+            }),
         }
     },
 
@@ -169,6 +215,26 @@ export default {
     },
 
     methods: {
+        createTerm() {
+            this.creatingTerm = true;
+        },
+
+        cancelCreateTerm() {
+            this.creatingTerm = false;
+            this.createTermForm.name = null;
+        },
+
+        storeTerm() {
+            console.log('create term ' + this.createTermForm.name + ' for taxonomy id ' + this.createTermForm.taxonomyId );
+
+            this.createTermForm.post(route('pm.terms.store'), {
+                preserveScroll: true
+            }).then(() => {
+                this.cancelCreateTerm();
+            });
+        },
+
+
         editTerm(id, name) {
             this.editingTerm = true;
             this.editTermForm.termId = id;
