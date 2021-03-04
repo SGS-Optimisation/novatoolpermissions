@@ -43,7 +43,7 @@
             <div class="flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mt-1">
 
                 <div v-for="rule in _.orderBy(searchedRules, 'created_at', 'desc')"
-                     class="w-full overflow-hidden sm:my-px sm:px-px sm:w-full md:my-px md:px-px md:w-full lg:my-px lg:px-px lg:w-1/3 xl:my-px xl:px-px xl:w-1/3 shadow-md p-3 rounded">
+                     class="w-full overflow-hidden sm:my-px sm:px-px sm:w-full md:my-px md:px-px md:w-full lg:my-px lg:px-px lg:w-1/3 xl:my-px xl:px-px xl:w-1/3 shadow-md p-3 rounded grid-masonry">
                     <view-rule-item :rule="rule" @on-click-view="openModal"/>
                 </div>
 
@@ -105,6 +105,7 @@ import JetInput from '@/Jetstream/Input'
 import ViewRule from '@/Components/PM/Rules/ViewRule'
 import ViewRuleItem from "@/Components/PM/Rules/ViewRuleItem";
 import JobSearch from "@/Components/OP/JobSearchForm";
+import Masonry from 'masonry-layout'
 
 export default {
     props: [
@@ -134,6 +135,15 @@ export default {
                     });
             }
         }
+    },
+
+    mounted() {
+        var msnry = new Masonry( '.grid-masonry', {
+            // options
+            itemSelector: '.grid-masonry-item',
+            columnWidth: 200,
+        });
+        msnry.layout();
     },
 
     methods: {
