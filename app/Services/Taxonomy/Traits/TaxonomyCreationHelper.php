@@ -42,7 +42,7 @@ trait TaxonomyCreationHelper
 
                     if (Arr::has($items, 'terms')) {
                         foreach ($items['terms'] as $term) {
-                            static::buildTerm($term, $taxonomy, $term_config, $rule);
+                            static::buildTerm($term, $taxonomy, $term_config, $rule, $client_account);
                         }
                     }
 
