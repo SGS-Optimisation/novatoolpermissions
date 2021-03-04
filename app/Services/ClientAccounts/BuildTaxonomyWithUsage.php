@@ -60,9 +60,12 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
             }
         }
 
-        $client_terms = $taxonomy->terms()->whereHas('client_accounts', function($query){
-            $query->where('id', $this->clientAccount->id);
-        })->get();
+        $client_terms = $taxonomy->terms()
+            ->whereHas('client_accounts', function ($query) {
+                $query->where('id', $this->clientAccount->id);
+            })
+            ->withCount('rules')
+            ->get();
 
         if (count($client_terms)) {
 
@@ -71,7 +74,7 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
                 $data[$taxonomy->name]['terms'][] = [
                     'id' => $term->id,
                     'name' => $term->name,
-                    'rulesCount' => $term->rules()->count()
+                    'rulesCount' => $term->rules_count,
                 ];
             }
 

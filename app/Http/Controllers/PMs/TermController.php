@@ -35,7 +35,8 @@ class TermController extends Controller
 
         $client_account->terms()->syncWithoutDetaching($term);
 
-        Cache::tags(['taxonomy'])->clear();
+        Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
+        Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
 
         return back();
     }
@@ -49,10 +50,13 @@ class TermController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $client_account = ClientAccount::find($request->clientAccountId);
         $term = Term::find($id);
+
         $term->update(['name' => $request->name]);
 
-        Cache::tags(['taxonomy'])->clear();
+        Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
+        Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
 
         return back();
     }
@@ -67,9 +71,12 @@ class TermController extends Controller
     public function destroy(Request $request, $id)
     {
         $term = Term::find($id);
+        $client_account = ClientAccount::find($request->clientAccountId);
+
         $term->delete();
 
-        Cache::tags(['taxonomy'])->clear();
+        Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
+        Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
 
         return back();
     }

@@ -2,7 +2,7 @@
     <div>
         <div class="flex flex-row flex-wrap">
             <div class="text-xs mx-2 border-blue-50 border my-1 bg-yellow-50 rounded-xl px-2 py-1"
-                 v-for="termData in terms">
+                 v-for="termData in _.sortBy(terms, function(term) {return term.name})">
 
                 <i v-if="termData.rulesCount === 0"
                    @click="confirmTermDeletion(termData.id, termData.name)"
@@ -185,13 +185,16 @@ export default {
 
             editTermForm: this.$inertia.form({
                 termId: null,
+                clientAccountId: this.clientAccount.id,
                 name: null,
 
             }, {
                 bag: 'editTerm'
             }),
 
-            deleteTermForm: this.$inertia.form({}, {
+            deleteTermForm: this.$inertia.form({
+                clientAccountId: this.clientAccount.id,
+            }, {
                 bag: 'deleteTerm'
             }),
         }

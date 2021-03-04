@@ -36,7 +36,8 @@ class TaxonomyController extends Controller
 
         $client_account->taxonomies()->syncWithoutDetaching($taxonomy);
 
-        Cache::tags(['taxonomy'])->clear();
+        Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
+        Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
 
         return back();
     }
@@ -51,9 +52,12 @@ class TaxonomyController extends Controller
     public function update(Request $request, $id)
     {
         $taxonomy = Taxonomy::find($id);
+        $client_account = ClientAccount::find($request->clientAccountId);
+
         $taxonomy->update(['name' => $request->name]);
 
-        Cache::tags(['taxonomy'])->clear();
+        Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
+        Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
 
         return back();
     }
@@ -68,9 +72,12 @@ class TaxonomyController extends Controller
     public function destroy(Request $request, $id)
     {
         $taxonomy = Taxonomy::find($id);
+        $client_account = ClientAccount::find($request->clientAccountId);
+
         $taxonomy->delete();
 
-        Cache::tags(['taxonomy'])->clear();
+        Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
+        Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
 
         return back();
     }

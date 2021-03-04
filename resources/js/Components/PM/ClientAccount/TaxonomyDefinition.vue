@@ -1,5 +1,5 @@
 <template>
-    <div class="px-5">
+    <div class="px-5 pb-12">
         <span class="cursor-pointer p-1 text-xs rounded-md
         bg-blue-300 hover:bg-blue-400"
               @click="creatingTaxonomy=true"
@@ -94,6 +94,7 @@
                                          :client-account="clientAccount"
                         >
                         </term-definition>
+
                     </template>
                 </jet-action-section>
 
@@ -123,6 +124,12 @@
             </template>
 
         </div>
+        <span class="cursor-pointer p-1 text-xs rounded-md
+        bg-blue-300 hover:bg-blue-400"
+              @click="creatingTaxonomy=true"
+        >
+            <i class="text-white fa fa-plus-circle"></i> New Vocabulary
+        </span>
     </div>
 </template>
 
@@ -187,7 +194,9 @@ export default {
                 bag: 'updateTaxonomy'
             }),
 
-            deleteForm: this.$inertia.form({}, {
+            deleteForm: this.$inertia.form({
+                clientAccountId: this.clientAccount.id,
+            }, {
                 bag: 'deleteTaxonomy'
             }),
 
