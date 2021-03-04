@@ -9,6 +9,7 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\Textarea;
 
 
 class ClientAccount extends Resource
@@ -74,7 +75,7 @@ class ClientAccount extends Resource
                 ->rules('required')
                 ->sortable()
             ,
-            Text::make(__('Alias'), 'alias')
+            Textarea::make(__('Alias'), 'alias')
                 ->hideFromIndex()
             ,
             Image::make(__('Image'), 'image')
