@@ -92,6 +92,9 @@ Route::name('pm.')
         Route::name('terms.')
             ->prefix('/terms')
             ->group(function () {
+                Route::post('/', [TermController::class, 'store'])
+                    ->name('store');
+
                 Route::put('/{id}', [TermController::class, 'update'])
                     ->name('update');
 
@@ -111,5 +114,6 @@ Route::group([
 ],
     function () {
         Route::match(['get', 'post'],'/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'index'])
-            ->name('home');
+            ->name('home')
+            ->where('jobNumber', '[0-9]+');
     });

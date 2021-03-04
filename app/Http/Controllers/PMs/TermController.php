@@ -11,6 +11,21 @@ use Laravel\Jetstream\Jetstream;
 
 class TermController extends Controller
 {
+
+    /**
+     * Update a term.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(Request $request)
+    {
+
+        Cache::tags(['taxonomy'])->clear();
+
+        return back();
+    }
+
     /**
      * Update a term.
      *

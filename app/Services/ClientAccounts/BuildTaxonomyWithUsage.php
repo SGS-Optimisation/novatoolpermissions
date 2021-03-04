@@ -54,14 +54,19 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
                 $data[$taxonomy->name]['children'][$child_taxonomy][] = static::processTaxonomy($child_taxonomy);
             }
         }
-        if ($taxonomy->terms()->count()) {
+
+        $client_terms = $taxonomy->terms()->whereHas('client_accounts', function($query){
+            $query->where('id', $this->clientAccount->id);
+        })->get();
+
+        if (count($client_terms)) {
             $data[$taxonomy->name] = [
                 'id' => $taxonomy->id,
                 'terms' => []
             ];
 
             /** @var Term $term */
-            foreach ($taxonomy->terms as $term) {
+            foreach ($client_terms as $term) {
                 $data[$taxonomy->name]['terms'][] = [
                     'id' => $term->id,
                     'name' => $term->name,
