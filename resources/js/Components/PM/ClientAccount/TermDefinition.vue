@@ -24,11 +24,16 @@
                     </span>
 
                     <span class="text-xs px-3 bg-red-200 text-red-800 rounded-full">
-                        <jet-nav-link :href="route('pm.client-account.rules', {clientAccount: clientAccount.slug }) + `?term=${termData.id}`">
+
+                        <jet-nav-link v-if="termData.rulesCount" :href="route('pm.client-account.rules', {clientAccount: clientAccount.slug }) + `?term=${termData.id}`">
                             <span title="Number of rules using this term. Click to view rules.">
                                 {{termData.rulesCount }}
                             </span>
-                        </jet-nav-link></span>
+                        </jet-nav-link>
+                        <span v-else title="Number of rules using this term. Click to view rules.">
+                            {{termData.rulesCount }}
+                        </span>
+                    </span>
                 </div>
             </div>
 

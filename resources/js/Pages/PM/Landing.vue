@@ -7,8 +7,8 @@
 
         </template>
 
-        <div class="py-12 flex flex-row justify-between">
-            <div class="mx-auto sm:px-6 lg:px-8">
+        <div class="mx-auto py-12 flex flex-grow">
+            <div class="px-2">
                 <h2>Your teams</h2>
                 <ul>
                     <li v-for="availableTeam in myTeams">
@@ -18,11 +18,11 @@
                     </li>
                 </ul>
             </div>
-            <div class="mx-auto sm:px-6 lg:px-8">
+            <div class="px-2">
                 <h2>Other teams</h2>
-                <ul>
-                    <li v-for="otherTeam in otherTeams">
-                        <jet-nav-link v-if="otherTeam.client_account" :href="route('pm.client-account.dashboard', {clientAccount: otherTeam.client_account.slug })">
+                <ul class="h-72 flex flex-col flex-wrap">
+                    <li class="px-2" v-for="otherTeam in otherTeams">
+                        <jet-nav-link :href="route('pm.client-account.dashboard', {clientAccount: otherTeam.client_account.slug })">
                             {{ otherTeam.client_account.name }}
                         </jet-nav-link>
                     </li>

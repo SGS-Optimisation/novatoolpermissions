@@ -18,6 +18,7 @@ class HomeController extends Controller
 
         $otherTeams = Team::with('clientAccount')
             ->whereNotIn('id', $myTeams->pluck('id')->all())
+            ->whereHas('clientAccount')
             ->get();
 
         return Jetstream::inertia()->render($request, 'PM/Landing', [
