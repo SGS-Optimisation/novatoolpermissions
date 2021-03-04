@@ -1,143 +1,131 @@
 <template>
-    <jet-action-section>
-        <template #title>
-            {{ taxonomyName }}
-        </template>
+    <div>
+        <div class="flex flex-row flex-wrap">
+            <div class="text-xs mx-2 border-blue-50 border my-1 bg-yellow-50 rounded-xl px-2 py-1"
+                 v-for="termData in terms">
 
-        <template #description>
+                <i v-if="termData.rulesCount === 0"
+                   @click="confirmTermDeletion(termData.id, termData.name)"
+                   class="text-red-600 fa fa-times cursor-pointer hover:bg-red-800 p-1 rounded-xl">
+                </i>
 
-        </template>
-
-        <template #content>
-
-            <div class="flex flex-row flex-wrap">
-                <div class="text-xs mx-2 border-blue-50 border my-1 bg-yellow-50 rounded-xl px-2 py-1"
-                     v-for="termData in terms">
-
-                    <i v-if="termData.rulesCount === 0"
-                       @click="confirmTermDeletion(termData.id, termData.name)"
-                       class="text-red-600 fa fa-times cursor-pointer hover:bg-red-800 p-1 rounded-xl">
-                    </i>
-
-                    <span @click="editTerm(termData.id, termData.name)"
-                          class="mt-2 cursor-pointer
+                <span @click="editTerm(termData.id, termData.name)"
+                      class="mt-2 cursor-pointer
                           border-b-2 border-dashed border-transparent hover:border-gray-300
                           transition duration-150 ease-in-out">
                         {{ termData.name }}
-                    </span>
+                </span>
 
-                    <span v-if="termData.rulesCount" class="text-xs px-2 bg-red-200 text-red-800 rounded-full">
+                <span v-if="termData.rulesCount" class="text-xs px-2 bg-red-200 text-red-800 rounded-full">
 
-                        <jet-nav-link  :href="route('pm.client-account.rules', {clientAccount: clientAccount.slug }) + `?term=${termData.id}`">
+                        <jet-nav-link
+                            :href="route('pm.client-account.rules', {clientAccount: clientAccount.slug }) + `?term=${termData.id}`">
                             <span title="Number of rules using this term. Click to view rules.">
-                                {{termData.rulesCount }}
+                                {{ termData.rulesCount }}
                             </span>
                         </jet-nav-link>
                     </span>
-                </div>
-
-                <i @click="creatingTerm=true"
-                   class="cursor-pointer pt-3 align-middle text-blue-400 hover:text-blue-700 fa fa-plus-circle">
-                </i>
             </div>
 
-            <jet-action-message :on="editTermForm.recentlySuccessful" class="mt-3">
-                <div class="flex bg-green-200">
-                    <span class="p-1">Saved.</span>
+            <i @click="creatingTerm=true"
+               class="cursor-pointer pt-3 align-middle text-blue-400 hover:text-blue-700 fa fa-plus-circle">
+            </i>
+        </div>
+
+        <jet-action-message :on="editTermForm.recentlySuccessful" class="mt-3">
+            <div class="flex bg-green-200">
+                <span class="p-1">Saved.</span>
+            </div>
+        </jet-action-message>
+
+        <jet-action-message :on="deleteTermForm.recentlySuccessful" class="mt-3">
+            <div class="flex bg-green-200">
+                <span class="p-1">Deleted.</span>
+            </div>
+        </jet-action-message>
+
+
+        <!--  Create Term Modal -->
+        <jet-dialog-modal :show="creatingTerm" @close="cancelCreateTerm">
+            <template #title>
+                New Term in {{ taxonomyName }}
+            </template>
+
+            <template #content>
+                <div class="mt-4">
+                    <jet-input type="text" class="mt-1 block w-3/4"
+                               :value="createTermForm.name"
+                               v-model="createTermForm.name"/>
+
                 </div>
-            </jet-action-message>
+            </template>
 
-            <jet-action-message :on="deleteTermForm.recentlySuccessful" class="mt-3">
-                <div class="flex bg-green-200">
-                    <span class="p-1">Deleted.</span>
+            <template #footer>
+                <jet-secondary-button @click.native="cancelCreateTerm">
+                    Nevermind
+                </jet-secondary-button>
+
+                <jet-button class="ml-2" @click.native="storeTerm"
+                            :class="{ 'opacity-25': createTermForm.processing }"
+                            :disabled="createTermForm.processing">
+                    Save
+                </jet-button>
+            </template>
+        </jet-dialog-modal>
+
+
+        <!-- Edit Term Modal -->
+        <jet-dialog-modal :show="editingTerm" @close="cancelEditTerm">
+            <template #title>
+                Edit Term {{ editingTermName }}
+            </template>
+
+            <template #content>
+                <div class="mt-4">
+                    <jet-input type="text" class="mt-1 block w-3/4"
+                               :value="editTermForm.name"
+                               v-model="editTermForm.name"/>
+
                 </div>
-            </jet-action-message>
+            </template>
+
+            <template #footer>
+                <jet-secondary-button @click.native="cancelEditTerm">
+                    Nevermind
+                </jet-secondary-button>
+
+                <jet-button class="ml-2" @click.native="updateTerm"
+                            :class="{ 'opacity-25': editTermForm.processing }"
+                            :disabled="editTermForm.processing">
+                    Save
+                </jet-button>
+            </template>
+        </jet-dialog-modal>
 
 
+        <!-- Delete Term Confirmation Modal -->
+        <jet-confirmation-modal :show="confirmingTermDeletion" @close="cancelDeleteTerm">
+            <template #title>
+                Delete Term
+            </template>
 
-            <!--  Create Term Modal -->
-            <jet-dialog-modal :show="creatingTerm" @close="cancelCreateTerm">
-                <template #title>
-                    New Term in {{taxonomyName}}
-                </template>
+            <template #content>
+                Are you sure you want to delete the term "{{ deletingTermName }}"?
+            </template>
 
-                <template #content>
-                    <div class="mt-4">
-                        <jet-input type="text" class="mt-1 block w-3/4"
-                                   :value="createTermForm.name"
-                                   v-model="createTermForm.name" />
+            <template #footer>
+                <jet-secondary-button @click.native="cancelDeleteTerm">
+                    Nevermind
+                </jet-secondary-button>
 
-                    </div>
-                </template>
-
-                <template #footer>
-                    <jet-secondary-button @click.native="cancelCreateTerm">
-                        Nevermind
-                    </jet-secondary-button>
-
-                    <jet-button class="ml-2" @click.native="storeTerm"
-                                :class="{ 'opacity-25': createTermForm.processing }"
-                                :disabled="createTermForm.processing">
-                        Save
-                    </jet-button>
-                </template>
-            </jet-dialog-modal>
-
-
-            <!-- Edit Term Modal -->
-            <jet-dialog-modal :show="editingTerm" @close="cancelEditTerm">
-                <template #title>
-                    Edit Term {{editingTermName}}
-                </template>
-
-                <template #content>
-                    <div class="mt-4">
-                        <jet-input type="text" class="mt-1 block w-3/4"
-                                   :value="editTermForm.name"
-                                   v-model="editTermForm.name" />
-
-                    </div>
-                </template>
-
-                <template #footer>
-                    <jet-secondary-button @click.native="cancelEditTerm">
-                        Nevermind
-                    </jet-secondary-button>
-
-                    <jet-button class="ml-2" @click.native="updateTerm"
-                                :class="{ 'opacity-25': editTermForm.processing }"
-                                :disabled="editTermForm.processing">
-                        Save
-                    </jet-button>
-                </template>
-            </jet-dialog-modal>
-
-
-            <!-- Delete Term Confirmation Modal -->
-            <jet-confirmation-modal :show="confirmingTermDeletion" @close="cancelDeleteTerm">
-                <template #title>
+                <jet-danger-button class="ml-2" @click.native="deleteTerm"
+                                   :class="{ 'opacity-25': deleteTermForm.processing }"
+                                   :disabled="deleteTermForm.processing">
                     Delete Term
-                </template>
-
-                <template #content>
-                    Are you sure you want to delete the term "{{ deletingTermName }}"?
-                </template>
-
-                <template #footer>
-                    <jet-secondary-button @click.native="cancelDeleteTerm">
-                        Nevermind
-                    </jet-secondary-button>
-
-                    <jet-danger-button class="ml-2" @click.native="deleteTerm"
-                                       :class="{ 'opacity-25': deleteTermForm.processing }" :disabled="deleteTermForm.processing">
-                        Delete Term
-                    </jet-danger-button>
-                </template>
-            </jet-confirmation-modal>
-
-
-        </template>
-    </jet-action-section>
+                </jet-danger-button>
+            </template>
+        </jet-confirmation-modal>
+    </div>
 </template>
 
 <script>
@@ -203,7 +191,6 @@ export default {
                 bag: 'editTerm'
             }),
 
-
             deleteTermForm: this.$inertia.form({}, {
                 bag: 'deleteTerm'
             }),
@@ -225,7 +212,7 @@ export default {
         },
 
         storeTerm() {
-            console.log('create term ' + this.createTermForm.name + ' for taxonomy id ' + this.createTermForm.taxonomyId );
+            console.log('create term ' + this.createTermForm.name + ' for taxonomy id ' + this.createTermForm.taxonomyId);
 
             this.createTermForm.post(route('pm.terms.store'), {
                 preserveScroll: true
@@ -273,8 +260,8 @@ export default {
             this.deletingTermName = null;
         },
 
-        deleteTerm(id) {
-            console.log('delete term ' + id);
+        deleteTerm() {
+            console.log('delete term ' + this.deletingTermId);
 
             this.deleteTermForm.delete(route('pm.terms.destroy', this.deletingTermId), {
                 preserveScroll: true

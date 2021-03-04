@@ -6,6 +6,7 @@ use App\Http\Controllers\PMs\ClientAccountTaxonomyController;
 use App\Http\Controllers\PMs\HomeController;
 use App\Http\Controllers\PMs\RuleController;
 use App\Http\Controllers\PMs\RuleTaxonomyController;
+use App\Http\Controllers\PMs\TaxonomyController;
 use App\Http\Controllers\PMs\TermController;
 use Illuminate\Support\Facades\Route;
 
@@ -87,6 +88,19 @@ Route::name('pm.')
                     Route::put('/{id}/taxonomy/update', [RuleTaxonomyController::class, 'update'])
                         ->name('rules.taxonomy.update');
                 });
+            });
+
+        Route::name('taxonomies.')
+            ->prefix('/taxonomies')
+            ->group(function () {
+                Route::post('/', [TaxonomyController::class, 'store'])
+                    ->name('store');
+
+                Route::put('/{id}', [TaxonomyController::class, 'update'])
+                    ->name('update');
+
+                Route::delete('/{id}', [TaxonomyController::class, 'destroy'])
+                    ->name('destroy');
             });
 
         Route::name('terms.')

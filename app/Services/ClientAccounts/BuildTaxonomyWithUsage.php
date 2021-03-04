@@ -42,7 +42,11 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
     protected function processTaxonomy(Taxonomy $taxonomy)
     {
         $data = [];
-        $data[$taxonomy->name]['taxonomy'] = $taxonomy;
+        $data[$taxonomy->name] = [
+            'id' => $taxonomy->id,
+            'taxonomy' => $taxonomy,
+            'terms' => []
+        ];
 
         if ($taxonomy->taxonomies()->count()) {
 
@@ -61,10 +65,6 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
         })->get();
 
         if (count($client_terms)) {
-            $data[$taxonomy->name] = [
-                'id' => $taxonomy->id,
-                'terms' => []
-            ];
 
             /** @var Term $term */
             foreach ($client_terms as $term) {
