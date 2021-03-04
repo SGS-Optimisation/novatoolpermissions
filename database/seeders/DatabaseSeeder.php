@@ -61,6 +61,7 @@ class DatabaseSeeder extends Seeder
         }
 
 
+        $this->call(MysgsClientAccountSeeder::class);
         $this->call(ClientAccountSeeder::class);
         $this->call(TaxonomySeeder::class);
         $this->call(FieldMappingSeeder::class);
@@ -68,9 +69,9 @@ class DatabaseSeeder extends Seeder
         if (app()->environment() === 'local') {
 
             /** @var ClientAccount $unilever */
-            $unilever = ClientAccount::whereRaw('LOWER(alias) LIKE "%unilever%"')->first();
-            $gsk = ClientAccount::whereRaw('LOWER(alias) LIKE "%gsk%"')->first();
-            $npp = ClientAccount::whereRaw('LOWER(alias) LIKE "%nestle%"')->first();
+            $unilever = ClientAccount::whereRaw('LOWER(name) LIKE "%unilever%"')->first();
+            $gsk = ClientAccount::whereRaw('LOWER(name) LIKE "%gsk%"')->first();
+            $npp = ClientAccount::whereRaw('LOWER(name) LIKE "%nestle%"')->first();
 
             $admin->teams()->create([
                 'name' => 'Admin\'s Team',
