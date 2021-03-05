@@ -21,59 +21,14 @@ class ClientAccountController extends Controller
     {
         \Log::debug('client account: ' . $client_account_slug);
 
-        $client_account = ClientAccount::whereSlug($client_account_slug)->first() ?? $request->user()->currentTeam->clientAccount;
-
-        /*if ($client_account && (!$client_account_slug || $client_account_slug == 'dashboard')) {
-            return redirect(route('dashboard', ['clientAccount' => $client_account->slug]));
-        }*/
+        $client_account = ClientAccount::withCount('rules')
+                ->whereSlug($client_account_slug)->first()
+            ?? $request->user()->currentTeam->clientAccount;
 
         return Jetstream::inertia()->render($request, 'ClientAccount/Dashboard', [
             'team' => $request->user()->currentTeam,
             'clientAccount' => $client_account,
-            'rulesCount' => $client_account->rules()->count(),
-        ]);
-    }
-
-
-    /**
-     * @param Request $request
-     * @param $client_account_slug
-     * @return \Inertia\Response
-     */
-    public function rules(Request $request, $client_account_slug)
-    {
-        $client_account = ClientAccount::whereSlug($client_account_slug)->first();
-
-        $term = $request->query('term');
-
-        $cacheTag = 'rules-' . $client_account_slug;
-        $tags = ['rules'];
-
-        if ($term) {
-            $cacheTag .=  '-' . $term;
-        }
-
-        $rules = Cache::tags($tags)->remember($cacheTag, 3600, function () use ($client_account, $term) {
-
-            $rules = $client_account->rules();
-
-            if($term){
-                $rules = $rules->whereHas('terms', function ($query) use ($term) {
-                    return $query->where('id', '=', $term);
-                });
-            }
-
-            $rules = $rules->get()->each(function ($rule) {
-                $rule->content = str_replace('<img', '<img loading="lazy"', $rule->content);
-            });
-
-            return $rules;
-        });
-
-        return Jetstream::inertia()->render($request, 'ClientAccount/ListRules', [
-            'team' => $request->user()->currentTeam,
-            'clientAccount' => $client_account,
-            'rules' => $rules //()->orderBy('updated_at', 'DESC')->paginate(50) ?? [],
+            'rulesCount' => $client_account->rules_count,
         ]);
     }
 

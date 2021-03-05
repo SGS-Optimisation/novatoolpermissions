@@ -4,6 +4,9 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-gray-50 pt-5">
                 <!--                <simple-pagination :data="rules"></simple-pagination>-->
 
+                <div v-if="search">
+                    <p>Showing rules for {{search}}</p>
+                </div>
                 <div v-for="rule in _.orderBy(rules, 'created_at', 'desc')">
                     <view-rule :rule="rule" :client-account="clientAccount"></view-rule>
 
@@ -24,6 +27,7 @@ export default {
         'clientAccount',
         'team',
         'rules',
+        'search',
     ],
 
     components: {

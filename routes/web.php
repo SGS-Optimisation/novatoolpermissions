@@ -70,7 +70,7 @@ Route::name('pm.')
                  */
                 Route::group(['prefix' => '/rules'], function () {
 
-                    Route::get('/', [ClientAccountController::class, 'rules'])
+                    Route::get('/', [RuleController::class, 'index'])
                         ->name('rules');
 
                     Route::get('/create', [RuleController::class, 'create'])
