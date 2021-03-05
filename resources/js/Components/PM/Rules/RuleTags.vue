@@ -2,7 +2,7 @@
     <div class="flex flex-shrink-0">
         <div v-for="(taxonomyTerms, taxonomy) in _.groupBy(rule.terms, function(item){
                             return item.taxonomy.name
-                        }) ">
+                        })">
 
             <div class="flex flex-col">
                 <div class="text-xs  bg-purple-400 m-2 text-white rounded-t-md mb-0 pl-1"
