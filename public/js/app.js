@@ -4883,118 +4883,10 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Layouts_ClientAccount__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Layouts/ClientAccount */ "./resources/js/Layouts/ClientAccount.vue");
 /* harmony import */ var _Components_PM_Rules_ListView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Components/PM/Rules/ListView */ "./resources/js/Components/PM/Rules/ListView.vue");
-<<<<<<< HEAD
 /* harmony import */ var vueisotope__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vueisotope */ "./node_modules/vueisotope/dist/vue_isotope.min.js");
 /* harmony import */ var vueisotope__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vueisotope__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
-=======
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['clientAccount', 'team', 'rules'],
-  components: {
-    ClientLayout: _Layouts_ClientAccount__WEBPACK_IMPORTED_MODULE_0__["default"],
-    ViewRule: _Components_PM_Rules_ListView__WEBPACK_IMPORTED_MODULE_1__["default"]
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Pages/ClientAccount/Overview.vue?vue&type=script&lang=js&":
-/*!****************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Pages/ClientAccount/Overview.vue?vue&type=script&lang=js& ***!
-  \****************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-/* harmony default export */ __webpack_exports__["default"] = ({
-  name: "Overview",
-  "props": ["clientAccount", "rulesCount"]
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Pages/Dashboard.vue?vue&type=script&lang=js&":
-/*!***************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Pages/Dashboard.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Layouts/AppLayout */ "./resources/js/Layouts/AppLayout.vue");
-/* harmony import */ var _Components_OP_JobSearchForm__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Components/OP/JobSearchForm */ "./resources/js/Components/OP/JobSearchForm.vue");
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['team'],
-  components: {
-    AppLayout: _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__["default"],
-    JobSearch: _Components_OP_JobSearchForm__WEBPACK_IMPORTED_MODULE_1__["default"]
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Pages/OP/JobRules.vue?vue&type=script&lang=js&":
-/*!*****************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Pages/OP/JobRules.vue?vue&type=script&lang=js& ***!
-  \*****************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Layouts/AppLayout */ "./resources/js/Layouts/AppLayout.vue");
-/* harmony import */ var _Jetstream_Input__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Jetstream/Input */ "./resources/js/Jetstream/Input.vue");
-/* harmony import */ var _Jetstream_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Jetstream/Button */ "./resources/js/Jetstream/Button.vue");
-/* harmony import */ var _Components_PM_Rules_ViewRule__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Components/PM/Rules/ViewRule */ "./resources/js/Components/PM/Rules/ViewRule.vue");
-/* harmony import */ var _Components_PM_Rules_ViewRuleItem__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Components/PM/Rules/ViewRuleItem */ "./resources/js/Components/PM/Rules/ViewRuleItem.vue");
-/* harmony import */ var _Components_OP_JobSearchForm__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Components/OP/JobSearchForm */ "./resources/js/Components/OP/JobSearchForm.vue");
-/* harmony import */ var masonry_layout__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! masonry-layout */ "./node_modules/masonry-layout/masonry.js");
-/* harmony import */ var masonry_layout__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(masonry_layout__WEBPACK_IMPORTED_MODULE_6__);
->>>>>>> 0fe9189d53f65aca7185420b58654b213b53ba3e
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -5072,12 +4964,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 
 
-
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['clientAccount', 'team', 'rules'],
   data: function data() {
     return {
-      allRules: _toConsumableArray(_.orderBy(this.rules, 'created_at')),
+      allRules: _toConsumableArray(_.orderBy(this.rules, 'created_at', 'desc')),
       sortOption: null,
       filterOption: null,
       filterText: "",
@@ -5113,14 +5004,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       return moment__WEBPACK_IMPORTED_MODULE_3___default()().subtract(3, 'months').isSameOrBefore(moment__WEBPACK_IMPORTED_MODULE_3___default()(itemElem.updated_at));
     };
   },
-  mounted: function mounted() {
-    var msnry = new masonry_layout__WEBPACK_IMPORTED_MODULE_6___default.a('.grid-masonry', {
-      // options
-      itemSelector: '.grid-masonry-item',
-      columnWidth: 200
-    });
-    msnry.layout();
-  },
   methods: {
     getOptions: function getOptions() {
       return {
@@ -5129,10 +5012,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           gutter: 10
         },
         getSortData: {
-          id: "id",
-          name: function name(itemElem) {
-            return itemElem.name.toLowerCase();
-          }
+          id: "id"
         },
         getFilterData: this.filterObject
       };
@@ -5221,6 +5101,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Components_PM_Rules_ViewRule__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Components/PM/Rules/ViewRule */ "./resources/js/Components/PM/Rules/ViewRule.vue");
 /* harmony import */ var _Components_PM_Rules_ViewRuleItem__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Components/PM/Rules/ViewRuleItem */ "./resources/js/Components/PM/Rules/ViewRuleItem.vue");
 /* harmony import */ var _Components_OP_JobSearchForm__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Components/OP/JobSearchForm */ "./resources/js/Components/OP/JobSearchForm.vue");
+/* harmony import */ var masonry_layout__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! masonry-layout */ "./node_modules/masonry-layout/masonry.js");
+/* harmony import */ var masonry_layout__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(masonry_layout__WEBPACK_IMPORTED_MODULE_6__);
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -5339,6 +5221,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['team', 'job', 'jobNumber', 'rules'],
   data: function data() {
@@ -5361,6 +5244,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         });
       }
     }
+  },
+  mounted: function mounted() {
+    var msnry = new masonry_layout__WEBPACK_IMPORTED_MODULE_6___default.a('.grid-masonry', {
+      // options
+      itemSelector: '.grid-masonry-item',
+      columnWidth: 200
+    });
+    msnry.layout();
   },
   methods: {
     newJobLoaded: function newJobLoaded() {

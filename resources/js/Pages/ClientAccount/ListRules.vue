@@ -74,7 +74,7 @@ export default {
 
     data() {
         return {
-            allRules: [ ..._.orderBy(this.rules, 'created_at') ],
+            allRules: [ ..._.orderBy(this.rules, 'created_at', 'desc') ],
             sortOption: null,
             filterOption: null,
             filterText: "",
@@ -108,7 +108,7 @@ export default {
     },
 
     methods: {
-        getOptions: function () {
+        getOptions() {
             return {
                 layoutMode: 'masonry',
                 masonry: {
@@ -116,9 +116,6 @@ export default {
                 },
                 getSortData: {
                     id: "id",
-                    name: (itemElem) => {
-                        return itemElem.name.toLowerCase();
-                    }
                 },
                 getFilterData: this.filterObject
             }
