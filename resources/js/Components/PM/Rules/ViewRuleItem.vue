@@ -1,6 +1,6 @@
 <template>
-    <div class="mx-4 grid-masonry-item flex">
-        <div class="flex-row w-full">
+    <div class="mx-4 flex">
+        <div class="w-full">
             <div class="text-sm font-medium text-gray-900">
                 {{ rule.name }}
             </div>

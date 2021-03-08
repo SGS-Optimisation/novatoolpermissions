@@ -86,7 +86,7 @@ export default {
     created() {
         this.allRules.forEach(rule => {
             rule.terms.forEach(term => {
-                if (!this.taxonomies.includes(term.taxonomy.name) && term.taxonomy.parent.name === 'Job Categorizations') {
+                if (!this.taxonomies.includes(term.taxonomy.name)) {
                     this.taxonomies.push(term.taxonomy.name);
                 }
             });

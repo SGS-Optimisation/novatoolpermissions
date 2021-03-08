@@ -4981,7 +4981,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
     this.allRules.forEach(function (rule) {
       rule.terms.forEach(function (term) {
-        if (!_this.taxonomies.includes(term.taxonomy.name) && term.taxonomy.parent.name === 'Job Categorizations') {
+        if (!_this.taxonomies.includes(term.taxonomy.name)) {
           _this.taxonomies.push(term.taxonomy.name);
         }
       });
@@ -5101,8 +5101,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Components_PM_Rules_ViewRule__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Components/PM/Rules/ViewRule */ "./resources/js/Components/PM/Rules/ViewRule.vue");
 /* harmony import */ var _Components_PM_Rules_ViewRuleItem__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Components/PM/Rules/ViewRuleItem */ "./resources/js/Components/PM/Rules/ViewRuleItem.vue");
 /* harmony import */ var _Components_OP_JobSearchForm__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Components/OP/JobSearchForm */ "./resources/js/Components/OP/JobSearchForm.vue");
-/* harmony import */ var masonry_layout__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! masonry-layout */ "./node_modules/masonry-layout/masonry.js");
-/* harmony import */ var masonry_layout__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(masonry_layout__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var vueisotope__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vueisotope */ "./node_modules/vueisotope/dist/vue_isotope.min.js");
+/* harmony import */ var vueisotope__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(vueisotope__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_7__);
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -5213,12 +5215,30 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 
 
 
+
+ //import Masonry from 'masonry-layout'
 
 
 
@@ -5228,10 +5248,16 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     return {
       searchJobKey: this.jobNumber,
       searching: false,
-      searchedRules: _toConsumableArray(this.rules),
+      searchedRules: _toConsumableArray(_.orderBy(this.rules, 'created_at', 'desc')),
       isOpen: false,
       currentRule: null,
-      rulesUpdated: false
+      rulesUpdated: false,
+      // isotope integration
+      sortOption: null,
+      filterOption: null,
+      filterText: "",
+      filterObject: {},
+      taxonomies: []
     };
   },
   watch: {
@@ -5245,15 +5271,55 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
     }
   },
-  mounted: function mounted() {
-    var msnry = new masonry_layout__WEBPACK_IMPORTED_MODULE_6___default.a('.grid-masonry', {
-      // options
-      itemSelector: '.grid-masonry-item',
-      columnWidth: 200
+  // mounted() {
+  //     var msnry = new Masonry( '.grid-masonry', {
+  //         // options
+  //         itemSelector: '.grid-masonry-item',
+  //         columnWidth: 200,
+  //     });
+  //     msnry.layout();
+  // },
+  created: function created() {
+    var _this2 = this;
+
+    this.searchedRules.forEach(function (rule) {
+      rule.terms.forEach(function (term) {
+        if (!_this2.taxonomies.includes(term.taxonomy.name)) {
+          _this2.taxonomies.push(term.taxonomy.name);
+        }
+      });
+
+      _this2.taxonomies.forEach(function (taxonomy) {
+        _this2.filterObject[taxonomy] = function (itemElem) {
+          console.log(itemElem, taxonomy);
+          return itemElem.terms.some(function (term) {
+            return term.taxonomy.name === taxonomy;
+          });
+        };
+      });
     });
-    msnry.layout();
+
+    this.filterObject['isNew'] = function (itemElem) {
+      return moment__WEBPACK_IMPORTED_MODULE_7___default()().subtract(3, 'months').isSameOrBefore(moment__WEBPACK_IMPORTED_MODULE_7___default()(itemElem.created_at));
+    };
+
+    this.filterObject['isUpdated'] = function (itemElem) {
+      return moment__WEBPACK_IMPORTED_MODULE_7___default()().subtract(3, 'months').isSameOrBefore(moment__WEBPACK_IMPORTED_MODULE_7___default()(itemElem.updated_at));
+    };
   },
   methods: {
+    getOptions: function getOptions() {
+      return {
+        layoutMode: 'masonry',
+        // masonry: {
+        //     gutter: 10,
+        // },
+        getSortData: {
+          id: "id"
+        },
+        getFilterData: this.filterObject
+      };
+    },
     newJobLoaded: function newJobLoaded() {
       this.searchedRules = _toConsumableArray(this.rules);
     },
@@ -5269,7 +5335,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       this.isOpen = false;
     },
     search: function search() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this.searchJobKey && this.searchJobKey !== '') {
         this.searching = true;
@@ -5277,11 +5343,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           url: route("rule_search", this.searchJobKey),
           method: "GET"
         }).then(function (result) {
-          _this2.searchedRules = result.data;
-          _this2.searching = false;
+          _this3.searchedRules = result.data;
+          _this3.searching = false;
         })["catch"](function (err) {
           console.log(err);
-          _this2.searching = false;
+          _this3.searching = false;
         });
       }
     }
@@ -5294,7 +5360,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     JetButton: _Jetstream_Button__WEBPACK_IMPORTED_MODULE_2__["default"],
     JetInput: _Jetstream_Input__WEBPACK_IMPORTED_MODULE_1__["default"],
     ViewRule: _Components_PM_Rules_ViewRule__WEBPACK_IMPORTED_MODULE_3__["default"],
-    JobSearch: _Components_OP_JobSearchForm__WEBPACK_IMPORTED_MODULE_5__["default"]
+    JobSearch: _Components_OP_JobSearchForm__WEBPACK_IMPORTED_MODULE_5__["default"],
+    isotope: vueisotope__WEBPACK_IMPORTED_MODULE_6___default.a
   }
 });
 
@@ -71760,8 +71827,8 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "mx-4 grid-masonry-item flex" }, [
-    _c("div", { staticClass: "flex-row w-full" }, [
+  return _c("div", { staticClass: "mx-4 flex" }, [
+    _c("div", { staticClass: "w-full" }, [
       _c("div", { staticClass: "text-sm font-medium text-gray-900" }, [
         _vm._v("\n            " + _vm._s(_vm.rule.name) + "\n        ")
       ]),
@@ -75669,9 +75736,9 @@ var render = function() {
                         },
                         [
                           _vm._v(
-                            "\n                        Rules for job " +
+                            "\n                    Rules for job " +
                               _vm._s(_vm.job.job_number) +
-                              "\n                    "
+                              "\n                "
                           )
                         ]
                       )
@@ -75719,7 +75786,7 @@ var render = function() {
                 _c("span", { staticClass: "inline-block align-middle mr-8" }, [
                   _c("b", { staticClass: "capitalize" }, [_vm._v("Hello!")]),
                   _vm._v(
-                    " Rules list updated do you want to check?\n                "
+                    " Rules list updated do you want to check?\n            "
                   )
                 ]),
                 _vm._v(" "),
@@ -75730,7 +75797,7 @@ var render = function() {
                       "absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none",
                     on: { click: _vm.reloadPage }
                   },
-                  [_vm._v("\n                    Reload\n                ")]
+                  [_vm._v("\n                Reload\n            ")]
                 )
               ]
             )
@@ -75740,28 +75807,141 @@ var render = function() {
           "div",
           {
             staticClass:
-              "flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mt-1"
+              "flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mt-2"
           },
-          _vm._l(
-            _vm._.orderBy(_vm.searchedRules, "created_at", "desc"),
-            function(rule) {
-              return _c(
-                "div",
-                {
-                  staticClass:
-                    "w-full overflow-hidden sm:my-px sm:px-px sm:w-full md:my-px md:px-px md:w-full lg:my-px lg:px-px lg:w-1/3 xl:my-px xl:px-px xl:w-1/3 shadow-md p-3 rounded grid-masonry"
+          [
+            _c(
+              "div",
+              { staticClass: "flex text-xs", attrs: { role: "group" } },
+              [
+                _c(
+                  "button",
+                  {
+                    class: [
+                      {
+                        "bg-blue-500 text-white": _vm.filterOption === "isNew"
+                      },
+                      {
+                        "bg-white text-blue-500": _vm.filterOption !== "isNew"
+                      },
+                      "hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg"
+                    ],
+                    on: {
+                      click: function($event) {
+                        return _vm.$refs.cpt.filter("isNew")
+                      }
+                    }
+                  },
+                  [_vm._v("\n                    New\n                ")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    class: [
+                      {
+                        "bg-blue-500 text-white":
+                          _vm.filterOption === "isUpdated"
+                      },
+                      {
+                        "bg-white text-blue-500":
+                          _vm.filterOption !== "isUpdated"
+                      },
+                      "hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline"
+                    ],
+                    on: {
+                      click: function($event) {
+                        return _vm.$refs.cpt.filter("isUpdated")
+                      }
+                    }
+                  },
+                  [_vm._v("\n                    Updated\n                ")]
+                ),
+                _vm._v(" "),
+                _vm._l(_vm.taxonomies, function(taxonomy) {
+                  return _c(
+                    "button",
+                    {
+                      class: [
+                        {
+                          "bg-blue-500 text-white":
+                            _vm.filterOption === taxonomy
+                        },
+                        {
+                          "bg-white text-blue-500":
+                            _vm.filterOption !== taxonomy
+                        },
+                        "hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline"
+                      ],
+                      on: {
+                        click: function($event) {
+                          return _vm.$refs.cpt.filter(taxonomy)
+                        }
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n                    " +
+                          _vm._s(taxonomy) +
+                          "\n                "
+                      )
+                    ]
+                  )
+                }),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass:
+                      "bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg",
+                    on: {
+                      click: function($event) {
+                        return _vm.$refs.cpt.unfilter()
+                      }
+                    }
+                  },
+                  [_vm._v("\n                    Unfilter\n                ")]
+                )
+              ],
+              2
+            ),
+            _vm._v(" "),
+            _c(
+              "isotope",
+              {
+                ref: "cpt",
+                staticClass: "w-full m-2",
+                attrs: {
+                  id: "root_isotope",
+                  options: _vm.getOptions(),
+                  list: _vm.searchedRules
                 },
-                [
-                  _c("view-rule-item", {
-                    attrs: { rule: rule },
-                    on: { "on-click-view": _vm.openModal }
-                  })
-                ],
-                1
-              )
-            }
-          ),
-          0
+                on: {
+                  filter: function($event) {
+                    _vm.filterOption = arguments[0]
+                  },
+                  sort: function($event) {
+                    _vm.sortOption = arguments[0]
+                  }
+                }
+              },
+              _vm._l(_vm.searchedRules, function(rule, ruleIndex) {
+                return _c(
+                  "div",
+                  { key: ruleIndex, staticClass: "w-1/3 rounded shadow p-2" },
+                  [
+                    _c("view-rule-item", {
+                      attrs: { rule: rule },
+                      on: { "on-click-view": _vm.openModal }
+                    })
+                  ],
+                  1
+                )
+              }),
+              0
+            )
+          ],
+          1
         )
       ]),
       _vm._v(" "),
@@ -75838,7 +76018,7 @@ var render = function() {
                                         },
                                         [
                                           _vm._v(
-                                            "\n                                            Close\n                                        "
+                                            "\n                                        Close\n                                    "
                                           )
                                         ]
                                       )
@@ -75879,7 +76059,7 @@ var render = function() {
                                   },
                                   [
                                     _vm._v(
-                                      "\n                                    Close\n                                "
+                                      "\n                                Close\n                            "
                                     )
                                   ]
                                 )
