@@ -2881,8 +2881,11 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     onSelectTerm: function onSelectTerm(term) {
       this.selected = term;
-      this.open = false;
+      this.hideList();
       this.$emit('on-change-filter', this.taxonomy[0], this.selected);
+    },
+    hideList: function hideList() {
+      this.open = false;
     }
   }
 });
@@ -71837,169 +71840,182 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", {}, [
-    _c(
-      "label",
-      {
-        staticClass: "block text-xs font-medium text-gray-700",
-        attrs: { id: "listbox-label" }
-      },
-      [_vm._v("\n        " + _vm._s(_vm.taxonomy[0]) + "\n    ")]
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "mt-1 relative" }, [
-      _c(
-        "button",
+  return _c(
+    "div",
+    {
+      directives: [
         {
-          staticClass:
-            "relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-xs",
-          attrs: {
-            type: "button",
-            "aria-haspopup": "listbox",
-            "aria-expanded": "true",
-            "aria-labelledby": "listbox-label"
-          },
-          on: {
-            click: function($event) {
-              _vm.open = !_vm.open
-            }
-          }
+          name: "click-outside",
+          rawName: "v-click-outside",
+          value: _vm.hideList,
+          expression: "hideList"
+        }
+      ]
+    },
+    [
+      _c(
+        "label",
+        {
+          staticClass: "block text-xs font-medium text-gray-700",
+          attrs: { id: "listbox-label" }
         },
-        [
-          _c("span", { staticClass: "flex items-center" }, [
-            _c("span", { staticClass: "ml-3 block truncate" }, [
-              _vm._v(
-                "\n                  " +
-                  _vm._s(_vm.selected ? _vm.selected : "None") +
-                  "\n                "
-              )
-            ])
-          ]),
-          _vm._v(" "),
-          _c(
-            "span",
-            {
-              staticClass:
-                "ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
-            },
-            [
-              _c(
-                "svg",
-                {
-                  staticClass: "h-5 w-5 text-gray-400",
-                  attrs: {
-                    xmlns: "http://www.w3.org/2000/svg",
-                    viewBox: "0 0 20 20",
-                    fill: "currentColor",
-                    "aria-hidden": "true"
-                  }
-                },
-                [
-                  _c("path", {
-                    attrs: {
-                      "fill-rule": "evenodd",
-                      d:
-                        "M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z",
-                      "clip-rule": "evenodd"
-                    }
-                  })
-                ]
-              )
-            ]
-          )
-        ]
+        [_vm._v("\n        " + _vm._s(_vm.taxonomy[0]) + "\n    ")]
       ),
       _vm._v(" "),
-      _vm.open
-        ? _c(
-            "div",
-            {
-              staticClass:
-                "absolute mt-1 w-full rounded-md bg-white shadow-lg z-50"
+      _c("div", { staticClass: "mt-1 relative" }, [
+        _c(
+          "button",
+          {
+            staticClass:
+              "relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-xs",
+            attrs: {
+              type: "button",
+              "aria-haspopup": "listbox",
+              "aria-expanded": "true",
+              "aria-labelledby": "listbox-label"
             },
-            [
-              _c(
-                "ul",
-                {
-                  staticClass:
-                    "max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-xs",
-                  attrs: {
-                    tabindex: "-1",
-                    role: "listbox",
-                    "aria-labelledby": "listbox-label"
-                  }
-                },
-                _vm._l(_vm.taxonomy[1], function(term) {
-                  return _c(
-                    "li",
-                    {
-                      staticClass:
-                        "text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9",
-                      attrs: { id: "listbox-item-0", role: "option" },
-                      on: {
-                        click: function($event) {
-                          return _vm.onSelectTerm(term)
-                        }
+            on: {
+              click: function($event) {
+                _vm.open = !_vm.open
+              }
+            }
+          },
+          [
+            _c("span", { staticClass: "flex items-center" }, [
+              _c("span", { staticClass: "ml-3 block truncate" }, [
+                _vm._v(
+                  "\n                  " +
+                    _vm._s(_vm.selected ? _vm.selected : "None") +
+                    "\n                "
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c(
+              "span",
+              {
+                staticClass:
+                  "ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
+              },
+              [
+                _c(
+                  "svg",
+                  {
+                    staticClass: "h-5 w-5 text-gray-400",
+                    attrs: {
+                      xmlns: "http://www.w3.org/2000/svg",
+                      viewBox: "0 0 20 20",
+                      fill: "currentColor",
+                      "aria-hidden": "true"
+                    }
+                  },
+                  [
+                    _c("path", {
+                      attrs: {
+                        "fill-rule": "evenodd",
+                        d:
+                          "M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z",
+                        "clip-rule": "evenodd"
                       }
-                    },
-                    [
-                      _c("div", { staticClass: "flex items-center" }, [
-                        _c(
-                          "span",
-                          { staticClass: "ml-3 block font-normal truncate" },
-                          [
-                            _vm._v(
-                              "\n                          " +
-                                _vm._s(term) +
-                                "\n                        "
-                            )
-                          ]
-                        )
-                      ]),
-                      _vm._v(" "),
-                      term === _vm.selected
-                        ? _c(
+                    })
+                  ]
+                )
+              ]
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _vm.open
+          ? _c(
+              "div",
+              {
+                staticClass:
+                  "absolute mt-1 w-full rounded-md bg-white shadow-lg z-50"
+              },
+              [
+                _c(
+                  "ul",
+                  {
+                    staticClass:
+                      "max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-xs",
+                    attrs: {
+                      tabindex: "-1",
+                      role: "listbox",
+                      "aria-labelledby": "listbox-label"
+                    }
+                  },
+                  _vm._l(_vm.taxonomy[1], function(term) {
+                    return _c(
+                      "li",
+                      {
+                        staticClass:
+                          "text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9",
+                        attrs: { id: "listbox-item-0", role: "option" },
+                        on: {
+                          click: function($event) {
+                            return _vm.onSelectTerm(term)
+                          }
+                        }
+                      },
+                      [
+                        _c("div", { staticClass: "flex items-center" }, [
+                          _c(
                             "span",
-                            {
-                              staticClass:
-                                "absolute inset-y-0 right-0 flex items-center pr-4"
-                            },
+                            { staticClass: "ml-3 block font-normal truncate" },
                             [
-                              _c(
-                                "svg",
-                                {
-                                  staticClass: "h-5 w-5",
-                                  attrs: {
-                                    xmlns: "http://www.w3.org/2000/svg",
-                                    viewBox: "0 0 20 20",
-                                    fill: "currentColor",
-                                    "aria-hidden": "true"
-                                  }
-                                },
-                                [
-                                  _c("path", {
-                                    attrs: {
-                                      "fill-rule": "evenodd",
-                                      d:
-                                        "M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z",
-                                      "clip-rule": "evenodd"
-                                    }
-                                  })
-                                ]
+                              _vm._v(
+                                "\n                          " +
+                                  _vm._s(term) +
+                                  "\n                        "
                               )
                             ]
                           )
-                        : _vm._e()
-                    ]
-                  )
-                }),
-                0
-              )
-            ]
-          )
-        : _vm._e()
-    ])
-  ])
+                        ]),
+                        _vm._v(" "),
+                        term === _vm.selected
+                          ? _c(
+                              "span",
+                              {
+                                staticClass:
+                                  "absolute inset-y-0 right-0 flex items-center pr-4"
+                              },
+                              [
+                                _c(
+                                  "svg",
+                                  {
+                                    staticClass: "h-5 w-5",
+                                    attrs: {
+                                      xmlns: "http://www.w3.org/2000/svg",
+                                      viewBox: "0 0 20 20",
+                                      fill: "currentColor",
+                                      "aria-hidden": "true"
+                                    }
+                                  },
+                                  [
+                                    _c("path", {
+                                      attrs: {
+                                        "fill-rule": "evenodd",
+                                        d:
+                                          "M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z",
+                                        "clip-rule": "evenodd"
+                                      }
+                                    })
+                                  ]
+                                )
+                              ]
+                            )
+                          : _vm._e()
+                      ]
+                    )
+                  }),
+                  0
+                )
+              ]
+            )
+          : _vm._e()
+      ])
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -96734,6 +96750,23 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(_inertiajs_inertia_vue__WEBPACK_I
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(laravel_jetstream__WEBPACK_IMPORTED_MODULE_2__["InertiaForm"]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(portal_vue__WEBPACK_IMPORTED_MODULE_3___default.a);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('v-select', vue_select__WEBPACK_IMPORTED_MODULE_5___default.a);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.directive('click-outside', {
+  bind: function bind(el, binding, vnode) {
+    var vm = vnode.context;
+    var callback = binding.value;
+
+    el.clickOutsideEvent = function (event) {
+      if (!(el == event.target || el.contains(event.target))) {
+        return callback.call(vm, event);
+      }
+    };
+
+    document.body.addEventListener('click', el.clickOutsideEvent);
+  },
+  unbind: function unbind(el) {
+    document.body.removeEventListener('click', el.clickOutsideEvent);
+  }
+});
 var app = document.getElementById('app');
 new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   render: function render(h) {

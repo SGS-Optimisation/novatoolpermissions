@@ -1,5 +1,5 @@
 <template>
-    <div class="">
+    <div v-click-outside="hideList">
         <label id="listbox-label" class="block text-xs font-medium text-gray-700">
             {{ taxonomy[0] }}
         </label>
@@ -81,8 +81,11 @@ export default {
     methods:{
         onSelectTerm(term){
             this.selected = term;
-            this.open = false;
+            this.hideList();
             this.$emit('on-change-filter', this.taxonomy[0], this.selected);
+        },
+        hideList(){
+            this.open = false
         }
     }
 }
