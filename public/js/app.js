@@ -2915,12 +2915,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "TaxonomyFilter",
-  props: ['taxonomy'],
+  props: ['taxonomy', 'selectedValue'],
   data: function data() {
     return {
-      selected: null,
+      selected: this.selectedValue !== '' ? this.selectedValue : null,
       open: false
     };
+  },
+  watch: {
+    selectedValue: function selectedValue(value) {
+      console.log(value);
+      this.selected = value !== '' ? value : null;
+    }
   },
   methods: {
     onSelectTerm: function onSelectTerm(term) {
@@ -5035,6 +5041,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _Components_PM_Rules_TaxonomyFilter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Components/PM/Rules/TaxonomyFilter */ "./resources/js/Components/PM/Rules/TaxonomyFilter.vue");
 /* harmony import */ var _Components_PM_Rules_FilterCondition__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Components/PM/Rules/FilterCondition */ "./resources/js/Components/PM/Rules/FilterCondition.vue");
+/* harmony import */ var _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/Jetstream/DangerButton */ "./resources/js/Jetstream/DangerButton.vue");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -5108,6 +5115,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -5204,6 +5218,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     onChangeFilterCondition: function onChangeFilterCondition(condition) {
       this.filterCondition = condition;
       this.$refs.cpt.filter('filterByTaxonomyTerm');
+    },
+    clearAllFilters: function clearAllFilters() {
+      for (var taxonomy in this.taxonomies) {
+        this.taxonomies[taxonomy] = '';
+      }
+
+      this.$refs.cpt.unfilter();
     }
   },
   components: {
@@ -5211,7 +5232,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     ClientLayout: _Layouts_ClientAccount__WEBPACK_IMPORTED_MODULE_0__["default"],
     ViewRule: _Components_PM_Rules_ListView__WEBPACK_IMPORTED_MODULE_1__["default"],
     isotope: vueisotope__WEBPACK_IMPORTED_MODULE_2___default.a,
-    TaxonomyFilter: _Components_PM_Rules_TaxonomyFilter__WEBPACK_IMPORTED_MODULE_4__["default"]
+    TaxonomyFilter: _Components_PM_Rules_TaxonomyFilter__WEBPACK_IMPORTED_MODULE_4__["default"],
+    JetButton: _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_6__["default"]
   }
 });
 
@@ -75959,7 +75981,10 @@ var render = function() {
                     ) {
                       return _c("taxonomy-filter", {
                         key: taxonomyIndex,
-                        attrs: { taxonomy: taxonomy },
+                        attrs: {
+                          taxonomy: taxonomy,
+                          "selected-value": _vm.taxonomies[taxonomy[0]]
+                        },
                         on: { "on-change-filter": _vm.filterByTaxonomyTerm }
                       })
                     }),
@@ -75969,7 +75994,23 @@ var render = function() {
                         "on-change-filter-condition":
                           _vm.onChangeFilterCondition
                       }
-                    })
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "jet-button",
+                      {
+                        nativeOn: {
+                          click: function($event) {
+                            return _vm.clearAllFilters($event)
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                    Reset All\n                "
+                        )
+                      ]
+                    )
                   ],
                   2
                 ),

@@ -71,11 +71,17 @@
 <script>
 export default {
     name: "TaxonomyFilter",
-    props: [ 'taxonomy' ],
+    props: [ 'taxonomy', 'selectedValue' ],
     data(){
         return {
-            selected: null,
+            selected: this.selectedValue !== '' ? this.selectedValue : null,
             open: false
+        }
+    },
+    watch:{
+        selectedValue(value){
+            console.log(value)
+            this.selected = value !== '' ? value : null
         }
     },
     methods:{

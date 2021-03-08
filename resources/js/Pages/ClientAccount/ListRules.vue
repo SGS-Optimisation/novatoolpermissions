@@ -5,9 +5,15 @@
                 <!-- <simple-pagination :data="rules"></simple-pagination> -->
                 <div class="grid grid-cols-5 gap-1">
                     <taxonomy-filter v-for="(taxonomy, taxonomyIndex) in Object.entries(termsByTaxonomies)"
-                                     :taxonomy="taxonomy" :key="taxonomyIndex"
+                                     :taxonomy="taxonomy"
+                                     :selected-value="taxonomies[taxonomy[0]]"
+                                     :key="taxonomyIndex"
                                      @on-change-filter="filterByTaxonomyTerm"/>
                     <filter-condition @on-change-filter-condition="onChangeFilterCondition"/>
+
+                    <jet-button @click.native="clearAllFilters">
+                        Reset All
+                    </jet-button>
                 </div>
                 <div id="filter" class="m-2">
                     <!--                    <div class="bg-white flex shadow p-2 mb-2">-->
@@ -66,6 +72,7 @@ import isotope from 'vueisotope'
 import moment from 'moment'
 import TaxonomyFilter from '@/Components/PM/Rules/TaxonomyFilter'
 import FilterCondition from "@/Components/PM/Rules/FilterCondition";
+import JetButton from "@/Jetstream/DangerButton";
 
 export default {
     props: [
@@ -155,6 +162,13 @@ export default {
         onChangeFilterCondition(condition) {
             this.filterCondition = condition;
             this.$refs.cpt.filter('filterByTaxonomyTerm')
+        },
+
+        clearAllFilters(){
+            for (const taxonomy in this.taxonomies) {
+                this.taxonomies[taxonomy] = '';
+            }
+            this.$refs.cpt.unfilter();
         }
     },
 
@@ -163,7 +177,8 @@ export default {
         ClientLayout,
         ViewRule,
         isotope,
-        TaxonomyFilter
+        TaxonomyFilter,
+        JetButton
     },
 }
 </script>
