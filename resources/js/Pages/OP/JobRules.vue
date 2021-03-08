@@ -35,38 +35,46 @@
 
             <div class="flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mt-2">
 
-                <div class="flex text-xs" role="group">
-                    <button @click="$refs.cpt.filter('isNew')"
+                <div class="flex text-xs m-2" role="group">
+                    <button @click="filterByNew"
                             :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
                         New
                     </button>
-                    <button @click="$refs.cpt.filter('isUpdated')"
+                    <button @click="filterByUpdated"
                             :class="[{ 'bg-blue-500 text-white' : filterOption === 'isUpdated' }, { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
                         Updated
                     </button>
                     <button
                         v-for="taxonomy in taxonomies"
-                        @click="$refs.cpt.filter(taxonomy)"
+                        @click="filterByTaxonomy(taxonomy)"
                         :class="[{ 'bg-blue-500 text-white' : filterOption === taxonomy }, { 'bg-white text-blue-500' : filterOption !== taxonomy  }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
                         {{ taxonomy }}
                     </button>
                     <button @click="$refs.cpt.unfilter()"
-                            class="bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
+                            class="bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
                         Unfilter
                     </button>
                 </div>
 
-                <isotope ref="cpt" id="root_isotope" class="w-full m-2" :options='getOptions()' :list="searchedRules"
+                <!--                <isotope ref="cpt" id="root_isotope" class="w-full m-2" :options='getOptions()' :list="searchedRules"-->
+                <!--                         @filter="filterOption=arguments[0]" @sort="sortOption=arguments[0]">-->
+                <!--                    <div class="w-1/3 rounded shadow-md hover:shadow-lg cursor-pointer p-2"-->
+                <!--                         v-for="(rule, ruleIndex) in searchedRules" :key="ruleIndex">-->
+                <!--                        <view-rule-item :rule="rule" @on-click-view="openModal"/>-->
+                <!--                    </div>-->
+                <!--                </isotope>-->
+
+                <isotope ref="cpt" id="root_isotope" class="w-full m-2" :options='getOptions()'
+                         :list="Object.entries(rulesByTaxonomies)"
                          @filter="filterOption=arguments[0]" @sort="sortOption=arguments[0]">
-                    <div class="w-1/3 rounded shadow p-2" v-for="(rule, ruleIndex) in searchedRules" :key="ruleIndex">
-                        <view-rule-item :rule="rule" @on-click-view="openModal"/>
+                    <div class="w-1/3 rounded shadow-md hover:shadow-lg cursor-pointer p-2"
+                         v-for="(rule, ruleIndex) in Object.entries(rulesByTaxonomies)" :key="ruleIndex">
+                        <view-rule-item :rule="rule" :filter-flag="filterFlag" @on-click-view="openModal"/>
                     </div>
                 </isotope>
 
             </div>
-
         </div>
-
 
         <div class="fixed z-10 inset-0 overflow-y-auto ease-out duration-400" v-if="isOpen">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -121,7 +129,6 @@ import JetInput from '@/Jetstream/Input'
 import ViewRule from '@/Components/PM/Rules/ViewRule'
 import ViewRuleItem from "@/Components/PM/Rules/ViewRuleItem";
 import JobSearch from "@/Components/OP/JobSearchForm";
-//import Masonry from 'masonry-layout'
 import isotope from 'vueisotope'
 import moment from "moment";
 
@@ -148,6 +155,10 @@ export default {
             filterText: "",
             filterObject: {},
             taxonomies: [],
+
+            rulesByTaxonomies: {},
+
+            filterFlag: null
         }
     },
 
@@ -162,36 +173,35 @@ export default {
         }
     },
 
-    // mounted() {
-    //     var msnry = new Masonry( '.grid-masonry', {
-    //         // options
-    //         itemSelector: '.grid-masonry-item',
-    //         columnWidth: 200,
-    //     });
-    //     msnry.layout();
-    // },
-
     created() {
+
         this.searchedRules.forEach(rule => {
             rule.terms.forEach(term => {
-                if (!this.taxonomies.includes(term.taxonomy.name)) {
-                    this.taxonomies.push(term.taxonomy.name);
+                if (term.taxonomy.parent.name === 'Job Categorizations') {
+                    if (!this.taxonomies.includes(term.taxonomy.name)) {
+                        this.taxonomies.push(term.taxonomy.name);
+                    }
+
+                    if (this.rulesByTaxonomies[term.taxonomy.name] === undefined) {
+                        this.rulesByTaxonomies[term.taxonomy.name] = [];
+                    }
+
+                    this.rulesByTaxonomies[term.taxonomy.name].push(rule);
                 }
             });
             this.taxonomies.forEach(taxonomy => {
                 this.filterObject[taxonomy] = itemElem => {
-                    console.log(itemElem, taxonomy)
-                    return itemElem.terms.some(term => term.taxonomy.name === taxonomy);
+                    return itemElem[0] === taxonomy;
                 }
             });
         });
 
         this.filterObject['isNew'] = (itemElem) => {
-            return moment().subtract(3, 'months').isSameOrBefore(moment(itemElem.created_at));
+            return itemElem[1].filter(rule => moment().subtract(3, 'months').isSameOrBefore(moment(rule.created_at))).length > 0;
         };
 
         this.filterObject['isUpdated'] = (itemElem) => {
-            return moment().subtract(3, 'months').isSameOrBefore(moment(itemElem.updated_at));
+            return itemElem[1].filter(rule => moment().subtract(3, 'months').isSameOrBefore(moment(rule.updated_at))).length > 0;
         };
     },
 
@@ -200,7 +210,7 @@ export default {
             return {
                 layoutMode: 'masonry',
                 // masonry: {
-                //     gutter: 10,
+                //     gutter: 2,
                 // },
                 getSortData: {
                     id: "id",
@@ -229,15 +239,26 @@ export default {
                     url: route("rule_search", this.searchJobKey),
                     method: "GET",
                 })
-                    .then(result => {
-                        this.searchedRules = result.data;
-                        this.searching = false;
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        this.searching = false;
-                    });
+                .then(result => {
+                    this.searchedRules = result.data;
+                    this.searching = false;
+                })
+                .catch(err => {
+                    this.searching = false;
+                });
             }
+        },
+        filterByNew() {
+            this.$refs.cpt.filter('isNew');
+            this.filterFlag = "new";
+        },
+        filterByUpdated() {
+            this.$refs.cpt.filter('isUpdated');
+            this.filterFlag = "updated";
+        },
+        filterByTaxonomy(taxonomy) {
+            this.$refs.cpt.filter(taxonomy)
+            this.filterFlag = null;
         }
     },
 

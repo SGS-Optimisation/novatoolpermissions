@@ -2893,6 +2893,20 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_0__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 //
 //
 //
@@ -2910,9 +2924,39 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "ViewRuleItem",
-  props: ['rule']
+  props: ['rule', 'filterFlag'],
+  computed: {
+    taxonomyRules: function taxonomyRules() {
+      var _this = this;
+
+      return _toConsumableArray(this.filterFlag ? this.rule[1].filter(function (rule) {
+        var time = _this.filterFlag === 'updated' ? moment__WEBPACK_IMPORTED_MODULE_0___default()(rule.updated_at) : moment__WEBPACK_IMPORTED_MODULE_0___default()(rule.created_at);
+        return moment__WEBPACK_IMPORTED_MODULE_0___default()().subtract(3, 'months').isSameOrBefore(time);
+      }) : this.rule[1]);
+    }
+  } // created(){
+  //     if(this.filterFlag) {
+  //         this.taxonomyRules = this.rule[1].filter(rule => {
+  //             let time = this.filterFlag === 'updated' ? moment(rule.updated_at) : moment(rule.created_at)
+  //             return moment().subtract(3, 'months').isSameOrBefore(time)
+  //         })
+  //     } else {
+  //         this.taxonomyRules = this.rule[1]
+  //     }
+  // }
+
 });
 
 /***/ }),
@@ -5231,6 +5275,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -5238,7 +5290,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 
 
- //import Masonry from 'masonry-layout'
 
 
 
@@ -5257,7 +5308,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       filterOption: null,
       filterText: "",
       filterObject: {},
-      taxonomies: []
+      taxonomies: [],
+      rulesByTaxonomies: {},
+      filterFlag: null
     };
   },
   watch: {
@@ -5271,40 +5324,41 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
     }
   },
-  // mounted() {
-  //     var msnry = new Masonry( '.grid-masonry', {
-  //         // options
-  //         itemSelector: '.grid-masonry-item',
-  //         columnWidth: 200,
-  //     });
-  //     msnry.layout();
-  // },
   created: function created() {
     var _this2 = this;
 
     this.searchedRules.forEach(function (rule) {
       rule.terms.forEach(function (term) {
-        if (!_this2.taxonomies.includes(term.taxonomy.name)) {
-          _this2.taxonomies.push(term.taxonomy.name);
+        if (term.taxonomy.parent.name === 'Job Categorizations') {
+          if (!_this2.taxonomies.includes(term.taxonomy.name)) {
+            _this2.taxonomies.push(term.taxonomy.name);
+          }
+
+          if (_this2.rulesByTaxonomies[term.taxonomy.name] === undefined) {
+            _this2.rulesByTaxonomies[term.taxonomy.name] = [];
+          }
+
+          _this2.rulesByTaxonomies[term.taxonomy.name].push(rule);
         }
       });
 
       _this2.taxonomies.forEach(function (taxonomy) {
         _this2.filterObject[taxonomy] = function (itemElem) {
-          console.log(itemElem, taxonomy);
-          return itemElem.terms.some(function (term) {
-            return term.taxonomy.name === taxonomy;
-          });
+          return itemElem[0] === taxonomy;
         };
       });
     });
 
     this.filterObject['isNew'] = function (itemElem) {
-      return moment__WEBPACK_IMPORTED_MODULE_7___default()().subtract(3, 'months').isSameOrBefore(moment__WEBPACK_IMPORTED_MODULE_7___default()(itemElem.created_at));
+      return itemElem[1].filter(function (rule) {
+        return moment__WEBPACK_IMPORTED_MODULE_7___default()().subtract(3, 'months').isSameOrBefore(moment__WEBPACK_IMPORTED_MODULE_7___default()(rule.created_at));
+      }).length > 0;
     };
 
     this.filterObject['isUpdated'] = function (itemElem) {
-      return moment__WEBPACK_IMPORTED_MODULE_7___default()().subtract(3, 'months').isSameOrBefore(moment__WEBPACK_IMPORTED_MODULE_7___default()(itemElem.updated_at));
+      return itemElem[1].filter(function (rule) {
+        return moment__WEBPACK_IMPORTED_MODULE_7___default()().subtract(3, 'months').isSameOrBefore(moment__WEBPACK_IMPORTED_MODULE_7___default()(rule.updated_at));
+      }).length > 0;
     };
   },
   methods: {
@@ -5312,7 +5366,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       return {
         layoutMode: 'masonry',
         // masonry: {
-        //     gutter: 10,
+        //     gutter: 2,
         // },
         getSortData: {
           id: "id"
@@ -5346,10 +5400,21 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           _this3.searchedRules = result.data;
           _this3.searching = false;
         })["catch"](function (err) {
-          console.log(err);
           _this3.searching = false;
         });
       }
+    },
+    filterByNew: function filterByNew() {
+      this.$refs.cpt.filter('isNew');
+      this.filterFlag = "new";
+    },
+    filterByUpdated: function filterByUpdated() {
+      this.$refs.cpt.filter('isUpdated');
+      this.filterFlag = "updated";
+    },
+    filterByTaxonomy: function filterByTaxonomy(taxonomy) {
+      this.$refs.cpt.filter(taxonomy);
+      this.filterFlag = null;
     }
   },
   components: {
@@ -71827,38 +71892,63 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "mx-4 flex" }, [
-    _c("div", { staticClass: "w-full" }, [
-      _c("div", { staticClass: "text-sm font-medium text-gray-900" }, [
-        _vm._v("\n            " + _vm._s(_vm.rule.name) + "\n        ")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "text-sm text-gray-500" }, [
-        _vm._v(
-          "\n            " +
-            _vm._s(_vm.moment(_vm.rule.created_at).fromNow()) +
-            "\n        "
+  return _vm.taxonomyRules.length > 0
+    ? _c("div", { staticClass: "mx-2" }, [
+        _c("div", { staticClass: "w-full" }, [
+          _c("h1", { staticClass: "text-md font-medium text-gray-900" }, [
+            _vm._v("\n            " + _vm._s(_vm.rule[0]) + "\n        ")
+          ])
+        ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "w-full" },
+          _vm._l(_vm.taxonomyRules, function(ruleItem) {
+            return _c("div", { staticClass: "flex flex-row border p-1 my-1" }, [
+              _c("div", { staticClass: "w-full" }, [
+                _c(
+                  "div",
+                  { staticClass: "text-xs font-medium text-gray-900" },
+                  [
+                    _vm._v(
+                      "\n                    " +
+                        _vm._s(ruleItem.name) +
+                        "\n                "
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "text-xs text-gray-500" }, [
+                  _vm._v(
+                    "\n                    Created " +
+                      _vm._s(_vm.moment(ruleItem.created_at).fromNow()) +
+                      "\n                     \n                    Updated " +
+                      _vm._s(_vm.moment(ruleItem.updated_at).fromNow()) +
+                      "\n                "
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c(
+                "a",
+                {
+                  staticClass:
+                    "text-indigo-600 hover:text-indigo-900 float-right justify-center -align-center",
+                  attrs: { href: "#" },
+                  on: {
+                    click: function($event) {
+                      return _vm.$emit("on-click-view", ruleItem)
+                    }
+                  }
+                },
+                [_vm._v("View")]
+              )
+            ])
+          }),
+          0
         )
       ])
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "flex-row" }, [
-      _c(
-        "a",
-        {
-          staticClass:
-            "text-indigo-600 hover:text-indigo-900 float-right justify-center -align-center",
-          attrs: { href: "#" },
-          on: {
-            click: function($event) {
-              return _vm.$emit("on-click-view", _vm.rule)
-            }
-          }
-        },
-        [_vm._v("View")]
-      )
-    ])
-  ])
+    : _vm._e()
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -75812,7 +75902,7 @@ var render = function() {
           [
             _c(
               "div",
-              { staticClass: "flex text-xs", attrs: { role: "group" } },
+              { staticClass: "flex text-xs m-2", attrs: { role: "group" } },
               [
                 _c(
                   "button",
@@ -75826,11 +75916,7 @@ var render = function() {
                       },
                       "hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg"
                     ],
-                    on: {
-                      click: function($event) {
-                        return _vm.$refs.cpt.filter("isNew")
-                      }
-                    }
+                    on: { click: _vm.filterByNew }
                   },
                   [_vm._v("\n                    New\n                ")]
                 ),
@@ -75849,11 +75935,7 @@ var render = function() {
                       },
                       "hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline"
                     ],
-                    on: {
-                      click: function($event) {
-                        return _vm.$refs.cpt.filter("isUpdated")
-                      }
-                    }
+                    on: { click: _vm.filterByUpdated }
                   },
                   [_vm._v("\n                    Updated\n                ")]
                 ),
@@ -75875,7 +75957,7 @@ var render = function() {
                       ],
                       on: {
                         click: function($event) {
-                          return _vm.$refs.cpt.filter(taxonomy)
+                          return _vm.filterByTaxonomy(taxonomy)
                         }
                       }
                     },
@@ -75893,7 +75975,7 @@ var render = function() {
                   "button",
                   {
                     staticClass:
-                      "bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg",
+                      "bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg",
                     on: {
                       click: function($event) {
                         return _vm.$refs.cpt.unfilter()
@@ -75914,7 +75996,7 @@ var render = function() {
                 attrs: {
                   id: "root_isotope",
                   options: _vm.getOptions(),
-                  list: _vm.searchedRules
+                  list: Object.entries(_vm.rulesByTaxonomies)
                 },
                 on: {
                   filter: function($event) {
@@ -75925,13 +76007,20 @@ var render = function() {
                   }
                 }
               },
-              _vm._l(_vm.searchedRules, function(rule, ruleIndex) {
+              _vm._l(Object.entries(_vm.rulesByTaxonomies), function(
+                rule,
+                ruleIndex
+              ) {
                 return _c(
                   "div",
-                  { key: ruleIndex, staticClass: "w-1/3 rounded shadow p-2" },
+                  {
+                    key: ruleIndex,
+                    staticClass:
+                      "w-1/3 rounded shadow-md hover:shadow-lg cursor-pointer p-2"
+                  },
                   [
                     _c("view-rule-item", {
-                      attrs: { rule: rule },
+                      attrs: { rule: rule, "filter-flag": _vm.filterFlag },
                       on: { "on-click-view": _vm.openModal }
                     })
                   ],
