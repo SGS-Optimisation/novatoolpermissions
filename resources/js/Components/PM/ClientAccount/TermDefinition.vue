@@ -4,7 +4,7 @@
             <div class="text-xs mx-2 border-blue-50 border my-1 bg-yellow-50 rounded-xl px-2 py-1"
                  v-for="termData in _.sortBy(terms, function(term) {return term.name})">
 
-                <i v-if="termData.rulesCount === 0"
+                <i v-if="termData.clientRulesCount === 0"
                    @click="confirmTermDeletion(termData.id, termData.name)"
                    class="text-red-600 fa fa-times cursor-pointer hover:bg-red-800 p-1 rounded-xl">
                 </i>
@@ -16,15 +16,17 @@
                         {{ termData.name }}
                 </span>
 
-                <span v-if="termData.rulesCount" class="text-xs px-2 bg-red-200 text-red-800 rounded-full">
-
-                        <jet-nav-link
-                            :href="route('pm.client-account.rules', {clientAccount: clientAccount.slug }) + `?term=${termData.id}`">
-                            <span title="Number of rules using this term. Click to view rules.">
-                                {{ termData.rulesCount }}
-                            </span>
-                        </jet-nav-link>
-                    </span>
+                <span v-if="termData.globalRulesCount" class="text-xs px-2 bg-red-200 text-red-800 rounded-full">
+                    <jet-nav-link
+                        :href="route('pm.client-account.rules', {clientAccount: clientAccount.slug }) + `?term=${termData.id}`">
+                        <span title="Number of rules using this term for this client account. Click to view rules.">
+                            {{ termData.clientRulesCount }}
+                        </span>
+                        <span v-if="termData.clientRulesCount !== termData.globalRulesCount" title="Number of rules using this term across all client accounts. Click to view rules.">
+                            &nbsp;({{ termData.globalRulesCount }})
+                        </span>
+                    </jet-nav-link>
+                </span>
             </div>
 
             <i @click="creatingTerm=true"

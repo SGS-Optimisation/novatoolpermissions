@@ -71,10 +71,15 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
 
             /** @var Term $term */
             foreach ($client_terms as $term) {
+
+                $client_rules_count = $term->rules()->where('client_account_id', $this->clientAccount->id)
+                    ->count();
+
                 $data[$taxonomy->name]['terms'][] = [
                     'id' => $term->id,
                     'name' => $term->name,
-                    'rulesCount' => $term->rules_count,
+                    'globalRulesCount' => $term->rules_count,
+                    'clientRulesCount' => $client_rules_count,
                 ];
             }
 
