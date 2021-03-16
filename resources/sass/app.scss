@@ -9,6 +9,12 @@
 
 @import '~vue-select/src/scss/vue-select';
 
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/mixins/';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/pagination';
+
+
 .vs__selected {
     font-size:12px;
 }

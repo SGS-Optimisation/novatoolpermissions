@@ -14,6 +14,7 @@
         "@inertiajs/inertia-vue": "^0.2.0",
         "@tailwindcss/ui": "^0.6.0",
         "axios": "^0.19",
+        "bootstrap": "^4.6.0",
         "cross-env": "^7.0",
         "laravel-echo": "^1.10.0",
         "laravel-jetstream": "^0.0.3",
@@ -33,6 +34,7 @@
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.15.2",
         "quill-image-resize": "^3.0.9",
+        "vue-pagination-2": "^3.0.8",
         "vue-select": "^3.11.2",
         "vue2-editor": "^2.10.2",
         "vueisotope": "^3.1.2"
