@@ -14,13 +14,6 @@
                                 classes="bg-white flex shadow"
                                 placeholder="Search another job">
                     </job-search>
-<!--                    <jet-input  type="text" class="flex-initial block w-full " v-model="searchJobKey" autofocus/>
-                    <jet-button v-if="!searching" class="flex-initial ml-1" @click.native="search">
-                        Search
-                    </jet-button>
-                    <jet-button v-else class="flex-initial ml-1">
-                        Searching
-                    </jet-button>-->
                 </div>
             </div>
         </template>
@@ -40,12 +33,35 @@
                 </button>
             </div>
 
-            <div class="flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mt-1">
+            <div class="flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mt-2">
 
-                <div v-for="rule in _.orderBy(searchedRules, 'created_at', 'desc')"
-                     class="w-full overflow-hidden sm:my-px sm:px-px sm:w-full md:my-px md:px-px md:w-full lg:my-px lg:px-px lg:w-1/3 xl:my-px xl:px-px xl:w-1/3 shadow-md p-3 rounded">
-                    <view-rule-item :rule="rule" @on-click-view="openModal"/>
+                <div class="flex text-xs" role="group">
+                    <button @click="$refs.cpt.filter('isNew')"
+                            :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
+                        New
+                    </button>
+                    <button @click="$refs.cpt.filter('isUpdated')"
+                            :class="[{ 'bg-blue-500 text-white' : filterOption === 'isUpdated' }, { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
+                        Updated
+                    </button>
+                    <button
+                        v-for="taxonomy in taxonomies"
+                        @click="$refs.cpt.filter(taxonomy)"
+                        :class="[{ 'bg-blue-500 text-white' : filterOption === taxonomy }, { 'bg-white text-blue-500' : filterOption !== taxonomy  }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
+                        {{ taxonomy }}
+                    </button>
+                    <button @click="$refs.cpt.unfilter()"
+                            class="bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
+                        Unfilter
+                    </button>
                 </div>
+
+                <isotope ref="cpt" id="root_isotope" class="w-full m-2" :options='getOptions()' :list="searchedRules"
+                         @filter="filterOption=arguments[0]" @sort="sortOption=arguments[0]">
+                    <div class="w-1/3 rounded shadow p-2" v-for="(rule, ruleIndex) in searchedRules" :key="ruleIndex">
+                        <view-rule-item :rule="rule" @on-click-view="openModal"/>
+                    </div>
+                </isotope>
 
             </div>
 
@@ -105,6 +121,9 @@ import JetInput from '@/Jetstream/Input'
 import ViewRule from '@/Components/PM/Rules/ViewRule'
 import ViewRuleItem from "@/Components/PM/Rules/ViewRuleItem";
 import JobSearch from "@/Components/OP/JobSearchForm";
+//import Masonry from 'masonry-layout'
+import isotope from 'vueisotope'
+import moment from "moment";
 
 export default {
     props: [
@@ -118,10 +137,17 @@ export default {
         return {
             searchJobKey: this.jobNumber,
             searching: false,
-            searchedRules: [...this.rules],
+            searchedRules: [..._.orderBy(this.rules, 'created_at', 'desc')],
             isOpen: false,
             currentRule: null,
-            rulesUpdated: false
+            rulesUpdated: false,
+
+            // isotope integration
+            sortOption: null,
+            filterOption: null,
+            filterText: "",
+            filterObject: {},
+            taxonomies: [],
         }
     },
 
@@ -136,9 +162,54 @@ export default {
         }
     },
 
+    // mounted() {
+    //     var msnry = new Masonry( '.grid-masonry', {
+    //         // options
+    //         itemSelector: '.grid-masonry-item',
+    //         columnWidth: 200,
+    //     });
+    //     msnry.layout();
+    // },
+
+    created() {
+        this.searchedRules.forEach(rule => {
+            rule.terms.forEach(term => {
+                if (!this.taxonomies.includes(term.taxonomy.name)) {
+                    this.taxonomies.push(term.taxonomy.name);
+                }
+            });
+            this.taxonomies.forEach(taxonomy => {
+                this.filterObject[taxonomy] = itemElem => {
+                    console.log(itemElem, taxonomy)
+                    return itemElem.terms.some(term => term.taxonomy.name === taxonomy);
+                }
+            });
+        });
+
+        this.filterObject['isNew'] = (itemElem) => {
+            return moment().subtract(3, 'months').isSameOrBefore(moment(itemElem.created_at));
+        };
+
+        this.filterObject['isUpdated'] = (itemElem) => {
+            return moment().subtract(3, 'months').isSameOrBefore(moment(itemElem.updated_at));
+        };
+    },
+
     methods: {
+        getOptions() {
+            return {
+                layoutMode: 'masonry',
+                // masonry: {
+                //     gutter: 10,
+                // },
+                getSortData: {
+                    id: "id",
+                },
+                getFilterData: this.filterObject
+            }
+        },
         newJobLoaded() {
-            this.searchedRules= [...this.rules];
+            this.searchedRules = [...this.rules];
         },
         reloadPage() {
             window.location = window.location + this.searchJobKey;
@@ -178,7 +249,8 @@ export default {
         JetButton,
         JetInput,
         ViewRule,
-        JobSearch
+        JobSearch,
+        isotope
     },
 }
 </script>
