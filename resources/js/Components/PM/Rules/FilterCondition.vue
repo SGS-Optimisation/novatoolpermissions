@@ -21,7 +21,7 @@ export default {
     name: "FilterCondition",
     data(){
         return {
-            toggleActive: false
+            toggleActive: true // true = AND, false = OR
         }
     },
     methods:{

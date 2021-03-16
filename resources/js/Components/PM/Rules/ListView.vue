@@ -2,7 +2,7 @@
   <div class="bg-white shadow-md m-2 p-3 rounded" :data-rule-id="rule.id">
     <div class="flex items-center justify-between">
       <div class="description">
-        <h2 @click="open = !open;" class="cursor-pointer text-xl font-bold">{{ rule.name }}</h2>
+        <h2 @click="open = !open; $emit('toggle')" class="cursor-pointer text-xl font-bold">{{ rule.name }}</h2>
         <div class="flex">
           <div class="flex-shrink cursor-default align-bottom text-xs border-dashed border-b border-gray-500"
                :title="date()">
@@ -17,7 +17,7 @@
 
       <!-- Button for opening card -->
       <div class="ml-4">
-        <div @click="open = !open;"
+        <div @click="open = !open; $emit('toggle')"
              class="flex items-center cursor-pointer px-3 py-2 text-gray-200 hover:text-gray-600"
              :class="{'transform rotate-180': open}">
           <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
