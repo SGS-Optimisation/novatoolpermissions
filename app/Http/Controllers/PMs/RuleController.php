@@ -85,7 +85,7 @@ class RuleController extends Controller
             'team' => $request->user()->currentTeam,
             'clientAccount' => $client_account,
             'rules' => $rules, //()->orderBy('updated_at', 'DESC')->paginate(50) ?? [],
-            'search' => $term->name,
+            'search' => optional($term)->name,
         ]);
     }
 
