@@ -15,41 +15,50 @@
 
                     <filter-condition @on-change-filter-condition="onChangeFilterCondition"/>
 
+                    <div id="filter" class="m-2">
+                        <div class="flex text-xs" role="group">
+                            <button @click="setFilterDate('isNew')"
+                                    :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
+                                New
+                            </button>
+                            <button @click="setFilterDate('isUpdated')"
+                                    :class="[{ 'bg-blue-500 text-white' : filterOption === 'isUpdated' }, { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
+                                Updated
+                            </button>
+                            <button @click="setFilterDate('all')"
+                                    class="bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
+                                Unfilter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="m-2 text-right">
                     <jet-button type="button" @click.native="clearAllFilters">
                         Reset All
                     </jet-button>
                 </div>
+
                 <div v-if="search">
-                    <p>Showing rules for {{search}}</p>
-                </div>
-                <div id="filter" class="m-2">
-                    <div class="flex text-xs" role="group">
-                        <button @click="setFilterDate('isNew')"
-                                :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
-                            New
-                        </button>
-                        <button @click="setFilterDate('isUpdated')"
-                                :class="[{ 'bg-blue-500 text-white' : filterOption === 'isUpdated' }, { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
-                            Updated
-                        </button>
-                        <button @click="setFilterDate('all')"
-                                class="bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
-                            Unfilter
-                        </button>
-                    </div>
+                    <p>Showing rules for {{ search }}</p>
                 </div>
 
-                <div class="mx-auto text-center">
+                <div class="px-2">
                     <pagination v-model="page"
                                 :options="paginationOptions"
                                 :per-page="perPage"
-                                :records="numFilteredRules"
-                                @paginate="changePage"/>
+                                :records="numFilteredRules"/>
                 </div>
 
                 <div v-for="(rule, ruleKey) in  _.drop(filteredRules, ((page-1)*perPage)).slice(0, perPage)"
                      :key="ruleKey">
                     <view-rule :rule="rule" :client-account="clientAccount"/>
+                </div>
+
+                <div class="px-2 pb-16 pt-4">
+                    <pagination v-model="page"
+                                :options="paginationOptions"
+                                :per-page="perPage"
+                                :records="numFilteredRules"/>
                 </div>
 
             </div>
@@ -108,6 +117,11 @@ export default {
 
         this.allRules.forEach(rule => {
             rule.terms.forEach(term => {
+                if(!term.taxonomy) {
+                    console.log('term has no taxonomy!', {term, rule});
+                    return;
+                }
+
                 if (this.taxonomies[term.taxonomy.name] === undefined) {
                     this.taxonomies[term.taxonomy.name] = '';
                 }
@@ -126,14 +140,14 @@ export default {
             //return this.filterCondition ? itemElem.terms.every(term => this.taxonomies[term.taxonomy.name] === term.name) : itemElem.terms.some(term => this.taxonomies[term.taxonomy.name] === term.name);
             if (this.filterCondition) {
                 let taxonomies = Object.entries(this.taxonomies);
-                if(taxonomies.length === 0)
+                if (taxonomies.length === 0)
                     return false;
                 for (const taxonomy of taxonomies) {
                     if (taxonomy[1] !== '') {
                         let matchingTaxonomy = itemElem.terms.map(term => term.taxonomy.name).includes(taxonomy[0])
-                        if(!matchingTaxonomy) return false
+                        if (!matchingTaxonomy) return false
                         let matchingTerms = itemElem.terms.map(term => term.name).includes(taxonomy[1])
-                        if(!matchingTerms) return false
+                        if (!matchingTerms) return false
                     }
                 }
                 return true;
@@ -158,11 +172,7 @@ export default {
 
     methods: {
 
-        changePage(){
-            console.log('changing page');
-        },
-
-        getRules(){
+        getRules() {
             this.filteredRules = _.filter(
                 _.filter(
                     this.allRules,
@@ -189,7 +199,7 @@ export default {
             this.getRules();
         },
 
-        clearAllFilters(){
+        clearAllFilters() {
             for (const taxonomy in this.taxonomies) {
                 this.taxonomies[taxonomy] = '';
             }
@@ -200,11 +210,11 @@ export default {
     },
 
     computed: {
-        numFilteredRules: function(){
+        numFilteredRules: function () {
             return this.filteredRules.length;
         },
 
-        numAllRules: function() {
+        numAllRules: function () {
             return this.allRules.length;
         }
     },

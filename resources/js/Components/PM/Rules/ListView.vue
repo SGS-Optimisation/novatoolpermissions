@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white shadow-md m-2 p-3 rounded" :data-rule-id="rule.id">
+  <div class="bg-white shadow-md my-2 p-3 rounded" :data-rule-id="rule.id">
     <div class="flex items-center justify-between">
       <div class="description">
         <h2 @click="open = !open; $emit('toggle')" class="cursor-pointer text-xl font-bold">{{ rule.name }}</h2>
