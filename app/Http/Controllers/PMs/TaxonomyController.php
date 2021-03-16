@@ -3,37 +3,38 @@
 namespace App\Http\Controllers\PMs;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateTaxonomyRequest;
 use App\Http\Requests\CreateTermRequest;
 use App\Models\ClientAccount;
 use App\Models\Taxonomy;
 use App\Models\Term;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Laravel\Jetstream\Jetstream;
 
-class TermController extends Controller
+class TaxonomyController extends Controller
 {
-
     /**
      * Update a term.
      *
      * @param  Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(CreateTermRequest $request)
+    public function store(CreateTaxonomyRequest $request)
     {
-
-        $taxonomy = Taxonomy::find($request->taxonomyId);
         $client_account = ClientAccount::find($request->clientAccountId);
 
         /** @var Term $term */
-        $term = $taxonomy->terms()->withTrashed()->firstOrCreate(['name' => $request->name]);
+        $taxonomy = $client_account->taxonomies()->withTrashed()
+            ->firstOrCreate([
+                'name' => $request->name,
+                'parent_id' => $request->parentTaxonomyId
+            ]);
 
-        if($term->deleted_at) {
-            $term->restore();
+        if ($taxonomy->deleted_at) {
+            $taxonomy->restore();
         }
 
-        $client_account->terms()->syncWithoutDetaching($term);
+        $client_account->taxonomies()->syncWithoutDetaching($taxonomy);
 
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
@@ -42,7 +43,7 @@ class TermController extends Controller
     }
 
     /**
-     * Update a term.
+     * Update a taxonomy.
      *
      * @param  Request  $request
      * @param $id
@@ -50,10 +51,10 @@ class TermController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $taxonomy = Taxonomy::find($id);
         $client_account = ClientAccount::find($request->clientAccountId);
-        $term = Term::find($id);
 
-        $term->update(['name' => $request->name]);
+        $taxonomy->update(['name' => $request->name]);
 
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
@@ -70,10 +71,10 @@ class TermController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $term = Term::find($id);
+        $taxonomy = Taxonomy::find($id);
         $client_account = ClientAccount::find($request->clientAccountId);
 
-        $term->delete();
+        $taxonomy->delete();
 
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');

@@ -2049,6 +2049,131 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Components_PM_ClientAccount_TermDefinition__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Components/PM/ClientAccount/TermDefinition */ "./resources/js/Components/PM/ClientAccount/TermDefinition.vue");
+/* harmony import */ var _Jetstream_ActionSection__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Jetstream/ActionSection */ "./resources/js/Jetstream/ActionSection.vue");
+/* harmony import */ var _Jetstream_ConfirmationModal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Jetstream/ConfirmationModal */ "./resources/js/Jetstream/ConfirmationModal.vue");
+/* harmony import */ var _Jetstream_DialogModal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Jetstream/DialogModal */ "./resources/js/Jetstream/DialogModal.vue");
+/* harmony import */ var _Jetstream_Button__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Jetstream/Button */ "./resources/js/Jetstream/Button.vue");
+/* harmony import */ var _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Jetstream/DangerButton */ "./resources/js/Jetstream/DangerButton.vue");
+/* harmony import */ var _Jetstream_Input__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/Jetstream/Input */ "./resources/js/Jetstream/Input.vue");
+/* harmony import */ var _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/Jetstream/InputError */ "./resources/js/Jetstream/InputError.vue");
+/* harmony import */ var _Jetstream_SecondaryButton__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @/Jetstream/SecondaryButton */ "./resources/js/Jetstream/SecondaryButton.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2068,12 +2193,119 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
+
+
+
+
+
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "TaxonomyDefinition",
   components: {
-    TermDefinition: _Components_PM_ClientAccount_TermDefinition__WEBPACK_IMPORTED_MODULE_0__["default"]
+    TermDefinition: _Components_PM_ClientAccount_TermDefinition__WEBPACK_IMPORTED_MODULE_0__["default"],
+    JetActionSection: _Jetstream_ActionSection__WEBPACK_IMPORTED_MODULE_1__["default"],
+    JetButton: _Jetstream_Button__WEBPACK_IMPORTED_MODULE_4__["default"],
+    JetConfirmationModal: _Jetstream_ConfirmationModal__WEBPACK_IMPORTED_MODULE_2__["default"],
+    JetDialogModal: _Jetstream_DialogModal__WEBPACK_IMPORTED_MODULE_3__["default"],
+    JetDangerButton: _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_5__["default"],
+    JetInput: _Jetstream_Input__WEBPACK_IMPORTED_MODULE_6__["default"],
+    JetInputError: _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_7__["default"],
+    JetSecondaryButton: _Jetstream_SecondaryButton__WEBPACK_IMPORTED_MODULE_8__["default"]
   },
-  props: ['parentTaxonomy', 'taxonomyHierarchy', 'clientAccount']
+  props: ['parentTaxonomy', 'taxonomyHierarchy', 'clientAccount'],
+  data: function data() {
+    return {
+      creatingTaxonomy: false,
+      confirmingTaxonomyDeletion: false,
+      deletingTaxonomyId: null,
+      deletingTaxonomyName: null,
+      deleting: false,
+      editingTaxonomy: false,
+      editingTaxonomyId: null,
+      editingTaxonomyName: null,
+      createForm: this.$inertia.form({
+        name: '',
+        clientAccountId: this.clientAccount.id,
+        parentTaxonomyId: this.parentTaxonomy.id
+      }, {
+        bag: 'storeTaxonomy'
+      }),
+      editForm: this.$inertia.form({
+        id: null,
+        name: '',
+        clientAccountId: this.clientAccount.id
+      }, {
+        bag: 'updateTaxonomy'
+      }),
+      deleteForm: this.$inertia.form({
+        clientAccountId: this.clientAccount.id
+      }, {
+        bag: 'deleteTaxonomy'
+      })
+    };
+  },
+  methods: {
+    storeTaxonomy: function storeTaxonomy() {
+      var _this = this;
+
+      console.log('create taxonomy ' + this.createForm.name);
+      this.createForm.post(route('pm.taxonomies.store'), {
+        preserveScroll: true
+      }).then(function () {
+        _this.cancelCreateTaxonomy();
+      });
+    },
+    cancelCreateTaxonomy: function cancelCreateTaxonomy() {
+      this.creatingTaxonomy = false;
+      this.createForm.name = null;
+    },
+    editTaxonomy: function editTaxonomy(id, name) {
+      console.log("editing taxonomy ".concat(id, ": ").concat(name));
+      this.editingTaxonomy = true;
+      this.editForm.id = id;
+      this.editForm.name = name;
+      this.editingTaxonomyName = name; //keep original taxonomy for display in modal title
+    },
+    cancelEditTaxonomy: function cancelEditTaxonomy() {
+      this.editingTaxonomy = false;
+      this.editingTaxonomyName = null;
+      this.editForm.id = null;
+      this.editForm.name = null;
+    },
+    updateTaxonomy: function updateTaxonomy() {
+      var _this2 = this;
+
+      console.log('updating taxonomy ' + this.editForm.id);
+      this.editForm.put(route('pm.taxonomies.update', this.editForm.id), {
+        preserveScroll: true
+      }).then(function () {
+        _this2.cancelEditTaxonomy();
+      });
+    },
+    confirmTaxonomyDeletion: function confirmTaxonomyDeletion(id, name) {
+      console.log('confirming deleting ' + id + ' : ' + name);
+      this.confirmingTaxonomyDeletion = true;
+      this.deletingTaxonomyId = id;
+      this.deletingTaxonomyName = name;
+    },
+    cancelDeleteTaxonomy: function cancelDeleteTaxonomy() {
+      this.confirmingTaxonomyDeletion = false;
+      this.deletingTaxonomyId = null;
+      this.deletingTaxonomyName = null;
+    },
+    deleteTaxonomy: function deleteTaxonomy() {
+      var _this3 = this;
+
+      console.log('delete taxonomy ' + this.deletingTaxonomyId);
+      this.deleteForm["delete"](route('pm.taxonomies.destroy', this.deletingTaxonomyId), {
+        preserveScroll: true
+      }).then(function () {
+        _this3.cancelDeleteTaxonomy();
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -2097,6 +2329,35 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Jetstream_Input__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/Jetstream/Input */ "./resources/js/Jetstream/Input.vue");
 /* harmony import */ var _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @/Jetstream/InputError */ "./resources/js/Jetstream/InputError.vue");
 /* harmony import */ var _Jetstream_SecondaryButton__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @/Jetstream/SecondaryButton */ "./resources/js/Jetstream/SecondaryButton.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2227,6 +2488,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      creatingTerm: false,
       confirmingTermDeletion: false,
       deletingTermId: null,
       deletingTermName: null,
@@ -2234,19 +2496,46 @@ __webpack_require__.r(__webpack_exports__);
       editingTerm: false,
       editingTermId: null,
       editingTermName: null,
-      deleteTermForm: this.$inertia.form({}, {
-        bag: 'deleteTerm'
+      createTermForm: this.$inertia.form({
+        clientAccountId: this.clientAccount.id,
+        taxonomyId: this.taxonomyId,
+        name: ""
+      }, {
+        bag: 'createTerm'
       }),
       editTermForm: this.$inertia.form({
         termId: null,
+        clientAccountId: this.clientAccount.id,
         name: null
       }, {
         bag: 'editTerm'
+      }),
+      deleteTermForm: this.$inertia.form({
+        clientAccountId: this.clientAccount.id
+      }, {
+        bag: 'deleteTerm'
       })
     };
   },
   mounted: function mounted() {},
   methods: {
+    createTerm: function createTerm() {
+      this.creatingTerm = true;
+    },
+    cancelCreateTerm: function cancelCreateTerm() {
+      this.creatingTerm = false;
+      this.createTermForm.name = null;
+    },
+    storeTerm: function storeTerm() {
+      var _this = this;
+
+      console.log('create term ' + this.createTermForm.name + ' for taxonomy id ' + this.createTermForm.taxonomyId);
+      this.createTermForm.post(route('pm.terms.store'), {
+        preserveScroll: true
+      }).then(function () {
+        _this.cancelCreateTerm();
+      });
+    },
     editTerm: function editTerm(id, name) {
       this.editingTerm = true;
       this.editTermForm.termId = id;
@@ -2260,13 +2549,13 @@ __webpack_require__.r(__webpack_exports__);
       this.editTermForm.name = null;
     },
     updateTerm: function updateTerm() {
-      var _this = this;
+      var _this2 = this;
 
       console.log('updating term ' + this.editTermForm.termId + ' from ' + this.editingTermName + ' to ' + this.editTermForm.name);
       this.editTermForm.put(route('pm.terms.update', this.editTermForm.termId), {
         preserveScroll: true
       }).then(function () {
-        _this.cancelEditTerm();
+        _this2.cancelEditTerm();
       });
     },
     confirmTermDeletion: function confirmTermDeletion(id, name) {
@@ -2280,14 +2569,14 @@ __webpack_require__.r(__webpack_exports__);
       this.deletingTermId = null;
       this.deletingTermName = null;
     },
-    deleteTerm: function deleteTerm(id) {
-      var _this2 = this;
+    deleteTerm: function deleteTerm() {
+      var _this3 = this;
 
-      console.log('delete term ' + id);
+      console.log('delete term ' + this.deletingTermId);
       this.deleteTermForm["delete"](route('pm.terms.destroy', this.deletingTermId), {
         preserveScroll: true
       }).then(function () {
-        _this2.cancelDeleteTerm();
+        _this3.cancelDeleteTerm();
       });
     }
   }
@@ -2379,6 +2668,50 @@ __webpack_require__.r(__webpack_exports__);
     SubNavLink: _Components_SubNavLink__WEBPACK_IMPORTED_MODULE_0__["default"],
     JetDropdown: _Jetstream_Dropdown__WEBPACK_IMPORTED_MODULE_1__["default"],
     JetDropdownLink: _Jetstream_DropdownLink__WEBPACK_IMPORTED_MODULE_2__["default"]
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/PM/Rules/FilterCondition.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Components/PM/Rules/FilterCondition.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FilterCondition",
+  data: function data() {
+    return {
+      toggleActive: false
+    };
+  },
+  methods: {
+    handleToggleActive: function handleToggleActive() {
+      this.toggleActive = !this.toggleActive;
+      this.$emit('on-change-filter-condition', this.toggleActive);
+    }
   }
 });
 
@@ -2790,6 +3123,114 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/PM/Rules/TaxonomyFilter.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Components/PM/Rules/TaxonomyFilter.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "TaxonomyFilter",
+  props: ['taxonomy', 'selectedValue'],
+  data: function data() {
+    return {
+      selected: this.selectedValue !== '' ? this.selectedValue : null,
+      open: false
+    };
+  },
+  watch: {
+    selectedValue: function selectedValue(value) {
+      console.log(value);
+      this.selected = value !== '' ? value : null;
+    }
+  },
+  methods: {
+    onSelectTerm: function onSelectTerm(term) {
+      this.selected = term;
+      this.hideList();
+      this.$emit('on-change-filter', this.taxonomy[0], this.selected);
+    },
+    hideList: function hideList() {
+      this.open = false;
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/PM/Rules/Term.vue?vue&type=script&lang=js&":
 /*!************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Components/PM/Rules/Term.vue?vue&type=script&lang=js& ***!
@@ -3035,6 +3476,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
 //
 //
 //
@@ -4747,8 +5191,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 
 
 
@@ -4931,6 +5373,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vueisotope__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vueisotope__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _Components_PM_Rules_TaxonomyFilter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Components/PM/Rules/TaxonomyFilter */ "./resources/js/Components/PM/Rules/TaxonomyFilter.vue");
+/* harmony import */ var _Components_PM_Rules_FilterCondition__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Components/PM/Rules/FilterCondition */ "./resources/js/Components/PM/Rules/FilterCondition.vue");
+/* harmony import */ var _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/Jetstream/DangerButton */ "./resources/js/Jetstream/DangerButton.vue");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -5004,12 +5449,24 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
 
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['clientAccount', 'team', 'rules'],
+  props: ['clientAccount', 'team', 'rules', 'search'],
   data: function data() {
     return {
       allRules: _toConsumableArray(_.orderBy(this.rules, 'created_at', 'desc')),
@@ -5017,7 +5474,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       filterOption: null,
       filterText: "",
       filterObject: {},
-      taxonomies: []
+      taxonomies: {},
+      termsByTaxonomies: {},
+      filterCondition: false
     };
   },
   created: function created() {
@@ -5025,20 +5484,48 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
     this.allRules.forEach(function (rule) {
       rule.terms.forEach(function (term) {
-        if (!_this.taxonomies.includes(term.taxonomy.name)) {
-          _this.taxonomies.push(term.taxonomy.name);
+        if (_this.taxonomies[term.taxonomy.name] === undefined) {
+          _this.taxonomies[term.taxonomy.name] = '';
+        }
+
+        if (_this.termsByTaxonomies[term.taxonomy.name] === undefined) {
+          _this.termsByTaxonomies[term.taxonomy.name] = [];
+        }
+
+        if (!_this.termsByTaxonomies[term.taxonomy.name].includes(term.name)) {
+          _this.termsByTaxonomies[term.taxonomy.name].push(term.name);
         }
       });
-
-      _this.taxonomies.forEach(function (taxonomy) {
-        _this.filterObject[taxonomy] = function (itemElem) {
-          console.log(itemElem, taxonomy);
-          return itemElem.terms.some(function (term) {
-            return term.taxonomy.name === taxonomy;
-          });
-        };
-      });
     });
+
+    this.filterObject['filterByTaxonomyTerm'] = function (itemElem) {
+      //return this.filterCondition ? itemElem.terms.every(term => this.taxonomies[term.taxonomy.name] === term.name) : itemElem.terms.some(term => this.taxonomies[term.taxonomy.name] === term.name);
+      if (_this.filterCondition) {
+        var taxonomies = Object.entries(_this.taxonomies);
+        if (taxonomies.length === 0) return false;
+
+        for (var _i = 0, _taxonomies = taxonomies; _i < _taxonomies.length; _i++) {
+          var taxonomy = _taxonomies[_i];
+
+          if (taxonomy[1] !== '') {
+            var matchingTaxonomy = itemElem.terms.map(function (term) {
+              return term.taxonomy.name;
+            }).includes(taxonomy[0]);
+            if (!matchingTaxonomy) return false;
+            var matchingTerms = itemElem.terms.map(function (term) {
+              return term.name;
+            }).includes(taxonomy[1]);
+            if (!matchingTerms) return false;
+          }
+        }
+
+        return true;
+      }
+
+      return itemElem.terms.some(function (term) {
+        return _this.taxonomies[term.taxonomy.name] === term.name;
+      });
+    };
 
     this.filterObject['isNew'] = function (itemElem) {
       return moment__WEBPACK_IMPORTED_MODULE_3___default()().subtract(3, 'months').isSameOrBefore(moment__WEBPACK_IMPORTED_MODULE_3___default()(itemElem.created_at));
@@ -5060,12 +5547,30 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         },
         getFilterData: this.filterObject
       };
+    },
+    filterByTaxonomyTerm: function filterByTaxonomyTerm(taxonomy, term) {
+      this.taxonomies[taxonomy] = term;
+      this.$refs.cpt.filter('filterByTaxonomyTerm');
+    },
+    onChangeFilterCondition: function onChangeFilterCondition(condition) {
+      this.filterCondition = condition;
+      this.$refs.cpt.filter('filterByTaxonomyTerm');
+    },
+    clearAllFilters: function clearAllFilters() {
+      for (var taxonomy in this.taxonomies) {
+        this.taxonomies[taxonomy] = '';
+      }
+
+      this.$refs.cpt.unfilter();
     }
   },
   components: {
+    FilterCondition: _Components_PM_Rules_FilterCondition__WEBPACK_IMPORTED_MODULE_5__["default"],
     ClientLayout: _Layouts_ClientAccount__WEBPACK_IMPORTED_MODULE_0__["default"],
     ViewRule: _Components_PM_Rules_ListView__WEBPACK_IMPORTED_MODULE_1__["default"],
-    isotope: vueisotope__WEBPACK_IMPORTED_MODULE_2___default.a
+    isotope: vueisotope__WEBPACK_IMPORTED_MODULE_2___default.a,
+    TaxonomyFilter: _Components_PM_Rules_TaxonomyFilter__WEBPACK_IMPORTED_MODULE_4__["default"],
+    JetButton: _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_6__["default"]
   }
 });
 
@@ -5468,12 +5973,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Landing",
-  props: ['team', 'myTeams'],
+  props: ['team', 'myTeams', 'otherTeams'],
   components: {
     AppLayout: _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__["default"],
     Welcome: _Jetstream_Welcome__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -70739,31 +71254,430 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    _vm._l(_vm.taxonomyHierarchy[_vm.parentTaxonomy.name].children, function(
-      taxonomyGroup,
-      index
-    ) {
-      return _c(
-        "div",
-        { staticClass: "flex flex-col py-2" },
+    { staticClass: "px-5 pb-12" },
+    [
+      _c(
+        "span",
+        {
+          staticClass:
+            "cursor-pointer p-1 text-xs rounded-md\n    bg-blue-300 hover:bg-blue-400",
+          on: {
+            click: function($event) {
+              _vm.creatingTaxonomy = true
+            }
+          }
+        },
         [
-          _vm._l(taxonomyGroup, function(taxonomyData, name) {
-            return [
-              _c("term-definition", {
-                attrs: {
-                  terms: taxonomyData.terms,
-                  "taxonomy-name": name,
-                  "taxonomy-id": taxonomyData.id,
-                  "client-account": _vm.clientAccount
-                }
-              })
-            ]
-          })
-        ],
-        2
+          _c("i", { staticClass: "text-white fa fa-plus-circle" }),
+          _vm._v(" New Vocabulary\n    ")
+        ]
+      ),
+      _vm._v(" "),
+      _vm._l(_vm.taxonomyHierarchy[_vm.parentTaxonomy.name].children, function(
+        taxonomyGroup,
+        index
+      ) {
+        return _c(
+          "div",
+          { staticClass: "flex flex-col py-2" },
+          [
+            _vm._l(taxonomyGroup, function(taxonomyData, name) {
+              return [
+                _c("jet-action-section", {
+                  scopedSlots: _vm._u(
+                    [
+                      {
+                        key: "title",
+                        fn: function() {
+                          return [
+                            _c(
+                              "span",
+                              {
+                                staticClass:
+                                  "mt-2 cursor-pointer\n                      border-b-2 border-dashed border-transparent hover:border-gray-300\n                      transition duration-150 ease-in-out",
+                                on: {
+                                  click: function($event) {
+                                    return _vm.editTaxonomy(
+                                      taxonomyData.id,
+                                      name
+                                    )
+                                  }
+                                }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                    " +
+                                    _vm._s(name) +
+                                    "\n                    "
+                                )
+                              ]
+                            )
+                          ]
+                        },
+                        proxy: true
+                      },
+                      {
+                        key: "description",
+                        fn: function() {
+                          return [
+                            taxonomyData.terms.length === 0
+                              ? _c("i", {
+                                  staticClass:
+                                    "text-red-600 fa fa-times cursor-pointer hover:bg-red-800 p-1 rounded-xl",
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.confirmTaxonomyDeletion(
+                                        taxonomyData.id,
+                                        name
+                                      )
+                                    }
+                                  }
+                                })
+                              : _vm._e()
+                          ]
+                        },
+                        proxy: true
+                      },
+                      {
+                        key: "content",
+                        fn: function() {
+                          return [
+                            _c("jet-dialog-modal", {
+                              attrs: { show: _vm.creatingTaxonomy },
+                              on: { close: _vm.cancelCreateTaxonomy },
+                              scopedSlots: _vm._u(
+                                [
+                                  {
+                                    key: "title",
+                                    fn: function() {
+                                      return [
+                                        _vm._v(
+                                          "\n                            New Vocabulary in " +
+                                            _vm._s(_vm.parentTaxonomy.name) +
+                                            "\n                        "
+                                        )
+                                      ]
+                                    },
+                                    proxy: true
+                                  },
+                                  {
+                                    key: "content",
+                                    fn: function() {
+                                      return [
+                                        _c(
+                                          "div",
+                                          { staticClass: "mt-4" },
+                                          [
+                                            _c("jet-input", {
+                                              staticClass: "mt-1 block w-3/4",
+                                              attrs: {
+                                                type: "text",
+                                                value: _vm.createForm.name
+                                              },
+                                              model: {
+                                                value: _vm.createForm.name,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.createForm,
+                                                    "name",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression: "createForm.name"
+                                              }
+                                            })
+                                          ],
+                                          1
+                                        )
+                                      ]
+                                    },
+                                    proxy: true
+                                  },
+                                  {
+                                    key: "footer",
+                                    fn: function() {
+                                      return [
+                                        _c(
+                                          "jet-secondary-button",
+                                          {
+                                            nativeOn: {
+                                              click: function($event) {
+                                                return _vm.cancelCreateTaxonomy(
+                                                  $event
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                                Nevermind\n                            "
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "jet-button",
+                                          {
+                                            staticClass: "ml-2",
+                                            class: {
+                                              "opacity-25":
+                                                _vm.createForm.processing
+                                            },
+                                            attrs: {
+                                              disabled:
+                                                _vm.createForm.processing
+                                            },
+                                            nativeOn: {
+                                              click: function($event) {
+                                                return _vm.storeTaxonomy($event)
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                                Save\n                            "
+                                            )
+                                          ]
+                                        )
+                                      ]
+                                    },
+                                    proxy: true
+                                  }
+                                ],
+                                null,
+                                true
+                              )
+                            }),
+                            _vm._v(" "),
+                            _c("jet-dialog-modal", {
+                              attrs: { show: _vm.editingTaxonomy },
+                              on: { close: _vm.cancelEditTaxonomy },
+                              scopedSlots: _vm._u(
+                                [
+                                  {
+                                    key: "title",
+                                    fn: function() {
+                                      return [
+                                        _vm._v(
+                                          '\n                            Edit Vocabulary "' +
+                                            _vm._s(_vm.editingTaxonomyName) +
+                                            '"\n                        '
+                                        )
+                                      ]
+                                    },
+                                    proxy: true
+                                  },
+                                  {
+                                    key: "content",
+                                    fn: function() {
+                                      return [
+                                        _c(
+                                          "div",
+                                          { staticClass: "mt-4" },
+                                          [
+                                            _c("jet-input", {
+                                              staticClass: "mt-1 block w-3/4",
+                                              attrs: {
+                                                type: "text",
+                                                value: _vm.editForm.name
+                                              },
+                                              model: {
+                                                value: _vm.editForm.name,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.editForm,
+                                                    "name",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression: "editForm.name"
+                                              }
+                                            })
+                                          ],
+                                          1
+                                        )
+                                      ]
+                                    },
+                                    proxy: true
+                                  },
+                                  {
+                                    key: "footer",
+                                    fn: function() {
+                                      return [
+                                        _c(
+                                          "jet-secondary-button",
+                                          {
+                                            nativeOn: {
+                                              click: function($event) {
+                                                return _vm.cancelEditTaxonomy(
+                                                  $event
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                                Nevermind\n                            "
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "jet-button",
+                                          {
+                                            staticClass: "ml-2",
+                                            class: {
+                                              "opacity-25":
+                                                _vm.editForm.processing
+                                            },
+                                            attrs: {
+                                              disabled: _vm.editForm.processing
+                                            },
+                                            nativeOn: {
+                                              click: function($event) {
+                                                return _vm.updateTaxonomy(
+                                                  $event
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                                Save\n                            "
+                                            )
+                                          ]
+                                        )
+                                      ]
+                                    },
+                                    proxy: true
+                                  }
+                                ],
+                                null,
+                                true
+                              )
+                            }),
+                            _vm._v(" "),
+                            _c("term-definition", {
+                              attrs: {
+                                terms: taxonomyData.terms,
+                                "taxonomy-name": name,
+                                "taxonomy-id": taxonomyData.id,
+                                "client-account": _vm.clientAccount
+                              }
+                            })
+                          ]
+                        },
+                        proxy: true
+                      }
+                    ],
+                    null,
+                    true
+                  )
+                }),
+                _vm._v(" "),
+                _c("jet-confirmation-modal", {
+                  attrs: { show: _vm.confirmingTaxonomyDeletion },
+                  on: { close: _vm.cancelDeleteTaxonomy },
+                  scopedSlots: _vm._u(
+                    [
+                      {
+                        key: "title",
+                        fn: function() {
+                          return [
+                            _vm._v(
+                              "\n                    Delete Vocabulary\n                "
+                            )
+                          ]
+                        },
+                        proxy: true
+                      },
+                      {
+                        key: "content",
+                        fn: function() {
+                          return [
+                            _vm._v(
+                              '\n                    Are you sure you want to delete the vocabulary "' +
+                                _vm._s(_vm.deletingTaxonomyName) +
+                                '"?\n                '
+                            )
+                          ]
+                        },
+                        proxy: true
+                      },
+                      {
+                        key: "footer",
+                        fn: function() {
+                          return [
+                            _c(
+                              "jet-secondary-button",
+                              {
+                                nativeOn: {
+                                  click: function($event) {
+                                    return _vm.cancelDeleteTaxonomy($event)
+                                  }
+                                }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                        Nevermind\n                    "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "jet-danger-button",
+                              {
+                                staticClass: "ml-2",
+                                class: {
+                                  "opacity-25": _vm.deleteForm.processing
+                                },
+                                attrs: { disabled: _vm.deleteForm.processing },
+                                nativeOn: {
+                                  click: function($event) {
+                                    return _vm.deleteTaxonomy($event)
+                                  }
+                                }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                        Delete Term\n                    "
+                                )
+                              ]
+                            )
+                          ]
+                        },
+                        proxy: true
+                      }
+                    ],
+                    null,
+                    true
+                  )
+                })
+              ]
+            })
+          ],
+          2
+        )
+      }),
+      _vm._v(" "),
+      _c(
+        "span",
+        {
+          staticClass:
+            "cursor-pointer p-1 text-xs rounded-md\n    bg-blue-300 hover:bg-blue-400",
+          on: {
+            click: function($event) {
+              _vm.creatingTaxonomy = true
+            }
+          }
+        },
+        [
+          _c("i", { staticClass: "text-white fa fa-plus-circle" }),
+          _vm._v(" New Vocabulary\n    ")
+        ]
       )
-    }),
-    0
+    ],
+    2
   )
 }
 var staticRenderFns = []
@@ -70788,308 +71702,390 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("jet-action-section", {
-    scopedSlots: _vm._u([
-      {
-        key: "title",
-        fn: function() {
-          return [_vm._v("\n        " + _vm._s(_vm.taxonomyName) + "\n    ")]
-        },
-        proxy: true
-      },
-      {
-        key: "description",
-        fn: function() {
-          return undefined
-        },
-        proxy: true
-      },
-      {
-        key: "content",
-        fn: function() {
-          return [
-            _c(
-              "div",
-              { staticClass: "flex flex-row flex-wrap" },
-              _vm._l(_vm.terms, function(termData) {
-                return _c(
-                  "div",
-                  {
-                    staticClass:
-                      "text-xs mx-2 border-blue-50 border my-1 bg-yellow-50 rounded-xl px-2 py-1"
-                  },
-                  [
-                    termData.rulesCount === 0
-                      ? _c("i", {
-                          staticClass:
-                            "text-red-600 fa fa-times cursor-pointer hover:bg-red-800 p-1 rounded-xl",
-                          on: {
-                            click: function($event) {
-                              return _vm.confirmTermDeletion(
-                                termData.id,
-                                termData.name
-                              )
-                            }
-                          }
-                        })
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _c(
-                      "span",
-                      {
+  return _c(
+    "div",
+    [
+      _c(
+        "div",
+        { staticClass: "flex flex-row flex-wrap" },
+        [
+          _vm._l(
+            _vm._.sortBy(_vm.terms, function(term) {
+              return term.name
+            }),
+            function(termData) {
+              return _c(
+                "div",
+                {
+                  staticClass:
+                    "text-xs mx-2 border-blue-50 border my-1 bg-yellow-50 rounded-xl px-2 py-1"
+                },
+                [
+                  termData.clientRulesCount === 0
+                    ? _c("i", {
+                        staticClass:
+                          "text-red-600 fa fa-times cursor-pointer hover:bg-red-800 p-1 rounded-xl",
                         on: {
                           click: function($event) {
-                            return _vm.editTerm(termData.id, termData.name)
+                            return _vm.confirmTermDeletion(
+                              termData.id,
+                              termData.name
+                            )
                           }
                         }
-                      },
-                      [
-                        _vm._v(
-                          "\n                    " +
-                            _vm._s(termData.name) +
-                            "\n                "
-                        )
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "span",
-                      {
-                        staticClass:
-                          "text-xs px-3 bg-red-200 text-red-800 rounded-full"
-                      },
-                      [
-                        _c(
-                          "jet-nav-link",
-                          {
-                            attrs: {
-                              href:
-                                _vm.route("pm.client-account.rules", {
-                                  clientAccount: _vm.clientAccount.slug
-                                }) +
-                                "?term=" +
-                                termData.id
-                            }
-                          },
-                          [
-                            _c(
-                              "span",
-                              {
-                                attrs: {
-                                  title:
-                                    "Number of rules using this term. Click to view rules."
-                                }
-                              },
-                              [
-                                _vm._v(
-                                  "\n                            " +
-                                    _vm._s(termData.rulesCount) +
-                                    "\n                        "
-                                )
-                              ]
-                            )
-                          ]
-                        )
-                      ],
-                      1
-                    )
-                  ]
-                )
-              }),
-              0
-            ),
-            _vm._v(" "),
-            _c(
-              "jet-action-message",
-              {
-                staticClass: "mt-3",
-                attrs: { on: _vm.editTermForm.recentlySuccessful }
-              },
-              [
-                _c("div", { staticClass: "flex bg-green-200" }, [
-                  _c("span", { staticClass: "p-1" }, [_vm._v("Saved.")])
-                ])
-              ]
-            ),
-            _vm._v(" "),
-            _c(
-              "jet-action-message",
-              {
-                staticClass: "mt-3",
-                attrs: { on: _vm.deleteTermForm.recentlySuccessful }
-              },
-              [
-                _c("div", { staticClass: "flex bg-green-200" }, [
-                  _c("span", { staticClass: "p-1" }, [_vm._v("Deleted.")])
-                ])
-              ]
-            ),
-            _vm._v(" "),
-            _c("jet-dialog-modal", {
-              attrs: { show: _vm.editingTerm },
-              on: { close: _vm.cancelEditTerm },
-              scopedSlots: _vm._u([
-                {
-                  key: "title",
-                  fn: function() {
-                    return [
+                      })
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticClass:
+                        "mt-2 cursor-pointer\n                      border-b-2 border-dashed border-transparent hover:border-gray-300\n                      transition duration-150 ease-in-out",
+                      on: {
+                        click: function($event) {
+                          return _vm.editTerm(termData.id, termData.name)
+                        }
+                      }
+                    },
+                    [
                       _vm._v(
-                        "\n                Edit Term " +
-                          _vm._s(_vm.editingTermName) +
+                        "\n                    " +
+                          _vm._s(termData.name) +
                           "\n            "
                       )
                     ]
-                  },
-                  proxy: true
-                },
-                {
-                  key: "content",
-                  fn: function() {
-                    return [
-                      _c(
-                        "div",
-                        { staticClass: "mt-4" },
+                  ),
+                  _vm._v(" "),
+                  termData.globalRulesCount
+                    ? _c(
+                        "span",
+                        {
+                          staticClass:
+                            "text-xs px-2 bg-red-200 text-red-800 rounded-full"
+                        },
                         [
-                          _c("jet-input", {
-                            staticClass: "mt-1 block w-3/4",
-                            attrs: {
-                              type: "text",
-                              value: _vm.editTermForm.name
+                          _c(
+                            "jet-nav-link",
+                            {
+                              attrs: {
+                                href:
+                                  _vm.route("pm.client-account.rules", {
+                                    clientAccount: _vm.clientAccount.slug
+                                  }) +
+                                  "?term=" +
+                                  termData.id
+                              }
                             },
-                            model: {
-                              value: _vm.editTermForm.name,
-                              callback: function($$v) {
-                                _vm.$set(_vm.editTermForm, "name", $$v)
-                              },
-                              expression: "editTermForm.name"
-                            }
-                          })
+                            [
+                              _c(
+                                "span",
+                                {
+                                  attrs: {
+                                    title:
+                                      "Number of rules using this term for this client account. Click to view rules."
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                        " +
+                                      _vm._s(termData.clientRulesCount) +
+                                      "\n                    "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              termData.clientRulesCount !==
+                              termData.globalRulesCount
+                                ? _c(
+                                    "span",
+                                    {
+                                      attrs: {
+                                        title:
+                                          "Number of rules using this term across all client accounts. Click to view rules."
+                                      }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                         (" +
+                                          _vm._s(termData.globalRulesCount) +
+                                          ")\n                    "
+                                      )
+                                    ]
+                                  )
+                                : _vm._e()
+                            ]
+                          )
                         ],
                         1
                       )
-                    ]
-                  },
-                  proxy: true
-                },
-                {
-                  key: "footer",
-                  fn: function() {
-                    return [
-                      _c(
-                        "jet-secondary-button",
-                        {
-                          nativeOn: {
-                            click: function($event) {
-                              return _vm.cancelEditTerm($event)
-                            }
-                          }
-                        },
-                        [
-                          _vm._v(
-                            "\n                    Nevermind\n                "
-                          )
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "jet-button",
-                        {
-                          staticClass: "ml-2",
-                          class: { "opacity-25": _vm.editTermForm.processing },
-                          attrs: { disabled: _vm.editTermForm.processing },
-                          nativeOn: {
-                            click: function($event) {
-                              return _vm.updateTerm($event)
-                            }
-                          }
-                        },
-                        [_vm._v("\n                    Save\n                ")]
-                      )
-                    ]
-                  },
-                  proxy: true
-                }
-              ])
-            }),
-            _vm._v(" "),
-            _c("jet-confirmation-modal", {
-              attrs: { show: _vm.confirmingTermDeletion },
-              on: { close: _vm.cancelDeleteTerm },
-              scopedSlots: _vm._u([
-                {
-                  key: "title",
-                  fn: function() {
-                    return [
-                      _vm._v("\n                Delete Term\n            ")
-                    ]
-                  },
-                  proxy: true
-                },
-                {
-                  key: "content",
-                  fn: function() {
-                    return [
-                      _vm._v(
-                        '\n                Are you sure you want to delete the term "' +
-                          _vm._s(_vm.deletingTermName) +
-                          '"?\n            '
-                      )
-                    ]
-                  },
-                  proxy: true
-                },
-                {
-                  key: "footer",
-                  fn: function() {
-                    return [
-                      _c(
-                        "jet-secondary-button",
-                        {
-                          nativeOn: {
-                            click: function($event) {
-                              return _vm.cancelDeleteTerm($event)
-                            }
-                          }
-                        },
-                        [
-                          _vm._v(
-                            "\n                    Nevermind\n                "
-                          )
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "jet-danger-button",
-                        {
-                          staticClass: "ml-2",
-                          class: {
-                            "opacity-25": _vm.deleteTermForm.processing
-                          },
-                          attrs: { disabled: _vm.deleteTermForm.processing },
-                          nativeOn: {
-                            click: function($event) {
-                              return _vm.deleteTerm($event)
-                            }
-                          }
-                        },
-                        [
-                          _vm._v(
-                            "\n                    Delete Term\n                "
-                          )
-                        ]
-                      )
-                    ]
-                  },
-                  proxy: true
-                }
-              ])
-            })
-          ]
+                    : _vm._e()
+                ]
+              )
+            }
+          ),
+          _vm._v(" "),
+          _c("i", {
+            staticClass:
+              "cursor-pointer pt-3 align-middle text-blue-400 hover:text-blue-700 fa fa-plus-circle",
+            on: {
+              click: function($event) {
+                _vm.creatingTerm = true
+              }
+            }
+          })
+        ],
+        2
+      ),
+      _vm._v(" "),
+      _c(
+        "jet-action-message",
+        {
+          staticClass: "mt-3",
+          attrs: { on: _vm.editTermForm.recentlySuccessful }
         },
-        proxy: true
-      }
-    ])
-  })
+        [
+          _c("div", { staticClass: "flex bg-green-200" }, [
+            _c("span", { staticClass: "p-1" }, [_vm._v("Saved.")])
+          ])
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "jet-action-message",
+        {
+          staticClass: "mt-3",
+          attrs: { on: _vm.deleteTermForm.recentlySuccessful }
+        },
+        [
+          _c("div", { staticClass: "flex bg-green-200" }, [
+            _c("span", { staticClass: "p-1" }, [_vm._v("Deleted.")])
+          ])
+        ]
+      ),
+      _vm._v(" "),
+      _c("jet-dialog-modal", {
+        attrs: { show: _vm.creatingTerm },
+        on: { close: _vm.cancelCreateTerm },
+        scopedSlots: _vm._u([
+          {
+            key: "title",
+            fn: function() {
+              return [
+                _vm._v(
+                  "\n            New Term in " +
+                    _vm._s(_vm.taxonomyName) +
+                    "\n        "
+                )
+              ]
+            },
+            proxy: true
+          },
+          {
+            key: "content",
+            fn: function() {
+              return [
+                _c(
+                  "div",
+                  { staticClass: "mt-4" },
+                  [
+                    _c("jet-input", {
+                      staticClass: "mt-1 block w-3/4",
+                      attrs: { type: "text", value: _vm.createTermForm.name },
+                      model: {
+                        value: _vm.createTermForm.name,
+                        callback: function($$v) {
+                          _vm.$set(_vm.createTermForm, "name", $$v)
+                        },
+                        expression: "createTermForm.name"
+                      }
+                    })
+                  ],
+                  1
+                )
+              ]
+            },
+            proxy: true
+          },
+          {
+            key: "footer",
+            fn: function() {
+              return [
+                _c(
+                  "jet-secondary-button",
+                  {
+                    nativeOn: {
+                      click: function($event) {
+                        return _vm.cancelCreateTerm($event)
+                      }
+                    }
+                  },
+                  [_vm._v("\n                Nevermind\n            ")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "jet-button",
+                  {
+                    staticClass: "ml-2",
+                    class: { "opacity-25": _vm.createTermForm.processing },
+                    attrs: { disabled: _vm.createTermForm.processing },
+                    nativeOn: {
+                      click: function($event) {
+                        return _vm.storeTerm($event)
+                      }
+                    }
+                  },
+                  [_vm._v("\n                Save\n            ")]
+                )
+              ]
+            },
+            proxy: true
+          }
+        ])
+      }),
+      _vm._v(" "),
+      _c("jet-dialog-modal", {
+        attrs: { show: _vm.editingTerm },
+        on: { close: _vm.cancelEditTerm },
+        scopedSlots: _vm._u([
+          {
+            key: "title",
+            fn: function() {
+              return [
+                _vm._v(
+                  "\n            Edit Term " +
+                    _vm._s(_vm.editingTermName) +
+                    "\n        "
+                )
+              ]
+            },
+            proxy: true
+          },
+          {
+            key: "content",
+            fn: function() {
+              return [
+                _c(
+                  "div",
+                  { staticClass: "mt-4" },
+                  [
+                    _c("jet-input", {
+                      staticClass: "mt-1 block w-3/4",
+                      attrs: { type: "text", value: _vm.editTermForm.name },
+                      model: {
+                        value: _vm.editTermForm.name,
+                        callback: function($$v) {
+                          _vm.$set(_vm.editTermForm, "name", $$v)
+                        },
+                        expression: "editTermForm.name"
+                      }
+                    })
+                  ],
+                  1
+                )
+              ]
+            },
+            proxy: true
+          },
+          {
+            key: "footer",
+            fn: function() {
+              return [
+                _c(
+                  "jet-secondary-button",
+                  {
+                    nativeOn: {
+                      click: function($event) {
+                        return _vm.cancelEditTerm($event)
+                      }
+                    }
+                  },
+                  [_vm._v("\n                Nevermind\n            ")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "jet-button",
+                  {
+                    staticClass: "ml-2",
+                    class: { "opacity-25": _vm.editTermForm.processing },
+                    attrs: { disabled: _vm.editTermForm.processing },
+                    nativeOn: {
+                      click: function($event) {
+                        return _vm.updateTerm($event)
+                      }
+                    }
+                  },
+                  [_vm._v("\n                Save\n            ")]
+                )
+              ]
+            },
+            proxy: true
+          }
+        ])
+      }),
+      _vm._v(" "),
+      _c("jet-confirmation-modal", {
+        attrs: { show: _vm.confirmingTermDeletion },
+        on: { close: _vm.cancelDeleteTerm },
+        scopedSlots: _vm._u([
+          {
+            key: "title",
+            fn: function() {
+              return [_vm._v("\n            Delete Term\n        ")]
+            },
+            proxy: true
+          },
+          {
+            key: "content",
+            fn: function() {
+              return [
+                _vm._v(
+                  '\n            Are you sure you want to delete the term "' +
+                    _vm._s(_vm.deletingTermName) +
+                    '"?\n        '
+                )
+              ]
+            },
+            proxy: true
+          },
+          {
+            key: "footer",
+            fn: function() {
+              return [
+                _c(
+                  "jet-secondary-button",
+                  {
+                    nativeOn: {
+                      click: function($event) {
+                        return _vm.cancelDeleteTerm($event)
+                      }
+                    }
+                  },
+                  [_vm._v("\n                Nevermind\n            ")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "jet-danger-button",
+                  {
+                    staticClass: "ml-2",
+                    class: { "opacity-25": _vm.deleteTermForm.processing },
+                    attrs: { disabled: _vm.deleteTermForm.processing },
+                    nativeOn: {
+                      click: function($event) {
+                        return _vm.deleteTerm($event)
+                      }
+                    }
+                  },
+                  [_vm._v("\n                Delete Term\n            ")]
+                )
+              ]
+            },
+            proxy: true
+          }
+        ])
+      })
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -71217,6 +72213,83 @@ var render = function() {
       )
     ])
   ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/PM/Rules/FilterCondition.vue?vue&type=template&id=b7f2f178&scoped=true&":
+/*!***************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Components/PM/Rules/FilterCondition.vue?vue&type=template&id=b7f2f178&scoped=true& ***!
+  \***************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "w-full h-full flex flex-col justify-center items-center" },
+    [
+      _c(
+        "div",
+        { staticClass: "flex justify-baseline items-baseline align-bottom" },
+        [
+          _c(
+            "span",
+            {
+              class: [
+                "h-6 w-6",
+                { "text-gray-500": !_vm.toggleActive },
+                { "text-gray-400": _vm.toggleActive }
+              ]
+            },
+            [_vm._v("\n            OR\n        ")]
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              class: [
+                { "bg-blue-700": _vm.toggleActive },
+                "w-14 h-7 flex items-center bg-gray-300 rounded-full mx-3 px-1"
+              ],
+              on: { click: _vm.handleToggleActive }
+            },
+            [
+              _c("div", {
+                class: [
+                  { "translate-x-7": _vm.toggleActive },
+                  "bg-white w-5 h-5 rounded-full shadow-md transform"
+                ]
+              })
+            ]
+          ),
+          _vm._v(" "),
+          _c(
+            "span",
+            {
+              class: [
+                "h-6 w-6",
+                { "text-gray-500": _vm.toggleActive },
+                { "text-gray-400": !_vm.toggleActive }
+              ]
+            },
+            [_vm._v("\n            AND\n        ")]
+          )
+        ]
+      )
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -71777,6 +72850,205 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/PM/Rules/TaxonomyFilter.vue?vue&type=template&id=7c0f3d10&scoped=true&":
+/*!**************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Components/PM/Rules/TaxonomyFilter.vue?vue&type=template&id=7c0f3d10&scoped=true& ***!
+  \**************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    {
+      directives: [
+        {
+          name: "click-outside",
+          rawName: "v-click-outside",
+          value: _vm.hideList,
+          expression: "hideList"
+        }
+      ]
+    },
+    [
+      _c(
+        "label",
+        {
+          staticClass: "block text-xs font-medium text-gray-700",
+          attrs: { id: "listbox-label" }
+        },
+        [_vm._v("\n        " + _vm._s(_vm.taxonomy[0]) + "\n    ")]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "mt-1 relative" }, [
+        _c(
+          "button",
+          {
+            staticClass:
+              "relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-xs",
+            attrs: {
+              type: "button",
+              "aria-haspopup": "listbox",
+              "aria-expanded": "true",
+              "aria-labelledby": "listbox-label"
+            },
+            on: {
+              click: function($event) {
+                _vm.open = !_vm.open
+              }
+            }
+          },
+          [
+            _c("span", { staticClass: "flex items-center" }, [
+              _c("span", { staticClass: "ml-3 block truncate" }, [
+                _vm._v(
+                  "\n                  " +
+                    _vm._s(_vm.selected ? _vm.selected : "None") +
+                    "\n                "
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c(
+              "span",
+              {
+                staticClass:
+                  "ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
+              },
+              [
+                _c(
+                  "svg",
+                  {
+                    staticClass: "h-5 w-5 text-gray-400",
+                    attrs: {
+                      xmlns: "http://www.w3.org/2000/svg",
+                      viewBox: "0 0 20 20",
+                      fill: "currentColor",
+                      "aria-hidden": "true"
+                    }
+                  },
+                  [
+                    _c("path", {
+                      attrs: {
+                        "fill-rule": "evenodd",
+                        d:
+                          "M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z",
+                        "clip-rule": "evenodd"
+                      }
+                    })
+                  ]
+                )
+              ]
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _vm.open
+          ? _c(
+              "div",
+              {
+                staticClass:
+                  "absolute mt-1 w-full rounded-md bg-white shadow-lg z-50"
+              },
+              [
+                _c(
+                  "ul",
+                  {
+                    staticClass:
+                      "max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-xs",
+                    attrs: {
+                      tabindex: "-1",
+                      role: "listbox",
+                      "aria-labelledby": "listbox-label"
+                    }
+                  },
+                  _vm._l(_vm.taxonomy[1], function(term) {
+                    return _c(
+                      "li",
+                      {
+                        staticClass:
+                          "text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9",
+                        attrs: { id: "listbox-item-0", role: "option" },
+                        on: {
+                          click: function($event) {
+                            return _vm.onSelectTerm(term)
+                          }
+                        }
+                      },
+                      [
+                        _c("div", { staticClass: "flex items-center" }, [
+                          _c(
+                            "span",
+                            { staticClass: "ml-3 block font-normal truncate" },
+                            [
+                              _vm._v(
+                                "\n                          " +
+                                  _vm._s(term) +
+                                  "\n                        "
+                              )
+                            ]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        term === _vm.selected
+                          ? _c(
+                              "span",
+                              {
+                                staticClass:
+                                  "absolute inset-y-0 right-0 flex items-center pr-4"
+                              },
+                              [
+                                _c(
+                                  "svg",
+                                  {
+                                    staticClass: "h-5 w-5",
+                                    attrs: {
+                                      xmlns: "http://www.w3.org/2000/svg",
+                                      viewBox: "0 0 20 20",
+                                      fill: "currentColor",
+                                      "aria-hidden": "true"
+                                    }
+                                  },
+                                  [
+                                    _c("path", {
+                                      attrs: {
+                                        "fill-rule": "evenodd",
+                                        d:
+                                          "M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z",
+                                        "clip-rule": "evenodd"
+                                      }
+                                    })
+                                  ]
+                                )
+                              ]
+                            )
+                          : _vm._e()
+                      ]
+                    )
+                  }),
+                  0
+                )
+              ]
+            )
+          : _vm._e()
+      ])
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/PM/Rules/Term.vue?vue&type=template&id=f7dbaa0a&scoped=true&":
 /*!****************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Components/PM/Rules/Term.vue?vue&type=template&id=f7dbaa0a&scoped=true& ***!
@@ -72050,9 +73322,10 @@ var render = function() {
             {
               key: tab.name,
               staticClass:
-                "no-underline border-b-2 border-transparent uppercase tracking-wide font-bold text-xs py-3 mr-8",
+                "no-underline hover:bg-blue-50 hover:border-blue-200 border-b-2 border-transparent\n               uppercase tracking-wide font-bold text-xs py-3 px-2 mr-8\n               rounded-t-md\n                ",
               class: {
-                "text-blue-500": tab.isActive,
+                "hover:text-grey-400 bg-blue-100 border-blue-200 ":
+                  tab.isActive,
                 "text-grey-400": tab.isActive == false
               },
               attrs: { href: tab.href },
@@ -72069,7 +73342,7 @@ var render = function() {
       )
     ]),
     _vm._v(" "),
-    _c("div", { staticClass: "tabs-details" }, [_vm._t("default")], 2)
+    _c("div", { staticClass: "tabs-details mt-3" }, [_vm._t("default")], 2)
   ])
 }
 var staticRenderFns = []
@@ -75284,43 +76557,36 @@ var render = function() {
                       },
                       [
                         _c(
-                          "div",
-                          { staticClass: "mx-auto sm:px-6 lg:px-8" },
-                          [
-                            _c(
-                              "tabs",
-                              _vm._l(_vm.topTaxonomies, function(
-                                topTaxonomy,
-                                index
-                              ) {
-                                return _c(
-                                  "tab",
-                                  {
-                                    key: topTaxonomy.name,
-                                    attrs: {
-                                      name: topTaxonomy.name,
-                                      selected: index == 0
-                                    }
-                                  },
-                                  [
-                                    _c("taxonomy-definition", {
-                                      attrs: {
-                                        "parent-taxonomy": topTaxonomy,
-                                        "taxonomy-hierarchy":
-                                          _vm.taxonomyHierarchy,
-                                        "client-account": _vm.clientAccount
-                                      }
-                                    })
-                                  ],
-                                  1
-                                )
-                              }),
+                          "tabs",
+                          _vm._l(_vm.topTaxonomies, function(
+                            topTaxonomy,
+                            index
+                          ) {
+                            return _c(
+                              "tab",
+                              {
+                                key: topTaxonomy.name,
+                                attrs: {
+                                  name: topTaxonomy.name,
+                                  selected: index == 0
+                                }
+                              },
+                              [
+                                _c("taxonomy-definition", {
+                                  attrs: {
+                                    "parent-taxonomy": topTaxonomy,
+                                    "taxonomy-hierarchy": _vm.taxonomyHierarchy,
+                                    "client-account": _vm.clientAccount
+                                  }
+                                })
+                              ],
                               1
                             )
-                          ],
+                          }),
                           1
                         )
-                      ]
+                      ],
+                      1
                     )
                   : _vm._e()
               ])
@@ -75573,7 +76839,59 @@ var render = function() {
                 staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8 bg-gray-50 pt-5"
               },
               [
-                _c("div", { attrs: { id: "filter" } }, [
+                _c(
+                  "div",
+                  { staticClass: "grid grid-cols-5 gap-1" },
+                  [
+                    _vm._l(Object.entries(_vm.termsByTaxonomies), function(
+                      taxonomy,
+                      taxonomyIndex
+                    ) {
+                      return _c("taxonomy-filter", {
+                        key: taxonomyIndex,
+                        attrs: {
+                          taxonomy: taxonomy,
+                          "selected-value": _vm.taxonomies[taxonomy[0]]
+                        },
+                        on: { "on-change-filter": _vm.filterByTaxonomyTerm }
+                      })
+                    }),
+                    _vm._v(" "),
+                    _c("filter-condition", {
+                      on: {
+                        "on-change-filter-condition":
+                          _vm.onChangeFilterCondition
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "jet-button",
+                      {
+                        nativeOn: {
+                          click: function($event) {
+                            return _vm.clearAllFilters($event)
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                    Reset All\n                "
+                        )
+                      ]
+                    )
+                  ],
+                  2
+                ),
+                _vm._v(" "),
+                _vm.search
+                  ? _c("div", [
+                      _c("p", [
+                        _vm._v("Showing rules for " + _vm._s(_vm.search))
+                      ])
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _c("div", { staticClass: "m-2", attrs: { id: "filter" } }, [
                   _c(
                     "div",
                     { staticClass: "flex text-xs", attrs: { role: "group" } },
@@ -75632,42 +76950,11 @@ var render = function() {
                         ]
                       ),
                       _vm._v(" "),
-                      _vm._l(_vm.taxonomies, function(taxonomy) {
-                        return _c(
-                          "button",
-                          {
-                            class: [
-                              {
-                                "bg-blue-500 text-white":
-                                  _vm.filterOption === taxonomy
-                              },
-                              {
-                                "bg-white text-blue-500":
-                                  _vm.filterOption !== taxonomy
-                              },
-                              "hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline"
-                            ],
-                            on: {
-                              click: function($event) {
-                                return _vm.$refs.cpt.filter(taxonomy)
-                              }
-                            }
-                          },
-                          [
-                            _vm._v(
-                              "\n                        " +
-                                _vm._s(taxonomy) +
-                                "\n                    "
-                            )
-                          ]
-                        )
-                      }),
-                      _vm._v(" "),
                       _c(
                         "button",
                         {
                           staticClass:
-                            "bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg",
+                            "bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg",
                           on: {
                             click: function($event) {
                               return _vm.$refs.cpt.unfilter()
@@ -75680,8 +76967,7 @@ var render = function() {
                           )
                         ]
                       )
-                    ],
-                    2
+                    ]
                   )
                 ]),
                 _vm._v(" "),
@@ -76213,8 +77499,8 @@ var render = function() {
     },
     [
       _vm._v(" "),
-      _c("div", { staticClass: "py-12" }, [
-        _c("div", { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" }, [
+      _c("div", { staticClass: "mx-auto py-12 flex flex-grow" }, [
+        _c("div", { staticClass: "px-2" }, [
           _c("h2", [_vm._v("Your teams")]),
           _vm._v(" "),
           _c(
@@ -76236,6 +77522,42 @@ var render = function() {
                       _vm._v(
                         "\n                        " +
                           _vm._s(availableTeam.client_account.name) +
+                          "\n                    "
+                      )
+                    ]
+                  )
+                ],
+                1
+              )
+            }),
+            0
+          )
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "px-2" }, [
+          _c("h2", [_vm._v("Other teams")]),
+          _vm._v(" "),
+          _c(
+            "ul",
+            { staticClass: "h-72 flex flex-col flex-wrap" },
+            _vm._l(_vm.otherTeams, function(otherTeam) {
+              return _c(
+                "li",
+                { staticClass: "px-2" },
+                [
+                  _c(
+                    "jet-nav-link",
+                    {
+                      attrs: {
+                        href: _vm.route("pm.client-account.dashboard", {
+                          clientAccount: otherTeam.client_account.slug
+                        })
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n                        " +
+                          _vm._s(otherTeam.client_account.name) +
                           "\n                    "
                       )
                     ]
@@ -92418,6 +93740,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/Components/PM/Rules/FilterCondition.vue":
+/*!**************************************************************!*\
+  !*** ./resources/js/Components/PM/Rules/FilterCondition.vue ***!
+  \**************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _FilterCondition_vue_vue_type_template_id_b7f2f178_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./FilterCondition.vue?vue&type=template&id=b7f2f178&scoped=true& */ "./resources/js/Components/PM/Rules/FilterCondition.vue?vue&type=template&id=b7f2f178&scoped=true&");
+/* harmony import */ var _FilterCondition_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FilterCondition.vue?vue&type=script&lang=js& */ "./resources/js/Components/PM/Rules/FilterCondition.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _FilterCondition_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _FilterCondition_vue_vue_type_template_id_b7f2f178_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _FilterCondition_vue_vue_type_template_id_b7f2f178_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "b7f2f178",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/Components/PM/Rules/FilterCondition.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/Components/PM/Rules/FilterCondition.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************!*\
+  !*** ./resources/js/Components/PM/Rules/FilterCondition.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FilterCondition_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./FilterCondition.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/PM/Rules/FilterCondition.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FilterCondition_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/Components/PM/Rules/FilterCondition.vue?vue&type=template&id=b7f2f178&scoped=true&":
+/*!*********************************************************************************************************!*\
+  !*** ./resources/js/Components/PM/Rules/FilterCondition.vue?vue&type=template&id=b7f2f178&scoped=true& ***!
+  \*********************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_FilterCondition_vue_vue_type_template_id_b7f2f178_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./FilterCondition.vue?vue&type=template&id=b7f2f178&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/PM/Rules/FilterCondition.vue?vue&type=template&id=b7f2f178&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_FilterCondition_vue_vue_type_template_id_b7f2f178_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_FilterCondition_vue_vue_type_template_id_b7f2f178_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/Components/PM/Rules/Form.vue":
 /*!***************************************************!*\
   !*** ./resources/js/Components/PM/Rules/Form.vue ***!
@@ -92689,6 +94080,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RuleTags_vue_vue_type_template_id_694be7c4___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RuleTags_vue_vue_type_template_id_694be7c4___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/Components/PM/Rules/TaxonomyFilter.vue":
+/*!*************************************************************!*\
+  !*** ./resources/js/Components/PM/Rules/TaxonomyFilter.vue ***!
+  \*************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _TaxonomyFilter_vue_vue_type_template_id_7c0f3d10_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TaxonomyFilter.vue?vue&type=template&id=7c0f3d10&scoped=true& */ "./resources/js/Components/PM/Rules/TaxonomyFilter.vue?vue&type=template&id=7c0f3d10&scoped=true&");
+/* harmony import */ var _TaxonomyFilter_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TaxonomyFilter.vue?vue&type=script&lang=js& */ "./resources/js/Components/PM/Rules/TaxonomyFilter.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _TaxonomyFilter_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _TaxonomyFilter_vue_vue_type_template_id_7c0f3d10_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _TaxonomyFilter_vue_vue_type_template_id_7c0f3d10_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "7c0f3d10",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/Components/PM/Rules/TaxonomyFilter.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/Components/PM/Rules/TaxonomyFilter.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************!*\
+  !*** ./resources/js/Components/PM/Rules/TaxonomyFilter.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyFilter_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./TaxonomyFilter.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/PM/Rules/TaxonomyFilter.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyFilter_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/Components/PM/Rules/TaxonomyFilter.vue?vue&type=template&id=7c0f3d10&scoped=true&":
+/*!********************************************************************************************************!*\
+  !*** ./resources/js/Components/PM/Rules/TaxonomyFilter.vue?vue&type=template&id=7c0f3d10&scoped=true& ***!
+  \********************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyFilter_vue_vue_type_template_id_7c0f3d10_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./TaxonomyFilter.vue?vue&type=template&id=7c0f3d10&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/PM/Rules/TaxonomyFilter.vue?vue&type=template&id=7c0f3d10&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyFilter_vue_vue_type_template_id_7c0f3d10_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TaxonomyFilter_vue_vue_type_template_id_7c0f3d10_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -96474,6 +97934,23 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(_inertiajs_inertia_vue__WEBPACK_I
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(laravel_jetstream__WEBPACK_IMPORTED_MODULE_2__["InertiaForm"]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(portal_vue__WEBPACK_IMPORTED_MODULE_3___default.a);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('v-select', vue_select__WEBPACK_IMPORTED_MODULE_5___default.a);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.directive('click-outside', {
+  bind: function bind(el, binding, vnode) {
+    var vm = vnode.context;
+    var callback = binding.value;
+
+    el.clickOutsideEvent = function (event) {
+      if (!(el == event.target || el.contains(event.target))) {
+        return callback.call(vm, event);
+      }
+    };
+
+    document.body.addEventListener('click', el.clickOutsideEvent);
+  },
+  unbind: function unbind(el) {
+    document.body.removeEventListener('click', el.clickOutsideEvent);
+  }
+});
 var app = document.getElementById('app');
 new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   render: function render(h) {
@@ -96548,8 +98025,8 @@ window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/sumitakkewar/sgsco/dagobah/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /Users/sumitakkewar/sgsco/dagobah/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /Users/labouy/Sites/dagobah/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /Users/labouy/Sites/dagobah/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

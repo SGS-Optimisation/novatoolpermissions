@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateRuleRequest;
 use App\Models\ClientAccount;
 use App\Models\Rule;
+use App\Models\Term;
 use App\Services\ClientAccounts\BuildTaxonomyLists;
 use App\Services\Taxonomy\Traits\TaxonomyBuilder;
 use Illuminate\Contracts\Foundation\Application;
@@ -40,6 +41,52 @@ class RuleController extends Controller
                 );
             };
         }
+    }
+
+    /**
+     * @param Request $request
+     * @param $client_account_slug
+     * @return \Inertia\Response
+     */
+    public function index(Request $request, $client_account_slug)
+    {
+        $client_account = ClientAccount::whereSlug($client_account_slug)->first();
+
+        $term = $request->query('term');
+
+        $cacheTag = 'rules-' . $client_account_slug;
+        $tags = ['rules'];
+
+        if ($term) {
+            $term = Term::find($term);
+            $cacheTag .=  '-' . $term;
+        }
+
+        $rules = Cache::tags($tags)->remember($cacheTag, 3600, function () use ($client_account, $term) {
+
+            $rules = $client_account->rules();
+
+            if($term){
+                $rules = $rules->whereHas('terms', function ($query) use ($term) {
+                    return $query->where('id', '=', $term->id);
+                });
+            }
+
+            $rules = $rules->get()->each(function ($rule) {
+                $rule->content = str_replace('<img', '<img loading="lazy"', $rule->content);
+            });
+
+            return $rules;
+        });
+
+        \Log::debug('rules index');
+
+        return Jetstream::inertia()->render($request, 'ClientAccount/ListRules', [
+            'team' => $request->user()->currentTeam,
+            'clientAccount' => $client_account,
+            'rules' => $rules, //()->orderBy('updated_at', 'DESC')->paginate(50) ?? [],
+            'search' => optional($term)->name,
+        ]);
     }
 
     /**

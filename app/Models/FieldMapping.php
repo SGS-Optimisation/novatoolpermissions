@@ -5,6 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class FieldMapping
+ * @package App\Models
+ * @mixin \Eloquent
+ */
 class FieldMapping extends Model
 {
     use HasFactory;

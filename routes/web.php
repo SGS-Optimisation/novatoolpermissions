@@ -6,6 +6,7 @@ use App\Http\Controllers\PMs\ClientAccountTaxonomyController;
 use App\Http\Controllers\PMs\HomeController;
 use App\Http\Controllers\PMs\RuleController;
 use App\Http\Controllers\PMs\RuleTaxonomyController;
+use App\Http\Controllers\PMs\TaxonomyController;
 use App\Http\Controllers\PMs\TermController;
 use Illuminate\Support\Facades\Route;
 
@@ -69,7 +70,7 @@ Route::name('pm.')
                  */
                 Route::group(['prefix' => '/rules'], function () {
 
-                    Route::get('/', [ClientAccountController::class, 'rules'])
+                    Route::get('/', [RuleController::class, 'index'])
                         ->name('rules');
 
                     Route::get('/create', [RuleController::class, 'create'])
@@ -89,9 +90,25 @@ Route::name('pm.')
                 });
             });
 
+        Route::name('taxonomies.')
+            ->prefix('/taxonomies')
+            ->group(function () {
+                Route::post('/', [TaxonomyController::class, 'store'])
+                    ->name('store');
+
+                Route::put('/{id}', [TaxonomyController::class, 'update'])
+                    ->name('update');
+
+                Route::delete('/{id}', [TaxonomyController::class, 'destroy'])
+                    ->name('destroy');
+            });
+
         Route::name('terms.')
             ->prefix('/terms')
             ->group(function () {
+                Route::post('/', [TermController::class, 'store'])
+                    ->name('store');
+
                 Route::put('/{id}', [TermController::class, 'update'])
                     ->name('update');
 
@@ -111,5 +128,6 @@ Route::group([
 ],
     function () {
         Route::match(['get', 'post'],'/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'index'])
-            ->name('home');
+            ->name('home')
+            ->where('jobNumber', '[0-9]+');
     });

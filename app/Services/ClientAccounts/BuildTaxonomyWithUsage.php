@@ -42,6 +42,11 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
     protected function processTaxonomy(Taxonomy $taxonomy)
     {
         $data = [];
+        $data[$taxonomy->name] = [
+            'id' => $taxonomy->id,
+            'taxonomy' => $taxonomy,
+            'terms' => []
+        ];
 
         if ($taxonomy->taxonomies()->count()) {
 
@@ -54,18 +59,27 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
                 $data[$taxonomy->name]['children'][$child_taxonomy][] = static::processTaxonomy($child_taxonomy);
             }
         }
-        if ($taxonomy->terms()->count()) {
-            $data[$taxonomy->name] = [
-                'id' => $taxonomy->id,
-                'terms' => []
-            ];
+
+        $client_terms = $taxonomy->terms()
+            ->whereHas('client_accounts', function ($query) {
+                $query->where('id', $this->clientAccount->id);
+            })
+            ->withCount('rules')
+            ->get();
+
+        if (count($client_terms)) {
 
             /** @var Term $term */
-            foreach ($taxonomy->terms as $term) {
+            foreach ($client_terms as $term) {
+
+                $client_rules_count = $term->rules()->where('client_account_id', $this->clientAccount->id)
+                    ->count();
+
                 $data[$taxonomy->name]['terms'][] = [
                     'id' => $term->id,
                     'name' => $term->name,
-                    'rulesCount' => $term->rules()->count()
+                    'globalRulesCount' => $term->rules_count,
+                    'clientRulesCount' => $client_rules_count,
                 ];
             }
 

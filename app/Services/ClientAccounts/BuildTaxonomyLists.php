@@ -40,6 +40,11 @@ class BuildTaxonomyLists extends BaseClientAccountService
     protected function processTaxonomy(Taxonomy $taxonomy)
     {
         $data = [];
+        $data[$taxonomy->name] = [
+            'id' => $taxonomy->id,
+            'taxonomy' => $taxonomy,
+            'terms' => []
+        ];
 
         if ($taxonomy->taxonomies()->count()) {
 

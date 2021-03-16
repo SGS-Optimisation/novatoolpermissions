@@ -17,19 +17,22 @@ trait TermHelper
      * @param  array  $config
      * @param  Rule|null  $rule
      */
-    protected static function buildTerm($name, $taxonomy, $config = [], $rule = null)
+    protected static function buildTerm($name, $taxonomy, $config = [], $rule = null, $client_account = null)
     {
         $term = Term::whereName($name)
             ->whereTaxonomyId($taxonomy->id)
             ->whereRaw('config = cast(? as json)', json_encode($config))
             ->first();
 
-        if(!$term){
+        if (!$term) {
             $term = $taxonomy->terms()->create(['name' => $name, 'config' => $config]);
         }
 
-        if($rule)
-        {
+        if ($client_account) {
+            $term->client_accounts()->syncWithoutDetaching($client_account);
+        }
+
+        if ($rule) {
             $rule->terms()->attach($term->id);
         }
 

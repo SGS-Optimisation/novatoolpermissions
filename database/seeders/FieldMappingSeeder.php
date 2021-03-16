@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\FieldMapping;
+use App\Models\Taxonomy;
 use Illuminate\Database\Seeder;
 
 class FieldMappingSeeder extends Seeder
@@ -14,21 +15,56 @@ class FieldMappingSeeder extends Seeder
      */
     public function run()
     {
-        FieldMapping::insert([
+        $bootstrap = [
             [
-                'api_name' => 'JobApi',
-                'api_version' => '1.0',
-                'api_action' => 'basicDetails',
-                'field_path' => 'packageType.name',
-                'taxonomy_id' => '25'
+                'names' => [
+                    'Component',
+                    'Components',
+                    'Pack Type',
+                    'PACKAGING TYPE',
+                    'Type de pack',
+                    'TYPE OF PACK',
+                    'Pack'
+                ],
+                'api_action' => 'extraDetails',
+                'field_path' => '0.extraDetailsFields.*[fieldName=Packaging_Component_Type].itemValue'
             ],
+
             [
-                'api_name' => 'JobApi',
-                'api_version' => '1.0',
+                'names' => ['Production Site', 'PRODUCTION SITE/FACTORY', 'FACTORY'],
                 'api_action' => 'extraDetails',
                 'field_path' => '0.extraDetailsFields.*[fieldName=Production_Factory_Site].itemValue',
-                'taxonomy_id' => '5'
-            ]
-        ]);
+            ],
+
+            [
+                'names' => ['Market', 'REGION/MARKET', 'Region'],
+                'api_action' => 'extraDetails',
+                'field_path' => '0.extraDetailsFields.*[fieldName=Market].itemValue',
+            ],
+
+
+            [
+                'names' => ['BRAND', 'Brand', 'Brands', 'Brand (Sub)', 'Brand - Sub',],
+                'api_action' => 'basicDetails',
+                'field_path' => 'brand',
+            ],
+
+        ];
+
+        foreach ($bootstrap as $mappingSet) {
+            foreach ($mappingSet['names'] as $name) {
+
+                $taxonomy = Taxonomy::where(['name' => $name])->first();
+
+                if ($taxonomy)
+                    FieldMapping::firstOrCreate([
+                        'api_name' => 'JobApi',
+                        'api_version' => '1.0',
+                        'api_action' => $mappingSet['api_action'],
+                        'field_path' => $mappingSet['field_path'],
+                        'taxonomy_id' => $taxonomy->id,
+                    ]);
+            }
+        }
     }
 }
