@@ -67,6 +67,13 @@
                                             API Tokens
                                         </jet-dropdown-link>
 
+                                        <!-- Authentication -->
+                                        <form @submit.prevent="logout">
+                                            <jet-dropdown-link as="button">
+                                                Logout
+                                            </jet-dropdown-link>
+                                        </form>
+
                                         <div class="border-t border-gray-100"></div>
 
                                         <!-- Team Management -->
@@ -110,15 +117,9 @@
                                                 </form>
                                             </template>
 
-                                            <div class="border-t border-gray-100"></div>
                                         </template>
 
-                                        <!-- Authentication -->
-                                        <form @submit.prevent="logout">
-                                            <jet-dropdown-link as="button">
-                                                Logout
-                                            </jet-dropdown-link>
-                                        </form>
+
                                     </template>
                                 </jet-dropdown>
                             </div>

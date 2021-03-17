@@ -87,7 +87,10 @@ class DatabaseSeeder extends Seeder
                 'personal_team' => true,
             ]);
 
-            $admin->teams()->sync([$unilever->team->id, $gsk->team->id, $npp->team->id]);
+            $admin->teams()->syncWithPivotValues(
+                [$unilever->team->id, $gsk->team->id, $npp->team->id],
+                ['role' => 'admin']
+            );
         }
 
         $this->call(RuleSeeder::class);
