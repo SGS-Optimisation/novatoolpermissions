@@ -21,6 +21,7 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
         $this->top_taxonomies = $this->clientAccount->taxonomies()
             //->with('taxonomies.terms')
             ->whereNull('parent_id')
+            ->orderBy('name')
             ->get();
 
 

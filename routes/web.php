@@ -45,48 +45,58 @@ Route::name('pm.')
         Route::get('/', [HomeController::class, 'index'])
             ->name('landing');
 
+
+
         Route::name('client-account.')
-            ->prefix('/{clientAccount:slug}')
+            //->prefix('/{clientAccount:slug}')
             ->group(function () {
 
-                Route::get('/', [ClientAccountController::class, 'index']);
+                Route::get('/client-account/create', [ClientAccountController::class, 'create'])
+                    ->name('create');
 
-                Route::get('/dashboard', [ClientAccountController::class, 'index'])
-                    ->name('dashboard');
+                Route::post('/client-account', [ClientAccountController::class, 'store'])
+                    ->name('store');
 
-                /*
-                 * Configuration section
-                 */
-                Route::group(['prefix' => '/configuration'], function () {
-                    Route::get('/', [ClientAccountTaxonomyController::class, 'show'])
-                        ->name('configuration');
+                Route::prefix('/{clientAccount:slug}')->group(function () {
+                    Route::get('/', [ClientAccountController::class, 'show']);
 
-                    Route::put('/', [ClientAccountTaxonomyController::class, 'update'])
-                        ->name('configuration.update');
-                });
+                    Route::get('/dashboard', [ClientAccountController::class, 'show'])
+                        ->name('dashboard');
 
-                /*
-                 * Rules section
-                 */
-                Route::group(['prefix' => '/rules'], function () {
+                    /*
+                     * Configuration section
+                     */
+                    Route::group(['prefix' => '/configuration'], function () {
+                        Route::get('/', [ClientAccountTaxonomyController::class, 'show'])
+                            ->name('configuration');
 
-                    Route::get('/', [RuleController::class, 'index'])
-                        ->name('rules');
+                        Route::put('/', [ClientAccountTaxonomyController::class, 'update'])
+                            ->name('configuration.update');
+                    });
 
-                    Route::get('/create', [RuleController::class, 'create'])
-                        ->name('rules.create');
+                    /*
+                     * Rules section
+                     */
+                    Route::group(['prefix' => '/rules'], function () {
 
-                    Route::post('/store', [RuleController::class, 'store'])
-                        ->name('rules.store');
+                        Route::get('/', [RuleController::class, 'index'])
+                            ->name('rules');
 
-                    Route::get('/{id}/edit', [RuleController::class, 'edit'])
-                        ->name('rules.edit');
+                        Route::get('/create', [RuleController::class, 'create'])
+                            ->name('rules.create');
 
-                    Route::put('/{id}/update', [RuleController::class, 'update'])
-                        ->name('rules.update');
+                        Route::post('/store', [RuleController::class, 'store'])
+                            ->name('rules.store');
 
-                    Route::put('/{id}/taxonomy/update', [RuleTaxonomyController::class, 'update'])
-                        ->name('rules.taxonomy.update');
+                        Route::get('/{id}/edit', [RuleController::class, 'edit'])
+                            ->name('rules.edit');
+
+                        Route::put('/{id}/update', [RuleController::class, 'update'])
+                            ->name('rules.update');
+
+                        Route::put('/{id}/taxonomy/update', [RuleTaxonomyController::class, 'update'])
+                            ->name('rules.taxonomy.update');
+                    });
                 });
             });
 
@@ -127,7 +137,7 @@ Route::group([
     //'prefix' => 'op/'
 ],
     function () {
-        Route::match(['get', 'post'],'/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'index'])
+        Route::match(['get', 'post'], '/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'index'])
             ->name('home')
             ->where('jobNumber', '[0-9]+');
     });
