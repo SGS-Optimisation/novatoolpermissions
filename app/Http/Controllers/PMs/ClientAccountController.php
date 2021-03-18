@@ -4,11 +4,14 @@ namespace App\Http\Controllers\PMs;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateClientAccountRequest;
+use App\Http\Requests\UpdateClientAccountRequest;
 use App\Models\ClientAccount;
 use App\Services\ClientAccounts\MakeTeam;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Laravel\Jetstream\Jetstream;
 
 class ClientAccountController extends Controller
@@ -49,7 +52,7 @@ class ClientAccountController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  CreateClientAccountRequest $request
+     * @param  CreateClientAccountRequest  $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
     public function store(CreateClientAccountRequest $request)
@@ -64,35 +67,57 @@ class ClientAccountController extends Controller
             $image_path = Storage::disk('public')->putFile('logos', $request->file('image'));
         }
 
-        $clientAccount = ClientAccount::create(array_merge(
+        $client_account = ClientAccount::create(array_merge(
             $request->only(['name', 'slug', 'alias']),
             ['image' => $image_path]
         ));
 
-        return redirect(route('pm.client-account.dashboard', [$clientAccount->slug]));
+        return redirect(route('pm.client-account.dashboard', [$client_account->slug]));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\ClientAccount  $clientAccount
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @param $client_account_slug
+     * @return \Inertia\Response
      */
-    public function edit(ClientAccount $clientAccount)
+    public function edit(Request $request, $client_account_slug)
     {
-        //
+        $client_account = ClientAccount::whereSlug($client_account_slug)->first();
+
+        return Jetstream::inertia()->render($request, 'ClientAccount/Update', [
+            'team' => $request->user()->currentTeam,
+            'clientAccount' => $client_account,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ClientAccount  $clientAccount
-     * @return \Illuminate\Http\Response
+     * @param  UpdateClientAccountRequest  $request
+     * @param $client_account_slug
+     * @return JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, ClientAccount $clientAccount)
+    public function update(UpdateClientAccountRequest $request, $client_account_slug)
     {
-        //
+        $client_account = ClientAccount::whereSlug($client_account_slug)->first();
+
+        $image_path = $client_account->image;
+
+        if ($request->hasFile('image')) {
+            \Log::debug('image uploaded');
+            $image_path = Storage::disk('public')->putFile('logos', $request->file('image'));
+        }
+
+        $client_account->update(array_merge(
+            $request->all(),
+            ['image' => $image_path]
+        ));
+
+        return $request->wantsJson()
+            ? new JsonResponse('', 200)
+            : redirect(route('pm.client-account.edit', [$client_account->slug]));
     }
 
     /**

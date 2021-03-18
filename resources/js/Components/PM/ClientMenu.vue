@@ -12,9 +12,13 @@
                     Rules
                 </sub-nav-link>
 
-                <sub-nav-link :href="route('pm.client-account.configuration', {clientAccount: clientAccount.slug })"
-                              :active="route().current('pm.client-account.configuration')">
-                    Configuration
+                <sub-nav-link :href="route('pm.client-account.taxonomy', {clientAccount: clientAccount.slug })"
+                              :active="route().current('pm.client-account.taxonomy')">
+                    Categories
+                </sub-nav-link>
+                <sub-nav-link :href="route('pm.client-account.edit', {clientAccount: clientAccount.slug })"
+                              :active="route().current('pm.client-account.edit')">
+                    Settings
                 </sub-nav-link>
             </nav>
 

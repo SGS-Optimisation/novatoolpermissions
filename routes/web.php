@@ -45,8 +45,6 @@ Route::name('pm.')
         Route::get('/', [HomeController::class, 'index'])
             ->name('landing');
 
-
-
         Route::name('client-account.')
             //->prefix('/{clientAccount:slug}')
             ->group(function () {
@@ -63,15 +61,18 @@ Route::name('pm.')
                     Route::get('/dashboard', [ClientAccountController::class, 'show'])
                         ->name('dashboard');
 
+                    Route::get('/edit', [ClientAccountController::class, 'edit'])
+                        ->name('edit');
+
+                    Route::post('/update', [ClientAccountController::class, 'update'])
+                        ->name('update');
+
                     /*
                      * Configuration section
                      */
-                    Route::group(['prefix' => '/configuration'], function () {
+                    Route::group(['prefix' => '/taxonomy'], function () {
                         Route::get('/', [ClientAccountTaxonomyController::class, 'show'])
-                            ->name('configuration');
-
-                        Route::put('/', [ClientAccountTaxonomyController::class, 'update'])
-                            ->name('configuration.update');
+                            ->name('taxonomy');
                     });
 
                     /*
