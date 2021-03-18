@@ -1,13 +1,19 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-
 @import '~@fortawesome/fontawesome-free/scss/fontawesome';
 @import '~@fortawesome/fontawesome-free/scss/regular';
 @import '~@fortawesome/fontawesome-free/scss/solid';
 @import '~@fortawesome/fontawesome-free/scss/brands';
 
 @import '~vue-select/src/scss/vue-select';
+
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/mixins/';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/pagination';
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
 
 .vs__selected {
     font-size:12px;

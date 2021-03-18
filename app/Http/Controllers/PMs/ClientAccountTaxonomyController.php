@@ -26,7 +26,6 @@ class ClientAccountTaxonomyController extends Controller
 
         return Jetstream::inertia()->render($request, 'ClientAccount/Configuration', array_merge([
             'team' => $request->user()->currentTeam,
-            'rulesCount' => $client_account->rules()->count(),
         ],
             $this->buildTaxonomyWithUsage($client_account)
         ));

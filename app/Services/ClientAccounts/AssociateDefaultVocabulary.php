@@ -24,5 +24,8 @@ class AssociateDefaultVocabulary extends BaseClientAccountService
                     $this->clientAccount->terms()->attach($term);
                 });
         });
+
+        \Cache::tags('taxonomy')->forget($this->clientAccount->slug.'-taxonomy-usage-data');
+        \Cache::tags('taxonomy')->forget($this->clientAccount->slug.'-rules-data');
     }
 }

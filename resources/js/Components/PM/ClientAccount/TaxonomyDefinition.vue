@@ -4,7 +4,7 @@
         bg-blue-300 hover:bg-blue-400"
               @click="creatingTaxonomy=true"
         >
-            <i class="text-white fa fa-plus-circle"></i> New Vocabulary
+            <i class="text-white fa fa-plus-circle"></i> New Category
         </span>
 
         <div class="flex flex-col py-2"
@@ -35,7 +35,7 @@
                         <!--  Create Taxonomy Modal -->
                         <jet-dialog-modal :show="creatingTaxonomy" @close="cancelCreateTaxonomy">
                             <template #title>
-                                New Vocabulary in {{ parentTaxonomy.name }}
+                                New Category in {{ parentTaxonomy.name }}
                             </template>
 
                             <template #content>
@@ -128,7 +128,7 @@
         bg-blue-300 hover:bg-blue-400"
               @click="creatingTaxonomy=true"
         >
-            <i class="text-white fa fa-plus-circle"></i> New Vocabulary
+            <i class="text-white fa fa-plus-circle"></i> New Category
         </span>
     </div>
 </template>

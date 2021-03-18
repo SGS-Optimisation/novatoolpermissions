@@ -15,8 +15,8 @@ class CreateClientAccountsTable extends Migration
     {
         Schema::create('client_accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug')->nullable();
+            $table->string('name')->unique();
+            $table->string('slug')->unique();
             $table->longText('alias')->nullable();
             $table->string('image')->nullable();
             $table->string('legacy_id')->nullable();

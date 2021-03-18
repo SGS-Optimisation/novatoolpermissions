@@ -1,9 +1,19 @@
 <template>
     <app-layout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Welcome
-            </h2>
+            <div class="flex justify-between">
+                <div class="flex flex-row content-center">
+                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                        Welcome
+                    </h2>
+                </div>
+
+                <div class="flex ml-6">
+                    <action-menu/>
+                </div>
+            </div>
+
+
 
         </template>
 
@@ -36,6 +46,7 @@
 import AppLayout from '@/Layouts/AppLayout'
 import Welcome from '@/Jetstream/Welcome'
 import JetNavLink from "@/Jetstream/NavLink";
+import ActionMenu from "@/Components/PM/ActionMenu";
 
 export default {
     name: "Landing",
@@ -46,6 +57,7 @@ export default {
     ],
 
     components: {
+        ActionMenu,
         AppLayout,
         Welcome,
         JetNavLink
