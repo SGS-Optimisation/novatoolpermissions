@@ -143,6 +143,9 @@ Route::group([
             ->where('jobNumber', '[0-9]+');
     });
 
-Route::get('audits', '\App\Http\Controllers\Api\AuditActivityController@index')
+Route::get('audits', '\App\Http\Controllers\Api\AuditActivityController@index')->name('audits')
     ->middleware('auth', \App\Http\Middleware\AllowOnlyAdmin::class);
-Route::get('audit', [\App\Http\Controllers\Api\AuditActivityController::class, 'index'])->name('audit');
+
+Route::post('ruleaudits', '\App\Http\Controllers\Api\AuditActivityController@showRuleAudits')->name('ruleaudits')
+    ->middleware('auth', \App\Http\Middleware\AllowOnlyAdmin::class);
+

@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Listeners\AuditedListener;
+//use App\Listeners\AuditedListener;
 use App\Models\ClientAccount;
 use App\Observers\ClientAccountObserver;
 use Illuminate\Auth\Events\Registered;
@@ -22,9 +22,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        Audited::class => [
-            AuditedListener::class
-        ]
+//        Audited::class => [
+//            AuditedListener::class
+//        ]
     ];
 
     /**

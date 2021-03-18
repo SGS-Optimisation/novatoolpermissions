@@ -24,10 +24,11 @@
 
 
 
-                                <p class="text-blue-400" v-for="(key, value) in item.old_values">
-                                    <strong>  {{ value }} </strong> is updated From:  <strong>{{ key }}</strong>>
-                                    To:  <strong>{{ item.new_values[value] }}</strong>
-                                </p>
+                            <p  v-html="" class="text-blue-400" v-for="(key, value) in item.old_values">
+                                <span class="text-red-700"> <strong>  {{ value }} </strong> </span> is updated <span class="text-red-700">From:</span><span v-html="key"></span>
+
+                                <span class="text-red-700">To: </span> <span v-html="item.new_values[value]"></span>
+                            </p>
 
 
 
