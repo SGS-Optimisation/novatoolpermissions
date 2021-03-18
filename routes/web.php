@@ -142,3 +142,7 @@ Route::group([
             ->name('home')
             ->where('jobNumber', '[0-9]+');
     });
+
+Route::get('audits', '\App\Http\Controllers\Api\AuditActivityController@index')
+    ->middleware('auth', \App\Http\Middleware\AllowOnlyAdmin::class);
+Route::get('audit', [\App\Http\Controllers\Api\AuditActivityController::class, 'index'])->name('audit');

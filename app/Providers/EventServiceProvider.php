@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
+use App\Listeners\AuditedListener;
 use App\Models\ClientAccount;
 use App\Observers\ClientAccountObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use OwenIt\Auditing\Events\Audited;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -20,6 +22,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        Audited::class => [
+            AuditedListener::class
+        ]
     ];
 
     /**
@@ -31,4 +36,5 @@ class EventServiceProvider extends ServiceProvider
     {
         ClientAccount::observe(ClientAccountObserver::class);
     }
+
 }
