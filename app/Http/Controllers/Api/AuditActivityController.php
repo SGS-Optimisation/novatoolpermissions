@@ -41,25 +41,16 @@ class AuditActivityController extends Controller
 
     public function history(Request $request)
     {
-       // dd("queryString3");
-        //$queryString = $request->getQueryString();
-        $queryString2 = http_build_query($request->query());
-        $queryString3 = http_build_query($request->all());
-       // dd($queryString);
-       // dd($queryString2);
-        //dd($queryString3);
-       //dd($request) ;
+      $url =  $request->server("HTTP_REFERER");
+      $url_array = explode('/', $url);
+  if(array_key_exists(6, $url_array)){
+      $id =  $url_array[6] ;
+      $rule = Rule::find($id);
+  }
 
-        $rule = Rule::find($request->query(0));
+      $all =  $rule->audits()->with('user')->get();
 
-        $all =  $rule->audits()->with('user')->get();
-
-        //$last = $article->audits()->latest()
-
-// Get Audit by id
-        //$audit = $article->audits()->find(4);
-
-        return Jetstream::inertia()->render($request, 'Api/AuditActivity', [
+      return Jetstream::inertia()->render($request, 'Api/AuditActivity', [
             'audits' => $all,
 
         ]);

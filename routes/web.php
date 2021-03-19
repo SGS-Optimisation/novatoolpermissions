@@ -150,6 +150,6 @@ Route::get('audits', '\App\Http\Controllers\Api\AuditActivityController@index')-
 //Route::match(['get', 'post'],'/ruleaudits', '\App\Http\Controllers\Api\AuditActivityController@showRuleAudits')->name('ruleaudits')
 //    ->middleware('auth', \App\Http\Middleware\AllowOnlyAdmin::class);
 
-Route::match(['get', 'post'],'pm/rule/history', [AuditActivityController::class, 'history'])
+Route::match(['get', 'post'],'pm/{pm}/rule/{rule}/history', [AuditActivityController::class, 'history'])
     ->name('rules.history');
 

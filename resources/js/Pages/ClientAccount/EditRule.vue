@@ -75,8 +75,7 @@ export default {
 
     methods: {
         findRuleAudit() {
-
-            this.form.post(route('rules.history',this.rule), {
+            this.form.post(route('rules.history', {pm:this.clientAccount.name, rule:this.rule.id}), {
                 preserveScroll: true
             }).then(() => {
                 this.$emit('loaded')
