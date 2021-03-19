@@ -1,24 +1,40 @@
 <template>
-    <div class="mx-2" v-if="taxonomyRules.length > 0">
+    <div class="mr-4 p-2 bg-indigo-50" v-if="taxonomyRules.length > 0">
         <div class="w-full">
-            <h1 class="text-md font-medium text-gray-900">
-                {{ rule[0] }}
+            <h1 class="bg-gray-500 text-md font-medium text-gray-100 px-2">
+                {{ group }}
             </h1>
         </div>
         <div class="w-full">
-            <div v-for="ruleItem in taxonomyRules" class="flex flex-row border p-1 my-1">
+            <div v-for="(rule, index) in taxonomyRules"
+                 :class="(index == taxonomyRules.length-1) ?
+                 'flex flex-row p-1 my-1'
+                :'flex flex-row border-b border-indigo-100 p-1 my-1'"
+            >
                 <div class="w-full">
-                    <div class="text-xs font-medium text-gray-900">
-                        {{ ruleItem.name }}
+                    <div class="cursor-pointer text- font-medium text-gray-900" @click="$emit('on-click-view', rule)">
+                        {{ rule.name }}
                     </div>
-                    <div class="text-xs text-gray-500">
-                        Created {{ moment(ruleItem.created_at).fromNow() }}
-                        &nbsp;
-                        Updated {{ moment(ruleItem.updated_at).fromNow() }}
+                    <div class="text-xs text-gray-500 flex flex-row justify-between">
+                        <div class="text-xs bg-pink-200 rounded-xl px-2">
+                            {{ _.find(rule.terms, (item) => {return item.taxonomy.name === group }).name  }}
+                        </div>
+
+                        <div>
+                            <span v-if="rule.created_at == rule.updated_at">
+                                Created {{ moment(rule.created_at).fromNow() }}
+                            </span>
+                            <span v-else>
+                                Updated {{ moment(rule.updated_at).fromNow() }}
+                            </span>
+                        </div>
                     </div>
+
                 </div>
-                <a href="#" @click="$emit('on-click-view', ruleItem)"
-                   class="text-indigo-600 hover:text-indigo-900 float-right justify-center -align-center">View</a>
+<!--                <a href="#" @click="$emit('on-click-view', ruleItem)"
+                   class="text-indigo-600 hover:text-indigo-900 float-right justify-center -align-center">
+                    <i class="fa fa-eye"></i>
+                </a>-->
             </div>
         </div>
     </div>
@@ -30,13 +46,15 @@ import moment from "moment";
 
 export default {
     name: "ViewRuleItem",
-    props: ['rule', 'filterFlag'],
+    props: [ 'group', 'rules', 'filterFlag'],
     computed:{
         taxonomyRules() {
-            return [...this.filterFlag ? this.rule[1].filter(rule => {
-                let time = this.filterFlag === 'updated' ? moment(rule.updated_at) : moment(rule.created_at)
+            return [...this.filterFlag ? this.rules.filter(rule => {
+                let time = this.filterFlag === 'updated' ? moment(rule.updated_at) : moment(rule.created_at);
+
                 return moment().subtract(3, 'months').isSameOrBefore(time)
-            }) : this.rule[1]]
+                    && (this.filterFlag !== 'updated' || rule.created_at !== rule.updated_at)
+            }) : this.rules]
         }
     }
     // created(){

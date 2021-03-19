@@ -6,7 +6,7 @@
                 <i class="fa fa-search fa-2x"></i>
             </span>
 
-            <input v-model="jobNumber" autofocus class="w-full rounded p-2 focus:outline-none" type="text"
+            <input v-model="jobNumber" autofocus class="w-full shadow rounded p-2 focus:outline-none" type="text"
                    :placeholder="placeholder">
 
             <jet-button :type="'submit'" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
@@ -24,7 +24,7 @@ export default {
     props: {
         classes: {
             type: String,
-            default: "bg-white flex shadow p-4",
+            default: "bg-white flex p-4",
         },
         placeholder: {
             type: String,
