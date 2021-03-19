@@ -3,10 +3,13 @@
         <template #body>
             <div class="mx-auto sm:px-6 lg:px-8">
 
-                <jet-nav-link  :href="route('rules.history', [ clientAccount.name, rule.id])"  >
+                <jet-nav-link  as="button" :href="route('rules.history', [ clientAccount.name, rule.id])"  >
                     View History
                 </jet-nav-link>
-
+<!--                <inertia-link as="button"-->
+<!--                              :href="route('rules.history', [clientAccount.name, rule.id])">-->
+<!--                    View History-->
+<!--                </inertia-link>-->
 
 
 
@@ -54,14 +57,21 @@ export default {
         MetadataForm
     },
 
-    props: [
+    props:[
         'team',
         'clientAccount',
         'taxonomyHierarchy',
         'topTaxonomies',
-        'rule'
+        'rule',
 
     ],
+
+
+
+
+
+
+
 
 
 
