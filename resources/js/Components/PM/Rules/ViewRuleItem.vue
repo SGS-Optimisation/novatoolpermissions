@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-4 bg-indigo-50" v-if="taxonomyRules.length > 0">
+    <div class="mr-4 p-2 bg-indigo-50" v-if="taxonomyRules.length > 0">
         <div class="w-full">
             <h1 class="bg-gray-500 text-md font-medium text-gray-100 px-2">
                 {{ group }}

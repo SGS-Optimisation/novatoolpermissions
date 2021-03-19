@@ -11,37 +11,44 @@
 
                 <div class="flex-grow">
                     <job-search @loaded="newJobLoaded"
-                                classes="bg-white flex shadow"
+                                classes="bg-white flex"
                                 placeholder="Search another job">
                     </job-search>
                 </div>
             </div>
         </template>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-50 shadow-inner border border-orange-200">
             <div class="flex justify-between">
                 <div class="p-2">
-                    <h3 class="font-semibold text-lg leading-loose text-gray-800">Client Account:
-                        {{ job.metadata.client.name }}
-                    </h3>
+                    <div>
+                        <h3 class="font-semibold text-lg leading-loose text-gray-800">Client Account:
+                            {{ job.metadata.client.name }}
+                        </h3>
+                    </div>
 
                     <div class="flex flex-shrink-0">
                         <div v-for="(value, item) in job.metadata.job_taxonomy" class="flex flex-col">
-                            <div class="flex flex-wrap flex-shrink-0 text-xs items-center px-2 text-xs mx-3">
-                                <div class="flex-grow h-full bg-gray-300 text-gray-600 px-1 rounded-l-xl">{{ item }}</div>
-                                <div class="flex flex-col">
+                            <div class="flex flex-wrap flex-shrink-0 text-xs items-center pr-3 text-xs mr-3">
+                                <div class="flex-grow h-full bg-gray-300 text-gray-600 px-2 rounded-l-lg">
+                                    <div class="grid h-full">
+                                        <div class="place-self-center">{{ item }}</div>
+                                    </div>
+                                </div>
+                                <div class="">
 
                                     <div :class="job.metadata.matched_taxonomy[item].length ?
-                                                'bg-blue-200 text-green-800 px-1 rounded-tr-xl'
-                                                :'bg-blue-200 text-green-800 px-1 rounded-r-xl'"
-                                         title="MySGS value"><span class="align-middle">{{ value }}</span></div>
+                                                'bg-blue-200 text-green-800 px-2 rounded-tr-lg'
+                                                :'bg-blue-200 text-green-800 px-2 rounded-r-lg'"
+                                         title="MySGS value">{{ value }}
+                                    </div>
 
                                     <div v-for="(terms, index) in job.metadata.matched_taxonomy[item]"
-                                        :class="(index === job.metadata.matched_taxonomy[item].length - 1) ?
-                                                    'bg-pink-200 text-green-800 px-1 rounded-br-xl'
-                                                    :'bg-pink-200 text-green-800 px-1'"
+                                         :class="(index === job.metadata.matched_taxonomy[item].length - 1) ?
+                                                    'bg-pink-200 text-green-800 px-2 rounded-br-lg'
+                                                    :'bg-pink-200 text-green-800 px-2'"
                                          title="Matched Dagobah terms">
-                                            {{ terms }}<br>
+                                        {{ terms }}<br>
                                     </div>
                                 </div>
 
@@ -52,13 +59,13 @@
             </div>
         </div>
 
-        <div class="pb-2 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 bg-white">
             <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-green-300" v-if="rulesUpdated">
                 <span class="text-xl inline-block mr-5 align-middle">
                     <i class="fas fa-bell"/>
                 </span>
                 <span class="inline-block align-middle mr-8">
-                    <b class="capitalize">Hello!</b> Rules list updated do you want to check?
+                    <b class="capitalize">Hello!</b> Rules list updated. Do you want to check?
                 </span>
                 <button
                     class="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none"
@@ -94,9 +101,10 @@
                          :list="Object.entries(rulesByTaxonomies)"
                          @filter="filterOption=arguments[0]" @sort="sortOption=arguments[0]">
 
-                    <div class="w-1/3 rounded p-2"
+                    <div class="w-1/3 rounded"
                          v-for="(ruleGroup, ruleIndex) in Object.entries(rulesByTaxonomies)" :key="ruleIndex">
-                        <view-rule-item :rules="ruleGroup[1]" :group="ruleGroup[0]" :filter-flag="filterFlag" @on-click-view="openModal"/>
+                        <view-rule-item :rules="ruleGroup[1]" :group="ruleGroup[0]" :filter-flag="filterFlag"
+                                        @on-click-view="openModal"/>
                     </div>
 
                 </isotope>

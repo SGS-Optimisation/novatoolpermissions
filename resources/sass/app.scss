@@ -18,3 +18,11 @@
 .vs__selected {
     font-size:12px;
 }
+
+button:focus {
+    outline: none;
+}
+
+.focus\:shadow-outline:focus {
+    box-shadow: none;
+}
