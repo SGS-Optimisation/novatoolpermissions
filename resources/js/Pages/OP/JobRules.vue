@@ -22,7 +22,32 @@
             <div class="flex justify-between">
                 <div class="p-2">
                     <h3 class="font-semibold text-lg leading-loose text-gray-800">Client Account:
-                        {{ job.metadata.client.name }}</h3>
+                        {{ job.metadata.client.name }}
+                    </h3>
+
+                    <div class="flex flex-shrink-0">
+                        <div v-for="(value, item) in job.metadata.job_taxonomy" class="flex flex-col">
+                            <div class="flex flex-wrap flex-shrink-0 text-sm items-center px-2 text-xs mx-3 my-1">
+                                <div class="flex-grow h-full bg-gray-400 text-green-800 p-1 rounded-l-xl">{{ item }}</div>
+                                <div class="flex flex-col">
+
+                                    <div :class="job.metadata.matched_taxonomy[item].length ?
+                                                'bg-blue-200 text-green-800 p-1 rounded-tr-xl'
+                                                :'bg-blue-200 text-green-800 p-1 rounded-r-xl'"
+                                         title="MySGS value">{{ value }}</div>
+
+                                    <div v-for="(terms, index) in job.metadata.matched_taxonomy[item]"
+                                        :class="(index === job.metadata.matched_taxonomy[item].length - 1) ?
+                                                    'bg-red-500 text-green-800 p-1 rounded-br-xl'
+                                                    :'bg-red-500 text-green-800 p-1'"
+                                         title="Matched Dagobah terms">
+                                            {{ terms }}<br>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
