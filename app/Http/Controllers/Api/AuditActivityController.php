@@ -39,9 +39,16 @@ class AuditActivityController extends Controller
 
     }
 
-    public function showRuleAudits(Request $request)
+    public function history(Request $request)
     {
-
+       // dd("queryString3");
+        //$queryString = $request->getQueryString();
+        $queryString2 = http_build_query($request->query());
+        $queryString3 = http_build_query($request->all());
+       // dd($queryString);
+       // dd($queryString2);
+        //dd($queryString3);
+       //dd($request) ;
 
         $rule = Rule::find($request->query(0));
 

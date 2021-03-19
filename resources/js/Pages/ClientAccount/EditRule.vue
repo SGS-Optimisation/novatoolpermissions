@@ -2,6 +2,7 @@
     <client-layout :client-account="clientAccount">
         <template #body>
             <div class="mx-auto sm:px-6 lg:px-8">
+
                 <form @submit.prevent="findRuleAudit">
                     <div>
                         <jet-button :type="'submit'" >
@@ -38,9 +39,10 @@
 import ClientLayout from '@/Layouts/ClientAccount'
 import RuleForm from '@/Components/PM/Rules/Form'
 import MetadataForm from '@/Components/PM/Rules/Meta'
-import DangerButton from "@/Jetstream/DangerButton";
+import JetNavLink from "@/Jetstream/NavLink";
 import JetButton from "@/Jetstream/DangerButton";
 import JetDropdownLink from "@/Jetstream/DropdownLink";
+
 
 export default {
     name: "CreateRule",
@@ -48,6 +50,7 @@ export default {
     components: {
         JetButton,
         JetDropdownLink,
+        JetNavLink,
         ClientLayout,
         RuleForm,
         MetadataForm
@@ -72,10 +75,8 @@ export default {
 
     methods: {
         findRuleAudit() {
-            var currentUrl = window.location.pathname;
 
-            console.log(this.rule);
-            this.form.post(route('ruleaudits', this.rule), {
+            this.form.post(route('rules.history',this.rule), {
                 preserveScroll: true
             }).then(() => {
                 this.$emit('loaded')

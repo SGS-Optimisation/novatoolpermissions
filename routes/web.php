@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuditActivityController;
 use App\Http\Controllers\CurrentTeamController;
 use App\Http\Controllers\PMs\ClientAccountController;
 use App\Http\Controllers\PMs\ClientAccountTaxonomyController;
@@ -83,8 +84,8 @@ Route::name('pm.')
                         Route::get('/', [RuleController::class, 'index'])
                             ->name('rules');
 
-                        Route::get('/create', [RuleController::class, 'create'])
-                            ->name('rules.create');
+                    Route::get('/create', [RuleController::class, 'create'])
+                        ->name('rules.create');
 
                         Route::post('/store', [RuleController::class, 'store'])
                             ->name('rules.store');
@@ -146,6 +147,9 @@ Route::group([
 Route::get('audits', '\App\Http\Controllers\Api\AuditActivityController@index')->name('audits')
     ->middleware('auth', \App\Http\Middleware\AllowOnlyAdmin::class);
 
-Route::post('ruleaudits', '\App\Http\Controllers\Api\AuditActivityController@showRuleAudits')->name('ruleaudits')
-    ->middleware('auth', \App\Http\Middleware\AllowOnlyAdmin::class);
+//Route::match(['get', 'post'],'/ruleaudits', '\App\Http\Controllers\Api\AuditActivityController@showRuleAudits')->name('ruleaudits')
+//    ->middleware('auth', \App\Http\Middleware\AllowOnlyAdmin::class);
+
+Route::match(['get', 'post'],'pm/rule/history', [AuditActivityController::class, 'history'])
+    ->name('rules.history');
 
