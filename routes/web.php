@@ -100,6 +100,9 @@ Route::name('pm.')
                             ->name('rules.taxonomy.update');
                     });
                 });
+
+
+
             });
 
         Route::name('taxonomies.')
@@ -129,7 +132,10 @@ Route::name('pm.')
             });
     });
 
-
+Route::get('audits', '\App\Http\Controllers\Api\AuditActivityController@index')->name('audits')
+    ->middleware('auth', \App\Http\Middleware\AllowOnlyAdmin::class);
+Route::match(['get', 'post'],'pm/{pm}/rule/{rule}/history', [AuditActivityController::class, 'history'])
+    ->name('rules.history');
 Route::group([
     'middleware' => [
         'auth:sanctum',
@@ -144,12 +150,10 @@ Route::group([
             ->where('jobNumber', '[0-9]+');
     });
 
-Route::get('audits', '\App\Http\Controllers\Api\AuditActivityController@index')->name('audits')
-    ->middleware('auth', \App\Http\Middleware\AllowOnlyAdmin::class);
+
 
 //Route::match(['get', 'post'],'/ruleaudits', '\App\Http\Controllers\Api\AuditActivityController@showRuleAudits')->name('ruleaudits')
 //    ->middleware('auth', \App\Http\Middleware\AllowOnlyAdmin::class);
 
-Route::match(['get', 'post'],'pm/{pm}/rule/{rule}/history', [AuditActivityController::class, 'history'])
-    ->name('rules.history');
+
 
