@@ -18,7 +18,7 @@
             </div>
         </template>
 
-        <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between">
                 <div class="p-2">
                     <h3 class="font-semibold text-lg leading-loose text-gray-800">Client Account:
@@ -27,19 +27,19 @@
 
                     <div class="flex flex-shrink-0">
                         <div v-for="(value, item) in job.metadata.job_taxonomy" class="flex flex-col">
-                            <div class="flex flex-wrap flex-shrink-0 text-sm items-center px-2 text-xs mx-3 my-1">
-                                <div class="flex-grow h-full bg-gray-400 text-green-800 p-1 rounded-l-xl">{{ item }}</div>
+                            <div class="flex flex-wrap flex-shrink-0 text-xs items-center px-2 text-xs mx-3">
+                                <div class="flex-grow h-full bg-gray-300 text-gray-600 px-1 rounded-l-xl">{{ item }}</div>
                                 <div class="flex flex-col">
 
                                     <div :class="job.metadata.matched_taxonomy[item].length ?
-                                                'bg-blue-200 text-green-800 p-1 rounded-tr-xl'
-                                                :'bg-blue-200 text-green-800 p-1 rounded-r-xl'"
-                                         title="MySGS value">{{ value }}</div>
+                                                'bg-blue-200 text-green-800 px-1 rounded-tr-xl'
+                                                :'bg-blue-200 text-green-800 px-1 rounded-r-xl'"
+                                         title="MySGS value"><span class="align-middle">{{ value }}</span></div>
 
                                     <div v-for="(terms, index) in job.metadata.matched_taxonomy[item]"
                                         :class="(index === job.metadata.matched_taxonomy[item].length - 1) ?
-                                                    'bg-red-500 text-green-800 p-1 rounded-br-xl'
-                                                    :'bg-red-500 text-green-800 p-1'"
+                                                    'bg-pink-200 text-green-800 px-1 rounded-br-xl'
+                                                    :'bg-pink-200 text-green-800 px-1'"
                                          title="Matched Dagobah terms">
                                             {{ terms }}<br>
                                     </div>
@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <div class="p-2">
+        <div class="pb-2 bg-white">
             <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-green-300" v-if="rulesUpdated">
                 <span class="text-xl inline-block mr-5 align-middle">
                     <i class="fas fa-bell"/>
@@ -67,9 +67,9 @@
                 </button>
             </div>
 
-            <div class="flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mt-2">
+            <div class="flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mb-2">
 
-                <div class="flex text-xs m-2" role="group">
+                <div class="flex text-xs mx-2" role="group">
                     <button @click="filterByNew"
                             :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
                         New
@@ -90,21 +90,15 @@
                     </button>
                 </div>
 
-                <!--                <isotope ref="cpt" id="root_isotope" class="w-full m-2" :options='getOptions()' :list="searchedRules"-->
-                <!--                         @filter="filterOption=arguments[0]" @sort="sortOption=arguments[0]">-->
-                <!--                    <div class="w-1/3 rounded shadow-md hover:shadow-lg cursor-pointer p-2"-->
-                <!--                         v-for="(rule, ruleIndex) in searchedRules" :key="ruleIndex">-->
-                <!--                        <view-rule-item :rule="rule" @on-click-view="openModal"/>-->
-                <!--                    </div>-->
-                <!--                </isotope>-->
-
                 <isotope ref="cpt" id="root_isotope" class="w-full m-2" :options='getOptions()'
                          :list="Object.entries(rulesByTaxonomies)"
                          @filter="filterOption=arguments[0]" @sort="sortOption=arguments[0]">
-                    <div class="w-1/3 rounded shadow-md hover:shadow-lg cursor-pointer p-2"
-                         v-for="(rule, ruleIndex) in Object.entries(rulesByTaxonomies)" :key="ruleIndex">
-                        <view-rule-item :rule="rule" :filter-flag="filterFlag" @on-click-view="openModal"/>
+
+                    <div class="w-1/3 rounded p-2"
+                         v-for="(ruleGroup, ruleIndex) in Object.entries(rulesByTaxonomies)" :key="ruleIndex">
+                        <view-rule-item :rules="ruleGroup[1]" :group="ruleGroup[0]" :filter-flag="filterFlag" @on-click-view="openModal"/>
                     </div>
+
                 </isotope>
 
             </div>
