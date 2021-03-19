@@ -18,7 +18,7 @@ class JobController extends Controller
      * @param null $jobNumber
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Inertia\Response
      */
-    public function index(Request $request, $jobNumber = null)
+    public function show(Request $request, $jobNumber = null)
     {
         $rules = [];
         $job = null;

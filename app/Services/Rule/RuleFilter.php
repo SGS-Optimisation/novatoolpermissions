@@ -26,22 +26,33 @@ class RuleFilter
         if($job->metadata->basicDetails) {
             $client = ClientAccount::with('rules.terms.taxonomy')->whereRaw('LOWER(alias) LIKE "%' . Str::lower($job->metadata->basicDetails->retailer->customerName) . '%"')->first();
 
+            $metadata = $job->metadata;
+            $metadata->client = $client->only(['id', 'name', 'slug']);
+
             foreach ($client->rules as $rule) {
                 $matched = true;
                 $matchedTaxonomies = [];
 
                 /** @var Term $term */
                 foreach ($rule->terms as $term) {
-
+                    /*
+                     * Initialize array key, there might be many terms for the same taxonomy
+                     */
                     if (!Arr::exists($matchedTaxonomies, $term->taxonomy->name)) {
                         $matchedTaxonomies[$term->taxonomy->name] = false;
                     }
 
+                    /*
+                     * If a rule applies to any/all jobs, it should be displayed, skip further checks
+                     */
                     if (Str::lower($term->name) === 'any' || Str::lower($term->name) === 'all') {
                         $matchedTaxonomies[$term->taxonomy->name] = true;
                         continue;
                     }
 
+                    /*
+                     * Otherwise, check if the field matches
+                     */
                     if ($term->taxonomy->mapping) {
                         /**
                          * retrieve value from mysgs response with help of taxonomy
@@ -72,6 +83,9 @@ class RuleFilter
                     $clientRules[] = $rule;
                 }
             }
+
+            $job->metadata = $metadata;
+            $job->save();
         }
 
         return $clientRules;

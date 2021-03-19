@@ -138,7 +138,7 @@ Route::group([
     //'prefix' => 'op/'
 ],
     function () {
-        Route::match(['get', 'post'], '/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'index'])
+        Route::match(['get', 'post'], '/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
             ->name('home')
             ->where('jobNumber', '[0-9]+');
     });

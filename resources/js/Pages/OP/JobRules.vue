@@ -4,7 +4,7 @@
             <div class="flex justify-between align-middle">
 
                 <div class="flex-grow">
-                    <h2 v-if="job" class="pt-2 font-semibold text-xl text-gray-800 leading-tight">
+                    <h2 v-if="job" class="pt-2 font-bold text-xl text-gray-800 leading-tight">
                         Rules for job {{ job.job_number }}
                     </h2>
                 </div>
@@ -17,6 +17,15 @@
                 </div>
             </div>
         </template>
+
+        <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between">
+                <div class="p-2">
+                    <h3 class="font-semibold text-lg leading-loose text-gray-800">Client Account:
+                        {{ job.metadata.client.name }}</h3>
+                </div>
+            </div>
+        </div>
 
         <div class="p-2">
             <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-green-300" v-if="rulesUpdated">
@@ -239,13 +248,13 @@ export default {
                     url: route("rule_search", this.searchJobKey),
                     method: "GET",
                 })
-                .then(result => {
-                    this.searchedRules = result.data;
-                    this.searching = false;
-                })
-                .catch(err => {
-                    this.searching = false;
-                });
+                    .then(result => {
+                        this.searchedRules = result.data;
+                        this.searching = false;
+                    })
+                    .catch(err => {
+                        this.searching = false;
+                    });
             }
         },
         filterByNew() {
