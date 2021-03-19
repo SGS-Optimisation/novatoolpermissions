@@ -3,13 +3,11 @@
         <template #body>
             <div class="mx-auto sm:px-6 lg:px-8">
 
-                <form @submit.prevent="findRuleAudit">
-                    <div>
-                        <jet-button :type="'submit'" >
-                            View History
-                        </jet-button>
-                    </div>
-                </form>
+                <jet-nav-link  :href="route('rules.history', [ clientAccount.name, rule.id])"  >
+                    View History
+                </jet-nav-link>
+
+
 
 
                 <rule-form :rule="rule"
@@ -64,24 +62,9 @@ export default {
         'rule'
 
     ],
-    data() {
-        return {
-            form: this.$inertia.form({}, {
-                    bag: 'findRuleAudit'
-                }
-            ),
-        }
-    },
 
-    methods: {
-        findRuleAudit() {
-            this.form.post(route('rules.history', {pm:this.clientAccount.name, rule:this.rule.id}), {
-                preserveScroll: true
-            }).then(() => {
-                this.$emit('loaded')
-            });
-        }
-    },
+
+
 
 }
 </script>

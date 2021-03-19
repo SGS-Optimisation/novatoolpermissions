@@ -131,9 +131,9 @@ Route::name('pm.')
             });
     });
 
-Route::get('audits', '\App\Http\Controllers\Api\AuditActivityController@index')->name('audits')
-    ->middleware('auth', \App\Http\Middleware\AllowOnlyAdmin::class);
-Route::match(['get', 'post'], 'pm/{pm}/rule/{rule}/history', [AuditActivityController::class, 'history'])
+Route::get('audits', '\App\Http\Controllers\Api\AuditActivityController@index')->name('audits');
+
+Route::get('pm/{pm}/rule/{rule}/history', [AuditActivityController::class, 'history'])
     ->name('rules.history');
 Route::group([
     'middleware' => [

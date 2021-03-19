@@ -41,7 +41,7 @@ class AuditActivityController extends Controller
 
     public function history(Request $request, $client, $id)
     {
-
+       // dd($data . $id);
         $rule = Rule::find($id);
         $all =  $rule->audits()->with('user')->get();
 
