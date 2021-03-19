@@ -42,9 +42,14 @@ class AuditActivityController extends Controller
     public function history(Request $request)
     {
       $url =  $request->server("HTTP_REFERER");
+      if(!is_null($url)){
+          $url_array = explode('/', $url);
+          $id =  $url_array[6] ;
+          $rule = Rule::find($id);
+      }else{
+      $url = $request->getRequestUri();
       $url_array = explode('/', $url);
-  if(array_key_exists(6, $url_array)){
-      $id =  $url_array[6] ;
+      $id =  $url_array[4] ;
       $rule = Rule::find($id);
   }
 

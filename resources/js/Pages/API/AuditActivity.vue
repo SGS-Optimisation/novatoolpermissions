@@ -14,7 +14,7 @@
                     <div class="panel-heading font-semibold text-2xl text-cool-gray-600">Recent Activities</div>
 
 
-                    <ul class="list-group">
+                    <ul class="list-group" v-if="typeof audits !== 'undefined'">
                         <li class="list-group-item border-t-2 sm:border-dashed" v-for="(item, index) in audits" :key="index">
 
 
@@ -35,6 +35,7 @@
 
                         </li>
                     </ul>
+                    <span v-if="typeof audits!== 'undefined'">No history</span>
                 </div>
             </div>
                 </div>
