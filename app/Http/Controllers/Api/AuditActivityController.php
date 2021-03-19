@@ -39,21 +39,11 @@ class AuditActivityController extends Controller
 
     }
 
-    public function history(Request $request)
+    public function history(Request $request, $client, $id)
     {
-      $url =  $request->server("HTTP_REFERER");
-      if(!is_null($url)){
-          $url_array = explode('/', $url);
-          $id =  $url_array[6] ;
-          $rule = Rule::find($id);
-      }else{
-      $url = $request->getRequestUri();
-      $url_array = explode('/', $url);
-      $id =  $url_array[4] ;
-      $rule = Rule::find($id);
-  }
 
-      $all =  $rule->audits()->with('user')->get();
+        $rule = Rule::find($id);
+        $all =  $rule->audits()->with('user')->get();
 
       return Jetstream::inertia()->render($request, 'Api/AuditActivity', [
             'audits' => $all,

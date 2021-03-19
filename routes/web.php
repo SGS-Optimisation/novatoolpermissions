@@ -102,7 +102,6 @@ Route::name('pm.')
                 });
 
 
-
             });
 
         Route::name('taxonomies.')
@@ -134,7 +133,7 @@ Route::name('pm.')
 
 Route::get('audits', '\App\Http\Controllers\Api\AuditActivityController@index')->name('audits')
     ->middleware('auth', \App\Http\Middleware\AllowOnlyAdmin::class);
-Route::match(['get', 'post'],'pm/{pm}/rule/{rule}/history', [AuditActivityController::class, 'history'])
+Route::match(['get', 'post'], 'pm/{pm}/rule/{rule}/history', [AuditActivityController::class, 'history'])
     ->name('rules.history');
 Route::group([
     'middleware' => [
@@ -145,7 +144,7 @@ Route::group([
     //'prefix' => 'op/'
 ],
     function () {
-        Route::match(['get', 'post'], '/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
+        Route::match(['get', 'post'],'/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'index'])
             ->name('home')
             ->where('jobNumber', '[0-9]+');
     });
