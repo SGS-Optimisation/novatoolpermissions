@@ -3,14 +3,9 @@
         <template #body>
             <div class="mx-auto sm:px-6 lg:px-8">
 
-                <jet-nav-link  as="button" :href="route('rules.history', [ clientAccount.name, rule.id])"  >
-                    View History
+                <jet-nav-link  as="button" :href="route('rules.history', [ clientAccount.slug, rule.id])"  >
+                     <i class="fa fa-history">view history</i>
                 </jet-nav-link>
-<!--                <inertia-link as="button"-->
-<!--                              :href="route('rules.history', [clientAccount.name, rule.id])">-->
-<!--                    View History-->
-<!--                </inertia-link>-->
-
 
 
                 <rule-form :rule="rule"
@@ -43,6 +38,7 @@ import MetadataForm from '@/Components/PM/Rules/Meta'
 import JetNavLink from "@/Jetstream/NavLink";
 import JetButton from "@/Jetstream/DangerButton";
 import JetDropdownLink from "@/Jetstream/DropdownLink";
+import Button from "@/Jetstream/Button";
 
 
 export default {
@@ -54,17 +50,20 @@ export default {
         JetNavLink,
         ClientLayout,
         RuleForm,
-        MetadataForm
+        MetadataForm,
+        Button
     },
 
-    props:[
-        'team',
-        'clientAccount',
-        'taxonomyHierarchy',
-        'topTaxonomies',
-        'rule',
 
-    ],
+    props: [
+    'team',
+    'clientAccount',
+    'taxonomyHierarchy',
+    'topTaxonomies',
+    'rule',
+
+
+],
 
 
 

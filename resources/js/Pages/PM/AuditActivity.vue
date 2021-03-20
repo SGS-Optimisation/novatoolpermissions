@@ -1,11 +1,14 @@
 <template>
-    <app-layout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Activity Trail
-            </h2>
-        </template>
-        <template>
+    <client-layout :client-account="clientAccount">
+        <template #body>
+<!--            <h2 class="font-semibold text-xl text-gray-800 leading-tight">-->
+<!--                Activity Trail-->
+<!--            </h2>-->
+            <div class="mx-auto sm:px-6 lg:px-8">
+            <jet-nav-link  as="button" :href="route('pm.client-account.rules.edit', {clientAccount: clientAccount.slug, id: ruleId })"  >
+                <i class="fa fa-step-backward">Back to Rule</i>
+            </jet-nav-link>
+
             <div class="flex lg:pt-36">
                 <div class="m-auto w-2/3">
                     <div class="container">
@@ -14,7 +17,7 @@
                             <div class="panel-heading font-semibold text-2xl text-cool-gray-600">Recent Activities</div>
 
 
-                            <ul class="list-group" v-if="typeof audits !== 'undefined'">
+                            <ul class="list-group" v-if="audits.length !== 0">
                                 <li class="list-group-item border-t-2 sm:border-dashed" v-for="(item, index) in audits"
                                     :key="index">
 
@@ -37,26 +40,29 @@
 
                                 </li>
                             </ul>
-                            <span v-if="typeof audits!== 'undefined'">No history</span>
+                            <span v-if="audits.length === 0">No history</span>
                         </div>
                     </div>
                 </div>
             </div>
+            </div>
         </template>
 
-    </app-layout>
+    </client-layout>
 </template>
 
 <script>
-import AppLayout from './../../Layouts/AppLayout'
-
+import ClientLayout from '@/Layouts/ClientAccount'
+import JetNavLink from "@/Jetstream/NavLink";
 export default {
     name: "AuditActivity",
-    props: ['audits'],
+    props: ['audits', 'clientAccount', 'team', 'ruleId'],
 
 
     components: {
-        AppLayout,
+        ClientLayout,
+        JetNavLink,
     },
+
 }
 </script>

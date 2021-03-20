@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\ClientAccount;
 use App\Models\Rule;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -39,14 +40,18 @@ class AuditActivityController extends Controller
 
     }
 
-    public function history(Request $request, $client, $id)
+    public function history(Request $request, $client_account_slug, $id)
     {
-       // dd($data . $id);
+        $client_account = ClientAccount::whereSlug($client_account_slug)->first();
+
         $rule = Rule::find($id);
         $all =  $rule->audits()->with('user')->get();
 
       return Jetstream::inertia()->render($request, 'PM/AuditActivity', [
+          'team' => $request->user()->currentTeam,
+          'clientAccount' => $client_account,
             'audits' => $all,
+          'ruleId'=>$id,
 
         ]);
     }
