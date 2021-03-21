@@ -90,8 +90,11 @@ Route::name('pm.')
                         Route::post('/store', [RuleController::class, 'store'])
                             ->name('rules.store');
 
-                        Route::get('/{id}/edit', [RuleController::class, 'edit'])
-                            ->name('rules.edit');
+                    Route::get('/{id}/edit', [RuleController::class, 'edit'])
+                        ->name('rules.edit');
+
+                    Route::get('/{id}/history', [AuditActivityController::class, 'history'])
+                        ->name('rules.history');
 
                         Route::put('/{id}/update', [RuleController::class, 'update'])
                             ->name('rules.update');
@@ -133,8 +136,7 @@ Route::name('pm.')
 
 Route::get('audits', '\App\Http\Controllers\Api\AuditActivityController@index')->name('audits');
 
-Route::get('pm/{pm}/rule/{rule}/history', [AuditActivityController::class, 'history'])
-    ->name('rules.history');
+
 Route::group([
     'middleware' => [
         'auth:sanctum',
@@ -150,9 +152,6 @@ Route::group([
     });
 
 
-
-//Route::match(['get', 'post'],'/ruleaudits', '\App\Http\Controllers\Api\AuditActivityController@showRuleAudits')->name('ruleaudits')
-//    ->middleware('auth', \App\Http\Middleware\AllowOnlyAdmin::class);
 
 
 

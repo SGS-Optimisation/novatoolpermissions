@@ -22,7 +22,7 @@ class AuditActivityController extends Controller
             ->orderBy('created_at', 'desc')->get();
 
 
-        return Jetstream::inertia()->render($request, 'PM/AuditActivity', [
+        return Jetstream::inertia()->render($request, 'Api/AuditActivity', [
             'audits' => $audits,
 
         ]);
@@ -50,7 +50,7 @@ class AuditActivityController extends Controller
       return Jetstream::inertia()->render($request, 'PM/AuditActivity', [
           'team' => $request->user()->currentTeam,
           'clientAccount' => $client_account,
-            'audits' => $all,
+          'audits' => $all,
           'ruleId'=>$id,
 
         ]);

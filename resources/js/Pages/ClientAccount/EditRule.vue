@@ -3,7 +3,7 @@
         <template #body>
             <div class="mx-auto sm:px-6 lg:px-8">
 
-                <jet-nav-link  as="button" :href="route('rules.history', [ clientAccount.slug, rule.id])"  >
+                <jet-nav-link  as="button" :href="route('pm.client-account.rules.history', [ clientAccount.slug, rule.id])"  >
                      <i class="fa fa-history">view history</i>
                 </jet-nav-link>
 
