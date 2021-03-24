@@ -15,24 +15,29 @@
 
                     <filter-condition @on-change-filter-condition="onChangeFilterCondition"/>
 
+                </div>
+                <div class="flex flex-row m-2 justify-end">
                     <div id="filter" class="m-2">
                         <div class="flex text-xs" role="group">
                             <button @click="setFilterDate('isNew')"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
-                                New
+                                New <span title="Total number of rules considered new" class="px-1 rounded-xl bg-pink-300">{{numNewRules}}</span>
                             </button>
                             <button @click="setFilterDate('isUpdated')"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isUpdated' }, { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
-                                Updated
+                                Updated <span title="Total number of rules considered updated" class="px-1 rounded-xl bg-pink-300">{{numUpdatedRules}}</span>
+                            </button>
+                            <button @click="setFilterDate('isFlagged')"
+                                    :class="[{ 'bg-blue-500 text-white' : filterOption === 'isFlagged' }, { 'bg-white text-blue-500' : filterOption !== 'isFlagged' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
+                                Flagged <span title="Total number of flagged rules" class="px-1 rounded-xl bg-pink-300">{{numFlaggedRules}}</span>
                             </button>
                             <button @click="setFilterDate('all')"
                                     class="bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
                                 Unfilter
                             </button>
+
                         </div>
                     </div>
-                </div>
-                <div class="m-2 text-right">
                     <jet-button type="button" @click.native="clearAllFilters">
                         Reset All
                     </jet-button>
@@ -163,6 +168,10 @@ export default {
             return moment().subtract(3, 'months').isSameOrBefore(moment(itemElem.updated_at));
         };
 
+        this.filterObject['isFlagged'] = (itemElem) => {
+            return itemElem.flagged === true;
+        };
+
         this.filterObject['all'] = (itemElem) => {
             return true;
         };
@@ -216,7 +225,17 @@ export default {
 
         numAllRules: function () {
             return this.allRules.length;
-        }
+        },
+
+        numNewRules: function () {
+            return (_.filter(this.allRules, this.filterObject.isNew)).length;
+        },
+        numUpdatedRules: function () {
+            return (_.filter(this.allRules, this.filterObject.isUpdated)).length;
+        },
+        numFlaggedRules: function () {
+            return (_.filter(this.allRules, this.filterObject.isFlagged)).length;
+        },
     },
 
     components: {

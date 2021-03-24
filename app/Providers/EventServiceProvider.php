@@ -22,6 +22,12 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+
+        'App\\Events\\Rules\\Flagged' => [
+            'App\\Listeners\\Rules\\RebuildRuleCache',
+            'App\\Listeners\\Rules\\NotifyRuleEditors',
+            'App\\Listeners\\Rules\\NotifyTeamOwner',
+        ]
 //        Audited::class => [
 //            AuditedListener::class
 //        ]

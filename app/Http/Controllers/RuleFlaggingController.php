@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Rules\Flagged;
 use App\Models\Rule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -29,6 +30,8 @@ class RuleFlaggingController extends Controller
         $rule->timestamps = false;
 
         $rule->save();
+        
+        event(new Flagged($rule));
 
         \Log::debug('flagging rule ' . $rule->id);
         logger('reason: ' . $request->reason);

@@ -9,6 +9,7 @@ import { InertiaForm } from 'laravel-jetstream';
 import PortalVue from 'portal-vue';
 import moment from "moment";
 import vSelect from 'vue-select'
+import Pagination from 'vue-pagination-2';
 
 
 Vue.mixin({ methods: { route } });
@@ -16,6 +17,8 @@ Vue.use(InertiaApp);
 Vue.use(InertiaForm);
 Vue.use(PortalVue);
 Vue.component('v-select', vSelect);
+Vue.component('pagination', Pagination);
+
 import DateFilter from './filters/date' // Import date
 
 Vue.filter('date', DateFilter ) // register filter globally
