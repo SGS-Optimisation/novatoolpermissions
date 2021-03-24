@@ -112,7 +112,30 @@
             </div>
         </div>
 
-        <div class="fixed z-10 inset-0 overflow-y-auto ease-out duration-400" v-if="isOpen">
+        <jet-dialog-modal :show="isOpen && currentRule" max-width="6xl" @close="closeModal">
+            <template #title>
+                <div class="flex justify-between">
+                    <div><p>Viewing rule</p></div>
+                    <jet-secondary-button @click.native="closeModal">
+                        <i class="fa fa-times"/>
+                    </jet-secondary-button>
+                </div>
+            </template>
+
+            <template #content>
+                <div class="overflow-scroll">
+                    <view-rule :rule="currentRule"/>
+                </div>
+            </template>
+
+            <template #footer>
+                <jet-secondary-button @click.native="closeModal">
+                    Close
+                </jet-secondary-button>
+            </template>
+        </jet-dialog-modal>
+
+<!--        <div class="fixed z-10 inset-0 overflow-y-auto ease-out duration-400" v-if="isOpen">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
 
                 <div class="fixed inset-0 transition-opacity">
@@ -151,7 +174,7 @@
 
                 </div>
             </div>
-        </div>
+        </div>-->
 
     </app-layout>
 </template>
@@ -161,7 +184,9 @@ import AppLayout from '@/Layouts/AppLayout'
 import Input from "@/Jetstream/Input";
 import Button from "@/Jetstream/Button";
 import JetButton from '@/Jetstream/Button'
+import JetDialogModal from '@/Jetstream/DialogModal';
 import JetInput from '@/Jetstream/Input'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import ViewRule from '@/Components/PM/Rules/ViewRule'
 import ViewRuleItem from "@/Components/PM/Rules/ViewRuleItem";
 import JobSearch from "@/Components/OP/JobSearchForm";
@@ -265,8 +290,8 @@ export default {
             this.isOpen = true
         },
         closeModal() {
-            this.currentRule = null;
             this.isOpen = false;
+            this.currentRule = null;
         },
         search() {
             if (this.searchJobKey && this.searchJobKey !== '') {
@@ -304,7 +329,9 @@ export default {
         Input,
         AppLayout,
         JetButton,
+        JetDialogModal,
         JetInput,
+        JetSecondaryButton,
         ViewRule,
         JobSearch,
         isotope
