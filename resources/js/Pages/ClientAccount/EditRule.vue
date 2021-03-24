@@ -2,27 +2,28 @@
     <client-layout :client-account="clientAccount">
         <template #body>
             <div class="mx-auto sm:px-6 lg:px-8">
-
-                <jet-nav-link  as="button" :href="route('pm.client-account.rules.history', [ clientAccount.slug, rule.id])"  >
-                     <i class="fa fa-history">view history</i>
-                </jet-nav-link>
-
-
                 <rule-form :rule="rule"
                            :client-account="clientAccount"
                            :taxonomy-hierarchy="taxonomyHierarchy"
                            :top-taxonomies="topTaxonomies"
                 >
                     <template #title>
-                        Updating rule {{ rule.name }}
+                        Updating rule <i>{{ rule.name }}</i>
+
+                        <jet-nav-link
+                            title="View history"
+                            :href="route('pm.client-account.rules.history', [ clientAccount.slug, rule.id])">
+                            <i class="fa fa-history"/>
+                        </jet-nav-link>
                     </template>
                 </rule-form>
 
                 <div class="mt-5">
-                    <metadata-form :rule="rule"
-                                   :client-account="clientAccount"
-                                   :taxonomy-hierarchy="taxonomyHierarchy"
-                                   :top-taxonomies="topTaxonomies">
+                    <metadata-form
+                        :rule="rule"
+                        :client-account="clientAccount"
+                        :taxonomy-hierarchy="taxonomyHierarchy"
+                        :top-taxonomies="topTaxonomies">
                     </metadata-form>
                 </div>
             </div>
@@ -56,23 +57,14 @@ export default {
 
 
     props: [
-    'team',
-    'clientAccount',
-    'taxonomyHierarchy',
-    'topTaxonomies',
-    'rule',
+        'team',
+        'clientAccount',
+        'taxonomyHierarchy',
+        'topTaxonomies',
+        'rule',
 
 
-],
-
-
-
-
-
-
-
-
-
+    ],
 
 
 }

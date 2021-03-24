@@ -26,5 +26,3 @@ Route::group([
     Route::get('search/{jobNumber}', [\App\Http\Controllers\OPs\JobController::class, 'search'])
         ->name('rule_search');
 });
-
-Route::get('audit', [\App\Http\Controllers\Api\AuditActivityController::class, 'show'])->name('audit');

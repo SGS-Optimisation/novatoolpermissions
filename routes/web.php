@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\AuditActivityController;
+use App\Http\Controllers\PMs\AuditActivityController;
 use App\Http\Controllers\CurrentTeamController;
 use App\Http\Controllers\PMs\ClientAccountController;
 use App\Http\Controllers\PMs\ClientAccountTaxonomyController;
@@ -92,7 +92,6 @@ Route::name('pm.')
 
                     Route::get('/{id}/edit', [RuleController::class, 'edit'])
                         ->name('rules.edit');
-
                     Route::get('/{id}/history', [AuditActivityController::class, 'history'])
                         ->name('rules.history');
 
@@ -133,8 +132,6 @@ Route::name('pm.')
                     ->name('destroy');
             });
     });
-
-Route::get('audits', '\App\Http\Controllers\Api\AuditActivityController@index')->name('audits');
 
 
 Route::group([

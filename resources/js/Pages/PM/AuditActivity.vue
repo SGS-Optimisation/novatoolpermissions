@@ -1,43 +1,59 @@
 <template>
     <client-layout :client-account="clientAccount">
         <template #body>
-<!--            <h2 class="font-semibold text-xl text-gray-800 leading-tight">-->
-<!--                Activity Trail-->
-<!--            </h2>-->
             <div class="mx-auto sm:px-6 lg:px-8">
-            <jet-nav-link  as="button" :href="route('pm.client-account.rules.edit', {clientAccount: clientAccount.slug, id: ruleId })"  >
-                <i class="fa fa-step-backward">Back to Rule</i>
-            </jet-nav-link>
+
 
             <div class="flex lg:pt-36">
                 <div class="m-auto w-2/3">
                     <div class="container">
                         <div class="panel panel-info">
                             <!-- Default panel contents -->
-                            <div class="panel-heading font-semibold text-2xl text-cool-gray-600">Recent Activities</div>
+                            <div class="panel-heading font-semibold text-2xl text-cool-gray-600">
+                                <jet-nav-link
+                                    title="Back to rule"
+                                    :href="route('pm.client-account.rules.edit', {clientAccount: clientAccount.slug, id: ruleId })"  >
+                                    <i class="fa fa-caret-square-left"></i>
+                                </jet-nav-link>
+
+                                Rule Changes
+                            </div>
 
 
                             <ul class="list-group" v-if="audits.length !== 0">
-                                <li class="list-group-item border-t-2 sm:border-dashed" v-for="(item, index) in audits"
+                                <li class="list-group-item mb-4 pb-5" v-for="(item, index) in audits"
                                     :key="index">
 
 
                                     On {{ item.created_at | date }},
-                                    {{ item.user.name }} with <strong>IP:</strong>{{ item.ip_address }}, {{
-                                        item.event
-                                    }} {{ item.auditable_type }}
-                                    record {{ item.auditable_id }} via {{ item.url }}
+                                    {{ item.user.name }} with <strong>IP:</strong>{{ item.ip_address }}
 
 
-                                    <p v-html="" class="text-blue-400" v-for="(key, value) in item.old_values">
-                                        <span class="text-red-700"> <strong>  {{ value }} </strong> </span> is updated
-                                        <span class="text-red-700">From:</span><span v-html="key"></span>
+                                    <table class="table-fixed w-full border-collapse border border-gray-400">
+                                        <thead>
+                                        <tr class=" border border-gray-400">
+                                            <th class=" ">
+                                                Field
+                                            </th>
+                                            <th class=" ">
+                                                Old
+                                            </th>
+                                            <th class=" ">
+                                                New
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr v-for="(key, value) in item.old_values" class="border-collapse border border-gray-400">
+                                            <td class=" ">{{ value }}</td>
+                                            <td><span class="  text-red-700" v-html="key"></span></td>
+                                            <td><span class="  text-blue-700" v-html="item.new_values[value]"></span></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
 
-                                        <span class="text-red-700">To: </span> <span
-                                        v-html="item.new_values[value]"></span>
-                                    </p>
 
-
+                                    <hr>
                                 </li>
                             </ul>
                             <span v-if="audits.length === 0">No history</span>

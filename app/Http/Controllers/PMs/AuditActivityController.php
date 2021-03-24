@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\PMs;
 
 use App\Http\Controllers\Controller;
 use App\Models\ClientAccount;
@@ -15,37 +15,18 @@ use Laravel\Jetstream\Jetstream;
 class AuditActivityController extends Controller
 {
 
-    public function index(Request $request)
-    {
-
-        $audits = Audit::with('user')
-            ->orderBy('created_at', 'desc')->get();
-
-
-        return Jetstream::inertia()->render($request, 'Api/AuditActivity', [
-            'audits' => $audits,
-
-        ]);
-
-    }
-
-    public function show(Request $request)
-    {
-
-        $audits = Audit::with('user')
-            ->orderBy('created_at', 'desc')->get();
-
-
-        return response()->json($audits);
-
-    }
-
-    public function history(Request $request, $client_account_slug, $id)
+    /**
+     * @param  Request  $request
+     * @param $client_account_slug
+     * @param $id
+     * @return \Inertia\Response
+     */
+    public function ruleHistory(Request $request, $client_account_slug, $id)
     {
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
 
         $rule = Rule::find($id);
-        $all =  $rule->audits()->with('user')->get();
+        $all =  $rule->audits()->orderBy('created_at', 'desc')->with('user')->get();
 
       return Jetstream::inertia()->render($request, 'PM/AuditActivity', [
           'team' => $request->user()->currentTeam,
