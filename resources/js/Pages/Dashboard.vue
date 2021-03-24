@@ -5,7 +5,6 @@
             <div class="m-auto w-2/3">
 
                     <job-search></job-search>
-
             </div>
         </div>
 
@@ -19,10 +18,11 @@ import JobSearch from "@/Components/OP/JobSearchForm";
 
 export default {
     props: [
-        'team',
+        'team', ['audits']
     ],
 
     components: {
+        AuditActivity,
         AppLayout,
         JobSearch
     },

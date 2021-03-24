@@ -8,15 +8,17 @@ import { InertiaApp } from '@inertiajs/inertia-vue';
 import { InertiaForm } from 'laravel-jetstream';
 import PortalVue from 'portal-vue';
 import moment from "moment";
-import vSelect from 'vue-select';
-import Pagination from 'vue-pagination-2';
+import vSelect from 'vue-select'
+
 
 Vue.mixin({ methods: { route } });
 Vue.use(InertiaApp);
 Vue.use(InertiaForm);
 Vue.use(PortalVue);
 Vue.component('v-select', vSelect);
-Vue.component('pagination', Pagination);
+import DateFilter from './filters/date' // Import date
+
+Vue.filter('date', DateFilter ) // register filter globally
 
 Vue.directive('click-outside', {
     bind(el, binding, vnode) {

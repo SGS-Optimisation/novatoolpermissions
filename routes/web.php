@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PMs\AuditActivityController;
 use App\Http\Controllers\CurrentTeamController;
 use App\Http\Controllers\PMs\ClientAccountController;
 use App\Http\Controllers\PMs\ClientAccountTaxonomyController;
@@ -83,14 +84,17 @@ Route::name('pm.')
                         Route::get('/', [RuleController::class, 'index'])
                             ->name('rules');
 
-                        Route::get('/create', [RuleController::class, 'create'])
-                            ->name('rules.create');
+                    Route::get('/create', [RuleController::class, 'create'])
+                        ->name('rules.create');
 
                         Route::post('/store', [RuleController::class, 'store'])
                             ->name('rules.store');
 
-                        Route::get('/{id}/edit', [RuleController::class, 'edit'])
-                            ->name('rules.edit');
+                    Route::get('/{id}/edit', [RuleController::class, 'edit'])
+                        ->name('rules.edit');
+
+                    Route::get('/{id}/history', [AuditActivityController::class, 'ruleHistory'])
+                        ->name('rules.history');
 
                         Route::put('/{id}/update', [RuleController::class, 'update'])
                             ->name('rules.update');
@@ -99,6 +103,8 @@ Route::name('pm.')
                             ->name('rules.taxonomy.update');
                     });
                 });
+
+
             });
 
         Route::name('taxonomies.')
@@ -138,7 +144,12 @@ Route::group([
     //'prefix' => 'op/'
 ],
     function () {
-        Route::match(['get', 'post'], '/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
+        Route::match(['get', 'post'],'/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'index'])
             ->name('home')
             ->where('jobNumber', '[0-9]+');
     });
+
+
+
+
+
