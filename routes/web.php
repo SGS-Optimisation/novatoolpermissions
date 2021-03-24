@@ -92,7 +92,8 @@ Route::name('pm.')
 
                     Route::get('/{id}/edit', [RuleController::class, 'edit'])
                         ->name('rules.edit');
-                    Route::get('/{id}/history', [AuditActivityController::class, 'history'])
+
+                    Route::get('/{id}/history', [AuditActivityController::class, 'ruleHistory'])
                         ->name('rules.history');
 
                         Route::put('/{id}/update', [RuleController::class, 'update'])
