@@ -104,7 +104,7 @@
                     <div class="w-1/3 rounded"
                          v-for="(ruleGroup, ruleIndex) in Object.entries(rulesByTaxonomies)" :key="ruleIndex">
                         <view-rule-item :rules="ruleGroup[1]" :group="ruleGroup[0]" :filter-flag="filterFlag"
-                                        @on-click-view="openModal"/>
+                                        @on-click-view="openRuleModal"/>
                     </div>
 
                 </isotope>
@@ -112,11 +112,13 @@
             </div>
         </div>
 
-        <jet-dialog-modal :show="isOpen && currentRule" max-width="6xl" @close="closeModal">
+
+        <!-- Rule Viewing Modal -->
+        <jet-dialog-modal :show="isOpen && currentRule" max-width="6xl" @close="closeRuleModal">
             <template #title>
                 <div class="flex justify-between">
                     <div><p>Viewing rule</p></div>
-                    <jet-secondary-button @click.native="closeModal">
+                    <jet-secondary-button @click.native="closeRuleModal">
                         <i class="fa fa-times"/>
                     </jet-secondary-button>
                 </div>
@@ -129,52 +131,54 @@
             </template>
 
             <template #footer>
-                <jet-secondary-button @click.native="closeModal">
+
+                <div>
+                    <jet-action-message :on="flagRuleForm.recentlySuccessful" class="ml-3">
+                        Rule was flagged.
+                    </jet-action-message>
+                </div>
+
+                <jet-button class="ml-2" @click.native="flagRule(currentRule)">
+                    Flag rule?
+                </jet-button>
+
+                <jet-secondary-button @click.native="closeRuleModal">
                     Close
                 </jet-secondary-button>
             </template>
         </jet-dialog-modal>
 
-<!--        <div class="fixed z-10 inset-0 overflow-y-auto ease-out duration-400" v-if="isOpen">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
 
-                <div class="fixed inset-0 transition-opacity">
-                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-                </div>
-
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
-                <div
-                    class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl w-full"
-                    role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-                    <form>
-
-                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                            <div class="">
-                                <div class="mb-4">
-                                    <view-rule :rule="currentRule">
-                                        <button @click="closeModal()" type="button"
-                                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
-                                            Close
-                                        </button>
-                                    </view-rule>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                            <span class="mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
-                                <button @click="closeModal()" type="button"
-                                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
-                                    Close
-                                </button>
-                            </span>
-                        </div>
-
-                    </form>
+        <!-- Rule Flagging Modal -->
+        <jet-dialog-modal :show="isFlaggingRule" @close="closeFlagModal">
+            <template #title>
+                <span v-if="currentFlaggingRule">Flag rule {{currentFlaggingRule.name}}</span>
+            </template>
+            <template #content>
+                <div class="mt-4">
+                    <jet-label for="reason" value="Flag reason"/>
+                    <textarea class="form-input rounded-md shadow-sm mt-1 block w-full" id="reason"
+                              placeholder="Please provide a short explanation"
+                              v-model="flagRuleForm.reason"/>
+<!--                    <jet-input type="text" class="mt-1 block w-3/4"
+                               :value="flagRuleForm.reason"
+                               v-model="flagRuleForm.reason"/>-->
 
                 </div>
-            </div>
-        </div>-->
+            </template>
+            <template #footer>
+                <jet-secondary-button @click.native="closeFlagModal">
+                    Nevermind
+                </jet-secondary-button>
+
+                <jet-danger-button class="ml-2" @click.native="sendFlagRule"
+                            :class="{ 'opacity-25': flagRuleForm.processing }"
+                            :disabled="flagRuleForm.processing">
+                    Flag
+                </jet-danger-button>
+            </template>
+        </jet-dialog-modal>
+
 
     </app-layout>
 </template>
@@ -183,9 +187,12 @@
 import AppLayout from '@/Layouts/AppLayout'
 import Input from "@/Jetstream/Input";
 import Button from "@/Jetstream/Button";
+import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetButton from '@/Jetstream/Button'
+import JetDangerButton from '@/Jetstream/DangerButton'
 import JetDialogModal from '@/Jetstream/DialogModal';
 import JetInput from '@/Jetstream/Input'
+import JetLabel from '@/Jetstream/Label'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import ViewRule from '@/Components/PM/Rules/ViewRule'
 import ViewRuleItem from "@/Components/PM/Rules/ViewRuleItem";
@@ -219,7 +226,15 @@ export default {
 
             rulesByTaxonomies: {},
 
-            filterFlag: null
+            filterFlag: null,
+            isFlaggingRule: false,
+            currentFlaggingRule: null,
+
+            flagRuleForm: this.$inertia.form({
+                reason: "",
+            }, {
+                bag: 'deleteTerm'
+            }),
         }
     },
 
@@ -285,11 +300,11 @@ export default {
         reloadPage() {
             window.location = window.location + this.searchJobKey;
         },
-        openModal(rule) {
+        openRuleModal(rule) {
             this.currentRule = rule;
             this.isOpen = true
         },
-        closeModal() {
+        closeRuleModal() {
             this.isOpen = false;
             this.currentRule = null;
         },
@@ -320,7 +335,30 @@ export default {
         filterByTaxonomy(taxonomy) {
             this.$refs.cpt.filter(taxonomy)
             this.filterFlag = null;
-        }
+        },
+
+        flagRule(rule) {
+            this.currentFlaggingRule = rule;
+            this.isFlaggingRule = true;
+        },
+
+        closeFlagModal() {
+            this.isFlaggingRule = false;
+            this.currentFlaggingRule = null;
+        },
+
+        sendFlagRule() {
+            console.log('flagging rule', this.currentFlaggingRule);
+
+            this.flagRuleForm.post(route('rule.flag', this.currentFlaggingRule.id), {
+                preserveScroll: true
+            }).then(() => {
+
+                    this.closeFlagModal();
+            });
+        },
+
+
     },
 
     components: {
@@ -328,9 +366,12 @@ export default {
         Button,
         Input,
         AppLayout,
+        JetActionMessage,
         JetButton,
+        JetDangerButton,
         JetDialogModal,
         JetInput,
+        JetLabel,
         JetSecondaryButton,
         ViewRule,
         JobSearch,
