@@ -1,7 +1,7 @@
 <template>
     <portal to="modal">
         <transition leave-active-class="duration-200">
-            <div v-show="show" class="modal fixed w-full h-full top-0 left-0 flex items-center justify-center">
+            <div v-show="show" class="modal fixed w-full h-4/5 top-10 left-0 flex items-center justify-center z-50">
                 <transition enter-active-class="ease-out duration-300"
                         enter-class="opacity-0"
                         enter-to-class="opacity-100"
@@ -19,7 +19,7 @@
                         leave-active-class="ease-in duration-200"
                         leave-class="opacity-100 translate-y-0 sm:scale-100"
                         leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                    <div v-show="show" class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full" :class="maxWidthClass">
+                    <div v-show="show" class="h-full bg-white rounded-lg overflow-scroll shadow-xl transform transition-all sm:w-full" :class="maxWidthClass">
                         <slot></slot>
                     </div>
                 </transition>
@@ -85,6 +85,8 @@
                     'lg': 'sm:max-w-lg',
                     'xl': 'sm:max-w-xl',
                     '2xl': 'sm:max-w-2xl',
+                    '4xl': 'sm:max-w-4xl',
+                    '6xl': 'sm:max-w-6xl',
                 }[this.maxWidth]
             }
         }

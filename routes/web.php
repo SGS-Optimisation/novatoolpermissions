@@ -147,7 +147,14 @@ Route::group([
         Route::match(['get', 'post'],'/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
             ->name('home')
             ->where('jobNumber', '[0-9]+');
+
+
+        Route::post('/rule/{rule}/flag', [\App\Http\Controllers\RuleFlaggingController::class, 'on'] )
+            ->name('rule.flag')
+            ->where('rule', '[0-9]+');
     });
+
+
 
 
 

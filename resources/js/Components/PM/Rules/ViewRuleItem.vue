@@ -16,12 +16,18 @@
                         {{ rule.name }}
                     </div>
                     <div class="text-xs text-gray-500 flex flex-row justify-between">
-                        <div class="text-xs bg-pink-200 rounded-xl px-2">
-                            {{ _.find(rule.terms, (item) => {return item.taxonomy.name === group }).name  }}
+                        <div class="flex flex-row">
+                            <div class="text-xs bg-pink-200 rounded-xl px-2">
+                                {{ _.find(rule.terms, (item) => {return item.taxonomy.name === group }).name  }}
+                            </div>
+                            <div class="ml-2" v-if="rule.flagged">
+                                <i title="This rule is currently flagged"
+                                   class="text-red-700 fa fa-flag"></i>
+                            </div>
                         </div>
 
                         <div>
-                            <span v-if="rule.created_at == rule.updated_at">
+                            <span v-if="rule.created_at === rule.updated_at">
                                 Created {{ moment(rule.created_at).fromNow() }}
                             </span>
                             <span v-else>
@@ -47,6 +53,10 @@ import moment from "moment";
 export default {
     name: "ViewRuleItem",
     props: [ 'group', 'rules', 'filterFlag'],
+    data() {
+        return {
+        }
+    },
     computed:{
         taxonomyRules() {
             return [...this.filterFlag ? this.rules.filter(rule => {

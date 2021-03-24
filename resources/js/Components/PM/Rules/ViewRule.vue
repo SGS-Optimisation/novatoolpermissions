@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="rule">
         <div class="py-3 sm:py-6 sm:flex sm:flex-row">
             <h1 class="text-lg text-gray-900 font-bold w-full" id="modal-headline">
                 {{ rule.name.slice(0, 30) }}
