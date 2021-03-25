@@ -1,5 +1,5 @@
 <template>
-    <div class="mr-4 p-2 bg-indigo-50" v-if="taxonomyRules.length > 0">
+    <div class="mr-4 mb-4 p-2 bg-indigo-50" v-if="taxonomyRules.length > 0">
         <div class="w-full">
             <h1 class="bg-gray-500 text-md font-medium text-gray-100 px-2">
                 {{ group }}
@@ -59,12 +59,12 @@ export default {
     },
     computed:{
         taxonomyRules() {
-            return [...this.filterFlag ? this.rules.filter(rule => {
+            return _.orderBy([...this.filterFlag ? this.rules.filter(rule => {
                 let time = this.filterFlag === 'updated' ? moment(rule.updated_at) : moment(rule.created_at);
 
                 return moment().subtract(3, 'months').isSameOrBefore(time)
                     && (this.filterFlag !== 'updated' || rule.created_at !== rule.updated_at)
-            }) : this.rules]
+            }) : this.rules], 'updated_at', 'desc')
         }
     }
     // created(){

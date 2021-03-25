@@ -2,7 +2,7 @@
     <app-layout>
 
         <div class="flex lg:pt-36">
-            <div class="m-auto w-2/3">
+            <div class="m-auto w-1/3">
 
                     <job-search></job-search>
             </div>
