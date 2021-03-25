@@ -1,77 +1,234 @@
 <template>
-  <div class="bg-white shadow-md my-2 p-3 rounded" :data-rule-id="rule.id">
-    <div class="flex items-center justify-between">
-      <div class="description">
-        <h2 @click="open = !open; $emit('toggle')" class="cursor-pointer text-xl font-bold">{{ rule.name }}</h2>
-        <div class="flex">
-          <div class="flex-shrink cursor-default align-bottom text-xs border-dashed border-b border-gray-500"
-               :title="date()">
-            Last updated {{ humanDate() }}
-          </div>
-          <nav-link :href="route('pm.client-account.rules.edit',  {clientAccount: clientAccount.slug, id: rule.id })">
-            <i class="fa fa-pen"></i>
-          </nav-link>
-        </div>
-        <rule-tags :rule="rule"/>
-      </div>
+    <div class="bg-white shadow-md my-2 p-3 rounded" :data-rule-id="rule.id">
+        <div class="flex items-center justify-between">
+            <div class="description">
+                <h2 @click="detailsOpen = !detailsOpen; $emit('toggle')" class="cursor-pointer text-xl font-bold">
+                    {{ rule.name }}</h2>
+                <div class="flex">
+                    <div class="flex-shrink cursor-default align-bottom text-xs border-dashed border-b border-gray-500"
+                         :title="date()">
+                        Last updated {{ humanDate() }}
+                    </div>
+                    <nav-link
+                        :href="route('pm.client-account.rules.edit',  {clientAccount: clientAccount.slug, id: rule.id })">
+                        <i class="fa fa-pen"></i>
+                    </nav-link>
+                    <div v-if="rule.flagged">
+                        <a @click="showFlagReason" class="cursor-pointer"><i class="fa fa-flag text-red-700"></i></a>
+                    </div>
+                </div>
+                <rule-tags :rule="rule"/>
+            </div>
 
-      <!-- Button for opening card -->
-      <div class="ml-4">
-        <div @click="open = !open; $emit('toggle')"
-             class="flex items-center cursor-pointer px-3 py-2 text-gray-200 hover:text-gray-600"
-             :class="{'transform rotate-180': open}">
-          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-               stroke="black">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-          </svg>
+            <!-- Button for opening card -->
+            <div class="ml-4">
+                <div @click="detailsOpen = !detailsOpen; $emit('toggle')"
+                     class="flex items-center cursor-pointer px-3 py-2 text-gray-200 hover:text-gray-600"
+                     :class="{'transform rotate-180': detailsOpen}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                         stroke="black">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </div>
+
+            </div>
+
         </div>
 
-      </div>
+
+        <!-- Collapsed content -->
+        <div class="w-full flex flex-col mt-8" :class="{'hidden': !detailsOpen}">
+            <hr class="mb-4 border-gray-700">
+            <div v-html="rule.content"></div>
+            <div class="text-right">
+                <button @click="flagRule()"
+                        class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
+                        rounded-md font-semibold text-xs text-white uppercase tracking-widest
+                        hover:bg-gray-700 active:bg-gray-900
+                        focus:outline-none focus:border-gray-900 focus:shadow-outline-gray
+                        transition ease-in-out duration-150">
+                    Flag rule?
+                </button>
+            </div>
+        </div>
+
+        <!-- Rule Flag Reason List Modal -->
+        <jet-dialog-modal :show="isShowingFlagModal" @close="closeFlagReasonModal">
+            <template #title>
+                Flag Reasons
+            </template>
+            <template #content>
+                <div v-if="rule.metadata && rule.metadata.flag_reason">
+                    <div class="flex flew-row"
+                         v-for="record in _.orderBy(rule.metadata.flag_reason, 'date', 'desc')">
+                        <div>[{{ record.date }}] {{ record.user }}: {{ record.reason }}</div>
+                    </div>
+                </div>
+            </template>
+            <template #footer>
+                <jet-secondary-button @click.native="closeFlagReasonModal">
+                    Close
+                </jet-secondary-button>
+
+                <jet-danger-button class="ml-2" @click.native="sendUnflagRule"
+                                   :class="{ 'opacity-25': unflagRuleForm.processing }"
+                                   :disabled="unflagRuleForm.processing">
+                    Remove flag
+                </jet-danger-button>
+            </template>
+        </jet-dialog-modal>
+
+        <!-- Rule Flagging Modal -->
+        <jet-dialog-modal :show="isFlaggingRule" @close="closeFlagModal">
+            <template #content>
+                <div class="mt-4">
+                    <jet-label for="reason" value="Flag reason"/>
+                    <textarea class="form-input rounded-md shadow-sm mt-1 block w-full" id="reason"
+                              placeholder="Please provide a short explanation"
+                              v-model="flagRuleForm.reason"/>
+                    <!--                    <jet-input type="text" class="mt-1 block w-3/4"
+                                                   :value="flagRuleForm.reason"
+                                                   v-model="flagRuleForm.reason"/>-->
+
+                </div>
+            </template>
+            <template #footer>
+                <jet-secondary-button @click.native="closeFlagModal">
+                    Nevermind
+                </jet-secondary-button>
+
+                <jet-danger-button class="ml-2" @click.native="sendFlagRule"
+                                   :class="{ 'opacity-25': flagRuleForm.processing }"
+                                   :disabled="flagRuleForm.processing">
+                    Flag
+                </jet-danger-button>
+            </template>
+        </jet-dialog-modal>
 
     </div>
-
-
-    <!-- Collapsed content -->
-    <div class="w-full flex flex-col mt-8" :class="{'hidden': !open}">
-      <hr class="mb-4 border-gray-700">
-      <div v-html="rule.content"></div>
-    </div>
-
-  </div>
 </template>
 
 <script>
 
 import RuleTags from "@/Components/PM/Rules/RuleTags";
+import JetActionMessage from '@/Jetstream/ActionMessage'
+import JetButton from '@/Jetstream/Button'
+import JetDangerButton from '@/Jetstream/DangerButton'
+import JetDialogModal from '@/Jetstream/DialogModal';
+import JetInput from '@/Jetstream/Input'
+import JetLabel from '@/Jetstream/Label'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 
 const moment = require('moment');
 
 import NavLink from "@/Jetstream/NavLink";
 
 export default {
-  name: "Rule",
-  props: ['rule', 'clientAccount'],
+    name: "Rule",
+    props: ['rule', 'clientAccount'],
 
-  components: {
-    RuleTags,
-    NavLink,
-  },
+    components: {
+        RuleTags,
+        NavLink,
+        JetActionMessage,
+        JetButton,
+        JetDangerButton,
+        JetDialogModal,
+        JetInput,
+        JetLabel,
+        JetSecondaryButton,
+    },
 
-  data() {
-    return {
-      open: false,
+    data() {
+        return {
+            detailsOpen: false,
+            isShowingFlagModal: false,
+
+            unflagRuleForm: this.$inertia.form({
+                reason: "",
+            }, {
+                bag: 'sendUnflagRule'
+            }),
+
+            isFlaggingRule: false,
+            currentFlaggingRule: null,
+
+            flagRuleForm: this.$inertia.form({
+                reason: "",
+            }, {
+                bag: 'sendFlagRule'
+            }),
+        }
+    },
+
+    methods: {
+        date: function () {
+            return moment(this.rule.updated_at).format('MMM DD YYYY, HH:mm:ss');
+        },
+
+        humanDate: function () {
+            return moment(this.rule.updated_at).fromNow();
+        },
+
+        showFlagReason() {
+            this.isShowingFlagModal = true;
+        },
+
+        closeFlagReasonModal() {
+            this.isShowingFlagModal = false;
+        },
+
+        sendUnflagRule() {
+            console.log('unflagging rule', this.rule);
+
+            this.flagRuleForm.post(route('rule.unflag', this.rule.id), {
+                preserveScroll: true
+            }).then(() => {
+                this.rule.flagged = false;
+                this.rule.metadata['flag_reason'] = [];
+                this.closeFlagReasonModal();
+                this.$emit('updated')
+            });
+        },
+
+
+        flagRule() {
+            this.isFlaggingRule = true;
+        },
+
+        closeFlagModal() {
+            this.isFlaggingRule = false;
+        },
+
+        sendFlagRule() {
+            console.log('flagging rule', this.rule);
+            let reason = this.flagRuleForm.reason;
+
+            this.flagRuleForm.post(route('rule.flag', this.rule.id), {
+                preserveScroll: true
+            }).then(() => {
+                this.rule.flagged = true;
+
+                let reasonEntry = {
+                    user: this.$page.user.name,
+                    date: moment().format('MMM DD YYYY, HH:mm:ss'),
+                    reason: reason,
+                };
+
+                if(this.rule.metadata === undefined || this.rule.metadata === null) {
+                    this.rule.metadata = {flag_reason: []};
+                }
+
+                if (this.rule.metadata['flag_reason'] === undefined) {
+                    this.rule.metadata['flag_reason'] = [];
+                }
+                this.rule.metadata['flag_reason'].push(reasonEntry);
+
+                this.closeFlagModal();
+                this.$emit('updated');
+            });
+        },
     }
-  },
-
-  methods: {
-    date: function () {
-      return moment(this.rule.updated_at).format('MMM DD YYYY, HH:mm:ss');
-    },
-
-    humanDate: function () {
-      return moment(this.rule.updated_at).fromNow();
-    },
-  }
 
 }
 </script>

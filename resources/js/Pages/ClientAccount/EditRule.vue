@@ -8,7 +8,7 @@
                            :top-taxonomies="topTaxonomies"
                 >
                     <template #title>
-                        Updating rule <i>{{ rule.name }}</i>
+                        Updating rule
 
                         <jet-nav-link
                             title="View history"
