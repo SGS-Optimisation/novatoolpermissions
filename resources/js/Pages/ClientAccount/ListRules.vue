@@ -56,7 +56,7 @@
 
                 <div v-for="(rule, ruleKey) in  _.drop(filteredRules, ((page-1)*perPage)).slice(0, perPage)"
                      :key="ruleKey">
-                    <view-rule :rule="rule" :client-account="clientAccount" @unflagged="getRules"/>
+                    <view-rule :rule="rule" :client-account="clientAccount" @updated="getRules"/>
                 </div>
 
                 <div class="px-2 pb-16 pt-4">

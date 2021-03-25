@@ -40,10 +40,20 @@
         <div class="w-full flex flex-col mt-8" :class="{'hidden': !detailsOpen}">
             <hr class="mb-4 border-gray-700">
             <div v-html="rule.content"></div>
+            <div class="text-right">
+                <button @click="flagRule()"
+                        class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
+                        rounded-md font-semibold text-xs text-white uppercase tracking-widest
+                        hover:bg-gray-700 active:bg-gray-900
+                        focus:outline-none focus:border-gray-900 focus:shadow-outline-gray
+                        transition ease-in-out duration-150">
+                    Flag rule?
+                </button>
+            </div>
         </div>
 
-        <!-- Rule Flag Reason Modal -->
-        <jet-dialog-modal :show="isShowingFlagModal" @close="closeFlagModal">
+        <!-- Rule Flag Reason List Modal -->
+        <jet-dialog-modal :show="isShowingFlagModal" @close="closeFlagReasonModal">
             <template #title>
                 Flag Reasons
             </template>
@@ -56,14 +66,41 @@
                 </div>
             </template>
             <template #footer>
-                <jet-secondary-button @click.native="closeFlagModal">
+                <jet-secondary-button @click.native="closeFlagReasonModal">
                     Close
                 </jet-secondary-button>
 
                 <jet-danger-button class="ml-2" @click.native="sendUnflagRule"
+                                   :class="{ 'opacity-25': unflagRuleForm.processing }"
+                                   :disabled="unflagRuleForm.processing">
+                    Remove flag
+                </jet-danger-button>
+            </template>
+        </jet-dialog-modal>
+
+        <!-- Rule Flagging Modal -->
+        <jet-dialog-modal :show="isFlaggingRule" @close="closeFlagModal">
+            <template #content>
+                <div class="mt-4">
+                    <jet-label for="reason" value="Flag reason"/>
+                    <textarea class="form-input rounded-md shadow-sm mt-1 block w-full" id="reason"
+                              placeholder="Please provide a short explanation"
+                              v-model="flagRuleForm.reason"/>
+                    <!--                    <jet-input type="text" class="mt-1 block w-3/4"
+                                                   :value="flagRuleForm.reason"
+                                                   v-model="flagRuleForm.reason"/>-->
+
+                </div>
+            </template>
+            <template #footer>
+                <jet-secondary-button @click.native="closeFlagModal">
+                    Nevermind
+                </jet-secondary-button>
+
+                <jet-danger-button class="ml-2" @click.native="sendFlagRule"
                                    :class="{ 'opacity-25': flagRuleForm.processing }"
                                    :disabled="flagRuleForm.processing">
-                    Remove flag
+                    Flag
                 </jet-danger-button>
             </template>
         </jet-dialog-modal>
@@ -107,10 +144,19 @@ export default {
             detailsOpen: false,
             isShowingFlagModal: false,
 
-            flagRuleForm: this.$inertia.form({
+            unflagRuleForm: this.$inertia.form({
                 reason: "",
             }, {
                 bag: 'sendUnflagRule'
+            }),
+
+            isFlaggingRule: false,
+            currentFlaggingRule: null,
+
+            flagRuleForm: this.$inertia.form({
+                reason: "",
+            }, {
+                bag: 'sendFlagRule'
             }),
         }
     },
@@ -128,7 +174,7 @@ export default {
             this.isShowingFlagModal = true;
         },
 
-        closeFlagModal() {
+        closeFlagReasonModal() {
             this.isShowingFlagModal = false;
         },
 
@@ -139,8 +185,47 @@ export default {
                 preserveScroll: true
             }).then(() => {
                 this.rule.flagged = false;
+                this.rule.metadata['flag_reason'] = [];
+                this.closeFlagReasonModal();
+                this.$emit('updated')
+            });
+        },
+
+
+        flagRule() {
+            this.isFlaggingRule = true;
+        },
+
+        closeFlagModal() {
+            this.isFlaggingRule = false;
+        },
+
+        sendFlagRule() {
+            console.log('flagging rule', this.rule);
+            let reason = this.flagRuleForm.reason;
+
+            this.flagRuleForm.post(route('rule.flag', this.rule.id), {
+                preserveScroll: true
+            }).then(() => {
+                this.rule.flagged = true;
+
+                let reasonEntry = {
+                    user: this.$page.user.name,
+                    date: moment().format('MMM DD YYYY, HH:mm:ss'),
+                    reason: reason,
+                };
+
+                if(this.rule.metadata === undefined || this.rule.metadata === null) {
+                    this.rule.metadata = {flag_reason: []};
+                }
+
+                if (this.rule.metadata['flag_reason'] === undefined) {
+                    this.rule.metadata['flag_reason'] = [];
+                }
+                this.rule.metadata['flag_reason'].push(reasonEntry);
+
                 this.closeFlagModal();
-                this.$emit('unflagged')
+                this.$emit('updated');
             });
         },
     }
