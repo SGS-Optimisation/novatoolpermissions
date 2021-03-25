@@ -15,6 +15,12 @@
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
+            <div class="flex justify-end mb-3">
+                <a href="/login/microsoft" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-800 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition ease-in-out duration-150 ">
+                    {{ __('Login with SGSco') }}
+                </a>
+            </div>
+
             <div>
                 <x-jet-label for="email" value="{{ __('Email') }}" />
                 <x-jet-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />

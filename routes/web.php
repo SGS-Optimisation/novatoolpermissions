@@ -84,17 +84,17 @@ Route::name('pm.')
                         Route::get('/', [RuleController::class, 'index'])
                             ->name('rules');
 
-                    Route::get('/create', [RuleController::class, 'create'])
-                        ->name('rules.create');
+                        Route::get('/create', [RuleController::class, 'create'])
+                            ->name('rules.create');
 
                         Route::post('/store', [RuleController::class, 'store'])
                             ->name('rules.store');
 
-                    Route::get('/{id}/edit', [RuleController::class, 'edit'])
-                        ->name('rules.edit');
+                        Route::get('/{id}/edit', [RuleController::class, 'edit'])
+                            ->name('rules.edit');
 
-                    Route::get('/{id}/history', [AuditActivityController::class, 'ruleHistory'])
-                        ->name('rules.history');
+                        Route::get('/{id}/history', [AuditActivityController::class, 'ruleHistory'])
+                            ->name('rules.history');
 
                         Route::put('/{id}/update', [RuleController::class, 'update'])
                             ->name('rules.update');
@@ -144,21 +144,28 @@ Route::group([
     //'prefix' => 'op/'
 ],
     function () {
-        Route::match(['get', 'post'],'/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
+        Route::match(['get', 'post'], '/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
             ->name('home')
             ->where('jobNumber', '[0-9]+');
 
 
-        Route::post('/rule/{rule}/flag', [\App\Http\Controllers\RuleFlaggingController::class, 'flag'] )
+        Route::post('/rule/{rule}/flag', [\App\Http\Controllers\RuleFlaggingController::class, 'flag'])
             ->name('rule.flag')
             ->where('rule', '[0-9]+');
 
-        Route::post('/rule/{rule}/unflag', [\App\Http\Controllers\RuleFlaggingController::class, 'unflag'] )
+        Route::post('/rule/{rule}/unflag', [\App\Http\Controllers\RuleFlaggingController::class, 'unflag'])
             ->name('rule.unflag')
             ->where('rule', '[0-9]+');
     });
 
 
+Route::get('nova/login', function () {
+    return redirect('/login/microsoft');
+})->name('nova.login');
+
+Route::get('nova/logout', function () {
+    return redirect('logout');
+})->name('nova.logout');
 
 
 

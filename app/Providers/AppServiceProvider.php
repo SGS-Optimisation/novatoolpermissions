@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Team;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +24,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        \Metrogistics\AzureSocialite\UserFactory::userCallback(function($new_user){
+            $new_user->save();
+
+            $new_user->ownedTeams()->save(Team::forceCreate([
+                'user_id' => $new_user->id,
+                'name' => explode(' ', $new_user->name, 2)[0]."'s Team",
+                'personal_team' => true,
+            ]));
+        });
     }
 }
