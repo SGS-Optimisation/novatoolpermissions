@@ -233,7 +233,7 @@ export default {
             flagRuleForm: this.$inertia.form({
                 reason: "",
             }, {
-                bag: 'deleteTerm'
+                bag: 'sendFlagRule'
             }),
         }
     },

@@ -3,6 +3,7 @@
 namespace App\Listeners\Rules;
 
 use App\Events\Rules\Flagged;
+use App\Events\Rules\Unflagged;
 use App\Repositories\RuleRepository;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -22,10 +23,10 @@ class RebuildRuleCache implements ShouldQueue
     /**
      * Handle the event.
      *
-     * @param  Flagged  $event
+     * @param  Flagged|Unflagged $event
      * @return void
      */
-    public function handle(Flagged $event)
+    public function handle( $event)
     {
         $rule = $event->rule;
 

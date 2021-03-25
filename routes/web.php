@@ -149,8 +149,12 @@ Route::group([
             ->where('jobNumber', '[0-9]+');
 
 
-        Route::post('/rule/{rule}/flag', [\App\Http\Controllers\RuleFlaggingController::class, 'on'] )
+        Route::post('/rule/{rule}/flag', [\App\Http\Controllers\RuleFlaggingController::class, 'flag'] )
             ->name('rule.flag')
+            ->where('rule', '[0-9]+');
+
+        Route::post('/rule/{rule}/unflag', [\App\Http\Controllers\RuleFlaggingController::class, 'unflag'] )
+            ->name('rule.unflag')
             ->where('rule', '[0-9]+');
     });
 

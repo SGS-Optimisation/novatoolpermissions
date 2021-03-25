@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\Rules\Flagged;
+use App\Events\Rules\Unflagged;
 use App\Models\Rule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -10,7 +11,7 @@ use Illuminate\Http\Request;
 class RuleFlaggingController extends Controller
 {
 
-    public function on(Request $request, Rule $rule)
+    public function flag(Request $request, Rule $rule)
     {
         $rule->flagged = true;
 
@@ -30,11 +31,30 @@ class RuleFlaggingController extends Controller
         $rule->timestamps = false;
 
         $rule->save();
-        
+
         event(new Flagged($rule));
 
         \Log::debug('flagging rule ' . $rule->id);
         logger('reason: ' . $request->reason);
+
+        return back();
+    }
+
+    public function unflag(Request $request, Rule $rule)
+    {
+        $rule->flagged = false;
+
+        $metadata = $rule->metadata ?? [];
+        $metadata['flag_reason'] = [];
+
+        $rule->metadata = $metadata;
+        $rule->timestamps = false;
+
+        $rule->save();
+
+        event(new Unflagged($rule));
+
+        \Log::debug('unflagging rule ' . $rule->id);
 
         return back();
     }
