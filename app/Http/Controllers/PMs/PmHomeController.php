@@ -7,16 +7,24 @@ use App\Models\Team;
 use Illuminate\Http\Request;
 use Laravel\Jetstream\Jetstream;
 
-class HomeController extends Controller
+class PmHomeController extends Controller
 {
     public function index(Request $request)
     {
 
-        $myTeams = $request->user()->allTeams()->filter(function ($team) {
+        $myTeams = $request->user()->allTeams()
+            ->filter(function ($team) {
             return $team->clientAccount != null;
         });
 
-        $otherTeams = Team::with('clientAccount')
+        foreach($myTeams as $team) {
+            $team->clientAccount->loadCount('rules');
+            
+        }
+
+        $otherTeams = Team::with(['clientAccount' => function($query){
+            return $query->withCount('rules');
+        }])
             ->whereNotIn('id', $myTeams->pluck('id')->all())
             ->whereHas('clientAccount')
             ->get();

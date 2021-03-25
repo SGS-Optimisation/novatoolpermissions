@@ -78,7 +78,7 @@ class RuleController extends Controller
     {
         return Jetstream::inertia()->render($request, 'ClientAccount/CreateRule', array_merge([
             'team' => $request->user()->currentTeam,
-            'rule' => new Rule(['content' => '<p>taki taki</p>'])
+            'rule' => new Rule(['content' => ''])
         ],
             $this->buildTaxonomyLists($client_account_slug)
         ));
@@ -106,7 +106,7 @@ class RuleController extends Controller
 
         return $request->wantsJson()
             ? new JsonResponse(['id' => $rule->id], 200)
-            : redirect(route('rules.edit', [$client_account_slug, $rule->id]))
+            : redirect(route('pm.client-account.rules.edit', [$client_account_slug, $rule->id]))
                 ->with('success', 'Rule successfully created!');
     }
 

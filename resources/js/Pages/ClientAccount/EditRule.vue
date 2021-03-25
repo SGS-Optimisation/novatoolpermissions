@@ -8,13 +8,21 @@
                            :top-taxonomies="topTaxonomies"
                 >
                     <template #title>
-                        Updating rule
-
-                        <jet-nav-link
-                            title="View history"
-                            :href="route('pm.client-account.rules.history', [ clientAccount.slug, rule.id])">
-                            <i class="fa fa-history"/>
-                        </jet-nav-link>
+                        <div class="flex w-48 bg-white rounded-b-lg shadow">
+                            <div class="mt-1 mx-auto">
+                                <jet-nav-link
+                                    title="Back to list"
+                                    :href="route('pm.client-account.rules', {clientAccount: clientAccount.slug })">
+                                    <i class="fa fa-caret-square-left"></i>
+                                </jet-nav-link>
+                                <span class="font-bold">Updating rule</span>
+                                <jet-nav-link
+                                    title="View history"
+                                    :href="route('pm.client-account.rules.history', [ clientAccount.slug, rule.id])">
+                                    <i class="fa fa-history"/>
+                                </jet-nav-link>
+                            </div>
+                        </div>
                     </template>
                 </rule-form>
 

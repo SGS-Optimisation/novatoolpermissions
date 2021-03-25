@@ -1,18 +1,17 @@
 <template>
-    <div class="mx-auto sm:px-6 lg:px-8" id="rule-metadata">
-        <jet-form-section @submitted="pushRuleMeta">
-            <template #title>
-                Rule metadata
-            </template>
-            <template #description>
-                Add the appropriate tags
-            </template>
-            <template #form>
-                <div class="flex flex-row mx-auto sm:px-6 lg:px-8">
-                    <div class="flex-grow px-4" v-for="topTaxonomy in topTaxonomies">
-                        <div>
-                            <h3 class="text-xs uppercase font-bold">{{ topTaxonomy.name }}</h3>
-
+    <div>
+        <div v-for="topTaxonomy in topTaxonomies"
+              class="mx-auto sm:px-6 lg:px-8">
+            <jet-form-section @submitted="pushRuleMeta">
+                <template #title>
+                    {{ topTaxonomy.name }}
+                </template>
+                <template #description>
+                    Add the appropriate tags
+                </template>
+                <template #form>
+                    <div class="flex flex-row mx-auto sm:px-6 lg:px-8">
+                        <div class="flex-grow px-4">
                             <div class="flex flex-col py-2"
                                  v-for="(taxonomyGroup, index) in taxonomyHierarchy[topTaxonomy.name].children">
                                 <template v-for="(taxonomyData, name) in taxonomyGroup">
@@ -26,19 +25,19 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </template>
+                </template>
 
-            <template #actions>
-                <jet-action-message :on="form.recentlySuccessful" class="mr-3">
-                    Saved.
-                </jet-action-message>
+                <template #actions>
+                    <jet-action-message :on="form.recentlySuccessful" class="mr-3">
+                        Saved.
+                    </jet-action-message>
 
-                <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Save
-                </jet-button>
-            </template>
-        </jet-form-section>
+                    <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                        Save
+                    </jet-button>
+                </template>
+            </jet-form-section>
+        </div>
     </div>
 </template>
 
@@ -99,7 +98,10 @@ export default {
         pushRuleMeta: function () {
             this.form.taxonomy = this.taxonomy;
 
-            this.form.put(route('pm.client-account.rules.taxonomy.update', {clientAccount: this.clientAccount.slug, id: this.rule.id}), {
+            this.form.put(route('pm.client-account.rules.taxonomy.update', {
+                clientAccount: this.clientAccount.slug,
+                id: this.rule.id
+            }), {
                 preserveScroll: true
             })
         },

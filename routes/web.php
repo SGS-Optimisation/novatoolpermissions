@@ -4,7 +4,7 @@ use App\Http\Controllers\PMs\AuditActivityController;
 use App\Http\Controllers\CurrentTeamController;
 use App\Http\Controllers\PMs\ClientAccountController;
 use App\Http\Controllers\PMs\ClientAccountTaxonomyController;
-use App\Http\Controllers\PMs\HomeController;
+use App\Http\Controllers\PMs\PmHomeController;
 use App\Http\Controllers\PMs\RuleController;
 use App\Http\Controllers\PMs\RuleTaxonomyController;
 use App\Http\Controllers\PMs\TaxonomyController;
@@ -43,7 +43,7 @@ Route::name('pm.')
         'cache.headers:public;max_age=3600;etag',
     ])->group(function () {
 
-        Route::get('/', [HomeController::class, 'index'])
+        Route::get('/', [PmHomeController::class, 'index'])
             ->name('landing');
 
         Route::name('client-account.')

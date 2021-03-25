@@ -24,6 +24,9 @@
                     <li v-for="availableTeam in myTeams">
                         <jet-nav-link :href="route('pm.client-account.dashboard', {clientAccount: availableTeam.client_account.slug })">
                             {{ availableTeam.client_account.name }}
+                            <span class="ml-2 bg-pink-300 rounded-lg px-1" title="Number of rules">
+                                {{ availableTeam.client_account.rules_count }}
+                            </span>
                         </jet-nav-link>
                     </li>
                 </ul>
@@ -34,6 +37,10 @@
                     <li class="px-2" v-for="otherTeam in otherTeams">
                         <jet-nav-link :href="route('pm.client-account.dashboard', {clientAccount: otherTeam.client_account.slug })">
                             {{ otherTeam.client_account.name }}
+
+                            <span class="ml-2 bg-pink-300 rounded-lg px-1" title="Number of rules">
+                                {{ otherTeam.client_account.rules_count }}
+                            </span>
                         </jet-nav-link>
                     </li>
                 </ul>
