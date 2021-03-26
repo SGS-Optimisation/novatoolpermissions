@@ -21,47 +21,11 @@
         <div v-if="currentJob.metadata.processing_mysgs">
             <loader></loader>
         </div>
+        <div v-else-if="!currentJob.metadata.client_found">
+            "{{currentJob.metadata.client.name}}" was not matched with any client account.
+        </div>
         <div v-else>
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-50 shadow-inner border border-orange-200">
-                <div class="flex justify-between">
-                    <div class="p-2">
-                        <div>
-                            <h3 class="font-semibold text-lg leading-loose text-gray-800">Client Account:
-                                {{ currentJob.metadata.client.name }}
-                            </h3>
-                        </div>
-
-                        <div class="flex flex-shrink-0">
-                            <div v-for="(value, item) in currentJob.metadata.job_taxonomy" class="flex flex-col">
-                                <div class="flex flex-wrap flex-shrink-0 text-xs items-center pr-3 text-xs mr-3">
-                                    <div class="flex-grow h-full bg-gray-300 text-gray-600 px-2 rounded-l-lg">
-                                        <div class="grid h-full">
-                                            <div class="place-self-center">{{ item }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="">
-
-                                        <div :class="currentJob.metadata.matched_taxonomy[item].length ?
-                                                'bg-blue-200 text-green-800 px-2 rounded-tr-lg'
-                                                :'bg-blue-200 text-green-800 px-2 rounded-r-lg'"
-                                             title="MySGS value">{{ value }}
-                                        </div>
-
-                                        <div v-for="(terms, index) in currentJob.metadata.matched_taxonomy[item]"
-                                             :class="(index === currentJob.metadata.matched_taxonomy[item].length - 1) ?
-                                                    'bg-pink-200 text-green-800 px-2 rounded-br-lg'
-                                                    :'bg-pink-200 text-green-800 px-2'"
-                                             title="Matched Dagobah terms">
-                                            {{ terms }}<br>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <job-identification :job="currentJob"/>
 
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 bg-white">
                 <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-green-300" v-if="rulesUpdated">
@@ -205,6 +169,7 @@ import ViewRuleItem from "@/Components/PM/Rules/ViewRuleItem";
 import JobSearch from "@/Components/OP/JobSearchForm";
 import isotope from 'vueisotope'
 import moment from "moment";
+import JobIdentification from "@/Components/OP/JobIdentification";
 
 export default {
     props: [
@@ -259,11 +224,11 @@ export default {
 
     created() {
         if (!this.currentJob.metadata.processing_mysgs) {
+            this.currentRules = this.rules;
+            this.newJobLoaded();
             this.initRulesParsing();
         } else {
-            this.timeOut = setTimeout(() => {
-                this.queryRules();
-            }, 2000);
+            this.waitMode();
         }
 
         this.initSearchFunctions();
@@ -303,6 +268,12 @@ export default {
             };
         },
 
+        waitMode() {
+            this.timeOut = setTimeout(() => {
+                this.queryRules();
+            }, 2000);
+        },
+
         queryRules() {
             axios.get(route('job.rules', this.jobNumber))
                 .then(({data}) => {
@@ -314,8 +285,9 @@ export default {
                         this.currentRules = data.rules;
                         this.newJobLoaded();
                         this.initRulesParsing();
+                    } else {
+                        this.waitMode();
                     }
-
                 })
         },
 
@@ -399,6 +371,7 @@ export default {
     },
 
     components: {
+        JobIdentification,
         ViewRuleItem,
         Button,
         Input,

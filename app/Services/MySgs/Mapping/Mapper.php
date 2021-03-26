@@ -12,8 +12,8 @@ class Mapper
 {
 
     /**
-     * @param Job $job
-     * @param FieldMapping $mapping
+     * @param  Job  $job
+     * @param  FieldMapping  $mapping
      * @return array|\ArrayAccess|mixed|void
      */
     public static function getMetaValue(Job $job, FieldMapping $mapping)
@@ -22,25 +22,25 @@ class Mapper
         /*
          * Build the appropriate Api object
          */
-        $apiClass = 'App\Services\MySgs\Api\\' . $mapping->api_name;
+        $apiClass = 'App\Services\MySgs\Api\\'.$mapping->api_name;
         $api = new $apiClass;
         $function = $mapping->api_action;
 
         /*
          * Check which parameter is expected from the api function
          */
-        //        $signature = get_func_argNames($function, $api);
-        //
-        //        if (array_keys($signature)[0] == 'jobVersionId') {
-        //            if (!is_array($job)) {
-        //                $job = json_decode($job);
-        //            }
-        //            $param = $job['jobVersionId'];
-        //        } else {
-        //            $param = $job['job_number'];
-        //        }
+        $signature = get_func_argNames($function, $api);
 
-        $response = $api::$function($job->job_number);
+        if (array_keys($signature)[0] == 'jobVersionId') {
+            if (!is_array($job)) {
+                $job = json_decode($job);
+            }
+            $param = $job->metadata->basicInfo->jobVersionId;
+        } else {
+            $param = $job->job_number;
+        }
+
+        $response = $api::$function($param);
 
         return static::parseMapping($mapping, $response);
     }
@@ -53,8 +53,8 @@ class Mapper
         $dataToResolve = static::parseFieldPathSection($field_path_sections, $data);
 
         // send the response to resolver to make some changes according to your need to tag
-        if($mapping->resolver_name !== null){
-            $resolverClass = 'App\Services\Resolvers\\' . $mapping->resolver_name;
+        if ($mapping->resolver_name !== null) {
+            $resolverClass = 'App\Services\Resolvers\\'.$mapping->resolver_name;
             $resolver = new $resolverClass;
             $dataToResolve = $resolver::handle($dataToResolve);
         }
@@ -72,7 +72,7 @@ class Mapper
         }
 
         if (is_int($section) || $section === "0") {
-            if(!isset($data[$section])){
+            if (!isset($data[$section])) {
                 return null;
             }
             return static::parseFieldPathSection($field_path_sections, $data[$section]);

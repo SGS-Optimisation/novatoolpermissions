@@ -34,7 +34,7 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         'App\\Events\\Jobs\\NewJobSearched' => [
-            'App\\Listeners\\Jobs\\SearchJobDetails',
+            'App\\Listeners\\Jobs\\LoadMySgsData',
         ]
 //        Audited::class => [
 //            AuditedListener::class

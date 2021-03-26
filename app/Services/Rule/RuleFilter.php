@@ -23,11 +23,12 @@ class RuleFilter
 
         $clientRules = [];
 
-        if ($job->metadata->basicDetails) {
-            $client = ClientAccount::with('rules.terms.taxonomy')->whereRaw('LOWER(alias) LIKE "%'.Str::lower($job->metadata->basicDetails->retailer->customerName).'%"')->first();
+        if ($job->metadata->client_found) {
+
+            $client = ClientAccount::find($job->metadata->client->id);
+            logger('loaded client ' . $client->name);
 
             $metadata = $job->metadata;
-            $metadata->client = $client->only(['id', 'name', 'slug']);
 
             $job_taxonomy_terms_matches = [];
             $job_taxonomy_terms = [];
