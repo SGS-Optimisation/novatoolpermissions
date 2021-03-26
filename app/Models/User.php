@@ -54,6 +54,13 @@ use Silvanite\Brandenburg\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereTwoFactorSecret($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $azure_id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\OwenIt\Auditing\Models\Audit[] $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Silvanite\Brandenburg\Role[] $roles
+ * @property-read int|null $roles_count
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereAzureId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User withRoles()
  */
 class User extends Authenticatable implements Auditable
 {

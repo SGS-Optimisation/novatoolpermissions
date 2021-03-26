@@ -31,6 +31,10 @@ class EventServiceProvider extends ServiceProvider
 
         'App\\Events\\Rules\\Unflagged' => [
             'App\\Listeners\\Rules\\RebuildRuleCache',
+        ],
+
+        'App\\Events\\Jobs\\NewJobSearched' => [
+            'App\\Listeners\\Jobs\\SearchJobDetails',
         ]
 //        Audited::class => [
 //            AuditedListener::class

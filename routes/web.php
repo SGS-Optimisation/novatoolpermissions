@@ -22,9 +22,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/*Route::get('/', function () {
-    return view('welcome');
-})->name('home');*/
+Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
@@ -33,6 +31,19 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     Route::put('/current-team', [CurrentTeamController::class, 'update'])
         ->name('current-team.update');
+
+    Route::match(['get', 'post'], '/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
+        ->name('job.rules')
+        ->where('jobNumber', '[0-9]+');
+
+
+    Route::post('/rule/{rule}/flag', [\App\Http\Controllers\RuleFlaggingController::class, 'flag'])
+        ->name('rule.flag')
+        ->where('rule', '[0-9]+');
+
+    Route::post('/rule/{rule}/unflag', [\App\Http\Controllers\RuleFlaggingController::class, 'unflag'])
+        ->name('rule.unflag')
+        ->where('rule', '[0-9]+');
 });
 
 Route::name('pm.')
@@ -132,30 +143,6 @@ Route::name('pm.')
                 Route::delete('/{id}', [TermController::class, 'destroy'])
                     ->name('destroy');
             });
-    });
-
-
-Route::group([
-    'middleware' => [
-        'auth:sanctum',
-        'verified',
-        'cache.headers:public;max_age=3600;etag',
-    ],
-    //'prefix' => 'op/'
-],
-    function () {
-        Route::match(['get', 'post'], '/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
-            ->name('home')
-            ->where('jobNumber', '[0-9]+');
-
-
-        Route::post('/rule/{rule}/flag', [\App\Http\Controllers\RuleFlaggingController::class, 'flag'])
-            ->name('rule.flag')
-            ->where('rule', '[0-9]+');
-
-        Route::post('/rule/{rule}/unflag', [\App\Http\Controllers\RuleFlaggingController::class, 'unflag'])
-            ->name('rule.unflag')
-            ->where('rule', '[0-9]+');
     });
 
 

@@ -31,6 +31,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereLegacyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientAccount whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $legacy_id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Rule[] $rules
+ * @property-read int|null $rules_count
+ * @property-read \App\Models\Team|null $team
  */
 class ClientAccount extends Model
 {

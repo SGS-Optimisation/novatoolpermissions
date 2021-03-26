@@ -38,6 +38,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|Taxonomy withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Taxonomy withoutTrashed()
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ClientAccount[] $client_accounts
+ * @property-read \App\Models\FieldMapping|null $mapping
  */
 class Taxonomy extends Model
 {
