@@ -185,7 +185,7 @@ export default {
             currentRules: this.rules,
             searchJobKey: this.jobNumber,
             searching: false,
-            searchedRules: [..._.orderBy(this.currentRules, 'created_at', 'desc')],
+            searchedRules: [this.currentRules],
             isOpen: false,
             currentRule: null,
             rulesUpdated: false,
@@ -304,7 +304,7 @@ export default {
             }
         },
         newJobLoaded() {
-            this.searchedRules = [...this.currentRules];
+            this.searchedRules = [..._.orderBy(this.currentRules, 'created_at', 'desc')];
         },
         reloadPage() {
             window.location = window.location + this.searchJobKey;

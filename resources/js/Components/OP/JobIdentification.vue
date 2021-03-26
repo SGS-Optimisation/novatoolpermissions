@@ -1,6 +1,6 @@
 <template>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-50 shadow-inner border border-orange-200">
-        <div class="flex justify-between">
+        <div class="flex flex-col">
 
             <div class="flex flex-row">
                 <img :src="'/'+job.metadata.client.image" style="max-width: 80px">
@@ -9,7 +9,7 @@
                 </h3>
             </div>
 
-            <div class="flex flex-shrink-0">
+            <div class="flex flex-row">
                 <div v-for="(value, item) in job.metadata.job_taxonomy" class="flex flex-col">
                     <div class="flex flex-wrap flex-shrink-0 text-xs items-center pr-3 text-xs mr-3">
                         <div class="flex-grow h-full bg-gray-300 text-gray-600 px-2 rounded-l-lg">

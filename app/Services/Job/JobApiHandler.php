@@ -51,8 +51,6 @@ class JobApiHandler
         $this->job->metadata = $job_metadata;
         $this->job->save();
 
-        logger(print_r($this->job->metadata));
-
         return $this;
     }
 
