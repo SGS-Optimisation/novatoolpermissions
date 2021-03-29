@@ -9,7 +9,7 @@
                 </h3>
             </div>
 
-            <div class="flex flex-row">
+            <div class="flex flex-row my-2 ">
                 <div v-for="(value, item) in job.metadata.job_taxonomy" class="flex flex-col">
                     <div class="flex flex-wrap flex-shrink-0 text-xs items-center pr-3 text-xs mr-3">
                         <div class="flex-grow h-full bg-gray-300 text-gray-600 px-2 rounded-l-lg">

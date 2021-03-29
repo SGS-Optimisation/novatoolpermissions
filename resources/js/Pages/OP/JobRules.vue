@@ -52,21 +52,32 @@
 
                     <div class="flex text-xs mx-2" role="group">
                         <button @click="filterByNew"
-                                :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
+                                class="hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg"
+                                :class="[
+                                    { 'bg-blue-500 text-white' : filterOption === 'isNew' },
+                                    { 'bg-white text-blue-500' : filterOption !== 'isNew' }
+                                ]">
                             New
                         </button>
                         <button @click="filterByUpdated"
-                                :class="[{ 'bg-blue-500 text-white' : filterOption === 'isUpdated' }, { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
+                                class="hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
+                                :class="[
+                                    { 'bg-blue-500 text-white' : filterOption === 'isUpdated' },
+                                    { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }
+                                ]">
                             Updated
                         </button>
                         <button
                             v-for="taxonomy in taxonomies"
                             @click="filterByTaxonomy(taxonomy)"
-                            :class="[{ 'bg-blue-500 text-white' : filterOption === taxonomy }, { 'bg-white text-blue-500' : filterOption !== taxonomy  }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
+                            class="hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
+                            :class="[
+                                { 'bg-blue-500 text-white' : filterOption === taxonomy },
+                                 { 'bg-white text-blue-500' : filterOption !== taxonomy  }, ]">
                             {{ taxonomy }}
                         </button>
                         <button @click="$refs.cpt.unfilter()"
-                                class="bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
+                                class="bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
                             Unfilter
                         </button>
                     </div>

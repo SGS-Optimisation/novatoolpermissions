@@ -14,10 +14,10 @@
                 <jet-action-section>
                     <template #title>
 
-                        <div @click="editTaxonomy(taxonomyData.id, name)"
+                        <div :data-id="taxonomyData.id" @click="editTaxonomy(taxonomyData.id, name)"
                              class="mt-2 cursor-pointer border-b-2 border-dashed border-transparent hover:border-gray-300
                              transition duration-150 ease-in-out"
-                             :class="{'text-red-600': !(taxonomyData.taxonomy.mapping && taxonomyData.taxonomy.mapping.id)}"
+                             :class="{'text-red-600': taxonomyData.taxonomy.requiresMapping && !(taxonomyData.taxonomy.mapping && taxonomyData.taxonomy.mapping.id)}"
                              :title="(taxonomyData.taxonomy.mapping && taxonomyData.taxonomy.mapping.id) ?
                         taxonomyData.taxonomy.mapping.api_name +'/'+ taxonomyData.taxonomy.mapping.api_action + '//' +taxonomyData.taxonomy.mapping.field_path: 'No mapping'">
                             {{ name }}

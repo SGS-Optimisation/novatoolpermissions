@@ -65,6 +65,8 @@ class Taxonomy extends Model
 
     protected $with = ['parent'];
 
+    protected $appends = ['requiresMapping'];
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -104,5 +106,10 @@ class Taxonomy extends Model
     public function mapping()
     {
         return $this->hasOne(FieldMapping::class);
+    }
+
+    public function getRequiresMappingAttribute()
+    {
+        return $this->parent && $this->parent->name == 'Account Structure';
     }
 }
