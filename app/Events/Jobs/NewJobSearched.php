@@ -18,15 +18,15 @@ class NewJobSearched
     /**
      * @var Job
      */
-    public $job;
+    public $mysgs_job;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Job $job)
+    public function __construct(Job $mysgs_job)
     {
-        $this->job = $job;
+        $this->mysgs_job = $mysgs_job;
     }
 
     /**

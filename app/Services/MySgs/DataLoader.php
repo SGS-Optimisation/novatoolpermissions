@@ -3,7 +3,6 @@
 
 namespace App\Services\MySgs;
 
-
 use App\Models\ClientAccount;
 use App\Models\Job;
 use App\Services\Job\JobApiHandler;
@@ -34,6 +33,9 @@ class DataLoader
             if($client) {
                 $job_metadata->client = $client->only(['id', 'name', 'slug', 'image']);
                 $job_metadata->client_found = true;
+            } else {
+                $job_metadata->client_found = false;
+                $job_metadata->client = ['name' => $customer_name];
             }
 
         } catch (\Exception $e) {

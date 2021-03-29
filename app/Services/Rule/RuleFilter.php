@@ -14,6 +14,28 @@ use Illuminate\Support\Str;
 class RuleFilter
 {
 
+    public static function findClient($job)
+    {
+        $customer_name = $job->metadata->basicDetails->retailer->customerName;
+
+        $client = ClientAccount::where('name', 'LIKE', '%'.$customer_name.'%')
+            ->orWhereRaw('LOWER(alias) LIKE "%'.Str::lower($job->metadata->basicDetails->retailer->customerName).'%"')
+            ->first();
+
+        $job_metadata = $job->metadata;
+
+        if($client) {
+            $job_metadata->client = $client->only(['id', 'name', 'slug', 'image']);
+            $job_metadata->client_found = true;
+        } else {
+            $job_metadata->client_found = false;
+            $job_metadata->client = ['name' => $customer_name];
+        }
+
+        $job->metadata = $job_metadata;
+        $job->save();
+    }
+
     /**
      * @param  Job  $job
      * @return array
@@ -23,10 +45,14 @@ class RuleFilter
 
         $clientRules = [];
 
+        if (!$job->metadata->client_found) {
+            static::findClient($job);
+        }
+
         if ($job->metadata->client_found) {
 
             $client = ClientAccount::find($job->metadata->client->id);
-            logger('loaded client ' . $client->name);
+            logger('loaded client '.$client->name);
 
             $metadata = $job->metadata;
 

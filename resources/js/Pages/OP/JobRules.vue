@@ -22,7 +22,13 @@
             <loader></loader>
         </div>
         <div v-else-if="!currentJob.metadata.client_found">
-            "{{currentJob.metadata.client.name}}" was not matched with any client account.
+            <div class="h-64 bg-white flex justify-center align-middle">
+                <p class="mt-16 text-red-700">"{{ currentJob.metadata.client.name }}" was not matched with any client account.</p>
+            </div>
+        </div>
+        <div v-else-if="currentJob.metadata.error_mysgs">
+            There was an error loading data for the job "{{ currentJob.metadata.client.name }}".
+            <br>Please try again later.
         </div>
         <div v-else>
             <job-identification :job="currentJob"/>
@@ -234,6 +240,10 @@ export default {
         this.initSearchFunctions();
     },
 
+    destroyed() {
+        clearTimeout(this.timeOut);
+    },
+
     methods: {
         initRulesParsing() {
             this.searchedRules.forEach(rule => {
@@ -271,7 +281,7 @@ export default {
         waitMode() {
             this.timeOut = setTimeout(() => {
                 this.queryRules();
-            }, 2000);
+            }, 5000);
         },
 
         queryRules() {

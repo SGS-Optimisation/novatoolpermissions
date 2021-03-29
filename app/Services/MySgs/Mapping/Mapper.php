@@ -40,7 +40,11 @@ class Mapper
             $param = $job->job_number;
         }
 
-        $response = $api::$function($param);
+        if (isset($job->metadata->{$mapping->api_action})) {
+            $response = $job->metadata->{$mapping->api_action};
+        } else {
+            $response = $api::$function($param);
+        }
 
         return static::parseMapping($mapping, $response);
     }
