@@ -38,6 +38,8 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @method static \Illuminate\Database\Query\Builder|Rule withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Rule withoutTrashed()
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\OwenIt\Auditing\Models\Audit[] $audits
+ * @property-read int|null $audits_count
  */
 class Rule extends Model implements Auditable
 {

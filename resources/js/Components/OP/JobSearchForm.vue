@@ -47,11 +47,8 @@ export default {
 
     methods: {
         findJob() {
-            this.form.post(route('home', this.jobNumber), {
-                preserveScroll: true
-            }).then(() => {
-                this.$emit('loaded')
-            });
+            this.$emit('searching')
+            this.form.post(route('job.rules', this.jobNumber));
         }
     },
 }

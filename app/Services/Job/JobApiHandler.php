@@ -7,32 +7,74 @@ namespace App\Services\Job;
 use App\Broadcast\RulesFiltered;
 use App\Jobs\JobApiRequest;
 use App\Models\Job;
+use App\Repositories\JobRepository;
 use App\Services\MySgs\Api\JobApi;
 
 class JobApiHandler
 {
     /**
-     * @param $jobNumber
-     * @param $apiName
-     * @return Job
+     * @var Job
      */
-    public static function handle($jobNumber, $apiName){
+    public $job;
 
-        $job = Job::whereJobNumber($jobNumber)->first();
+    public $response;
 
-        if($job){
-            JobApiRequest::dispatch($jobNumber, $apiName);
-            return $job;
+    /**
+     * JobApiHandler constructor.
+     * @param  Job  $job
+     */
+    public function __construct($job)
+    {
+        if (is_string($job)) {
+            $job = JobRepository::createFromJobNumber($job);
         }
 
-        $jobDetails = JobApi::$apiName($jobNumber);
+        $this->job = $job;
+    }
 
-        $job = Job::create([
-            'job_number' => $jobNumber,
-            'metadata' => [ $apiName => $jobDetails ]
-        ]);
 
-        return $job;
+    /**
+     * @param $apiName
+     * @return JobApiHandler
+     */
+    public function handle($apiName)
+    {
+        logger('handling api call ' . $apiName . ' on job ' . $this->job->id);
+
+
+        $this->response = JobApi::$apiName($this->getApiParam($apiName));
+
+        $job_metadata = $this->job->metadata;
+
+        $job_metadata->$apiName = $this->response;
+
+        $this->job->metadata = $job_metadata;
+        $this->job->save();
+
+        return $this;
+    }
+
+
+    protected function getApiParam($apiName) {
+        /*
+         * Build the appropriate Api object
+         */
+        $apiclass = 'App\Services\MySgs\Api\JobApi';
+        $api = new $apiclass;
+        $function = $apiName;
+
+        /*
+         * Check which parameter is expected from the api function
+         */
+        $signature = get_func_argNames($function, $api);
+
+        if (array_keys($signature)[0] == 'jobVersionId') {
+            $param = $this->job->metadata->basicInfo->jobVersionId;
+        } else {
+            $param = $this->job->job_number;
+        }
+
+        return $param;
     }
 
 }

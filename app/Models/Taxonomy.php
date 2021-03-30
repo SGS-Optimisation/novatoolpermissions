@@ -38,6 +38,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|Taxonomy withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Taxonomy withoutTrashed()
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ClientAccount[] $client_accounts
+ * @property-read \App\Models\FieldMapping|null $mapping
  */
 class Taxonomy extends Model
 {
@@ -62,6 +64,8 @@ class Taxonomy extends Model
     ];
 
     protected $with = ['parent'];
+
+    protected $appends = ['requiresMapping'];
 
 
     /**
@@ -102,5 +106,10 @@ class Taxonomy extends Model
     public function mapping()
     {
         return $this->hasOne(FieldMapping::class);
+    }
+
+    public function getRequiresMappingAttribute()
+    {
+        return $this->parent && $this->parent->name == 'Account Structure';
     }
 }
