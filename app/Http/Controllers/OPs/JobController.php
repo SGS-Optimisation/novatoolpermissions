@@ -36,6 +36,8 @@ class JobController extends Controller
             $rules = RuleFilter::handle($job);
         }
 
+
+
         return $request->wantsJson() ?
             new JsonResponse(['rules' => $rules, 'job' => $job], 200)
             : Jetstream::inertia()->render($request, 'OP/JobRules', [
@@ -47,21 +49,14 @@ class JobController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Helper to redirect to show.
      *
      * @param  Request  $request
      * @param  null  $jobNumber
-     * @return \Illuminate\Http\JsonResponse
+     * @return RedirectResponse
      */
     public function search(Request $request, $jobNumber)
     {
-        $rules = [];
-        if ($jobNumber) {
-            $job = JobApiHandler::handle($jobNumber, 'basicDetails');
-            if ($job) {
-                $rules = RuleFilter::handle($job);
-            }
-        }
-        return response()->json($rules);
+        return \Redirect::route('job.rules', [$jobNumber]);
     }
 }

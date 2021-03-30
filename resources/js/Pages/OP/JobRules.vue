@@ -10,7 +10,7 @@
                 </div>
 
                 <div class="flex-grow">
-                    <job-search @loaded="newJobLoaded"
+                    <job-search @searching="runningSearch"
                                 classes="bg-white flex"
                                 placeholder="Search another job">
                     </job-search>
@@ -18,12 +18,16 @@
             </div>
         </template>
 
-        <div v-if="currentJob.metadata.processing_mysgs">
+        <div v-if="searching">
             <loader></loader>
         </div>
-        <div v-else-if="!currentJob.metadata.client_found">
+        <div v-else-if="currentJob.metadata.processing_mysgs">
+            <loader></loader>
+        </div>
+        <div v-else-if="currentJob.metadata.client_found === false">
             <div class="h-64 bg-white flex justify-center align-middle">
-                <p class="mt-16 text-red-700">"{{ currentJob.metadata.client.name }}" was not matched with any client account.</p>
+                <p class="mt-16 text-red-700">"{{ currentJob.metadata.client.name }}" was not matched with any client
+                    account.</p>
             </div>
         </div>
         <div v-else-if="currentJob.metadata.error_mysgs">
@@ -35,12 +39,12 @@
 
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 bg-white">
                 <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-green-300" v-if="rulesUpdated">
-                <span class="text-xl inline-block mr-5 align-middle">
-                    <i class="fas fa-bell"/>
-                </span>
+                    <span class="text-xl inline-block mr-5 align-middle">
+                        <i class="fas fa-bell"/>
+                    </span>
                     <span class="inline-block align-middle mr-8">
-                    <b class="capitalize">Hello!</b> Rules list updated. Do you want to check?
-                </span>
+                        <b class="capitalize">Hello!</b> Rules list updated. Do you want to check?
+                    </span>
                     <button
                         class="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none"
                         @click="reloadPage">
@@ -236,19 +240,20 @@ export default {
                         this.rulesUpdated = true;
                     });
             }
+        },
+
+        jobNumber: function (newJobNumber, oldJobNumber) {
+            console.log('detected job number change');
+            this.initJobLoaded();
         }
     },
 
     created() {
-        if (!this.currentJob.metadata.processing_mysgs) {
-            this.currentRules = this.rules;
-            this.newJobLoaded();
-            this.initRulesParsing();
-        } else {
-            this.waitMode();
-        }
 
-        this.initSearchFunctions();
+    },
+
+    mounted() {
+        this.initJobLoaded();
     },
 
     destroyed() {
@@ -256,6 +261,19 @@ export default {
     },
 
     methods: {
+        initJobLoaded() {
+            this.currentJob = this.job;
+            if (this.currentJob.metadata.processing_mysgs === false) {
+                this.currentRules = this.rules;
+                this.newRulesLoaded();
+                this.initRulesParsing();
+            } else {
+                this.waitMode();
+            }
+
+            this.initSearchFunctions();
+        },
+
         initRulesParsing() {
             this.searchedRules.forEach(rule => {
                 rule.terms.forEach(term => {
@@ -304,7 +322,7 @@ export default {
 
                         this.currentJob = data.job;
                         this.currentRules = data.rules;
-                        this.newJobLoaded();
+                        this.newRulesLoaded();
                         this.initRulesParsing();
                     } else {
                         this.waitMode();
@@ -324,8 +342,15 @@ export default {
                 getFilterData: this.filterObject
             }
         },
-        newJobLoaded() {
+        newRulesLoaded() {
             this.searchedRules = [..._.orderBy(this.currentRules, 'created_at', 'desc')];
+            this.searching = false;
+        },
+        runningSearch() {
+            this.currentJob = {metadata: {}};
+            this.searching = true;
+            this.taxonomies = [];
+            this.rulesByTaxonomies = {};
         },
         reloadPage() {
             window.location = window.location + this.searchJobKey;
@@ -337,22 +362,6 @@ export default {
         closeRuleModal() {
             this.isOpen = false;
             this.currentRule = null;
-        },
-        search() {
-            if (this.searchJobKey && this.searchJobKey !== '') {
-                this.searching = true;
-                axios({
-                    url: route("rule_search", this.searchJobKey),
-                    method: "GET",
-                })
-                    .then(result => {
-                        this.searchedRules = result.data;
-                        this.searching = false;
-                    })
-                    .catch(err => {
-                        this.searching = false;
-                    });
-            }
         },
         filterByNew() {
             this.$refs.cpt.filter('isNew');
