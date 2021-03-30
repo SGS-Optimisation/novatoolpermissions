@@ -62,4 +62,9 @@ class FieldMapping extends Model
     public function taxonomy(){
         return $this->belongsTo(Taxonomy::class);
     }
+
+    public function getSlugAttribute()
+    {
+        return \Str::snake($this->api_name . '_' . $this->api_action);
+    }
 }

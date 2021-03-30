@@ -23,34 +23,124 @@ class TaxonomySeeder extends Seeder
         $taxonomies = [
             'Account Structure' => [
                 'children' => [
-                    'Brands' => [
+                    'Brand' => [
+                        'meta' => [
+                            'aliases' => ['BRAND', 'Brand', 'Brand (Sub)', 'Brand - Sub'],
+                        ],
                         'terms' => [
                             'ANY'
+                        ],
+                        'mapping' => [
+                            'api_name' => 'JobApi',
+                            'api_version' => '1.0',
+                            'api_action' => 'basicDetails',
+                            'field_path' => 'brand',
                         ]
                     ],
-                    'Market' => [
+                    'Category/Business Unit' => [
                         'terms' => [
                             'ANY'
-                        ]
-                    ],
-                    'Production Site' => [
-                        'terms' => [
-                            'ANY'
-                        ]
-                    ],
-                    'Category/BU' => [
-                        'terms' => [
-                            'ANY'
+                        ],
+                        'mapping' => [
+                            'api_name' => 'JobApi',
+                            'api_version' => '1.0',
+                            'api_action' => 'extraDetails',
+                            'field_path' => '0.extraDetailsFields.*[fieldName=02_Category|fieldName=Category].itemValue'
                         ]
                     ],
                     'Pack Type' => [
+                        'meta' => [
+                            'aliases' => [
+                                'PACKAGING TYPE',
+                                'Type de pack',
+                                'TYPE OF PACK',
+                                'Pack',
+                                'Component',
+                                'Components'
+                            ]
+                        ],
                         'terms' => [
                             'ANY',
-                            'Back Label',
-                            'Front Label',
-                            'Shipper'
+                        ],
+                        'mapping' => [
+                            'api_name' => 'JobApi',
+                            'api_version' => '1.0',
+                            'api_action' => 'extraDetails',
+                            'field_path' => '0.extraDetailsFields.*[fieldName=Packaging_Component_Type|fieldName=10_PackagingFormat].itemValue'
                         ]
                     ],
+                    'Region/Market' => [
+                        'meta' => [
+                            'aliases' => ['Market', 'REGION/MARKET', 'Region'],
+                        ],
+                        'terms' => [
+                            'ANY',
+                        ],
+                        'mapping' => [
+                            'api_name' => 'JobApi',
+                            'api_version' => '1.0',
+                            'api_action' => 'extraDetails',
+                            'field_path' => '0.extraDetailsFields.*[fieldName=Market].itemValue',
+                        ]
+                    ],
+                    'Printer' => [
+                        'terms' => [
+                            'ANY'
+                        ],
+                        'mapping' => [
+
+                        ]
+                    ],
+                    'Production site/Factory' => [
+                        'meta' => [
+                            'aliases' => ['Production Site', 'PRODUCTION SITE/FACTORY', 'FACTORY'],
+                        ],
+                        'terms' => [
+                            'ANY'
+                        ],
+                        'mapping' => [
+                            'api_name' => 'JobApi',
+                            'api_version' => '1.0',
+                            'api_action' => 'extraDetails',
+                            'field_path' => '0.extraDetailsFields.*[fieldName=Production_Factory_Site].itemValue',
+                        ]
+                    ],
+                    'Weight' => [
+                        'terms' => [
+                            'ANY'
+                        ],
+                        'mapping' => [
+                            'api_name' => 'JobApi',
+                            'api_version' => '1.0',
+                            'api_action' => 'basicDetails',
+                            'field_path' => 'weight',
+                        ]
+                    ],
+                    'Variety' => [
+                        'terms' => [
+                            'ANY'
+                        ],
+                        'mapping' => [
+                            'api_name' => 'JobApi',
+                            'api_version' => '1.0',
+                            'api_action' => 'basicDetails',
+                            'field_path' => 'variety',
+                        ]
+                    ],
+                    'Production Stage' => [
+                        'terms' => [
+                            'ANY'
+                        ],
+                        'mapping' => [
+                            'api_name' => 'ProductionApi',
+                            'api_version' => '1.0',
+                            'api_action' => 'jobItems',
+                            'field_path' => '*.jobItemDescription',
+                            'resolver_name' => 'ProductionStageResolver',
+                        ]
+                    ],
+
+
                 ],
             ],
 

@@ -5,7 +5,7 @@ namespace App\Services\MySgs;
 
 use App\Models\ClientAccount;
 use App\Models\Job;
-use App\Services\Job\JobApiHandler;
+use App\Services\Job\JobApiCaller;
 use Illuminate\Support\Str;
 
 class DataLoader
@@ -15,9 +15,10 @@ class DataLoader
      * @param Job $job
      */
     public static function handle($job) {
-        $basicInfo = (new JobApiHandler($job))->handle('basicInfo');
-        $basicDetails = (new JobApiHandler($job))->handle('basicDetails');
-        $extraDetails = (new JobApiHandler($job))->handle('extraDetails');
+        $basicInfo = (new JobApiCaller($job))->handle('JobApi', 'basicInfo');
+        $basicDetails = (new JobApiCaller($job))->handle('JobApi', 'basicDetails');
+        $extraDetails = (new JobApiCaller($job))->handle('JobApi', 'extraDetails');
+        $jobItems = (new JobApiCaller($job))->handle('ProductionApi', 'jobItems');
 
         $job->designation = $basicInfo->response->jobDescription;
         $job_metadata = $job->metadata;

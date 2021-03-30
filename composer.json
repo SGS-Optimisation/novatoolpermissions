@@ -32,15 +32,14 @@
         "silvanite/brandenburg": "^1.4",
         "silvanite/novatoolpermissions": "^1.0",
         "socialiteproviders/microsoft-azure": "^3.0",
+        "softcreatr/jsonpath": "^0.5 || ^0.7",
         "tightenco/ziggy": "^0.9.4"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",
-        "cloudstudio/resource-generator": "9999999-dev",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laracademy/generators": "^3.0",
-        "laravel-shift/blueprint": "9999999-dev",
         "laravel/sail": "^0.0.5",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^5.0",

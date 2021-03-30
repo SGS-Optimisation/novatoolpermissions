@@ -46,6 +46,7 @@ class Job extends Resource
             ID::make(__('ID'), 'id')->sortable(),
             Text::make(__('Job Number'), 'job_number')->sortable(),
             Code::make(__('Metadata'), 'metadata')
+                ->json()
                 ->sortable()
                 ->hideFromIndex()
         ];

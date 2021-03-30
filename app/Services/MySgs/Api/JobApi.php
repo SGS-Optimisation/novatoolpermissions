@@ -13,19 +13,25 @@ class JobApi extends BaseApi
 
     public static function basicInfo($formattedJobNumber, $params = [], $array_mode = false)
     {
-        logger('basic info api');
+        logger('basic info job api');
         return static::get('Job/basicInfo/formattedJobNumber/', $formattedJobNumber, $params, $array_mode);
     }
 
     public static function basicDetails($jobVersionId, $params = [])
     {
-        logger('basic details api');
+        logger('basic details job api');
         return static::get('JobVersion/basicDetails/', $jobVersionId, $params);
     }
 
     public static function extraDetails($jobVersionId, $params = [])
     {
-        logger('extra details api');
+        logger('extra details job api');
         return static::get('JobVersion/extraDetails/', $jobVersionId, $params);
+    }
+
+    public static function latestStage($jobVersionId, $params = [])
+    {
+        logger('latest stage job api');
+        return static::get('JobStage/LatestStage/', $jobVersionId, $params);
     }
 }

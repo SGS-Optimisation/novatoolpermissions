@@ -10,7 +10,7 @@ use App\Models\Job;
 use App\Repositories\JobRepository;
 use App\Services\MySgs\Api\JobApi;
 
-class JobApiHandler
+class JobApiCaller
 {
     /**
      * @var Job
@@ -35,18 +35,23 @@ class JobApiHandler
 
     /**
      * @param $apiName
-     * @return JobApiHandler
+     * @param $apiAction
+     * @return JobApiCaller
      */
-    public function handle($apiName)
+    public function handle($apiName, $apiAction)
     {
-        logger('handling api call ' . $apiName . ' on job ' . $this->job->id);
+        logger('handling api call ' . $apiName  . '::' . $apiAction . ' on job ' . $this->job->id);
+
+        $apiclass = 'App\Services\MySgs\Api\\' . $apiName;
+        $api = new $apiclass;
+        $param = static::getApiParam($apiName, $apiAction, $this->job);
 
 
-        $this->response = JobApi::$apiName($this->getApiParam($apiName));
+        $this->response = $response = $api::$apiAction($param);
 
         $job_metadata = $this->job->metadata;
 
-        $job_metadata->$apiName = $this->response;
+        $job_metadata->$apiAction = $this->response;
 
         $this->job->metadata = $job_metadata;
         $this->job->save();
@@ -55,13 +60,12 @@ class JobApiHandler
     }
 
 
-    protected function getApiParam($apiName) {
+    public static function getApiParam($apiName, $function, $job) {
         /*
          * Build the appropriate Api object
          */
-        $apiclass = 'App\Services\MySgs\Api\JobApi';
+        $apiclass = 'App\Services\MySgs\Api\\' . $apiName;
         $api = new $apiclass;
-        $function = $apiName;
 
         /*
          * Check which parameter is expected from the api function
@@ -69,9 +73,9 @@ class JobApiHandler
         $signature = get_func_argNames($function, $api);
 
         if (array_keys($signature)[0] == 'jobVersionId') {
-            $param = $this->job->metadata->basicInfo->jobVersionId;
+            $param = $job->metadata->basicInfo->jobVersionId;
         } else {
-            $param = $this->job->job_number;
+            $param = $job->job_number;
         }
 
         return $param;

@@ -15,9 +15,12 @@ class AuthApi extends BaseApi
 
     public static function appAuth()
     {
-        if ((!Cache::has('mysgs_token') && !Cache::has('mysgs_token_expiry')) || Carbon::createFromTimeString(Cache::get('mysgs_token_expiry'))->lessThan(Carbon::today())) {
+        if (
+            (!Cache::has('mysgs_token') && !Cache::has('mysgs_token_expiry'))
+            || Carbon::createFromTimeString(Cache::get('mysgs_token_expiry'))->lessThan(Carbon::today())
+        ) {
 
-            $url = static::buildBaseUrl() . 'ApplicationAuthorisation/authenticate';
+            $url = static::buildBaseUrl().'ApplicationAuthorisation/authenticate';
 
             $response = Http::post($url, [
                 "appId" => nova_get_setting('api_app_id'),

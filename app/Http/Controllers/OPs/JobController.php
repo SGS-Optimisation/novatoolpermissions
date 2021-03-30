@@ -4,7 +4,7 @@ namespace App\Http\Controllers\OPs;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\JobRepository;
-use App\Services\Job\JobApiHandler;
+use App\Services\Job\JobApiCaller;
 use App\Services\Rule\RuleFilter;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\JsonResponse;

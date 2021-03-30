@@ -24,7 +24,7 @@ class RuleFilter
 
         $job_metadata = $job->metadata;
 
-        if($client) {
+        if ($client) {
             $job_metadata->client = $client->only(['id', 'name', 'slug', 'image']);
             $job_metadata->client_found = true;
         } else {
@@ -91,10 +91,8 @@ class RuleFilter
 
                         /**
                          * retrieve value from mysgs response with help of taxonomy
-                         * some mapping logic here
                          */
-
-                        $mysgsValue = Str::lower(Mapper::getMetaValue($job, $term->taxonomy->mapping));
+                        $mysgsValue = (new Mapper($job, $term->taxonomy->mapping))->getMetaValue();
 
                         $termValue = Str::lower($term->name);
                         $job_taxonomy_terms[$term->taxonomy->name] = $mysgsValue;
@@ -102,7 +100,9 @@ class RuleFilter
                         /**
                          * compare retrieved value with this term
                          */
-                        if (!(Str::contains($termValue, $mysgsValue) || Str::contains($mysgsValue, $termValue))) {
+                        if (!(Str::contains($termValue, strtolower($mysgsValue))
+                            || Str::contains(strtolower($mysgsValue), $termValue))
+                        ) {
                             $matched = false;
                         } else {
                             $matchedTaxonomies[$term->taxonomy->name] = true;

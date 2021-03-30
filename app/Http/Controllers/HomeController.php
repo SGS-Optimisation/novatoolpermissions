@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Job\JobApiHandler;
+use App\Services\Job\JobApiCaller;
 use App\Services\Rule\RuleFilter;
 use Illuminate\Http\Request;
 use Laravel\Jetstream\Jetstream;

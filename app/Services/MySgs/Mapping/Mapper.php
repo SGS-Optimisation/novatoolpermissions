@@ -6,107 +6,150 @@ namespace App\Services\MySgs\Mapping;
 
 use App\Models\FieldMapping;
 use App\Models\Job;
+use App\Services\Job\JobApiCaller;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 class Mapper
 {
+
+    public $accumulator = [];
+
+    /**
+     * @var Job
+     */
+    public $job;
+
+    /**
+     * @var FieldMapping
+     */
+    public $mapping;
+
+    /**
+     * Mapper constructor.
+     * @param  Job  $job
+     */
+    public function __construct(Job $job, FieldMapping $mapping = null)
+    {
+        $this->job = $job;
+        $this->mapping = $mapping;
+    }
+
 
     /**
      * @param  Job  $job
      * @param  FieldMapping  $mapping
      * @return array|\ArrayAccess|mixed|void
      */
-    public static function getMetaValue(Job $job, FieldMapping $mapping)
+    public function getMetaValue(FieldMapping $mapping = null)
     {
-
-        /*
-         * Build the appropriate Api object
-         */
-        $apiClass = 'App\Services\MySgs\Api\\'.$mapping->api_name;
-        $api = new $apiClass;
-        $function = $mapping->api_action;
-
-        /*
-         * Check which parameter is expected from the api function
-         */
-        $signature = get_func_argNames($function, $api);
-
-        if (array_keys($signature)[0] == 'jobVersionId') {
-            if (!is_array($job)) {
-                $job = json_decode($job);
-            }
-            $param = $job->metadata->basicInfo->jobVersionId;
-        } else {
-            $param = $job->job_number;
+        $this->accumulator = [];
+        $job = $this->job;
+        if(!$mapping) {
+            $mapping = $this->mapping;
         }
 
-        if (isset($job->metadata->{$mapping->api_action})) {
-            $response = $job->metadata->{$mapping->api_action};
+        /*
+         * Check if data from API is already stored and still fresh
+         */
+        if (isset($job->metadata->{$mapping->api_action})
+            && $job->metadata->{$mapping->api_action} != []
+            && $job->metadata->{$mapping->api_action} != ''
+            && $job->updated_at->isAfter(Carbon::now()->subHours(4))
+        ) {
+            logger('using stored data for mapping ' . $mapping->id);
+            $data = $job->metadata->{$mapping->api_action};
         } else {
-            $response = $api::$function($param);
+            logger('no stored data for mapping ' . $mapping->id);
+            $api_data = (new JobApiCaller($job))->handle($mapping->api_name, $mapping->api_action);
+            $data = $api_data->response;
         }
 
-        return static::parseMapping($mapping, $response);
+        return static::parseMapping($mapping, $data);
     }
 
 
-    protected static function parseMapping($mapping, $data)
+    protected function parseMapping($mapping, $data)
     {
         $field_path_sections = explode('.', $mapping->field_path);
 
-        $dataToResolve = static::parseFieldPathSection($field_path_sections, $data);
+        static::parseFieldPathSection($field_path_sections, $data);
+
+        $dataToResolve = $this->accumulator;
 
         // send the response to resolver to make some changes according to your need to tag
         if ($mapping->resolver_name !== null) {
             $resolverClass = 'App\Services\Resolvers\\'.$mapping->resolver_name;
             $resolver = new $resolverClass;
-            $dataToResolve = $resolver::handle($dataToResolve);
+            $dataToResolve = $resolver::handle($this->accumulator);
+        } else {
+            if(count($this->accumulator) == 0) {
+                $dataToResolve = '';
+            }
+            elseif(count($this->accumulator) == 1) {
+                $dataToResolve = $this->accumulator[0];
+            }
         }
+
+        //logger('mapping for ' . $mapping->id);
+        //logger(print_r($dataToResolve, true));
 
         return $dataToResolve;
     }
 
 
-    protected static function parseFieldPathSection($field_path_sections, $data)
+    protected function parseFieldPathSection($field_path_sections, $data)
     {
         $section = array_shift($field_path_sections);
 
         if ($section === null) {
-            return $data;
+            $this->accumulator[] = $data;
         }
 
         if (is_int($section) || $section === "0") {
-            if (!isset($data[$section])) {
-                return null;
+            if (isset($data[$section])) {
+                static::parseFieldPathSection($field_path_sections, $data[$section]);
             }
-            return static::parseFieldPathSection($field_path_sections, $data[$section]);
         } elseif (Str::startsWith($section, '*')) {
 
             $section_recursive = ltrim($section, '*');
 
+            /*
+             * Case of *[key1=val1|key2=val2]
+             */
             if (Str::startsWith($section_recursive, '[') && Str::endsWith($section_recursive, ']')) {
 
-                $matcher = array_map(
+                $attrs_matcher = array_map(
                     'trim',
-                    explode('=', trim($section_recursive, "[]"))
+                    explode('|', trim($section_recursive, "[]"))
                 );
 
-                $field = $matcher[0];
-                $value = $matcher[1];
+                /*
+                 * Process each key value pair
+                 */
+                foreach($attrs_matcher as $attr_matcher) {
+                    $matcher = explode('=', $attr_matcher);
 
-                foreach ($data as $item) {
-                    if (isset($item->$field) && $item->$field === $value) {
-                        return static::parseFieldPathSection($field_path_sections, $item);
+                    $field = $matcher[0];
+                    $value = $matcher[1];
+
+                    foreach ($data as $item) {
+                        if (isset($item->$field) && $item->$field === $value) {
+                            static::parseFieldPathSection($field_path_sections, $item);
+                        }
                     }
                 }
+
+
+
             } else {
                 /*
                  * TODO this should do some recursion, but on what?
                  */
-                return static::parseFieldPathSection($field_path_sections, $data);
+                static::parseFieldPathSection($field_path_sections, $data);
             }
-        } else {
-            return static::parseFieldPathSection($field_path_sections, $data->$section);
+        } elseif(isset($data->$section)) {
+            static::parseFieldPathSection($field_path_sections, $data->$section);
         }
     }
 }
