@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2e431833e285f4db730574d7f444e6f0",
+    "content-hash": "dd6e7999d69b0a0516dc66aa4c3bdcb5",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -4000,22 +4000,23 @@
         },
         {
             "name": "optimistdigital/nova-sortable",
-            "version": "1.6.2",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/optimistdigital/nova-sortable.git",
-                "reference": "a9023629805eaeecf7cb3be0a3639bd91875f493"
+                "reference": "c72a31e4cac7b8dc54ef41bab46b49c9d9a83edc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/optimistdigital/nova-sortable/zipball/a9023629805eaeecf7cb3be0a3639bd91875f493",
-                "reference": "a9023629805eaeecf7cb3be0a3639bd91875f493",
+                "url": "https://api.github.com/repos/optimistdigital/nova-sortable/zipball/c72a31e4cac7b8dc54ef41bab46b49c9d9a83edc",
+                "reference": "c72a31e4cac7b8dc54ef41bab46b49c9d9a83edc",
                 "shasum": ""
             },
             "require": {
-                "laravel/nova": "^2.0.11 || ^3.0",
-                "php": ">=7.1.0",
-                "spatie/eloquent-sortable": "^3.9.0"
+                "laravel/nova": "^3.0",
+                "optimistdigital/nova-translations-loader": "^3.0.0",
+                "php": ">=7.3.0",
+                "spatie/eloquent-sortable": "^3.10.0"
             },
             "type": "library",
             "extra": {
@@ -4041,13 +4042,17 @@
                 "nova",
                 "optimistdigital"
             ],
+            "support": {
+                "issues": "https://github.com/optimistdigital/nova-sortable/issues",
+                "source": "https://github.com/optimistdigital/nova-sortable/tree/2.2.0"
+            },
             "funding": [
                 {
                     "url": "https://github.com/optimistdigital",
                     "type": "github"
                 }
             ],
-            "time": "2020-11-25T12:52:11+00:00"
+            "time": "2021-03-26T09:15:18+00:00"
         },
         {
             "name": "optimistdigital/nova-translations-loader",

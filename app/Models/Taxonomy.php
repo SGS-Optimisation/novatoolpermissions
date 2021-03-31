@@ -108,6 +108,11 @@ class Taxonomy extends Model
         return $this->hasOne(FieldMapping::class);
     }
 
+    public function mappings()
+    {
+        return $this->hasMany(FieldMapping::class)->orderBy('sort_order');
+    }
+
     public function getRequiresMappingAttribute()
     {
         return $this->parent && $this->parent->name == 'Account Structure';

@@ -23,6 +23,7 @@ class CreateFieldMappingsTable extends Migration
             $table->string('field_path');
             $table->string('resolver_name')->nullable();
             $table->foreignId('taxonomy_id')->constrained('taxonomies')->cascadeOnDelete();
+            $table->integer('sort_order');
             $table->timestamps();
         });
 

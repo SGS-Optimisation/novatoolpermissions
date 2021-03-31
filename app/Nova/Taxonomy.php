@@ -93,7 +93,8 @@ class Taxonomy extends Resource
             ,
             HasMany::make('Terms', 'terms')
             ,
-            HasOne::make('Field Mapping', 'mapping')
+            //HasOne::make('Field Mapping', 'mapping')
+            HasMany::make('Field Mappings', 'mappings')
             ,
             //Stack::make('Stacked Terms', $terms_stack),
             Stack::make('Taxonomies', (function(){

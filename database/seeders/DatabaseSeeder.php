@@ -63,7 +63,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call(MysgsClientAccountSeeder::class);
         $this->call(ClientAccountSeeder::class);
-        $this->call(TaxonomySeeder::class);
+        $this->call(TaxonomyAccountStructureSeeder::class);
+        $this->call(TaxonomyJobCategoizationsSeeder::class);
         $this->call(FieldMappingSeeder::class);
 
         if (app()->environment() === 'local') {
