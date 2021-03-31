@@ -68,9 +68,17 @@ class Mapper
         return static::parseMapping($mapping, $data);
     }
 
+    public function run()
+    {
+        $value = $this->getMetaValue();
+
+        return ['result' => $value, 'raw' => $this->accumulator];
+    }
+
 
     protected function parseMapping($mapping, $data)
     {
+
         $field_path_sections = explode('.', $mapping->field_path);
 
         static::parseFieldPathSection($field_path_sections, $data);
@@ -79,7 +87,7 @@ class Mapper
 
         // send the response to resolver to make some changes according to your need to tag
         if ($mapping->resolver_name !== null) {
-            $resolverClass = 'App\Services\Resolvers\\'.$mapping->resolver_name;
+            $resolverClass = 'App\Services\MySgs\Resolvers\\'.$mapping->resolver_name;
             $resolver = new $resolverClass;
             $dataToResolve = $resolver::handle($this->accumulator);
         } else {
@@ -90,9 +98,6 @@ class Mapper
                 $dataToResolve = $this->accumulator[0];
             }
         }
-
-        //logger('mapping for ' . $mapping->id);
-        //logger(print_r($dataToResolve, true));
 
         return $dataToResolve;
     }
@@ -143,10 +148,10 @@ class Mapper
 
 
             } else {
-                /*
-                 * TODO this should do some recursion, but on what?
-                 */
-                static::parseFieldPathSection($field_path_sections, $data);
+                foreach($data as $item) {
+                    static::parseFieldPathSection($field_path_sections, $item);
+                }
+
             }
         } elseif(isset($data->$section)) {
             static::parseFieldPathSection($field_path_sections, $data->$section);

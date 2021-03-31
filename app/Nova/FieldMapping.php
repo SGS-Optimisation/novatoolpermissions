@@ -56,7 +56,7 @@ class FieldMapping extends Resource
             Select::make(__('Api Name'), 'api_name')
                 ->options([
                     'JobApi' => 'Job',
-                    'ProdApi' => 'Production',
+                    'ProductionApi' => 'Production',
                     'CustomerApi' => 'Customer',
                 ])
                 ->rules('required')

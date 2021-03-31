@@ -92,10 +92,11 @@ class RuleFilter
                         /**
                          * retrieve value from mysgs response with help of taxonomy
                          */
-                        $mysgsValue = (new Mapper($job, $term->taxonomy->mapping))->getMetaValue();
+                        $mapper = new Mapper($job, $term->taxonomy->mapping);
+                        $mysgsValue = $mapper->getMetaValue();
 
                         $termValue = Str::lower($term->name);
-                        $job_taxonomy_terms[$term->taxonomy->name] = $mysgsValue;
+                        $job_taxonomy_terms[$term->taxonomy->name] = $mapper->accumulator;
 
                         /**
                          * compare retrieved value with this term
