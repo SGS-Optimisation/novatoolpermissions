@@ -72,7 +72,7 @@ class Mapper
     {
         $value = $this->getMetaValue();
 
-        return ['result' => $value, 'raw' => $this->accumulator];
+        return [$value, $this->accumulator];
     }
 
 

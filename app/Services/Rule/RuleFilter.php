@@ -42,6 +42,12 @@ class RuleFilter
      */
     public static function handle(Job $job): array
     {
+        $memoizeMapper = memoize(
+            function($job, $mapping) {
+                $mapper = new Mapper($job, $mapping);
+                return $mapper->run();
+            }
+        );
 
         $clientRules = [];
 
@@ -92,11 +98,10 @@ class RuleFilter
                         /**
                          * retrieve value from mysgs response with help of taxonomy
                          */
-                        $mapper = new Mapper($job, $term->taxonomy->mapping);
-                        $mysgsValue = $mapper->getMetaValue();
+                        list($mysgsValue, $raw) = $memoizeMapper($job, $term->taxonomy->mapping);
 
                         $termValue = Str::lower($term->name);
-                        $job_taxonomy_terms[$term->taxonomy->name] = $mapper->accumulator;
+                        $job_taxonomy_terms[$term->taxonomy->name] = $raw;
 
                         /**
                          * compare retrieved value with this term
