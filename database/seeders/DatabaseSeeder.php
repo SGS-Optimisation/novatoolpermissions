@@ -26,6 +26,13 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('letmein'),
         ]);
 
+        $admin->teams()->create([
+            'name' => 'Admin\'s Team',
+            'user_id' => $admin->id,
+            'client_account_id' => null,
+            'personal_team' => true,
+        ]);
+
         $settings = [
             [
                 'key' => 'api_app_id',
@@ -61,6 +68,7 @@ class DatabaseSeeder extends Seeder
         //$this->call(ClientAccountSeeder::class);
         (new ClientAccountLegacyImport())->handle();
         $this->call(FieldMappingSeeder::class);
+
 
         (new \App\Services\LegacyImport\RuleLegacyImport())->handle();
     }
