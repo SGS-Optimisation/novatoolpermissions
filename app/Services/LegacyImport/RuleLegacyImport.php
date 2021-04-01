@@ -68,6 +68,8 @@ class RuleLegacyImport extends BaseService
                         $rule);
                 });
 
+                $job_categorization_success = true;
+
                 if ($item->RuleCategorization) {
                     $taxonomy_name = $item->RuleCategorization;
                     $terms = $item->SubRuleCategorization ? [$item->SubRuleCategorization] : [];
