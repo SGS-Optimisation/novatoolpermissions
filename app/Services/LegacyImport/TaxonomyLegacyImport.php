@@ -25,7 +25,7 @@ class TaxonomyLegacyImport extends BaseService
             });
 
             collect($projet->Categorizations)->each(function ($categorizations) use ($client_account) {
-                static::createJobCategorizationTaxonomy($categorizations, $client_account);
+                static::createClientAccountJobCategorizationTaxonomy($categorizations, $client_account);
             });
         });
 

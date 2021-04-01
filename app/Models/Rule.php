@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -73,9 +74,11 @@ class Rule extends Model implements Auditable
      */
     public function terms()
     {
-        return $this->belongsToMany(\App\Models\Term::class)->with(['taxonomy' => function($query){
-            $query->orderBy('name', 'asc');
-        }]);
+        return $this->belongsToMany(\App\Models\Term::class)->with([
+            'taxonomy' => function ($query) {
+                $query->orderBy('name', 'asc');
+            }
+        ]);
 
         //orderBy('name');
     }
@@ -86,5 +89,41 @@ class Rule extends Model implements Auditable
     public function clientAccount()
     {
         return $this->belongsTo(\App\Models\ClientAccount::class);
+    }
+
+
+    public function recordFlagReason($username, $message = '', $date = null)
+    {
+        $this->flagged = true;
+
+        $metadata = $this->metadata ?? [];
+
+        if (!isset($metadata['flag_reason'])) {
+            $metadata['flag_reason'] = [];
+        }
+
+        $metadata['flag_reason'][] = [
+            'user' => $username,
+            'reason' => $message,
+            'date' => $date ?? Carbon::now()->format('Y-m-d H:i:s'),
+        ];
+
+        $this->metadata = $metadata;
+        $this->timestamps = false;
+
+        $this->save();
+    }
+
+    public function unflag()
+    {
+        $this->flagged = false;
+
+        $metadata = $this->metadata ?? [];
+        $metadata['flag_reason'] = [];
+
+        $this->metadata = $metadata;
+        $this->timestamps = false;
+
+        $this->save();
     }
 }

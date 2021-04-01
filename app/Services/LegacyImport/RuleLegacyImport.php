@@ -14,6 +14,8 @@ class RuleLegacyImport extends BaseService
 
     use TaxonomyCreationHelper;
 
+    public $problem_rules = [];
+
     public function handle()
     {
         Specification::select([
@@ -47,7 +49,12 @@ class RuleLegacyImport extends BaseService
                 });
 
                 if ($item->RuleCategorization) {
-                    static::processTaxonomies([
+                    $taxonomy_name = $item->RuleCategorization;
+                    $terms = $item->SubRuleCategorization ? [$item->SubRuleCategorization] : [];
+
+                    static::createJobCategorizationTaxonomy($taxonomy_name, $terms, $client_account, $rule);
+
+                    /*static::processTaxonomies([
                         'Job Categorizations' => [
                             'children' => [
                                 $item->RuleCategorization => [
@@ -61,7 +68,7 @@ class RuleLegacyImport extends BaseService
                         null,
                         $client_account,
                         $rule
-                    );
+                    );*/
                 }
             } else {
                 // if client is not present log it inside

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\ClientAccount;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\LegacyImport\ClientAccountLegacyImport;
 use App\Services\LegacyImport\TaxonomyLegacyImport;
 use Illuminate\Database\Seeder;
 use OptimistDigital\NovaSettings\NovaSettings;
@@ -66,9 +67,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call(TaxonomyAccountStructureSeeder::class);
         $this->call(TaxonomyJobCategorizationsSeeder::class);
-        //(new TaxonomyLegacyImport)->handle();
         //$this->call(ClientAccountSeeder::class);
-        (new \App\Services\LegacyImport\ClientAccountLegacyImport())->handle();
+        (new ClientAccountLegacyImport())->handle();
         $this->call(FieldMappingSeeder::class);
 
         if (app()->environment() === 'local') {

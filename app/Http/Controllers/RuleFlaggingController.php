@@ -13,24 +13,7 @@ class RuleFlaggingController extends Controller
 
     public function flag(Request $request, Rule $rule)
     {
-        $rule->flagged = true;
-
-        $metadata = $rule->metadata ?? [];
-
-        if(!isset($metadata['flag_reason'])) {
-            $metadata['flag_reason'] = [];
-        }
-
-        $metadata['flag_reason'][] = [
-            'user' => $request->user()->name,
-            'reason' => $request->reason,
-            'date' => Carbon::now()->format('Y-m-d H:i:s'),
-        ];
-
-        $rule->metadata = $metadata;
-        $rule->timestamps = false;
-
-        $rule->save();
+        $rule->recordFlagReason($request->user()->name, $request->reason);
 
         event(new Flagged($rule));
 
@@ -42,15 +25,7 @@ class RuleFlaggingController extends Controller
 
     public function unflag(Request $request, Rule $rule)
     {
-        $rule->flagged = false;
-
-        $metadata = $rule->metadata ?? [];
-        $metadata['flag_reason'] = [];
-
-        $rule->metadata = $metadata;
-        $rule->timestamps = false;
-
-        $rule->save();
+        $rule->unflag();
 
         event(new Unflagged($rule));
 

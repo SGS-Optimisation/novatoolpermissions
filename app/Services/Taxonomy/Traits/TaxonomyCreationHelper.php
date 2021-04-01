@@ -103,26 +103,80 @@ trait TaxonomyCreationHelper
         return $taxonomy;
     }
 
+    /**
+     * @param $designation
+     * @param  ClientAccount  $client_account
+     * @param  Rule|null  $rule
+     */
     public static function createAccountStructureTaxonomy($designation, $client_account, $rule = null)
     {
-        static::processTaxonomies([
-            'Account Structure' => [
-                'children' => [
-                    $designation['Title'] => [
-                        'terms' => $designation['Subjobs']
-                    ]
-                ]
-            ]
-        ],
-            ['default' => false],
-            ['default' => false],
-            null,
-            $client_account,
-            $rule
-        );
+        $taxonomy_name = $designation['Title'];
+        $terms = $designation['Subjobs'];
+
+        /** @var Taxonomy $account_structure */
+        $account_structure = $client_account->root_taxonomies()->whereName('Account Structure')->first();
+
+        $taxonomy = Taxonomy::where('name', $taxonomy_name)
+            ->whereParentId($account_structure->id)
+            ->first();
+
+        if (!$taxonomy) {
+            if ($rule) {
+                $rule->recordFlagReason(
+                    '[System]',
+                    sprintf(
+                        'Importing category failed: %s with value %s',
+                        $taxonomy_name, print_r($terms, true)
+                    )
+                );
+            }
+
+            return;
+        }
+
+        foreach ($terms as $term) {
+            static::buildTerm($term, $taxonomy, [], $rule, $client_account);
+        }
+
     }
 
-    public static function createJobCategorizationTaxonomy($categorizations, $client_account)
+    /**
+     * @param  string  $taxonomy_name
+     * @param  array  $terms
+     * @param  ClientAccount  $client_account
+     * @param  Rule|null  $rule
+     */
+    public static function createJobCategorizationTaxonomy($taxonomy_name, $terms, $client_account, $rule = null)
+    {
+        /** @var Taxonomy $account_structure */
+        $job_categorizations = $client_account->root_taxonomies()->whereName('Job Categorizations')->first();
+
+        $taxonomy = Taxonomy::where('name', $taxonomy_name)
+            ->whereParentId($job_categorizations->id)
+            ->first();
+
+        if (!$taxonomy) {
+            if ($rule) {
+                $rule->recordFlagReason(
+                    '[System]',
+                    sprintf(
+                        'Importing category failed: %s with value %s',
+                        $taxonomy_name, print_r($terms, true)
+                    )
+                );
+            }
+
+            return;
+        }
+
+        foreach ($terms as $term) {
+            static::buildTerm($term, $taxonomy, [], $rule, $client_account);
+        }
+
+    }
+
+
+    public static function createClientAccountJobCategorizationTaxonomy($categorizations, $client_account)
     {
         static::processTaxonomies([
             'Job Categorizations' => [
