@@ -19,7 +19,7 @@ class RuleFilter
         $customer_name = $job->metadata->basicDetails->retailer->customerName;
 
         $client = ClientAccount::where('name', 'LIKE', '%'.$customer_name.'%')
-            ->orWhereRaw('LOWER(alias) LIKE "%'.Str::lower($job->metadata->basicDetails->retailer->customerName).'%"')
+            ->orWhereRaw('LOWER("alias") LIKE ?', ['%'.Str::lower($customer_name).'%'])
             ->first();
 
         $job_metadata = $job->metadata;
