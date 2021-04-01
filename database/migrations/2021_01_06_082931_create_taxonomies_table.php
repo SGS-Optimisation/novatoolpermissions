@@ -18,7 +18,10 @@ class CreateTaxonomiesTable extends Migration
         Schema::create('taxonomies', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('parent_id')->nullable()->constrained('taxonomies')->cascadeOnDelete();
+            $table->foreignId('parent_id')
+                ->nullable()
+                ->constrained('taxonomies')
+                ->nullOnDelete();
             $table->json('config')->nullable();
             $table->timestamps();
             $table->softDeletes();
