@@ -111,7 +111,7 @@ class ClientAccountController extends Controller
         }
 
         $client_account->update(array_merge(
-            $request->all(),
+            $request->only(['name', 'slug', 'alias']),
             ['image' => $image_path]
         ));
 
