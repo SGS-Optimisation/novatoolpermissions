@@ -86,7 +86,9 @@
                         </button>
                     </div>
 
-                    <isotope ref="cpt" id="root_isotope" class="w-full m-2" :options='getOptions()'
+                    <isotope ref="cpt" id="root_isotope" class="w-full m-2"
+                             v-if="Object.keys(filterObject).length"
+                             :options='getOptions()'
                              :list="Object.entries(rulesByTaxonomies)"
                              @filter="filterOption=arguments[0]" @sort="sortOption=arguments[0]">
 
@@ -206,7 +208,7 @@ export default {
             currentRules: this.rules,
             searchJobKey: this.jobNumber,
             searching: false,
-            searchedRules: [this.currentRules],
+            searchedRules: [..._.orderBy(this.rules, 'created_at', 'desc')],
             isOpen: false,
             currentRule: null,
             rulesUpdated: false,
@@ -264,6 +266,7 @@ export default {
         initJobLoaded() {
             this.currentJob = this.job;
             if (this.currentJob.metadata.processing_mysgs === false) {
+                console.log('job rules already loaded');
                 this.currentRules = this.rules;
                 this.newRulesLoaded();
                 this.initRulesParsing();
@@ -271,7 +274,12 @@ export default {
                 this.waitMode();
             }
 
-            this.initSearchFunctions();
+
+        },
+
+        newRulesLoaded() {
+            this.searchedRules = [..._.orderBy(this.currentRules, 'created_at', 'desc')];
+            this.searching = false;
         },
 
         initRulesParsing() {
@@ -295,6 +303,8 @@ export default {
                     }
                 });
             });
+
+            this.initSearchFunctions();
         },
 
         initSearchFunctions() {
@@ -342,10 +352,7 @@ export default {
                 getFilterData: this.filterObject
             }
         },
-        newRulesLoaded() {
-            this.searchedRules = [..._.orderBy(this.currentRules, 'created_at', 'desc')];
-            this.searching = false;
-        },
+
         runningSearch() {
             this.currentJob = {metadata: {}};
             this.searching = true;
@@ -372,6 +379,7 @@ export default {
             this.filterFlag = "updated";
         },
         filterByTaxonomy(taxonomy) {
+            console.log('filtering by taxonomy', taxonomy);
             this.$refs.cpt.filter(taxonomy)
             this.filterFlag = null;
         },
