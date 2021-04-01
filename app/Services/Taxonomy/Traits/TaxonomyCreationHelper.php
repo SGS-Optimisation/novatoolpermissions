@@ -92,8 +92,7 @@ trait TaxonomyCreationHelper
             $taxonomy_data['parent_id'] = $parent->id;
         }
 
-        $taxonomy = Taxonomy::where($taxonomy_data)->whereRaw('config = cast(? as json)',
-            json_encode($config))->first();
+        $taxonomy = Taxonomy::where($taxonomy_data)->first();
 
         if (!$taxonomy) {
             $taxonomy_data['config'] = $config;
