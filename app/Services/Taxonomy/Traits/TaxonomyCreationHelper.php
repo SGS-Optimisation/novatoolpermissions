@@ -116,7 +116,11 @@ trait TaxonomyCreationHelper
         /** @var Taxonomy $account_structure */
         $account_structure = $client_account->root_taxonomies()->whereName('Account Structure')->first();
 
-        $taxonomy = Taxonomy::where('name', $taxonomy_name)
+        $taxonomy = Taxonomy::query()
+            ->where(function ($query) use ($taxonomy_name) {
+                return $query->where('name', $taxonomy_name)
+                    ->orWhereJsonContains('config->aliases', $taxonomy_name);
+            })
             ->whereParentId($account_structure->id)
             ->first();
 
@@ -126,17 +130,19 @@ trait TaxonomyCreationHelper
                     '[System]',
                     sprintf(
                         'Importing category failed: %s with value %s',
-                        $taxonomy_name, print_r($terms, true)
+                        $taxonomy_name, implode(', ', array_values($terms))
                     )
                 );
             }
 
-            return;
+            return false;
         }
 
         foreach ($terms as $term) {
             static::buildTerm($term, $taxonomy, [], $rule, $client_account);
         }
+
+        return true;
 
     }
 
@@ -151,7 +157,11 @@ trait TaxonomyCreationHelper
         /** @var Taxonomy $account_structure */
         $job_categorizations = $client_account->root_taxonomies()->whereName('Job Categorizations')->first();
 
-        $taxonomy = Taxonomy::where('name', $taxonomy_name)
+        $taxonomy = Taxonomy::query()
+            ->where(function ($query) use ($taxonomy_name) {
+                return $query->where('name', $taxonomy_name)
+                    ->orWhereJsonContains('config->aliases', $taxonomy_name);
+            })
             ->whereParentId($job_categorizations->id)
             ->first();
 
@@ -161,17 +171,19 @@ trait TaxonomyCreationHelper
                     '[System]',
                     sprintf(
                         'Importing category failed: %s with value %s',
-                        $taxonomy_name, print_r($terms, true)
+                        $taxonomy_name, implode(', ', array_values($terms))
                     )
                 );
             }
 
-            return;
+            return false;
         }
 
         foreach ($terms as $term) {
             static::buildTerm($term, $taxonomy, [], $rule, $client_account);
         }
+
+        return true;
 
     }
 

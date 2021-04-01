@@ -15,7 +15,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property int $client_account_id
  * @property string $name
  * @property string $content
- * @property string $metadata
+ * @property array $metadata
  * @property bool $flagged
  * @property \Carbon\Carbon $deleted_at
  * @property \Carbon\Carbon $created_at

@@ -21,7 +21,6 @@ trait TermHelper
     {
         $term = Term::whereName($name)
             ->whereTaxonomyId($taxonomy->id)
-            ->whereRaw('config = cast(? as json)', json_encode($config))
             ->first();
 
         if (!$term) {

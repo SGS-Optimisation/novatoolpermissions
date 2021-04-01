@@ -23,7 +23,7 @@ class TaxonomyAccountStructureSeeder extends Seeder
                 'children' => [
                     'Brand' => [
                         'config' => [
-                            'aliases' => ['BRAND', 'Brand', 'Brand (Sub)', 'Brand - Sub'],
+                            'aliases' => ['BRAND', 'Brand', 'Brand (Sub)', 'Brand - Sub', 'BRANDS', 'Brands'],
                         ],
                         'terms' => [
                             'ANY'
