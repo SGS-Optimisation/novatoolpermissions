@@ -21,7 +21,7 @@ class CreateTaxonomiesTable extends Migration
             $table->foreignId('parent_id')
                 ->nullable()
                 ->constrained('taxonomies')
-                ->nullOnDelete();
+                ->onDelete('no action');
             $table->json('config')->nullable();
             $table->timestamps();
             $table->softDeletes();
