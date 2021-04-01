@@ -22,7 +22,7 @@ class RuleSeeder extends Seeder
             /**
              * importing legacy data from mongo dump
              */
-            (new \App\Services\LegacyImport\Rule())->handle();
+            (new \App\Services\LegacyImport\RuleLegacyImport())->handle();
 //        } else {
 //
 //            Rule::factory()->count(5)->create([

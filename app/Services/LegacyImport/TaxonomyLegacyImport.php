@@ -9,7 +9,7 @@ use App\Models\ClientAccount;
 use App\Services\BaseService;
 use App\Services\Taxonomy\Traits\TaxonomyCreationHelper;
 
-class Taxonomy extends BaseService
+class TaxonomyLegacyImport extends BaseService
 {
 
     use TaxonomyCreationHelper;

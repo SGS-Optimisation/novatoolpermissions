@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Services\LegacyImport\Taxonomy;
+use App\Services\LegacyImport\TaxonomyLegacyImport;
 use App\Services\Taxonomy\Traits\TaxonomyCreationHelper;
 use Illuminate\Database\Seeder;
 
@@ -22,13 +22,13 @@ class TaxonomyAccountStructureSeeder extends Seeder
             'Account Structure' => [
                 'children' => [
                     'Brand' => [
-                        'meta' => [
+                        'config' => [
                             'aliases' => ['BRAND', 'Brand', 'Brand (Sub)', 'Brand - Sub'],
                         ],
                         'terms' => [
                             'ANY'
                         ],
-                        'mapping' => [
+                        'mappings' => [
                             [
                                 'api_name' => 'JobApi',
                                 'api_version' => '1.0',
@@ -41,7 +41,7 @@ class TaxonomyAccountStructureSeeder extends Seeder
                         'terms' => [
                             'ANY'
                         ],
-                        'mapping' => [
+                        'mappings' => [
                             [
                                 'api_name' => 'JobApi',
                                 'api_version' => '1.0',
@@ -51,7 +51,7 @@ class TaxonomyAccountStructureSeeder extends Seeder
                         ]
                     ],
                     'Pack Type' => [
-                        'meta' => [
+                        'config' => [
                             'aliases' => [
                                 'PACKAGING TYPE',
                                 'Type de pack',
@@ -64,29 +64,29 @@ class TaxonomyAccountStructureSeeder extends Seeder
                         'terms' => [
                             'ANY',
                         ],
-                        'mapping' => [
+                        'mappings' => [
+                            [
+                                'api_name' => 'JobApi',
+                                'api_version' => '1.0',
+                                'api_action' => 'basicDetails',
+                                'field_path' => 'packageType.name'
+                            ],
                             [
                                 'api_name' => 'JobApi',
                                 'api_version' => '1.0',
                                 'api_action' => 'extraDetails',
                                 'field_path' => '0.extraDetailsFields.*[fieldName=Packaging_Component_Type|fieldName=10_PackagingFormat].itemValue'
                             ],
-                            [
-                                'api_name' => 'JobApi',
-                                'api_version' => '1.0',
-                                'api_action' => 'basicDetails',
-                                'field_path' => 'packageType.name'
-                            ]
                         ]
                     ],
                     'Region/Market' => [
-                        'meta' => [
+                        'config' => [
                             'aliases' => ['Market', 'REGION/MARKET', 'Region'],
                         ],
                         'terms' => [
                             'ANY',
                         ],
-                        'mapping' => [
+                        'mappings' => [
                             [
                                 'api_name' => 'JobApi',
                                 'api_version' => '1.0',
@@ -99,18 +99,18 @@ class TaxonomyAccountStructureSeeder extends Seeder
                         'terms' => [
                             'ANY'
                         ],
-                        'mapping' => [
+                        'mappings' => [
                             // TODO: find MYSGS API for this
                         ]
                     ],
                     'Production site/Factory' => [
-                        'meta' => [
+                        'config' => [
                             'aliases' => ['Production Site', 'PRODUCTION SITE/FACTORY', 'FACTORY'],
                         ],
                         'terms' => [
                             'ANY'
                         ],
-                        'mapping' => [
+                        'mappings' => [
                             [
                                 'api_name' => 'JobApi',
                                 'api_version' => '1.0',
@@ -123,7 +123,7 @@ class TaxonomyAccountStructureSeeder extends Seeder
                         'terms' => [
                             'ANY'
                         ],
-                        'mapping' => [
+                        'mappings' => [
                             [
                                 'api_name' => 'JobApi',
                                 'api_version' => '1.0',
@@ -136,7 +136,7 @@ class TaxonomyAccountStructureSeeder extends Seeder
                         'terms' => [
                             'ANY'
                         ],
-                        'mapping' => [
+                        'mappings' => [
                             [
                                 'api_name' => 'JobApi',
                                 'api_version' => '1.0',
@@ -149,7 +149,7 @@ class TaxonomyAccountStructureSeeder extends Seeder
                         'terms' => [
                             'ANY'
                         ],
-                        'mapping' => [
+                        'mappings' => [
                             [
                                 'api_name' => 'ProductionApi',
                                 'api_version' => '1.0',
@@ -168,6 +168,5 @@ class TaxonomyAccountStructureSeeder extends Seeder
 
         static::processTaxonomies($taxonomies, $default_vocab_config, $default_term_config);
 
-        (new Taxonomy)->handle();
     }
 }

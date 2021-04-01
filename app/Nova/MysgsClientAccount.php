@@ -5,6 +5,7 @@ namespace App\Nova;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class MysgsClientAccount extends Resource
@@ -43,7 +44,7 @@ class MysgsClientAccount extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
             Text::make(__('Name'), 'name')->sortable(),
-            Text::make(__('Alias'), 'alias')->sortable(),
+            Textarea::make(__('Alias'), 'alias')->alwaysShow(),
         ];
     }
 

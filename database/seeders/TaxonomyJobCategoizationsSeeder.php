@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Services\LegacyImport\Taxonomy;
+use App\Services\LegacyImport\TaxonomyLegacyImport;
 use App\Services\Taxonomy\Traits\TaxonomyCreationHelper;
 use Illuminate\Database\Seeder;
 
@@ -99,6 +99,6 @@ class TaxonomyJobCategoizationsSeeder extends Seeder
 
         static::processTaxonomies($taxonomies, $default_vocab_config, $default_term_config);
 
-        (new Taxonomy)->handle();
+
     }
 }
