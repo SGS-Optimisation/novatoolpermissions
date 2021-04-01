@@ -6,7 +6,7 @@ use App\Services\LegacyImport\TaxonomyLegacyImport;
 use App\Services\Taxonomy\Traits\TaxonomyCreationHelper;
 use Illuminate\Database\Seeder;
 
-class TaxonomyJobCategoizationsSeeder extends Seeder
+class TaxonomyJobCategorizationsSeeder extends Seeder
 {
 
     use TaxonomyCreationHelper;

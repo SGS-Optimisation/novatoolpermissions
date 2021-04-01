@@ -16,6 +16,6 @@ class ClientAccountSeeder extends Seeder
      */
     public function run()
     {
-        (new \App\Services\LegacyImport\ClientAccount())->handle();
+        (new \App\Services\LegacyImport\ClientAccountLegacyImport())->handle();
     }
 }
