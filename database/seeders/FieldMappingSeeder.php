@@ -26,6 +26,8 @@ class FieldMappingSeeder extends Seeder
                     'TYPE OF PACK',
                     'Pack'
                 ],
+                //'api_action' => 'basicDetails',
+                //'field_path' => 'packageType.name',
                 'api_action' => 'extraDetails',
                 'field_path' => '0.extraDetailsFields.*[fieldName=Packaging_Component_Type].itemValue'
             ],

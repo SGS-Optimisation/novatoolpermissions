@@ -99,7 +99,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         $dev_tools = [];
 
         if (app()->environment() == 'local') {
-            $dev_tools [] = new \Cloudstudio\ResourceGenerator\ResourceGenerator();
         }
 
         return array_merge([

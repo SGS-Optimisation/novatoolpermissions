@@ -9,9 +9,12 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use OptimistDigital\NovaSortable\Traits\HasSortableRows;
 
 class FieldMapping extends Resource
 {
+    use HasSortableRows;
+
     /**
      * The model the resource corresponds to.
      *
@@ -56,7 +59,7 @@ class FieldMapping extends Resource
             Select::make(__('Api Name'), 'api_name')
                 ->options([
                     'JobApi' => 'Job',
-                    'ProdApi' => 'Production',
+                    'ProductionApi' => 'Production',
                     'CustomerApi' => 'Customer',
                 ])
                 ->rules('required')

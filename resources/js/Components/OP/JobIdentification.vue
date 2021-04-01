@@ -9,8 +9,8 @@
                 </h3>
             </div>
 
-            <div class="flex flex-row my-2 ">
-                <div v-for="(value, item) in job.metadata.job_taxonomy" class="flex flex-col">
+            <div class="flex flex-row my-5 ">
+                <div v-for="(values, item) in job.metadata.job_taxonomy" class="flex flex-col">
                     <div class="flex flex-wrap flex-shrink-0 text-xs items-center pr-3 text-xs mr-3">
                         <div class="flex-grow h-full bg-gray-300 text-gray-600 px-2 rounded-l-lg">
                             <div class="grid h-full">
@@ -19,10 +19,13 @@
                         </div>
                         <div class="">
 
-                            <div :class="job.metadata.matched_taxonomy[item].length ?
-                                                'bg-blue-200 text-green-800 px-2 rounded-tr-lg'
-                                                :'bg-blue-200 text-green-800 px-2 rounded-r-lg'"
-                                 title="MySGS value">{{ value }}
+                            <div class="bg-blue-200 text-green-800 px-2"
+                                 :class="job.metadata.matched_taxonomy[item].length ? 'b rounded-tr-lg':'rounded-r-lg'"
+                                 title="MySGS value">
+                                <div class="w-32" v-for="value in values">
+                                    <span v-if="values.length > 1">- </span>
+                                    {{ value }}
+                                </div>
                             </div>
 
                             <div v-for="(terms, index) in job.metadata.matched_taxonomy[item]"
@@ -30,7 +33,7 @@
                                                     'bg-pink-200 text-green-800 px-2 rounded-br-lg'
                                                     :'bg-pink-200 text-green-800 px-2'"
                                  title="Matched Dagobah terms">
-                                {{ terms }}<br>
+                                {{ terms }}
                             </div>
                         </div>
 

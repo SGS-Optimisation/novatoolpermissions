@@ -24,10 +24,10 @@ class MysgsClientAccountSeeder extends Seeder
 
         Arr::forget($customers, '---------------------');
 
-        foreach ($customers as $customerNmae => $customer) {
+        foreach ($customers as $customerName => $customer) {
             MysgsClientAccount::firstOrCreate([
-                'name' => $customerNmae,
-                'alias' => implode(PHP_EOL, array_unique(Arr::pluck($customer, 'Customer Name')))
+                'name' => $customerName,
+                'alias' => implode("\n", array_unique(Arr::pluck($customer, 'Customer Name')))
             ]);
         }
     }

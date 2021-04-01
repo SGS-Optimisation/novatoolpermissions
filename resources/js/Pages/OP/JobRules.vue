@@ -54,9 +54,9 @@
 
                 <div class="flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mb-2">
 
-                    <div class="flex text-xs mx-2" role="group">
+                    <div class="flex flex-grow text-xs mx-2" role="group">
                         <button @click="filterByNew"
-                                class="hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg"
+                                class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg"
                                 :class="[
                                     { 'bg-blue-500 text-white' : filterOption === 'isNew' },
                                     { 'bg-white text-blue-500' : filterOption !== 'isNew' }
@@ -64,7 +64,7 @@
                             New
                         </button>
                         <button @click="filterByUpdated"
-                                class="hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
+                                class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
                                 :class="[
                                     { 'bg-blue-500 text-white' : filterOption === 'isUpdated' },
                                     { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }
@@ -74,14 +74,14 @@
                         <button
                             v-for="taxonomy in taxonomies"
                             @click="filterByTaxonomy(taxonomy)"
-                            class="hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
+                            class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
                             :class="[
                                 { 'bg-blue-500 text-white' : filterOption === taxonomy },
                                  { 'bg-white text-blue-500' : filterOption !== taxonomy  }, ]">
                             {{ taxonomy }}
                         </button>
                         <button @click="$refs.cpt.unfilter()"
-                                class="bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
+                                class="flex-grow bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
                             Unfilter
                         </button>
                     </div>

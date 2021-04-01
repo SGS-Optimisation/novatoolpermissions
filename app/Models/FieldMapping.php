@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\EloquentSortable\Sortable;
+use Spatie\EloquentSortable\SortableTrait;
 
 /**
  * Class FieldMapping
@@ -33,9 +35,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|FieldMapping whereTaxonomyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FieldMapping whereUpdatedAt($value)
  */
-class FieldMapping extends Model
+class FieldMapping extends Model implements Sortable
 {
-    use HasFactory;
+    use HasFactory, SortableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -56,10 +58,20 @@ class FieldMapping extends Model
         'updated_at' => 'datetime',
     ];
 
+    public $sortable = [
+        'order_column_name' => 'sort_order',
+        'sort_when_creating' => true,
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function taxonomy(){
         return $this->belongsTo(Taxonomy::class);
+    }
+
+    public function getSlugAttribute()
+    {
+        return \Str::snake($this->api_name . '_' . $this->api_action);
     }
 }

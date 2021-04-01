@@ -166,3 +166,19 @@ function compareTwoArrays($array1, $array2): bool
     }
     return true;
 }
+
+function memoize($func)
+{
+    return function () use ($func) {
+        static $cache = [];
+
+        $args = func_get_args();
+        $key = serialize($args);
+
+        if (!isset($cache[$key])) {
+            $cache[$key] = $func(...$args);
+        }
+
+        return $cache[$key];
+    };
+}

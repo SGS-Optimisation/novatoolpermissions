@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\ClientAccount;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\LegacyImport\TaxonomyLegacyImport;
 use Illuminate\Database\Seeder;
 use OptimistDigital\NovaSettings\NovaSettings;
 
@@ -19,6 +20,11 @@ class DatabaseSeeder extends Seeder
     {
 
         if (app()->environment() === 'local') {
+            $admin = User::firstOrCreate([
+                'name' => 'Admin',
+                'email' => 'admin@sgsco.com',
+                'password' => bcrypt('letmein'),
+            ]);
 
             $user = User::firstOrCreate([
                 'name' => 'Quidam',
@@ -26,20 +32,15 @@ class DatabaseSeeder extends Seeder
                 'password' => bcrypt('letmein'),
             ]);
 
-            $admin = User::firstOrCreate([
-                'name' => 'Admin',
-                'email' => 'admin@sgsco.com',
-                'password' => bcrypt('letmein'),
-            ]);
 
             $settings = [
                 [
                     'key' => 'api_app_id',
-                    'value' => '3CCE21AF-BF21-4B74-9E60-0D1B6BDD6597'
+                    'value' => env('MYSGS_API_APP_ID')
                 ],
                 [
                     'key' => 'api_app_key',
-                    'value' => '&a+!a9t6*&N*Xs%5Q&Qz7_^B3=y-JB2h7&NuLtLaafhuA-TN_p^9^=gYzhsDyp4KkWDykNLn+aW+SZ@X5!PV-V#mSNXpj=&j?aAvtg8q6y-FPHLztdwkn$!E*W@NvW&Xsj7*zQN#+cDsa9#FtMa8yaqs8vzFjY8XwpdhJ6SXgRgu_wytgu=6Jsgad9=uT7=g^QFKMCQzjv9Y7Pgh6bFTP?mayuZArWHk$cq+b=j8uwywDJX8H^dN44NUTeZ^NzeD'
+                    'value' => env('MYSGS_API_APP_KEY')
                 ],
                 [
                     'key' => 'api_base_path',
@@ -51,19 +52,23 @@ class DatabaseSeeder extends Seeder
                 ],
                 [
                     'key' => 'subscription_key',
-                    'value' => '0a5af6485db34ed490ca01b314028d61'
+                    'value' => env('MYSGS_API_SUBSCRIPTION_KEY'),
                 ]
             ];
 
-            foreach ($settings as $setting){
+            foreach ($settings as $setting) {
                 NovaSettings::setSettingValue($setting['key'], $setting['value']);
             }
         }
 
 
         $this->call(MysgsClientAccountSeeder::class);
-        $this->call(ClientAccountSeeder::class);
-        $this->call(TaxonomySeeder::class);
+
+        $this->call(TaxonomyAccountStructureSeeder::class);
+        $this->call(TaxonomyJobCategorizationsSeeder::class);
+        //(new TaxonomyLegacyImport)->handle();
+        //$this->call(ClientAccountSeeder::class);
+        (new \App\Services\LegacyImport\ClientAccountLegacyImport())->handle();
         $this->call(FieldMappingSeeder::class);
 
         if (app()->environment() === 'local') {
@@ -93,6 +98,6 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        $this->call(RuleSeeder::class);
+        (new \App\Services\LegacyImport\RuleLegacyImport())->handle();
     }
 }
