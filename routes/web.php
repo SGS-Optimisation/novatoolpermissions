@@ -22,9 +22,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
+/**
+ * When user is unauthenticated, route '/' is handled by Fortify and leads to /login page
+ */
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
     Route::get('/dashboard', function () {
         return redirect(route('home'));
     })->name('dashboard');

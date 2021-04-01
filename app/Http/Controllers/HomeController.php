@@ -18,7 +18,7 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         return Jetstream::inertia()->render($request, 'Dashboard', [
-            'team' => $request->user()->currentTeam,
+            'team' => optional($request->user())->currentTeam,
         ]);
     }
 }
