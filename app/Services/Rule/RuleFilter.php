@@ -18,8 +18,21 @@ class RuleFilter
     {
         $customer_name = $job->metadata->basicDetails->retailer->customerName;
 
+        $connection = config('database.default');
+        $driver = config("database.connections.{$connection}.driver");
+
+        switch ($driver) {
+            case 'sqlsrv':
+                $search = 'LOWER("alias") LIKE ?';
+                break;
+            case 'mysql':
+            default:
+                $search = 'LOWER(alias) LIKE ?';
+        }
+        $searchData = ['%'.Str::lower($customer_name).'%'];
+
         $client = ClientAccount::where('name', 'LIKE', '%'.$customer_name.'%')
-            ->orWhereRaw('LOWER("alias") LIKE ?', ['%'.Str::lower($customer_name).'%'])
+            ->orWhereRaw($search, $searchData)
             ->first();
 
         $job_metadata = $job->metadata;
@@ -43,7 +56,7 @@ class RuleFilter
     public static function handle(Job $job): array
     {
         $memoizeMapper = memoize(
-            function($job, $mapping) {
+            function ($job, $mapping) {
                 $mapper = new Mapper($job, $mapping);
                 return $mapper->run();
             }
