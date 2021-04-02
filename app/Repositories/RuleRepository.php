@@ -23,7 +23,6 @@ class RuleRepository
             $this->client_account = $client_account;
         }
 
-        logger('built rule repo for ' . $client_account->name);
     }
 
     public function all($search_term = null)
@@ -37,7 +36,8 @@ class RuleRepository
             $cacheTag .= '-'.optional($term)->name;
         }
 
-        return Cache::tags($tags)->remember($cacheTag, 3600, function () use ($term) {
+        return Cache::tags($tags)
+            ->remember($cacheTag, 60*60*24*30, function () use ($term) {
 
             $rules = $this->client_account->rules()->with('terms.taxonomy')->withCount('terms');
 
@@ -46,6 +46,8 @@ class RuleRepository
                     return $query->where('id', '=', $term->id);
                 });
             }
+
+            logger('built rule repo for ' . $this->client_account->name);
 
             $rules = $rules->get()->each(function ($rule) {
                 $rule->content = str_replace('<img', '<img loading="lazy"', $rule->content);

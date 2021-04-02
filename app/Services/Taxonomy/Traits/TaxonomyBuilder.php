@@ -44,10 +44,12 @@ trait TaxonomyBuilder
 
         return Cache::tags('taxonomy')->remember(
             $client_account->slug.'-taxonomy-usage-data',
-            3600,
+            60*60*24*30,
             function () use ($client_account) {
 
                 $taxonomy_builder = (new BuildTaxonomyWithUsage($client_account))->handle();
+
+                logger('built taxonomy with usage for ' . $client_account->name);
 
                 return [
                     'clientAccount' => $client_account,
