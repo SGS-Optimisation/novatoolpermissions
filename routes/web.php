@@ -59,7 +59,7 @@ Route::name('pm.')
     ->middleware([
         'auth:sanctum',
         'verified',
-        'cache.headers:public;max_age=3600;etag',
+        //'cache.headers:public;max_age=3600;etag',
     ])->group(function () {
 
         Route::get('/', [PmHomeController::class, 'index'])

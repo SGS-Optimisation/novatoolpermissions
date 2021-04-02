@@ -4,7 +4,9 @@ namespace App\Providers;
 
 //use App\Listeners\AuditedListener;
 use App\Models\ClientAccount;
+use App\Models\Rule;
 use App\Observers\ClientAccountObserver;
+use App\Observers\RuleObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -33,9 +35,13 @@ class EventServiceProvider extends ServiceProvider
             'App\\Listeners\\Rules\\RebuildRuleCache',
         ],
 
+        'App\\Events\\Rules\\Updated' => [
+            'App\\Listeners\\Rules\\RebuildRuleCache',
+        ],
+
         'App\\Events\\Jobs\\NewJobSearched' => [
             'App\\Listeners\\Jobs\\LoadMySgsData',
-        ]
+        ],
 //        Audited::class => [
 //            AuditedListener::class
 //        ]
@@ -49,6 +55,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         ClientAccount::observe(ClientAccountObserver::class);
+        Rule::observe(RuleObserver::class);
     }
 
 }

@@ -98,8 +98,6 @@ class RuleController extends Controller
         $rule = $client_account->rules()->create($rule_fields);
         $this->parseContent($request, $rule);
 
-        Cache::tags(['rules'])->clear();
-
         logger('rule added: ' . $rule->id);
 
         $request->session()->flash('success', 'Rule successfully created!');
@@ -163,8 +161,6 @@ class RuleController extends Controller
         $rule = Rule::find($id);
         $rule->update($rule_fields);
         $this->parseContent($request, $rule);
-
-        Cache::tags(['rules'])->clear();
 
         return $request->wantsJson()
             ? new JsonResponse('', 200)

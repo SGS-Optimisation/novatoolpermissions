@@ -8,4 +8,5 @@
     php artisan config:clear
     php artisan migrate --force
     sudo supervisorctl restart dagobah-queue-worker:
+    php artisan cache:warmup
 @endtask
