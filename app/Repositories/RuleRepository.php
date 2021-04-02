@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 
 use App\Models\ClientAccount;
+use App\Models\Taxonomy;
 use App\Models\Term;
 use Illuminate\Support\Facades\Cache;
 
@@ -38,7 +39,7 @@ class RuleRepository
 
         return Cache::tags($tags)->remember($cacheTag, 3600, function () use ($term) {
 
-            $rules = $this->client_account->rules();
+            $rules = $this->client_account->rules()->with('terms.taxonomy')->withCount('terms');
 
             if($term){
                 $rules = $rules->whereHas('terms', function ($query) use ($term) {
@@ -48,6 +49,12 @@ class RuleRepository
 
             $rules = $rules->get()->each(function ($rule) {
                 $rule->content = str_replace('<img', '<img loading="lazy"', $rule->content);
+
+                if($rule->terms_count === 0) {
+                    $term = (new Term(['name' => 'No term', 'taxonomy_id' => 0,
+                        'taxonomy' => new Taxonomy(['name' => 'No category'])]));
+                    $rule->terms->add($term);
+                }
             });
 
             return $rules;
