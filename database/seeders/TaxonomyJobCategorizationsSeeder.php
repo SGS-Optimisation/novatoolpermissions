@@ -22,14 +22,20 @@ class TaxonomyJobCategorizationsSeeder extends Seeder
 
             'Job Categorizations' => [
                 'children' => [
-                    'Artwork Identification Panel (AIP/Shirtail/Header/Legend)' => [
+                    'AIP' => [
+                        'config' => [
+                            'aliases' => ['Artwork Identification Panel', 'Shirtail', 'Header', 'Legend'],
+                        ],
                         'terms' => [
                             'General information',
                             'Technical information',
                             'Colors'
                         ]
                     ],
-                    'Technical Drawing' => [
+                    'Tech Drawing' => [
+                        'config' => [
+                            'aliases' => ['Technical Drawing']
+                        ],
                         'terms' => [
                             'Specs (swatch color, stroke size/attributes)',
                             'Layer management',
@@ -37,15 +43,22 @@ class TaxonomyJobCategorizationsSeeder extends Seeder
                             'Diecut elements (eyemarks/coding areas/printfree areas/step and repeat/print direction)'
                         ]
                     ],
-                    'Mechanical	Artboards' => [
+                    'Mechanical' => [
+                        'config' => [
+                            'aliases' => ['Mechanical_1',],
+                        ],
                         'terms' => [
+                            'Artboards',
                             'Layers',
                             'Separation',
                             'Links',
                             'Layout',
                         ]
                     ],
-                    'Technical/printer specifications' => [
+                    'Tech/printer specs' => [
+                        'config' => [
+                            'aliases' => ['Printer specifications', 'Technical specifications'],
+                        ],
                         'terms' => [
                             'Ink coverage',
                             'Screen rulings/angles',
@@ -64,6 +77,9 @@ class TaxonomyJobCategorizationsSeeder extends Seeder
                         ],
                     ],
                     'Regulatory' => [
+                        'config' => [
+                            'aliases' => ['Regulatory_1',],
+                        ],
                         'terms' => [
                             'Codes',
                             'Barcodes',

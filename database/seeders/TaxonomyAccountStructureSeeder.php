@@ -37,7 +37,10 @@ class TaxonomyAccountStructureSeeder extends Seeder
                             ],
                         ]
                     ],
-                    'Category/Business Unit' => [
+                    'BU' => [
+                        'config' => [
+                            'aliases' => ['Category/Business Unit', 'Business Unit', 'Category'],
+                        ],
                         'terms' => [
                             'ANY'
                         ],
@@ -103,7 +106,7 @@ class TaxonomyAccountStructureSeeder extends Seeder
                             // TODO: find MYSGS API for this
                         ]
                     ],
-                    'Production site/Factory' => [
+                    'Factory' => [
                         'config' => [
                             'aliases' => ['Production Site', 'PRODUCTION SITE/FACTORY', 'FACTORY'],
                         ],
@@ -145,7 +148,10 @@ class TaxonomyAccountStructureSeeder extends Seeder
                             ]
                         ]
                     ],
-                    'Production Stage' => [
+                    'Stage' => [
+                        'config' => [
+                            'aliases' => ['Production Stage'],
+                        ],
                         'terms' => [
                             'ANY'
                         ],
