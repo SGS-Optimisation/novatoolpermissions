@@ -37,3 +37,8 @@ mix.js('resources/js/app.js', 'public/js')
             cert: homedir + '/.config/valet/Certificates/' + domain + '.crt',
         },
     })
+
+
+if (mix.inProduction()) {
+    mix.version();
+}
