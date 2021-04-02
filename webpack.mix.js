@@ -11,6 +11,9 @@ const mix = require('laravel-mix');
  |
  */
 
+const domain = 'dagobah.test'; // <== edit this one
+const homedir = require('os').homedir();
+
 mix.js('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
     .options({
@@ -23,4 +26,14 @@ mix.js('resources/js/app.js', 'public/js')
         require('postcss-import'),
         require('tailwindcss'),
     ])*/
-    .webpackConfig(require('./webpack.config'));
+    .webpackConfig(require('./webpack.config'))
+
+    .browserSync({
+        proxy: 'https://' + domain,
+        host: domain,
+        open: 'external',
+        https: {
+            key: homedir + '/.config/valet/Certificates/' + domain + '.key',
+            cert: homedir + '/.config/valet/Certificates/' + domain + '.crt',
+        },
+    })
