@@ -22,7 +22,11 @@ class AuthApi extends BaseApi
 
             $url = static::buildBaseUrl().'ApplicationAuthorisation/authenticate';
 
-            $response = Http::post($url, [
+            $response = Http::withHeaders([
+                'Ocp-Apim-Subscription-Key' => nova_get_setting('subscription_key'),
+                'Ocp-Apim-Trace' => 'true',
+                'Cache-Control' => 'no-cache',
+            ])->post($url, [
                 "appId" => nova_get_setting('api_app_id'),
                 "apiKey" => nova_get_setting('api_app_key'),
             ]);
