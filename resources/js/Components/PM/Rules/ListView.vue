@@ -241,7 +241,7 @@ export default {
 
     computed: {
         excerpt() {
-            return clip(this.rule.content, 120, {html: true, maxLines: 2});
+            return clip(this.rule.content.replace(/<img .*?>/g,''), 120, {html: true, maxLines: 2});
         }
     }
 
