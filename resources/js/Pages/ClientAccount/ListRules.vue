@@ -16,9 +16,16 @@
                     <filter-condition @on-change-filter-condition="onChangeFilterCondition"/>
 
                 </div>
-                <div class="flex flex-row m-2 justify-end">
-                    <div id="filter" class="m-2">
-                        <div class="flex text-xs" role="group">
+                <div class="flex flex-row m-2 justify-between">
+                    <div class="flex justify-start m-2 inline-block" id="text-search">
+                        <jet-label class="align-middle mr-2" for="text-search" value="Text search"/>
+                        <jet-input type="text" name="text-search" autocomplete="off" class="block"
+                                   v-model="filterText"
+                                   @input="debounceGetRules"
+                        />
+                    </div>
+                    <div id="filter" class="flex justify-end">
+                        <div class="flex text-xs m-2" role="group">
                             <button @click="setFilterDate('isNew')"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
                                 New <span title="Total number of rules considered new" class="px-1 rounded-xl bg-pink-300">{{numNewRules}}</span>
@@ -37,10 +44,11 @@
                             </button>
 
                         </div>
+                        <jet-button type="button" @click.native="clearAllFilters">
+                            Reset All
+                        </jet-button>
                     </div>
-                    <jet-button type="button" @click.native="clearAllFilters">
-                        Reset All
-                    </jet-button>
+
                 </div>
 
                 <div v-if="search">
@@ -54,7 +62,7 @@
                                 :records="numFilteredRules"/>
                 </div>
 
-                <div v-for="(rule, ruleKey) in  _.drop(filteredRules, ((page-1)*perPage)).slice(0, perPage)"
+                <div v-for="(rule, ruleKey) in _.drop(filteredRules, ((page-1)*perPage)).slice(0, perPage)"
                      :key="ruleKey">
                     <view-rule :rule="rule" :client-account="clientAccount" @updated="getRules"/>
                 </div>
@@ -79,6 +87,8 @@ import TaxonomyFilter from '@/Components/PM/Rules/TaxonomyFilter'
 import TaxonomySelector from "@/Components/PM/Rules/TaxonomySelector";
 import FilterCondition from "@/Components/PM/Rules/FilterCondition";
 import JetButton from "@/Jetstream/Button";
+import JetInput from "@/Jetstream/Input";
+import JetLabel from "@/Jetstream/Label";
 
 export default {
     props: [
@@ -184,13 +194,23 @@ export default {
         getRules() {
             this.filteredRules = _.filter(
                 _.filter(
-                    this.allRules,
+                    _.filter(this.allRules, (rule) => {
+                        if(!this.filterText || this.filterText === '') {
+                            return true;
+                        }
+                        return rule.name.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
+                            || rule.content.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1;
+                    }),
                     this.filterObject['filterByTaxonomyTerm']
                 ),
                 this.filterObject[this.filterOption]
             );
             this.page = 1;
         },
+
+        debounceGetRules: _.debounce( function(e) {
+            this.getRules()
+        }, 300),
 
         filterByTaxonomyTerm(taxonomy, term) {
             this.taxonomies[taxonomy] = (term ? term : '');
@@ -213,6 +233,7 @@ export default {
                 this.taxonomies[taxonomy] = '';
             }
             this.filterOption = 'all';
+            this.filterText = '';
             this.getRules();
             this.$refs.taxonomySelectors.forEach(selector => selector.clearSelected());
         }
@@ -244,7 +265,9 @@ export default {
         ViewRule,
         TaxonomyFilter,
         TaxonomySelector,
-        JetButton
+        JetButton,
+        JetInput,
+        JetLabel,
     },
 }
 </script>
