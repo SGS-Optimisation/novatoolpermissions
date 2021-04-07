@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c2ac521c6222ceece784e9ac349f7b8",
+    "content-hash": "0e6abc8a6a14e21adb893349ba6a1838",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -9280,6 +9280,52 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.9.1"
             },
             "time": "2020-07-08T17:02:28+00:00"
+        },
+        {
+            "name": "wehaa/custom-links",
+            "version": "v0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wehaa/custom-links.git",
+                "reference": "fa1af763080bfe04b561413091fff8bdd9142604"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wehaa/custom-links/zipball/fa1af763080bfe04b561413091fff8bdd9142604",
+                "reference": "fa1af763080bfe04b561413091fff8bdd9142604",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Wehaa\\CustomLinks\\ToolServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Wehaa\\CustomLinks\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Adds custom links to Nova sidebar.",
+            "keywords": [
+                "laravel",
+                "nova",
+                "sidebar"
+            ],
+            "support": {
+                "issues": "https://github.com/wehaa/custom-links/issues",
+                "source": "https://github.com/wehaa/custom-links/tree/v0.1.1"
+            },
+            "time": "2019-09-14T02:00:44+00:00"
         }
     ],
     "packages-dev": [

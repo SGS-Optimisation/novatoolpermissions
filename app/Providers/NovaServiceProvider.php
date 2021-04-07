@@ -12,6 +12,7 @@ use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
 use OptimistDigital\NovaSettings\NovaSettings;
 use Silvanite\NovaToolPermissions\NovaToolPermissions;
+use Wehaa\CustomLinks\CustomLinks;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
@@ -104,7 +105,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
         return array_merge([
             new NovaToolPermissions(),
-            new \OptimistDigital\NovaSettings\NovaSettings
+            new \OptimistDigital\NovaSettings\NovaSettings,
+            new CustomLinks(),
         ], $dev_tools);
     }
 
