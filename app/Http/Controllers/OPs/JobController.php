@@ -31,8 +31,8 @@ class JobController extends Controller
 
         $job = JobRepository::findByJobNumber($jobNumber);
 
-        if (!$job->metadata->processing_mysgs) {
-            logger('already loaded mysgs data');
+        if (!$job->metadata->processing_mysgs && !$job->metadata->error_mysgs) {
+            logger('mysgs data available');
             $rules = RuleFilter::handle($job);
         }
 

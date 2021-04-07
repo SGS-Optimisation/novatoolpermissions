@@ -35,24 +35,45 @@ class BaseApi
      * @param $api_action
      * @param $query
      * @param $params
-     * @param bool $array_mode
+     * @param  bool  $array_mode
      * @return mixed
      */
     public static function get($api_action, $query, $params, $array_mode = false)
     {
-        $url = static::buildBaseUrl() . $api_action . $query;
+        $url = static::buildBaseUrl().$api_action.$query;
 
+        $parsed_response = Cache::get($url.print_r($params, true));
+
+        if(!$parsed_response) {
+            Cache::forget($url.print_r($params, true));
+            $parsed_response = static::call($url, $params, $array_mode);
+        }
+
+        return $parsed_response;
+
+    }
+
+    protected static function call($url, $params, $array_mode = false)
+    {
         return Cache::remember(
-            $url . print_r($params, true),
+            $url.print_r($params, true),
             3600,
             function () use ($url, $params, $array_mode) {
                 $response = static::buildRequest()->get($url, $params);
+
+                if ($response->status() > 203) {
+                    /* no content or error */
+                    return false;
+                }
+
                 return static::parseResponse($response, $array_mode);
             }
         );
     }
 
-    public static function parseResponse($response, $array_mode){
+
+    public static function parseResponse($response, $array_mode)
+    {
         return !is_array($response->body()) ?
             (json_decode($response->successful() ? $response->body() : "", $array_mode)) :
             $response->body();

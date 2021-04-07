@@ -24,15 +24,21 @@
         <div v-else-if="currentJob.metadata.processing_mysgs">
             <loader></loader>
         </div>
+        <div v-else-if="currentJob.metadata.error_mysgs">
+            <div class="h-64 bg-white flex justify-center align-middle">
+                <p class="mt-16 text-red-700">There was an error loading data for the job "{{ currentJob.job_number }}".
+                    <br><span v-if="currentJob.metadata.error_mysgs_reason">
+                        {{ currentJob.metadata.error_mysgs_reason}}
+                    </span>
+                    <span v-else>Please try again later.</span>
+                </p>
+            </div>
+        </div>
         <div v-else-if="currentJob.metadata.client_found === false">
             <div class="h-64 bg-white flex justify-center align-middle">
                 <p class="mt-16 text-red-700">"{{ currentJob.metadata.client.name }}" was not matched with any client
                     account.</p>
             </div>
-        </div>
-        <div v-else-if="currentJob.metadata.error_mysgs">
-            There was an error loading data for the job "{{ currentJob.metadata.client.name }}".
-            <br>Please try again later.
         </div>
         <div v-else>
             <job-identification :job="currentJob"/>
