@@ -1,14 +1,17 @@
 <template>
-    <div class="flex flex-shrink-0">
+    <div class="flex flex-wrap">
         <div v-for="(taxonomyTerms, taxonomy) in _.groupBy(rule.terms, function(item){
                             return item.taxonomy ? item.taxonomy.name : 'ERROR';
                         })">
 
             <div class="flex flex-col">
-                <div class="text-xs  bg-purple-400 m-2 text-white rounded-t-md mb-0 pl-1 flex-grow"
-                     v-if="taxonomyTerms[0].taxonomy && taxonomyTerms[0].taxonomy.parent">
-
-                    {{ taxonomyTerms[0].taxonomy.parent.name }}
+                <div class="text-xxs m-2 rounded-t-md mb-0 pl-1 flex-grow h-1"
+                     :class="{
+                        'text-pink-200 bg-pink-400' : taxonomyTerms[0].taxonomy.parent.name === 'Account Structure',
+                        'text-purple-200 bg-purple-400' : taxonomyTerms[0].taxonomy.parent.name === 'Job Categorizations'
+                        }"
+                     v-if="taxonomyTerms[0].taxonomy && taxonomyTerms[0].taxonomy.parent"
+                    :title="taxonomyTerms[0].taxonomy.parent.name">
                 </div>
 
                 <div class="flex flex-wrap flex-grow flex-shrink-0 text-sm items-center px-2">
@@ -37,3 +40,10 @@ export default {
     props: ['rule']
 }
 </script>
+
+<style scoped>
+.text-xxs {
+    font-size: 0.5rem;
+    text-transform: uppercase;
+}
+</style>
