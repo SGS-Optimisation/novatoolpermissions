@@ -34,7 +34,7 @@ export default {
 
         setSelected: function (value) {
             console.log("value selected for " + this.taxonomyName, value);
-            this.$emit('brandSelected', this.taxonomyName, value);
+            this.$emit('termSelected', this.taxonomyName, value);
         }
     },
 }

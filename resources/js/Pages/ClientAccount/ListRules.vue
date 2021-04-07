@@ -8,7 +8,7 @@
                                        :taxonomy-name="taxonomyName"
                                        :key="taxonomyName"
                                        :terms="terms"
-                                       @brandSelected="filterByTaxonomyTerm"
+                                       @termSelected="filterByTaxonomyTerm"
                                        ref="taxonomySelectors"
                     >
                     </taxonomy-selector>

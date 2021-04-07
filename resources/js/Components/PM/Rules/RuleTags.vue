@@ -5,20 +5,21 @@
                         })">
 
             <div class="flex flex-col">
-                <div class="text-xs  bg-purple-400 m-2 text-white rounded-t-md mb-0 pl-1"
+                <div class="text-xs  bg-purple-400 m-2 text-white rounded-t-md mb-0 pl-1 flex-grow"
                      v-if="taxonomyTerms[0].taxonomy && taxonomyTerms[0].taxonomy.parent">
 
                     {{ taxonomyTerms[0].taxonomy.parent.name }}
                 </div>
 
-                <div class="flex flex-wrap flex-shrink-0 text-sm items-center px-2">
+                <div class="flex flex-wrap flex-grow flex-shrink-0 text-sm items-center px-2">
                     <div class="bg-gray-300 text-gray-600 px-2 py-1 rounded-bl-md text-xs">
                         {{ taxonomy }}
                     </div>
                     <div v-for="(term, index) in taxonomyTerms"
+                         class="h-full text-xs flex-grow bg-blue-200 text-green-800 px-2 py-1 "
                          :class="(index == taxonomyTerms.length -1) ?
-                                     'h-full text-xs bg-blue-200 text-green-800 px-2 py-1 rounded-br-md'
-                                     : 'h-full text-xs bg-blue-200 text-green-800 px-2 py-1 border-r border-blue-100'"
+                                     'rounded-br-md'
+                                     : 'border-r border-blue-100'"
                     >
                         {{ term.name }}
                     </div>

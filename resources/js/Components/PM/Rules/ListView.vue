@@ -1,9 +1,10 @@
 <template>
-    <div class="bg-white shadow-md my-2 p-3 rounded" :data-rule-id="rule.id">
+    <div class="bg-white shadow-md my-4 p-3 rounded" :data-rule-id="rule.id">
         <div class="flex items-center justify-between">
             <div class="description">
                 <h2 @click="detailsOpen = !detailsOpen; $emit('toggle')" class="cursor-pointer text-xl font-bold">
                     {{ rule.name }}</h2>
+
                 <div class="flex">
                     <div class="flex-shrink cursor-default align-bottom text-xs border-dashed border-b border-gray-500"
                          :title="date()">
@@ -35,12 +36,19 @@
 
         </div>
 
-
         <!-- Collapsed content -->
-        <div class="w-full flex flex-col mt-8" :class="{'hidden': !detailsOpen}">
-            <hr class="mb-4 border-gray-700">
-            <div v-html="rule.content"></div>
-            <div class="text-right">
+        <div class="w-full flex flex-col mt-4">
+            <hr class="mb-4 border-gray-300">
+            <template v-if="detailsOpen">
+                <div v-html="rule.content"/>
+            </template>
+            <template v-else>
+                <div @click="detailsOpen = !detailsOpen; $emit('toggle')"
+                     class="cursor-pointer"
+                     v-html="excerpt"/>
+            </template>
+
+            <div class="text-right" :class="{'hidden' : !detailsOpen}">
                 <button @click="flagRule()"
                         class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
                         rounded-md font-semibold text-xs text-white uppercase tracking-widest
@@ -118,6 +126,7 @@ import JetDialogModal from '@/Jetstream/DialogModal';
 import JetInput from '@/Jetstream/Input'
 import JetLabel from '@/Jetstream/Label'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import clip from "text-clipper";
 
 const moment = require('moment');
 
@@ -228,6 +237,12 @@ export default {
                 this.$emit('updated');
             });
         },
+    },
+
+    computed: {
+        excerpt() {
+            return clip(this.rule.content, 120, {html: true, maxLines: 2});
+        }
     }
 
 }
