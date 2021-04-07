@@ -92,7 +92,7 @@ Route::name('pm.')
                      */
                     Route::group(['prefix' => '/taxonomy'], function () {
                         Route::get('/', [ClientAccountTaxonomyController::class, 'show'])
-                            ->middleware('cache.headers:public;max_age=300;etag')
+                            //->middleware('cache.headers:public;max_age=300;etag')
                             ->name('taxonomy');
                     });
 
@@ -102,7 +102,7 @@ Route::name('pm.')
                     Route::group(['prefix' => '/rules'], function () {
 
                         Route::get('/', [RuleController::class, 'index'])
-                            ->middleware('cache.headers:public;max_age=300;etag')
+                            //->middleware('cache.headers:public;max_age=300;etag')
                             ->name('rules');
 
                         Route::get('/create', [RuleController::class, 'create'])
