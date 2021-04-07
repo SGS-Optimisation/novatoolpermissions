@@ -28,7 +28,7 @@
             <div class="h-64 bg-white flex justify-center align-middle">
                 <p class="mt-16 text-red-700">There was an error loading data for the job "{{ currentJob.job_number }}".
                     <br><span v-if="currentJob.metadata.error_mysgs_reason">
-                        {{ currentJob.metadata.error_mysgs_reason}}
+                        {{ currentJob.metadata.error_mysgs_reason }}
                     </span>
                     <span v-else>Please try again later.</span>
                 </p>
@@ -61,7 +61,7 @@
                 <div class="flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mb-2">
 
                     <div class="flex flex-grow text-xs mx-2" role="group">
-                        <button @click="filterByNew"
+                        <button @click="filterButtonClicked('isNew')"
                                 class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg"
                                 :class="[
                                     { 'bg-blue-500 text-white' : filterOption === 'isNew' },
@@ -69,7 +69,7 @@
                                 ]">
                             New
                         </button>
-                        <button @click="filterByUpdated"
+                        <button @click="filterButtonClicked('isUpdated')"
                                 class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
                                 :class="[
                                     { 'bg-blue-500 text-white' : filterOption === 'isUpdated' },
@@ -79,14 +79,14 @@
                         </button>
                         <button
                             v-for="taxonomy in taxonomies"
-                            @click="filterByTaxonomy(taxonomy)"
+                            @click="filterButtonClicked(taxonomy)"
                             class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
                             :class="[
                                 { 'bg-blue-500 text-white' : filterOption === taxonomy },
                                  { 'bg-white text-blue-500' : filterOption !== taxonomy  }, ]">
                             {{ taxonomy }}
                         </button>
-                        <button @click="$refs.cpt.unfilter()"
+                        <button @click="unfilter"
                                 class="flex-grow bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
                             Unfilter
                         </button>
@@ -222,6 +222,7 @@ export default {
             // isotope integration
             sortOption: null,
             filterOption: null,
+            filterOptionTracker: null,
             filterText: "",
             filterObject: {},
             taxonomies: [],
@@ -321,6 +322,10 @@ export default {
             this.filterObject['isUpdated'] = (itemElem) => {
                 return itemElem[1].filter(rule => moment().subtract(3, 'months').isSameOrBefore(moment(rule.updated_at))).length > 0;
             };
+
+            this.filterObject['all'] = (itemElem) => {
+                return true;
+            };
         },
 
         waitMode() {
@@ -376,6 +381,30 @@ export default {
             this.isOpen = false;
             this.currentRule = null;
         },
+
+        filterButtonClicked(filterName) {
+            console.log('filter button clicked');
+
+            if (this.filterOptionTracker !== '' && this.filterOptionTracker === filterName) {
+                this.unfilter();
+                console.log('unfiltering');
+                return;
+            }
+
+            this.filterOptionTracker = filterName;
+            switch (filterName) {
+                case 'isNew':
+                    this.filterByNew()
+                    break;
+                case 'isUpdated':
+                    this.filterByUpdated();
+                    break;
+                default:
+                    this.filterByTaxonomy(filterName);
+                    break;
+            }
+        },
+
         filterByNew() {
             this.$refs.cpt.filter('isNew');
             this.filterFlag = "new";
@@ -388,6 +417,12 @@ export default {
             console.log('filtering by taxonomy', taxonomy);
             this.$refs.cpt.filter(taxonomy)
             this.filterFlag = null;
+        },
+        unfilter() {
+            this.filterOptionTracker = '';
+            this.filterFlag = null;
+            this.$refs.cpt.filter('all');
+            this.$refs.cpt.unfilter();
         },
 
         flagRule(rule) {
