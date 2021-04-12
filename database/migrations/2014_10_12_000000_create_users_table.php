@@ -17,6 +17,11 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('azure_id')->nullable();
             $table->string('name');
+            $table->string('given_name')->nullable();
+            $table->string('surname')->nullable();
+            $table->string('job_title')->nullable();
+            $table->string('office_location')->nullable();
+            $table->string('mobile_phone')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();

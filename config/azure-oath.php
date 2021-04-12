@@ -38,8 +38,11 @@ return [
     // AzureUserField => LaravelUserField
     'user_map' => [
         'name' => 'name',
+        'givenName' => 'given_name',
+        'surname' => 'surname',
+        'jobTitle' => 'job_title',
+        'officeLocation' => 'office_location',
+        'mobilePhone' => 'mobile_phone',
         'email' => 'email',
-        'name' => 'name',
-        'name' => 'name',
     ]
 ];
