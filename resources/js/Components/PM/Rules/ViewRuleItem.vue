@@ -12,13 +12,18 @@
                 :'flex flex-row border-b border-indigo-100 p-1 my-1'"
             >
                 <div class="w-full">
-                    <div class="cursor-pointer text- font-medium text-gray-900" @click="$emit('on-click-view', rule)">
-                        {{ rule.name }}
+                    <div class="cursor-pointer" @click="$emit('on-click-view', rule)">
+                        <p class="text-sm font-bold text-gray-900">{{ rule.name }}</p>
+                        <p class="text-xs text-gray-700" v-html="excerpt(rule)"/>
                     </div>
                     <div class="text-xs text-gray-500 flex flex-row justify-between">
                         <div class="flex flex-row">
-                            <div class="text-xs bg-pink-200 rounded-xl px-2">
-                                {{ _.find(rule.terms, (item) => {return item.taxonomy.name === group }).name  }}
+                            <div class="hidden text-xs bg-pink-200 rounded-xl px-2">
+                                {{
+                                    _.find(rule.terms, (item) => {
+                                        return item.taxonomy.name === group
+                                    }).name
+                                }}
                             </div>
                             <div class="ml-2" v-if="rule.flagged">
                                 <i title="This rule is currently flagged"
@@ -37,10 +42,10 @@
                     </div>
 
                 </div>
-<!--                <a href="#" @click="$emit('on-click-view', ruleItem)"
-                   class="text-indigo-600 hover:text-indigo-900 float-right justify-center -align-center">
-                    <i class="fa fa-eye"></i>
-                </a>-->
+                <!--                <a href="#" @click="$emit('on-click-view', ruleItem)"
+                                   class="text-indigo-600 hover:text-indigo-900 float-right justify-center -align-center">
+                                    <i class="fa fa-eye"></i>
+                                </a>-->
             </div>
         </div>
     </div>
@@ -49,15 +54,20 @@
 <script>
 
 import moment from "moment";
+import clip from "text-clipper";
 
 export default {
     name: "ViewRuleItem",
-    props: [ 'group', 'rules', 'filterFlag'],
+    props: ['group', 'rules', 'filterFlag'],
     data() {
-        return {
-        }
+        return {}
     },
-    computed:{
+    methods: {
+        excerpt(rule) {
+            return clip(rule.content.replace(/<img .*?>/g, ''), 180, {html: true, maxLines: 2});
+        },
+    },
+    computed: {
         taxonomyRules() {
             return _.orderBy([...this.filterFlag ? this.rules.filter(rule => {
                 let time = this.filterFlag === 'updated' ? moment(rule.updated_at) : moment(rule.created_at);
@@ -65,7 +75,9 @@ export default {
                 return moment().subtract(3, 'months').isSameOrBefore(time)
                     && (this.filterFlag !== 'updated' || rule.created_at !== rule.updated_at)
             }) : this.rules], 'updated_at', 'desc')
-        }
+        },
+
+
     }
     // created(){
     //     if(this.filterFlag) {
