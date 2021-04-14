@@ -18,7 +18,7 @@
                     </div>
                     <div class="text-xs text-gray-500 flex flex-row justify-between">
                         <div class="flex flex-row">
-                            <div class="hidden text-xs bg-pink-200 rounded-xl px-2">
+                            <div class="text-xs bg-pink-200 rounded-xl px-2">
                                 {{
                                     _.find(rule.terms, (item) => {
                                         return item.taxonomy.name === group
@@ -64,7 +64,7 @@ export default {
     },
     methods: {
         excerpt(rule) {
-            return clip(rule.content.replace(/<img .*?>/g, ''), 180, {html: true, maxLines: 2});
+            return clip(rule.content.replace(/<[^>]+>/g, ''), 180, {html: true, maxLines: 3});
         },
     },
     computed: {

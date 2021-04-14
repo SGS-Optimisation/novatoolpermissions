@@ -114,8 +114,10 @@
         <!-- Rule Viewing Modal -->
         <jet-dialog-modal :show="isOpen && currentRule" max-width="6xl" @close="closeRuleModal">
             <template #title>
-                <div class="flex justify-between">
-                    <div><p>Viewing rule</p></div>
+                <div v-if="currentRule" class="flex justify-between">
+                    <div class="flex-grow border-gray-200 border-b-2 mr-6">
+                        <p class="font-bold">{{currentRule.name}}</p>
+                    </div>
                     <jet-secondary-button @click.native="closeRuleModal">
                         <i class="fa fa-times"/>
                     </jet-secondary-button>
@@ -139,6 +141,12 @@
                 <jet-button class="ml-2" @click.native="flagRule(currentRule)">
                     Flag rule?
                 </jet-button>
+
+                <a v-if="currentRule" target="_blank"
+                   class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150"
+                   :href="route('pm.client-account.rules.edit', {clientAccount: currentJob.metadata.client.slug, id: currentRule.id})">
+                    Edit
+                </a>
 
                 <jet-secondary-button @click.native="closeRuleModal">
                     Close
@@ -379,7 +387,7 @@ export default {
         },
         closeRuleModal() {
             this.isOpen = false;
-            this.currentRule = null;
+            //this.currentRule = null;
         },
 
         filterButtonClicked(filterName) {
