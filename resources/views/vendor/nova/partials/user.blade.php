@@ -14,9 +14,13 @@
 <dropdown-menu slot="menu" width="200" direction="rtl">
     <ul class="list-reset">
         <li>
-            <a href="{{ route('nova.logout') }}" class="block no-underline text-90 hover:bg-30 p-3">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+            <button type="submit"
+                    class="w-full block no-underline text-90 hover:bg-30 p-3">
                 {{ __('Logout') }}
-            </a>
+            </button>
+            </form>
         </li>
     </ul>
 </dropdown-menu>

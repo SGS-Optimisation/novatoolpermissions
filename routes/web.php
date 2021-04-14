@@ -160,7 +160,7 @@ Route::get('nova/login', function () {
     return redirect('/login/microsoft');
 })->name('nova.login');
 
-Route::get('nova/logout', function () {
+Route::match(['get', 'post'], 'nova/logout', function () {
     return redirect('logout');
 })->name('nova.logout');
 
