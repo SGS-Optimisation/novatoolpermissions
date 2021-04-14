@@ -61,6 +61,17 @@ use Silvanite\Brandenburg\Traits\HasRoles;
  * @property-read int|null $roles_count
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAzureId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User withRoles()
+ * @property string|null $given_name
+ * @property string|null $surname
+ * @property string|null $job_title
+ * @property string|null $office_location
+ * @property string|null $mobile_phone
+ * @method static \Database\Factories\UserFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereGivenName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereJobTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereMobilePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereSurname($value)
  */
 class User extends Authenticatable implements Auditable
 {

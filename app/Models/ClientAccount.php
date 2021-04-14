@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Rule[] $rules
  * @property-read int|null $rules_count
  * @property-read \App\Models\Team|null $team
+ * @method static \Database\Factories\ClientAccountFactory factory(...$parameters)
  */
 class ClientAccount extends Model
 {

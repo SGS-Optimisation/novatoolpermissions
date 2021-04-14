@@ -40,6 +40,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ClientAccount[] $client_accounts
  * @property-read \App\Models\FieldMapping|null $mapping
+ * @property-read mixed $requires_mapping
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\FieldMapping[] $mappings
+ * @property-read int|null $mappings_count
+ * @method static \Database\Factories\TaxonomyFactory factory(...$parameters)
  */
 class Taxonomy extends Model
 {

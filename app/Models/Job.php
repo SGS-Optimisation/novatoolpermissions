@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Job whereMetadata($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Job whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Database\Factories\JobFactory factory(...$parameters)
  */
 class Job extends Model
 {

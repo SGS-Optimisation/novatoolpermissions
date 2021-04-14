@@ -32,6 +32,7 @@ use Jenssegers\Mongodb\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Rule[] $rules
  * @property-read int|null $rules_count
  * @method static \Illuminate\Database\Eloquent\Builder|Term whereDeletedAt($value)
+ * @method static \Database\Factories\TermFactory factory(...$parameters)
  */
 class Term extends Model
 {

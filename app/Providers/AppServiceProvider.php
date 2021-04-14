@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Team;
+use App\Services\Azure\Auth\AssignRoles;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -35,6 +36,8 @@ class AppServiceProvider extends ServiceProvider
                 'name' => explode(' ', $new_user->name, 2)[0]."'s Team",
                 'personal_team' => true,
             ]));
+
+            AssignRoles::handle($new_user);
         });
     }
 }

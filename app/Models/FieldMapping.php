@@ -34,6 +34,10 @@ use Spatie\EloquentSortable\SortableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|FieldMapping whereResolverName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FieldMapping whereTaxonomyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FieldMapping whereUpdatedAt($value)
+ * @property int $sort_order
+ * @property-read mixed $slug
+ * @method static \Illuminate\Database\Eloquent\Builder|FieldMapping ordered(string $direction = 'asc')
+ * @method static \Illuminate\Database\Eloquent\Builder|FieldMapping whereSortOrder($value)
  */
 class FieldMapping extends Model implements Sortable
 {

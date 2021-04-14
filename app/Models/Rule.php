@@ -41,6 +41,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\OwenIt\Auditing\Models\Audit[] $audits
  * @property-read int|null $audits_count
+ * @method static \Database\Factories\RuleFactory factory(...$parameters)
  */
 class Rule extends Model implements Auditable
 {
