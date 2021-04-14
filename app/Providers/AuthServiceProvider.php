@@ -2,12 +2,19 @@
 
 namespace App\Providers;
 
+use App\Models\ClientAccount;
+use App\Models\Rule;
 use App\Models\Team;
+use App\Policies\ClientAccountPolicy;
+use App\Policies\RulePolicy;
 use App\Policies\TeamPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Silvanite\Brandenburg\Traits\ValidatesPermissions;
 
 class AuthServiceProvider extends ServiceProvider
 {
+    use ValidatesPermissions;
+
     /**
      * The policy mappings for the application.
      *
@@ -15,6 +22,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Team::class => TeamPolicy::class,
+        Rule::class => RulePolicy::class,
+        ClientAccount::class => ClientAccountPolicy::class,
     ];
 
     /**
@@ -24,8 +33,20 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->registerPolicies();
+        collect([
+            'createRules', 'updateRules', 'deleteRules',
+            'createClientAccounts', 'updateClientAccounts', 'deleteClientAccounts',
 
-        //
+        ])->each(function ($permission) {
+            \Gate::define($permission, function ($user) use ($permission) {
+                if ($this->nobodyHasAccess($permission)) {
+                    return true;
+                }
+
+                return $user->hasRoleWithPermission($permission);
+            });
+        });
+
+        $this->registerPolicies();
     }
 }

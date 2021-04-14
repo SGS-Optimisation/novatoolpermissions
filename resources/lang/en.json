@@ -1,0 +1,19 @@
+{
+    "viewNova": "Access Admin",
+    "viewRoles": "View Roles",
+    "manageRoles": "Manage Roles",
+    "assignRoles": "Assign Roles",
+    "viewUsers": "View Users",
+    "manageUsers": "Manage Users",
+    "canBeGivenAccess": "Can be given access",
+
+    "createRules": "Create Rules",
+    "updateRules": "Update Rules",
+    "deleteRules": "Delete Rules",
+
+    "createClientAccounts": "Create Client Accounts",
+    "updateClientAccounts": "Update Client Accounts",
+    "deleteClientAccounts": "Delete Client Accounts"
+
+
+}
