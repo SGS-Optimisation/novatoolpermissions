@@ -14,37 +14,28 @@
             </div>
 
 
-
         </template>
 
-        <div class="mx-auto py-12 flex flex-grow">
-            <div class="px-2">
-                <h2>Your teams</h2>
-                <ul>
-                    <li v-for="availableTeam in myTeams">
-                        <jet-nav-link :href="route('pm.client-account.dashboard', {clientAccount: availableTeam.client_account.slug })">
-                            {{ availableTeam.client_account.name }}
-                            <span class="ml-2 bg-pink-300 rounded-lg px-1" title="Number of rules">
-                                {{ availableTeam.client_account.rules_count }}
-                            </span>
-                        </jet-nav-link>
-                    </li>
-                </ul>
-            </div>
-            <div class="px-2">
-                <h2>Other teams</h2>
-                <ul class="h-72 flex flex-col flex-wrap">
-                    <li class="px-2" v-for="otherTeam in otherTeams">
-                        <jet-nav-link :href="route('pm.client-account.dashboard', {clientAccount: otherTeam.client_account.slug })">
-                            {{ otherTeam.client_account.name }}
+        <div class="bg-white justify-around flex">
+        <div class="flex flex-col w-4/5 py-12">
 
-                            <span class="ml-2 bg-pink-300 rounded-lg px-1" title="Number of rules">
-                                {{ otherTeam.client_account.rules_count }}
-                            </span>
-                        </jet-nav-link>
-                    </li>
-                </ul>
+            <div class="pl-2 pr-8">
+                <h2 class="text-center bg-gray-100 font-semibold">Your teams</h2>
+                <div class="flex flex-wrap justify-center pt-1">
+                    <div class="p-3" v-for="team in myTeams">
+                        <client-account-link :team="team"/>
+                    </div>
+                </div>
             </div>
+            <div class="px-2 mt-8">
+                <h2 class="text-center bg-gray-100 font-semibold">Other teams</h2>
+                <div class="flex flex-wrap justify-center pt-1">
+                    <div class="p-3" v-for="team in otherTeams">
+                        <client-account-link :team="team"/>
+                    </div>
+                </div>
+            </div>
+        </div>
         </div>
     </app-layout>
 </template>
@@ -54,6 +45,7 @@ import AppLayout from '@/Layouts/AppLayout'
 import Welcome from '@/Jetstream/Welcome'
 import JetNavLink from "@/Jetstream/NavLink";
 import ActionMenu from "@/Components/PM/ActionMenu";
+import ClientAccountLink from "@/Components/PM/ClientAccount/ClientAccountLink";
 
 export default {
     name: "Landing",
@@ -64,6 +56,7 @@ export default {
     ],
 
     components: {
+        ClientAccountLink,
         ActionMenu,
         AppLayout,
         Welcome,

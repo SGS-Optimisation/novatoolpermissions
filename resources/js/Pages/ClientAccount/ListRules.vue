@@ -18,7 +18,7 @@
                 </div>
                 <div class="flex flex-row m-2 justify-between">
                     <div class="flex justify-start m-2 inline-block" id="text-search">
-                        <jet-label class="align-middle mr-2" for="text-search" value="Text search"/>
+                        <jet-label class="align-middle mr-2 mt-2" for="text-search" value="Text search:"/>
                         <jet-input type="text" name="text-search" autocomplete="off" class="block"
                                    v-model="filterText"
                                    @input="debounceGetRules"
@@ -44,7 +44,7 @@
                             </button>
 
                         </div>
-                        <jet-button type="button" @click.native="clearAllFilters">
+                        <jet-button class="mt-2 h-2/3" type="button" @click.native="clearAllFilters">
                             Reset All
                         </jet-button>
                     </div>

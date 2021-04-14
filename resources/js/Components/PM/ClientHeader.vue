@@ -1,7 +1,7 @@
 <template>
     <div class="mr-4 my-auto">
         <div v-if="clientAccount != null && clientAccount.image !== ''">
-            <img  :src="'/storage/'+clientAccount.image" style="max-width: 80px">
+            <img :src="'/storage/'+clientAccount.image" style="max-width: 80px">
         </div>
         <div v-else>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
