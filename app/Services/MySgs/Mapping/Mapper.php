@@ -70,7 +70,14 @@ class Mapper
 
     public function run()
     {
-        $value = $this->getMetaValue();
+        try{
+            $value = $this->getMetaValue();
+        }catch (\Exception $e) {
+            \Log::error('error running mapping ' . $this->mapping->id );
+            \Log::error($e->getMessage());
+            $value = null;
+        }
+
 
         return [$value, $this->accumulator];
     }
