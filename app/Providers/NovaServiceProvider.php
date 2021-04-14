@@ -62,11 +62,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     protected function gate()
     {
-        Gate::define('viewNova', function ($user) {
+        /*Gate::define('viewNova', function ($user) {
             return Str::endsWith($user->email, '@sgsco.com')
                 || Str::endsWith($user->email, '@thr3dcgi.com')
                 || $user->hasRoleWithPermission('viewNova');
-        });
+        });*/
     }
 
     /**
