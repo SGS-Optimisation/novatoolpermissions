@@ -102,6 +102,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         $admin_tools = [];
 
         if (app()->environment() == 'local') {
+            $dev_tools[] = new \Cloudstudio\ResourceGenerator\ResourceGenerator();
+
         }
 
         if (Gate::check('manageSettings')) {

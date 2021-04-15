@@ -46,6 +46,7 @@ class AuthServiceProvider extends ServiceProvider
             'viewTerms', 'manageTerms',
             'viewFieldMappings', 'manageFieldMappings',
             'manageSettings',
+            'manageTeams',
 
         ])->each(function ($permission) {
             \Gate::define($permission, function ($user) use ($permission) {

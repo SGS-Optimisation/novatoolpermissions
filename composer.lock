@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0e6abc8a6a14e21adb893349ba6a1838",
+    "content-hash": "994800fdbfe0e30ec770c33004e33997",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -545,6 +545,71 @@
                 "source": "https://github.com/cakephp/chronos"
             },
             "time": "2021-04-07T01:06:46+00:00"
+        },
+        {
+            "name": "cloudstudio/resource-generator",
+            "version": "1.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cloudstudio/resource-generator.git",
+                "reference": "a14fcdf9e2117228f310decb8eb6dc65aec42dcf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cloudstudio/resource-generator/zipball/a14fcdf9e2117228f310decb8eb6dc65aec42dcf",
+                "reference": "a14fcdf9e2117228f310decb8eb6dc65aec42dcf",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "^2.8",
+                "laravel/nova": "*",
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^3.6",
+                "phpunit/phpunit": "7.1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Cloudstudio\\ResourceGenerator\\ResourceGeneratorServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Cloudstudio\\ResourceGenerator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Toni Soriano",
+                    "email": "hello@cloudstudio.es",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Eric Lagarda",
+                    "email": "eric@infinety.es",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Resource Generator for Laravel Nova",
+            "keywords": [
+                "generator",
+                "laravel",
+                "nova",
+                "resource"
+            ],
+            "support": {
+                "issues": "https://github.com/cloudstudio/resource-generator/issues",
+                "source": "https://github.com/cloudstudio/resource-generator/tree/master"
+            },
+            "time": "2019-10-16T07:23:16+00:00"
         },
         {
             "name": "composer/ca-bundle",
