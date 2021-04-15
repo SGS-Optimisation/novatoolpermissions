@@ -99,15 +99,19 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function tools()
     {
         $dev_tools = [];
+        $admin_tools = [];
 
         if (app()->environment() == 'local') {
         }
 
+        if (Gate::check('manageSettings')) {
+            $admin_tools[] = new \OptimistDigital\NovaSettings\NovaSettings;
+        }
+
         return array_merge([
             new NovaToolPermissions(),
-            new \OptimistDigital\NovaSettings\NovaSettings,
             new CustomLinks(),
-        ], $dev_tools);
+        ], $dev_tools, $admin_tools);
     }
 
     /**

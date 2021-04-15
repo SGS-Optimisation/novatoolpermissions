@@ -2,12 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\ClientAccount;
-use App\Models\Rule;
+use App\Models\Term;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class RulePolicy
+class TermPolicy
 {
     use HandlesAuthorization;
 
@@ -19,68 +18,64 @@ class RulePolicy
      */
     public function viewAny(User $user)
     {
-        return true;
+        return $user->canAny(['viewTerms', 'manageTerms']);
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rule  $rule
+     * @param  \App\Models\Term  $term
      * @return mixed
      */
-    public function view(User $user, Rule $rule)
+    public function view(User $user, Term $term)
     {
-        return true;
+        return $user->can('manageTerms');
     }
 
     /**
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
-     * @param  ClientAccount  $clientAccount
      * @return mixed
      */
-    public function create(User $user, ClientAccount $clientAccount)
+    public function create(User $user)
     {
-        return $user->can('createRules')
-            && $user->belongsToTeam($clientAccount->team);
+        return $user->can('manageTerms');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rule  $rule
+     * @param  \App\Models\Term  $term
      * @return mixed
      */
-    public function update(User $user, Rule $rule)
+    public function update(User $user, Term $term)
     {
-        return $user->can('updateRules')
-            && $user->belongsToTeam($rule->clientAccount->team);
+        return $user->can('manageTerms');
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rule  $rule
+     * @param  \App\Models\Term  $term
      * @return mixed
      */
-    public function delete(User $user, Rule $rule)
+    public function delete(User $user, Term $term)
     {
-        return $user->can('deleteRules')
-            && $user->belongsToTeam($rule->clientAccount->team);
+        return $user->can('manageTerms');
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rule  $rule
+     * @param  \App\Models\Term  $term
      * @return mixed
      */
-    public function restore(User $user, Rule $rule)
+    public function restore(User $user, Term $term)
     {
         //
     }
@@ -89,10 +84,10 @@ class RulePolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rule  $rule
+     * @param  \App\Models\Term  $term
      * @return mixed
      */
-    public function forceDelete(User $user, Rule $rule)
+    public function forceDelete(User $user, Term $term)
     {
         //
     }

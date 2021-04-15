@@ -2,12 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\ClientAccount;
-use App\Models\Rule;
+use App\Models\Taxonomy;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class RulePolicy
+class TaxonomyPolicy
 {
     use HandlesAuthorization;
 
@@ -19,68 +18,64 @@ class RulePolicy
      */
     public function viewAny(User $user)
     {
-        return true;
+        return $user->canAny(['viewTaxonomies', 'manageTaxonomies']);
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rule  $rule
+     * @param  \App\Models\Taxonomy  $taxonomy
      * @return mixed
      */
-    public function view(User $user, Rule $rule)
+    public function view(User $user, Taxonomy $taxonomy)
     {
-        return true;
+        return $user->can('manageTaxonomies');
     }
 
     /**
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
-     * @param  ClientAccount  $clientAccount
      * @return mixed
      */
-    public function create(User $user, ClientAccount $clientAccount)
+    public function create(User $user)
     {
-        return $user->can('createRules')
-            && $user->belongsToTeam($clientAccount->team);
+        return $user->can('manageTaxonomies');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rule  $rule
+     * @param  \App\Models\Taxonomy  $taxonomy
      * @return mixed
      */
-    public function update(User $user, Rule $rule)
+    public function update(User $user, Taxonomy $taxonomy)
     {
-        return $user->can('updateRules')
-            && $user->belongsToTeam($rule->clientAccount->team);
+        return $user->can('manageTaxonomies');
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rule  $rule
+     * @param  \App\Models\Taxonomy  $taxonomy
      * @return mixed
      */
-    public function delete(User $user, Rule $rule)
+    public function delete(User $user, Taxonomy $taxonomy)
     {
-        return $user->can('deleteRules')
-            && $user->belongsToTeam($rule->clientAccount->team);
+        return $user->can('manageTaxonomies');
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rule  $rule
+     * @param  \App\Models\Taxonomy  $taxonomy
      * @return mixed
      */
-    public function restore(User $user, Rule $rule)
+    public function restore(User $user, Taxonomy $taxonomy)
     {
         //
     }
@@ -89,10 +84,10 @@ class RulePolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rule  $rule
+     * @param  \App\Models\Taxonomy  $taxonomy
      * @return mixed
      */
-    public function forceDelete(User $user, Rule $rule)
+    public function forceDelete(User $user, Taxonomy $taxonomy)
     {
         //
     }

@@ -76,6 +76,9 @@ class RuleController extends Controller
      */
     public function create(Request $request, $client_account_slug)
     {
+        $client_account = ClientAccount::whereSlug($client_account_slug)->first();
+        $this->authorize('create', [Rule::class, $client_account]);
+
         return Jetstream::inertia()->render($request, 'ClientAccount/CreateRule', array_merge([
             'team' => $request->user()->currentTeam,
             'rule' => new Rule(['content' => ''])
@@ -129,9 +132,9 @@ class RuleController extends Controller
      */
     public function edit(Request $request, $client_account_slug, $id)
     {
-        $request->session()->flash('status', 'Task was successful!');
-
         $rule = Rule::find($id);
+
+        $this->authorize('update', $rule);
 
         $rule->content = str_replace(
             ['\n', '<div>&nbsp;</div>', '<div>', '</div>', '<span>', '</span>', '<p></p>', '<p><br></p>'],

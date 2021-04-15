@@ -18,25 +18,27 @@ class ShareUserPermissions
      */
     public function handle(Request $request, Closure $next)
     {
-        Inertia::share([
-            'user_permissions' => \Cache::remember('user-permissions-' . $request->user()->id,
-                300,
-                function() use ($request){
-                    $accumulator = collect();
-                    $request->user()->roles->each(function(Role $role) use ($accumulator){
+        if (!\Auth::guest()) {
+            Inertia::share([
+                'user_permissions' => \Cache::remember('user-permissions-'.$request->user()->id,
+                    300,
+                    function () use ($request) {
+                        $accumulator = collect();
+                        $request->user()->roles->each(function (Role $role) use ($accumulator) {
 
-                        foreach($role->permissions as $permission) {
-                            $accumulator->add($permission);
-                        }
-                    });
-                    //logger($accumulator->join(','));
+                            foreach ($role->permissions as $permission) {
+                                $accumulator->add($permission);
+                            }
+                        });
+                        //logger($accumulator->join(','));
 
-                    $permissions = $accumulator->unique()->toArray();
+                        $permissions = $accumulator->unique()->toArray();
 
-                    return array_combine($permissions, array_fill(0, count($permissions), true));
-                }
-            ),
-        ]);
+                        return array_combine($permissions, array_fill(0, count($permissions), true));
+                    }
+                ),
+            ]);
+        }
 
         return $next($request);
     }

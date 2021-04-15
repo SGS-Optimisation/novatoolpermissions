@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
             ]);
 
             ClientAccount::inRandomOrder()->take(3)->get()->each(function(ClientAccount $client) use ($user){
-                 $client->team->users()->attach($user->id);
+                 $client->team->users()->attach($user->id, ['role' => 'editor']);
             });
         });
     }

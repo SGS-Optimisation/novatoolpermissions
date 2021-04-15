@@ -4,10 +4,14 @@ namespace App\Providers;
 
 use App\Models\ClientAccount;
 use App\Models\Rule;
+use App\Models\Taxonomy;
 use App\Models\Team;
+use App\Models\Term;
 use App\Policies\ClientAccountPolicy;
 use App\Policies\RulePolicy;
+use App\Policies\TaxonomyPolicy;
 use App\Policies\TeamPolicy;
+use App\Policies\TermPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Silvanite\Brandenburg\Traits\ValidatesPermissions;
 
@@ -24,6 +28,8 @@ class AuthServiceProvider extends ServiceProvider
         Team::class => TeamPolicy::class,
         Rule::class => RulePolicy::class,
         ClientAccount::class => ClientAccountPolicy::class,
+        Taxonomy::class => TaxonomyPolicy::class,
+        Term::class => TermPolicy::class,
     ];
 
     /**
@@ -36,6 +42,10 @@ class AuthServiceProvider extends ServiceProvider
         collect([
             'createRules', 'updateRules', 'deleteRules',
             'createClientAccounts', 'updateClientAccounts', 'deleteClientAccounts',
+            'viewTaxonomies', 'manageTaxonomies',
+            'viewTerms', 'manageTerms',
+            'viewFieldMappings', 'manageFieldMappings',
+            'manageSettings',
 
         ])->each(function ($permission) {
             \Gate::define($permission, function ($user) use ($permission) {
