@@ -153,7 +153,7 @@ Route::name('pm.')
                 Route::put('/{id}', [TermController::class, 'update'])
                     ->name('update');
 
-                Route::delete('/{id}', [TermController::class, 'destroy'])
+                Route::put('/{id}', [TermController::class, 'destroy'])
                     ->name('destroy');
             });
     });

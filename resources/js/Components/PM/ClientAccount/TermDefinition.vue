@@ -268,7 +268,7 @@ export default {
         deleteTerm() {
             console.log('delete term ' + this.deletingTermId);
 
-            this.deleteTermForm.delete(route('pm.terms.destroy', this.deletingTermId), {
+            this.deleteTermForm.put(route('pm.terms.destroy', this.deletingTermId), {
                 preserveScroll: true
             }).then(() => {
                 this.cancelDeleteTerm();
