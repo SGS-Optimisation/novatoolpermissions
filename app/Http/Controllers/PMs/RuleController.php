@@ -45,7 +45,7 @@ class RuleController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @param $client_account_slug
      * @return \Inertia\Response
      */
@@ -101,7 +101,7 @@ class RuleController extends Controller
         $rule = $client_account->rules()->create($rule_fields);
         $this->parseContent($request, $rule);
 
-        logger('rule added: ' . $rule->id);
+        logger('rule added: '.$rule->id);
 
         $request->session()->flash('success', 'Rule successfully created!');
 
@@ -137,9 +137,20 @@ class RuleController extends Controller
         $this->authorize('update', $rule);
 
         $rule->content = str_replace(
-            ['\n', '<div>&nbsp;</div>', '<div>', '</div>', '<span>', '</span>', '<p></p>', '<p><br></p>'],
-            ['', '', '', '', '', '', '', ''],
-            nl2br($rule->content)
+            [
+                '\n',
+                '\r\n',
+                '<div>&nbsp;</div>',
+                '<p></p>',
+                '<p><br></p>',
+                '<ul>',
+                '</ul>',
+                '<li>',
+                '</li>',
+                '</span>'
+            ],
+            ['', '', '', '', '', '', '', '', '', '</span><br/>'],
+            $rule->content
         );
 
         return Jetstream::inertia()->render($request, 'ClientAccount/EditRule', array_merge([
