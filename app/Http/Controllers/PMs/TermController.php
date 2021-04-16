@@ -70,10 +70,14 @@ class TermController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $term = Term::find($id);
         $client_account = ClientAccount::find($request->clientAccountId);
+        $client_account->terms()->detach($id);
 
-        $term->delete();
+        $term = Term::find($id);
+
+        if($term->client_accounts()->count() == 0 && $term->rules()->count() == 0) {
+            $term->delete();
+        }
 
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');

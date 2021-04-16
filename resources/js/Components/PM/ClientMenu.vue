@@ -20,6 +20,9 @@
                               :active="route().current('pm.client-account.edit')">
                     Settings
                 </sub-nav-link>
+                <sub-nav-link :href="route('teams.show', clientAccount.team.id)">
+                    Team
+                </sub-nav-link>
             </nav>
 
 

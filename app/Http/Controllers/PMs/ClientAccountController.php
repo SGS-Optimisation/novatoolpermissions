@@ -16,6 +16,14 @@ use Laravel\Jetstream\Jetstream;
 
 class ClientAccountController extends Controller
 {
+
+    public function getById($id)
+    {
+        $client_account = ClientAccount::find($id);
+
+        return redirect(route('pm.client-account.dashboard', [$client_account->slug]));
+    }
+
     /**
      * Display a listing of the resource.
      *

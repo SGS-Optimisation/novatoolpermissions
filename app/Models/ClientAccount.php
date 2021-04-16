@@ -57,6 +57,8 @@ class ClientAccount extends Model
         'id' => 'integer',
     ];
 
+    protected $with = ['team'];
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

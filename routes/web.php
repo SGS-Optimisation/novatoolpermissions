@@ -76,6 +76,8 @@ Route::name('pm.')
                 Route::post('/client-account', [ClientAccountController::class, 'store'])
                     ->name('store');
 
+                Route::get('/{id}', [ClientAccountController::class, 'getById'])->name('getById');
+
                 Route::prefix('/{clientAccount:slug}')->group(function () {
                     Route::get('/', [ClientAccountController::class, 'show']);
 
