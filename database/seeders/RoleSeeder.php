@@ -33,7 +33,7 @@ class RoleSeeder extends Seeder
             'sysadmin' => [
                 'viewNova', 'viewRoles', 'manageRoles', 'assignRoles', 'viewUsers', 'manageUsers',
                 'canBeGivenAccess',
-                'createRules', 'updateRules', 'deleteRules',
+                'forceCreateRules', 'createRules', 'updateRules', 'deleteRules',
                 'createClientAccounts', 'updateClientAccounts', 'deleteClientAccounts',
                 'accessPM',
                 'viewTaxonomies', 'manageTaxonomies',

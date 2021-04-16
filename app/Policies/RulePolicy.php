@@ -43,8 +43,8 @@ class RulePolicy
      */
     public function create(User $user, ClientAccount $clientAccount)
     {
-        return $user->can('createRules')
-            && $user->belongsToTeam($clientAccount->team);
+        return $user->can('createRules') && $user->belongsToTeam($clientAccount->team)
+            || $user->can('forceCreateRules');
     }
 
     /**
@@ -56,8 +56,8 @@ class RulePolicy
      */
     public function update(User $user, Rule $rule)
     {
-        return $user->can('updateRules')
-            && $user->belongsToTeam($rule->clientAccount->team);
+        return $user->can('updateRules') && $user->belongsToTeam($rule->clientAccount->team)
+            || $user->can('forceCreateRules');
     }
 
     /**
