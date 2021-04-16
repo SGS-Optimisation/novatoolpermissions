@@ -31,7 +31,7 @@ class Kernel extends ConsoleKernel
         })->daily();
 
         $schedule->command('cache:clear')->lastDayOfMonth();
-        $schedule->command('cache:warmup')->lastDayOfMonth();
+        $schedule->command('cache:warmup')->hourly();
     }
 
     /**
