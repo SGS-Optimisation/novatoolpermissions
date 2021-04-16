@@ -13,7 +13,12 @@ class AssignRoles
 
     public static function handle(User $user)
     {
-        logger('checking roles for new user ' . $user->name);
+        logger('checking roles for new user '.$user->name);
+
+        if (env('DEMO_MODE')) {
+            $user->assignRole('sysadmin');
+            return;
+        }
 
         $TL_titles = [
             'Team Leader',
@@ -27,18 +32,18 @@ class AssignRoles
             'Chef de Projet',
         ];
 
-        foreach($TL_titles as $title) {
+        foreach ($TL_titles as $title) {
             static::checkTitleStringForRole($user, $title, 'team-leader');
         }
 
-        foreach($PM_titles as $title) {
+        foreach ($PM_titles as $title) {
             static::checkTitleStringForRole($user, $title, 'project-manager');
         }
     }
 
     protected static function checkTitleStringForRole(User $user, $title, $role)
     {
-        if(Str::contains($user->job_title, $title) || Str::contains($title, $user->job_title)) {
+        if (Str::contains($user->job_title, $title) || Str::contains($title, $user->job_title)) {
             $user->assignRole($role);
         }
     }
