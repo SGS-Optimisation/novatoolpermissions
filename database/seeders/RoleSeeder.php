@@ -32,7 +32,7 @@ class RoleSeeder extends Seeder
         $permissions = [
             'sysadmin' => [
                 'viewNova', 'viewRoles', 'manageRoles', 'assignRoles', 'viewUsers', 'manageUsers',
-                'canBeGivenAccess', 'viewTelescope',
+                'canBeGivenAccess',
                 'createRules', 'updateRules', 'deleteRules',
                 'createClientAccounts', 'updateClientAccounts', 'deleteClientAccounts',
                 'accessPM',
