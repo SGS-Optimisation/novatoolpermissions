@@ -29,8 +29,47 @@ class RoleSeeder extends Seeder
             ],
         ];
 
+        $permissions = [
+            'sysadmin' => [
+                'viewNova', 'viewRoles', 'manageRoles', 'assignRoles', 'viewUsers', 'manageUsers',
+                'canBeGivenAccess', 'viewTelescope',
+                'createRules', 'updateRules', 'deleteRules',
+                'createClientAccounts', 'updateClientAccounts', 'deleteClientAccounts',
+                'accessPM',
+                'viewTaxonomies', 'manageTaxonomies',
+                'viewTerms', 'manageTerms',
+                'viewFieldMappings', 'manageFieldMappings',
+                'manageSettings',
+                'manageTeams',
+            ],
+            'team-leader' => [
+                'viewNova', 'viewRoles', 'assignRoles', 'viewUsers', 'manageUsers',
+                'canBeGivenAccess',
+                'createRules', 'updateRules', 'deleteRules',
+                'createClientAccounts', 'updateClientAccounts',
+                'accessPM',
+                'viewTaxonomies', 'manageTaxonomies',
+                'viewTerms', 'manageTerms',
+                'viewFieldMappings',
+                'manageTeams',
+            ],
+            'project-manager' => [
+                'viewNova', 'viewUsers',
+                'canBeGivenAccess',
+                'createRules', 'updateRules',
+                'createClientAccounts', 'updateClientAccounts',
+                'accessPM',
+                'viewTaxonomies',
+                'viewTerms',
+                'viewFieldMappings',
+            ],
+        ];
+
         foreach ($roles as $role) {
-            Role::firstOrCreate($role);
+            /** @var Role $role */
+            $role = Role::firstOrCreate($role);
+
+            $role->setPermissions($permissions[$role->slug]);
         }
     }
 }
