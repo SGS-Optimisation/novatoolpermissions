@@ -1,0 +1,3 @@
+- ## Get Started
+    - [Overview](/{{route}}/{{version}}/overview)
+    - [Client Onboarding](/{{route}}/{{version}}/client_onboarding)
