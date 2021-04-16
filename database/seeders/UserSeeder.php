@@ -27,5 +27,14 @@ class UserSeeder extends Seeder
                  $client->team->users()->attach($user->id, ['role' => 'editor']);
             });
         });
+
+        User::factory()->count(10)->create()->each(function($user){
+            $user->teams()->create([
+                'name' => $user->name.'\'s Team',
+                'user_id' => $user->id,
+                'client_account_id' => null,
+                'personal_team' => true,
+            ]);
+        });
     }
 }

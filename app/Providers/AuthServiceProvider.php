@@ -42,6 +42,7 @@ class AuthServiceProvider extends ServiceProvider
         collect([
             'createRules', 'updateRules', 'deleteRules',
             'createClientAccounts', 'updateClientAccounts', 'deleteClientAccounts',
+            'accessPM',
             'viewTaxonomies', 'manageTaxonomies',
             'viewTerms', 'manageTerms',
             'viewFieldMappings', 'manageFieldMappings',

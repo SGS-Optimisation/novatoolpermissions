@@ -13,7 +13,19 @@
 
     "createClientAccounts": "Create Client Accounts",
     "updateClientAccounts": "Update Client Accounts",
-    "deleteClientAccounts": "Delete Client Accounts"
+    "deleteClientAccounts": "Delete Client Accounts",
+
+    "accessPM": "Access Project Manager Section",
+    "manageFieldMappings": "Manage Field Mappings",
+    "manageSettings":  "Manage Settings",
+    "manageTaxonomies": "Manage Taxonomies",
+    "manageTeams":  "Manage Teams",
+    "manageTerms": "Manage Terms",
+    "viewFieldMappings":  "View Field Mappings",
+    "viewTaxonomies": "View Taxonomies",
+    "viewTelescope":  "View Telescope",
+    "viewTerms": "View Terms"
+
 
 
 }

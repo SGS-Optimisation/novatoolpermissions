@@ -18,7 +18,8 @@
                                 <jet-nav-link :href="route('home')" :active="route().current('home')">
                                     Home
                                 </jet-nav-link>
-                                <jet-nav-link :href="route('pm.landing')" :active="route().current('pm.landing')">
+                                <jet-nav-link v-if="$page.user_permissions.accessPM"
+                                              :href="route('pm.landing')" :active="route().current('pm.landing')">
                                     Project Manager
                                 </jet-nav-link>
                                 <a v-if="$page.user_permissions.viewNova"
