@@ -150,10 +150,10 @@ Route::name('pm.')
                 Route::post('/', [TermController::class, 'store'])
                     ->name('store');
 
-                Route::put('/{id}', [TermController::class, 'update'])
+                Route::put('/{id}/update', [TermController::class, 'update'])
                     ->name('update');
 
-                Route::put('/{id}', [TermController::class, 'destroy'])
+                Route::put('/{id}/delete', [TermController::class, 'destroy'])
                     ->name('destroy');
             });
     });
