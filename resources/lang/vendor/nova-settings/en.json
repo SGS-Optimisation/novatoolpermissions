@@ -1,0 +1,8 @@
+{
+  "novaSettings.navigationItemTitle": "Settings",
+  "novaSettings.saveButtonText": "Save settings",
+  "novaSettings.noSettingsFieldsText": "No settings fields have been defined.",
+  "novaSettings.settingsSuccessToast": "Settings successfully updated",
+  "novaSettings.general": "General",
+  "novaSettings.mysgs-api": "MySGS API"
+}

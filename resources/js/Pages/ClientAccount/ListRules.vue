@@ -27,10 +27,12 @@
                     <div id="filter" class="flex justify-end">
                         <div class="flex text-xs m-2" role="group">
                             <button @click="setFilterDate('isNew')"
+                                    :title="$page.settings.rule_filter_new_duration + ' days'"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
                                 New <span title="Total number of rules considered new" class="px-1 rounded-xl bg-pink-300">{{numNewRules}}</span>
                             </button>
                             <button @click="setFilterDate('isUpdated')"
+                                    :title="$page.settings.rule_filter_updated_duration + ' days'"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isUpdated' }, { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
                                 Updated <span title="Total number of rules considered updated" class="px-1 rounded-xl bg-pink-300">{{numUpdatedRules}}</span>
                             </button>
@@ -171,11 +173,11 @@ export default {
         };
 
         this.filterObject['isNew'] = (itemElem) => {
-            return moment().subtract(3, 'months').isSameOrBefore(moment(itemElem.created_at));
+            return moment().subtract(parseInt(this.$page.settings.rule_filter_new_duration), 'days').isSameOrBefore(moment(itemElem.created_at));
         };
 
         this.filterObject['isUpdated'] = (itemElem) => {
-            return moment().subtract(3, 'months').isSameOrBefore(moment(itemElem.updated_at));
+            return moment().subtract(this.$page.settings.rule_filter_updated_duration, 'days').isSameOrBefore(moment(itemElem.updated_at));
         };
 
         this.filterObject['isFlagged'] = (itemElem) => {

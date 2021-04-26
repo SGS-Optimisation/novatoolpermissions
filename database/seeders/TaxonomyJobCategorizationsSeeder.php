@@ -28,7 +28,7 @@ class TaxonomyJobCategorizationsSeeder extends Seeder
                                 'aliases' => ['Artwork Identification Panel', 'Shirtail', 'Header', 'Legend']
                             ],
                             'Tech Drawing' => [
-                                'aliases' => ['Technical Drawing']
+                                'aliases' => ['Technical Drawing', 'Technical Elements', 'Tech Specs']
                             ],
                             'Mechanical' => [
                                 'aliases' => ['Mechanical_1',],

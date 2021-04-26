@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
@@ -26,18 +27,19 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         parent::boot();
 
         NovaSettings::addSettingsFields([
-
             Text::make('Api Base Path', 'api_base_path')->required(),
-
             Text::make('Api Version', 'api_version')->required(),
-
             Text::make('Api App Id', 'api_app_id')->required(),
-
             Text::make('Api App Key', 'api_app_key')->required(),
-
             Text::make('Subscription Key', 'subscription_key')->required()
+        ], [], 'mysgs-api');
 
-        ]);
+        NovaSettings::addSettingsFields([
+            Number::make('Number of days to consider rules as "New"', 'rule_filter_new_duration')
+                ->min(0)->required(),
+            Number::make('Number of days to consider rules as "Updated"', 'rule_filter_updated_duration')
+                ->min(0)->required(),
+        ], [], 'rules');
     }
 
     /**
