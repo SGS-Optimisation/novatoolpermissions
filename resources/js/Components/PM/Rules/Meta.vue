@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="pb-36">
         <div v-for="topTaxonomy in topTaxonomies"
               class="mx-auto sm:px-6 lg:px-8">
             <jet-form-section @submitted="pushRuleMeta">

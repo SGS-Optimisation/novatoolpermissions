@@ -2,7 +2,11 @@
 
     <div>
         <span>{{ taxonomyName }}</span>
-        <v-select v-model="selection" multiple :options="terms" @input="setSelected"></v-select>
+        <v-select v-model="selection"
+                  multiple
+                  :appendToBody=true
+                  :options="terms"
+                  @input="setSelected"/>
     </div>
 </template>
 
