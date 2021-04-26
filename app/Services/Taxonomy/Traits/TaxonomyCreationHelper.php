@@ -7,6 +7,7 @@ namespace App\Services\Taxonomy\Traits;
 use App\Models\ClientAccount;
 use App\Models\Rule;
 use App\Models\Taxonomy;
+use App\Models\Term;
 use App\Services\Term\Traits\TermHelper;
 use Illuminate\Support\Arr;
 
@@ -54,8 +55,14 @@ trait TaxonomyCreationHelper
                     }
 
                     if (Arr::has($taxonomy_data, 'terms')) {
-                        foreach ($taxonomy_data['terms'] as $term) {
-                            static::buildTerm($term, $taxonomy, $term_config, $rule, $client_account);
+                        if (Arr::isAssoc($taxonomy_data['terms'])) {
+                            foreach ($taxonomy_data['terms'] as $term => $config) {
+                                static::buildTerm($term, $taxonomy, array_merge($term_config, $config), $rule, $client_account);
+                            }
+                        } else {
+                            foreach ($taxonomy_data['terms'] as $term) {
+                                static::buildTerm($term, $taxonomy, $term_config, $rule, $client_account);
+                            }
                         }
                     }
 
@@ -156,15 +163,22 @@ trait TaxonomyCreationHelper
         /** @var Taxonomy $account_structure */
         $job_categorizations = $client_account->root_taxonomies()->whereName('Job Categorizations')->first();
 
-        $taxonomy = Taxonomy::query()
+        /*$taxonomy = Taxonomy::query()
             ->where(function ($query) use ($taxonomy_name) {
                 return $query->where('name', $taxonomy_name)
                     ->orWhereJsonContains('config->aliases', $taxonomy_name);
             })
             ->whereParentId($job_categorizations->id)
+            ->first();*/
+
+        $term = Term::query()->where(function ($query) use ($taxonomy_name) {
+            return $query->where('name', $taxonomy_name)
+                ->orWhereJsonContains('config->aliases', $taxonomy_name);
+        })
+            ->whereTaxonomyId($job_categorizations->id)
             ->first();
 
-        if (!$taxonomy) {
+        if (!$term) {
             if ($rule) {
                 $rule->recordFlagReason(
                     '[System]',
@@ -179,7 +193,7 @@ trait TaxonomyCreationHelper
         }
 
         foreach ($terms as $term) {
-            static::buildTerm($term, $taxonomy, [], $rule, $client_account);
+            static::buildTerm($term, $job_categorizations, [], $rule, $client_account);
         }
 
         return true;
