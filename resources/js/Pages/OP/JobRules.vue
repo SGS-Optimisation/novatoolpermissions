@@ -303,15 +303,15 @@ export default {
             this.searchedRules.forEach(rule => {
                 rule.terms.forEach(term => {
                     if (term.taxonomy.parent.name === 'Job Categorizations') {
-                        if (!this.taxonomies.includes(term.taxonomy.name)) {
-                            this.taxonomies.push(term.taxonomy.name);
+                        if (!this.taxonomies.includes(term.name)) {
+                            this.taxonomies.push(term.name);
                         }
 
-                        if (this.rulesByTaxonomies[term.taxonomy.name] === undefined) {
-                            this.rulesByTaxonomies[term.taxonomy.name] = [];
+                        if (this.rulesByTaxonomies[term.name] === undefined) {
+                            this.rulesByTaxonomies[term.name] = [];
                         }
 
-                        this.rulesByTaxonomies[term.taxonomy.name].push(rule);
+                        this.rulesByTaxonomies[term.name].push(rule);
                     }
                 });
                 this.taxonomies.forEach(taxonomy => {

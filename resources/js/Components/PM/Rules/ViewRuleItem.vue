@@ -18,13 +18,13 @@
                     </div>
                     <div class="text-xs text-gray-500 flex flex-row justify-between">
                         <div class="flex flex-row">
-                            <div class="text-xs bg-pink-200 rounded-xl px-2">
+<!--                            <div class="text-xs bg-pink-200 rounded-xl px-2">
                                 {{
                                     _.find(rule.terms, (item) => {
-                                        return item.taxonomy.name === group
+                                        return item.name === group
                                     }).name
                                 }}
-                            </div>
+                            </div>-->
                             <div class="ml-2" v-if="rule.flagged">
                                 <i title="This rule is currently flagged"
                                    class="text-red-700 fa fa-flag"></i>
