@@ -12,6 +12,13 @@
                                        ref="taxonomySelectors"
                     >
                     </taxonomy-selector>
+                    <taxonomy-selector :taxonomy-name="'State'"
+                                       :terms="states"
+                                       @termSelected="filterByState"
+                                       ref="stateSelector"
+                    >
+                    </taxonomy-selector>
+
 
                     <filter-condition @on-change-filter-condition="onChangeFilterCondition"/>
 
@@ -98,6 +105,7 @@ export default {
         'team',
         'rules',
         'search',
+        'states',
     ],
 
     data() {
@@ -123,6 +131,7 @@ export default {
             sortOption: null,
             filterOption: 'all',
             filterText: "",
+            filterState: "",
             filterObject: {},
             taxonomies: {},
             termsByTaxonomies: {},
@@ -172,6 +181,10 @@ export default {
             return itemElem.terms.some(term => this.taxonomies[term.taxonomy.name] === term.name);
         };
 
+        this.filterObject['filterState'] = (itemElem) => {
+            return !this.filterState || itemElem.state === this.filterState;
+        };
+
         this.filterObject['isNew'] = (itemElem) => {
             return moment().subtract(parseInt(this.$page.settings.rule_filter_new_duration), 'days').isSameOrBefore(moment(itemElem.created_at));
         };
@@ -196,16 +209,18 @@ export default {
         getRules() {
             this.filteredRules = _.filter(
                 _.filter(
-                    _.filter(this.allRules, (rule) => {
-                        if(!this.filterText || this.filterText === '') {
-                            return true;
-                        }
-                        return rule.name.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
-                            || rule.content.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1;
-                    }),
-                    this.filterObject['filterByTaxonomyTerm']
-                ),
-                this.filterObject[this.filterOption]
+                    _.filter(
+                        _.filter(this.allRules, (rule) => {
+                            if (!this.filterText || this.filterText === '') {
+                                return true;
+                            }
+                            return rule.name.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
+                                || rule.content.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1;
+                        }),
+                        this.filterObject['filterByTaxonomyTerm']
+                    ),
+                    this.filterObject[this.filterOption]),
+                this.filterObject['filterState'],
             );
             this.page = 1;
         },
@@ -216,6 +231,11 @@ export default {
 
         filterByTaxonomyTerm(taxonomy, term) {
             this.taxonomies[taxonomy] = (term ? term : '');
+            this.getRules();
+        },
+
+        filterByState(dummy, state) {
+            this.filterState = state ? state : '';
             this.getRules();
         },
 
@@ -236,8 +256,10 @@ export default {
             }
             this.filterOption = 'all';
             this.filterText = '';
+            this.filterState = '';
             this.getRules();
             this.$refs.taxonomySelectors.forEach(selector => selector.clearSelected());
+            this.$refs.stateSelector.clearSelected();
         }
     },
 

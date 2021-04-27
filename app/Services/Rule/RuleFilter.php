@@ -78,7 +78,7 @@ class RuleFilter
             $job_taxonomy_terms_matches = [];
             $job_taxonomy_terms = [];
 
-            foreach ($client->rules as $rule) {
+            foreach ($client->rules()->isPublished()->get() as $rule) {
                 $matched = true;
                 $matchedTaxonomies = [];
 

@@ -3,6 +3,7 @@
         <template #body>
             <div class="mx-auto sm:px-6 lg:px-8">
                 <rule-form :rule="rule"
+                           :states="states"
                            :client-account="clientAccount"
                            :taxonomy-hierarchy="taxonomyHierarchy"
                            :top-taxonomies="topTaxonomies"
@@ -26,7 +27,7 @@
                     </template>
                 </rule-form>
 
-                <div class="mt-5">
+                <div class="mt-12">
                     <metadata-form
                         :rule="rule"
                         :client-account="clientAccount"
@@ -70,6 +71,7 @@ export default {
         'taxonomyHierarchy',
         'topTaxonomies',
         'rule',
+        'states',
 
 
     ],

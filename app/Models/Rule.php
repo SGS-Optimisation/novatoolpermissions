@@ -2,7 +2,13 @@
 
 namespace App\Models;
 
+use App\States\HasStates;
+use App\States\Rules\DraftState;
+use App\States\Rules\PublishedState;
+use App\States\Rules\ReviewingState;
+use App\States\Rules\RuleState;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -45,15 +51,15 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class Rule extends Model implements Auditable
 {
-    use HasFactory, SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
+    use HasFactory, SoftDeletes, HasStates, \OwenIt\Auditing\Auditable;
+
 
     /**
      * The attributes that aren't mass assignable.
      *
      * @var array
      */
-    protected $guarded = [];
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be cast to native types.
@@ -65,10 +71,16 @@ class Rule extends Model implements Auditable
         'client_account_id' => 'integer',
         'metadata' => 'array',
         'flagged' => 'boolean',
+        'state' => RuleState::class,
+
     ];
 
     protected $with = ['terms'];
 
+    public function scopeIsPublished(Builder $query)
+    {
+        return $query->whereState('state', PublishedState::class);
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
