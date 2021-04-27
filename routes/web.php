@@ -137,10 +137,10 @@ Route::name('pm.')
                 Route::post('/', [TaxonomyController::class, 'store'])
                     ->name('store');
 
-                Route::put('/{id}', [TaxonomyController::class, 'update'])
+                Route::put('/{id}/update', [TaxonomyController::class, 'update'])
                     ->name('update');
 
-                Route::delete('/{id}', [TaxonomyController::class, 'destroy'])
+                Route::put('/{id}/destroy', [TaxonomyController::class, 'destroy'])
                     ->name('destroy');
             });
 

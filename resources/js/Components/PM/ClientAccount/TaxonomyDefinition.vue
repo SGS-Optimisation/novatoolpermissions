@@ -124,7 +124,7 @@
                         <jet-danger-button class="ml-2" @click.native="deleteTaxonomy"
                                            :class="{ 'opacity-25': deleteForm.processing }"
                                            :disabled="deleteForm.processing">
-                            Delete Term
+                            Delete
                         </jet-danger-button>
                     </template>
                 </jet-confirmation-modal>
@@ -270,7 +270,7 @@ export default {
         deleteTaxonomy() {
             console.log('delete taxonomy ' + this.deletingTaxonomyId);
 
-            this.deleteForm.delete(route('pm.taxonomies.destroy', this.deletingTaxonomyId), {
+            this.deleteForm.put(route('pm.taxonomies.destroy', this.deletingTaxonomyId), {
                 preserveScroll: true
             }).then(() => {
                 this.cancelDeleteTaxonomy();

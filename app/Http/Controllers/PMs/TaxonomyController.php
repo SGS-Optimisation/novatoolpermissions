@@ -63,7 +63,8 @@ class TaxonomyController extends Controller
     }
 
     /**
-     * Delete a term.
+     * Delete a taxonomy.
+     * The taxonomy is not actually deleted, but rather detached from the client account
      *
      * @param  Request  $request
      * @param $id
@@ -71,10 +72,11 @@ class TaxonomyController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $taxonomy = Taxonomy::find($id);
         $client_account = ClientAccount::find($request->clientAccountId);
+        $taxonomy = Taxonomy::find($id);
+        logger('detaching taxonomy ' . $taxonomy->name . ' from client ' . $client_account->name);
 
-        $taxonomy->delete();
+        $client_account->taxonomies()->detach($id);
 
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
