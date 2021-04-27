@@ -62,6 +62,7 @@
 
                     <div class="flex flex-grow text-xs mx-2" role="group">
                         <button @click="filterButtonClicked('isNew')"
+                                :title="$page.settings.rule_filter_new_duration + ' days'"
                                 class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg"
                                 :class="[
                                     { 'bg-blue-500 text-white' : filterOption === 'isNew' },
@@ -70,6 +71,7 @@
                             New
                         </button>
                         <button @click="filterButtonClicked('isUpdated')"
+                                :title="$page.settings.rule_filter_updated_duration + ' days'"
                                 class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
                                 :class="[
                                     { 'bg-blue-500 text-white' : filterOption === 'isUpdated' },
@@ -301,15 +303,15 @@ export default {
             this.searchedRules.forEach(rule => {
                 rule.terms.forEach(term => {
                     if (term.taxonomy.parent.name === 'Job Categorizations') {
-                        if (!this.taxonomies.includes(term.taxonomy.name)) {
-                            this.taxonomies.push(term.taxonomy.name);
+                        if (!this.taxonomies.includes(term.name)) {
+                            this.taxonomies.push(term.name);
                         }
 
-                        if (this.rulesByTaxonomies[term.taxonomy.name] === undefined) {
-                            this.rulesByTaxonomies[term.taxonomy.name] = [];
+                        if (this.rulesByTaxonomies[term.name] === undefined) {
+                            this.rulesByTaxonomies[term.name] = [];
                         }
 
-                        this.rulesByTaxonomies[term.taxonomy.name].push(rule);
+                        this.rulesByTaxonomies[term.name].push(rule);
                     }
                 });
                 this.taxonomies.forEach(taxonomy => {
@@ -324,11 +326,17 @@ export default {
 
         initSearchFunctions() {
             this.filterObject['isNew'] = (itemElem) => {
-                return itemElem[1].filter(rule => moment().subtract(3, 'months').isSameOrBefore(moment(rule.created_at))).length > 0;
+                return itemElem[1].filter(rule => moment()
+                    .subtract(parseInt(this.$page.settings.rule_filter_new_duration), 'days')
+                    .isSameOrBefore(moment(rule.created_at))
+                ).length > 0;
             };
 
             this.filterObject['isUpdated'] = (itemElem) => {
-                return itemElem[1].filter(rule => moment().subtract(3, 'months').isSameOrBefore(moment(rule.updated_at))).length > 0;
+                return itemElem[1].filter(rule => moment()
+                    .subtract(parseInt(this.$page.settings.rule_filter_updated_duration), 'days')
+                    .isSameOrBefore(moment(rule.updated_at))
+                ).length > 0;
             };
 
             this.filterObject['all'] = (itemElem) => {

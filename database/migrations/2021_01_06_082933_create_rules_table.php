@@ -22,6 +22,7 @@ class CreateRulesTable extends Migration
             $table->longText('content')->nullable();
             $table->json('metadata')->nullable();
             $table->boolean('flagged')->default(false);
+            $table->string('state')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

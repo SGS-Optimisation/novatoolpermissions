@@ -25,7 +25,7 @@
                                      title="MySGS value">
                                     <div>
                                         <div class="w-32" v-for="value in values.slice(0, limit)"
-                                             :title="value.length < 20 ? '' : value">
+                                             :title="'MySGS value' + (value.length < 20 ? '' : ': ' +value)">
                                             <span v-if="values.length > 1">- </span>
                                             {{ shorten(value) }}
                                         </div>

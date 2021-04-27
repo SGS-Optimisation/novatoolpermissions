@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $this->call(RoleSeeder::class);
 
         $admin = User::firstOrCreate([
             'name' => 'Admin',
@@ -53,6 +54,14 @@ class DatabaseSeeder extends Seeder
             [
                 'key' => 'subscription_key',
                 'value' => env('MYSGS_API_SUBSCRIPTION_KEY'),
+            ],
+            [
+                'key' => 'rule_filter_new_duration',
+                'value' => 30,
+            ],
+            [
+                'key' => 'rule_filter_updated_duration',
+                'value' => 30,
             ]
         ];
 

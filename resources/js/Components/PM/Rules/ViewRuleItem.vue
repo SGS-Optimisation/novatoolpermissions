@@ -18,13 +18,13 @@
                     </div>
                     <div class="text-xs text-gray-500 flex flex-row justify-between">
                         <div class="flex flex-row">
-                            <div class="text-xs bg-pink-200 rounded-xl px-2">
+<!--                            <div class="text-xs bg-pink-200 rounded-xl px-2">
                                 {{
                                     _.find(rule.terms, (item) => {
-                                        return item.taxonomy.name === group
+                                        return item.name === group
                                     }).name
                                 }}
-                            </div>
+                            </div>-->
                             <div class="ml-2" v-if="rule.flagged">
                                 <i title="This rule is currently flagged"
                                    class="text-red-700 fa fa-flag"></i>
@@ -32,10 +32,10 @@
                         </div>
 
                         <div>
-                            <span v-if="rule.created_at === rule.updated_at">
+                            <span v-if="rule.created_at === rule.updated_at" :title="moment(rule.created_at)">
                                 Created {{ moment(rule.created_at).fromNow() }}
                             </span>
-                            <span v-else>
+                            <span v-else :title="moment(rule.updated_at)">
                                 Updated {{ moment(rule.updated_at).fromNow() }}
                             </span>
                         </div>
@@ -70,9 +70,12 @@ export default {
     computed: {
         taxonomyRules() {
             return _.orderBy([...this.filterFlag ? this.rules.filter(rule => {
-                let time = this.filterFlag === 'updated' ? moment(rule.updated_at) : moment(rule.created_at);
+                let time = (this.filterFlag === 'updated') ? moment(rule.updated_at) : moment(rule.created_at);
+                let numDays = (this.filterFlag === 'updated') ?
+                    this.$page.settings.rule_filter_updated_duration
+                    : this.$page.settings.rule_filter_new_duration;
 
-                return moment().subtract(3, 'months').isSameOrBefore(time)
+                return moment().subtract(parseInt(numDays), 'days').isSameOrBefore(time)
                     && (this.filterFlag !== 'updated' || rule.created_at !== rule.updated_at)
             }) : this.rules], 'updated_at', 'desc')
         },

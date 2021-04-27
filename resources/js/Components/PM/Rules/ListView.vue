@@ -1,5 +1,14 @@
 <template>
-    <div class="bg-white shadow-md my-4 p-3 rounded" :data-rule-id="rule.id">
+    <div class="bg-white shadow-md my-4 p-3 rounded relative" :data-rule-id="rule.id">
+        <div class="ribbon z-0">
+            <span class="text-xxs text-white font-semibold text-center"
+            :class="{
+                'bg-indigo-400': rule.state === 'Published',
+                'bg-yellow-400' : rule.state !== 'Published'
+            }">
+                {{rule.state}}
+            </span>
+        </div>
         <div class="flex items-center justify-between">
             <div class="description">
                 <h2 @click="detailsOpen = !detailsOpen; $emit('toggle')" class="cursor-pointer text-xl font-bold">
@@ -22,7 +31,7 @@
             </div>
 
             <!-- Button for opening card -->
-            <div class="ml-4">
+            <div class="ml-4 z-20">
                 <div @click="detailsOpen = !detailsOpen; $emit('toggle')"
                      class="flex items-center cursor-pointer px-3 py-2 text-gray-200 hover:text-gray-600"
                      :class="{'transform rotate-180': detailsOpen}">
@@ -247,3 +256,8 @@ export default {
 
 }
 </script>
+<style scoped>
+.text-xxs {
+    font-size: 0.5rem;
+}
+</style>

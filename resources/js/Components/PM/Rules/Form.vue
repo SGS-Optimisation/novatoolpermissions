@@ -34,6 +34,35 @@
                     </div>
 
                     <input type="hidden" v-model="form.ContentDraftId">
+
+                    <section>
+
+                        <div class="flex flex-row">
+                            <div class="flex flex-row px-4">
+                                <input id="current-state" v-model="form.state" type="radio" class="hidden" :value="rule.state">
+                                <label for="current-state" @click="form.state=rule.state" class="ml-1 initial flex items-center cursor-pointer">
+                                    <span class="w-8 h-8 inline-block mr-2 rounded-full border border-grey flex-no-shrink"></span>
+                                    {{rule.state}}
+                                </label>
+
+                            </div>
+                            <div v-for="(state, index) in states" class="flex flew-row px-4">
+                                <input
+                                    v-model="form.state"
+                                    :name="'state-'+index"
+                                    type="radio"
+                                    class="hidden"
+                                    :value="state">
+                                <label class="ml-1 flex items-center cursor-pointer" :for="'state-'+index"
+                                       @click="form.state=state">
+                                    <span class="w-8 h-8 inline-block mr-2 rounded-full border border-grey flex-no-shrink"></span>
+                                    {{ state }}
+                                </label>
+
+                            </div>
+                        </div>
+                    </section>
+
                 </template>
 
                 <template #actions>
@@ -84,7 +113,8 @@ export default {
         'clientAccount',
         'taxonomyHierarchy',
         'topTaxonomies',
-        'rule'
+        'rule',
+        'states',
     ],
 
     data() {
@@ -98,7 +128,8 @@ export default {
             form: this.$inertia.form({
                 name: this.rule.name,
                 content: this.rule.content,
-                ContentDraftId: uuidv4()
+                ContentDraftId: uuidv4(),
+                state: this.rule.state,
             }, {
                 bag: 'pushRuleData',
                 resetOnSuccess: false,
@@ -160,3 +191,28 @@ function uuidv4() {
     )
 }
 </script>
+
+<style scoped>
+
+input[type="radio"] + label span {
+    transition: background .2s,
+    transform .2s;
+}
+
+input[type="radio"] + label span:hover,
+input[type="radio"] + label:hover span{
+    transform: scale(1.2);
+}
+
+input[type="radio"]:checked + label span {
+    background-color: #3490DC;
+    box-shadow: 0px 0px 0px 2px white inset;
+}
+
+input[type="radio"]:checked + label{
+    color: #3490DC;
+}
+input[type="radio"] + label.initial{
+    color: #0B5EA0;
+}
+</style>

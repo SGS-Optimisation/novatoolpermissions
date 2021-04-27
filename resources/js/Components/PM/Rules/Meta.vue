@@ -1,8 +1,8 @@
 <template>
-    <div>
-        <div v-for="topTaxonomy in topTaxonomies"
+    <div class="pb-36">
+        <div v-for="(topTaxonomy, index) in topTaxonomies"
               class="mx-auto sm:px-6 lg:px-8">
-            <jet-form-section @submitted="pushRuleMeta">
+            <jet-form-section @submitted="pushRuleMeta" :class="{'mb-4': (index !== topTaxonomies.length - 1)}">
                 <template #title>
                     {{ topTaxonomy.name }}
                 </template>
@@ -27,7 +27,7 @@
                     </div>
                 </template>
 
-                <template #actions>
+                <template #actions v-if="index === topTaxonomies.length - 1">
                     <jet-action-message :on="form.recentlySuccessful" class="mr-3">
                         Saved.
                     </jet-action-message>

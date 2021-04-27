@@ -12,6 +12,13 @@
                                        ref="taxonomySelectors"
                     >
                     </taxonomy-selector>
+                    <taxonomy-selector :taxonomy-name="'State'"
+                                       :terms="states"
+                                       @termSelected="filterByState"
+                                       ref="stateSelector"
+                    >
+                    </taxonomy-selector>
+
 
                     <filter-condition @on-change-filter-condition="onChangeFilterCondition"/>
 
@@ -27,10 +34,12 @@
                     <div id="filter" class="flex justify-end">
                         <div class="flex text-xs m-2" role="group">
                             <button @click="setFilterDate('isNew')"
+                                    :title="$page.settings.rule_filter_new_duration + ' days'"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
                                 New <span title="Total number of rules considered new" class="px-1 rounded-xl bg-pink-300">{{numNewRules}}</span>
                             </button>
                             <button @click="setFilterDate('isUpdated')"
+                                    :title="$page.settings.rule_filter_updated_duration + ' days'"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isUpdated' }, { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
                                 Updated <span title="Total number of rules considered updated" class="px-1 rounded-xl bg-pink-300">{{numUpdatedRules}}</span>
                             </button>
@@ -96,6 +105,7 @@ export default {
         'team',
         'rules',
         'search',
+        'states',
     ],
 
     data() {
@@ -121,6 +131,7 @@ export default {
             sortOption: null,
             filterOption: 'all',
             filterText: "",
+            filterState: "",
             filterObject: {},
             taxonomies: {},
             termsByTaxonomies: {},
@@ -170,12 +181,16 @@ export default {
             return itemElem.terms.some(term => this.taxonomies[term.taxonomy.name] === term.name);
         };
 
+        this.filterObject['filterState'] = (itemElem) => {
+            return !this.filterState || itemElem.state === this.filterState;
+        };
+
         this.filterObject['isNew'] = (itemElem) => {
-            return moment().subtract(3, 'months').isSameOrBefore(moment(itemElem.created_at));
+            return moment().subtract(parseInt(this.$page.settings.rule_filter_new_duration), 'days').isSameOrBefore(moment(itemElem.created_at));
         };
 
         this.filterObject['isUpdated'] = (itemElem) => {
-            return moment().subtract(3, 'months').isSameOrBefore(moment(itemElem.updated_at));
+            return moment().subtract(this.$page.settings.rule_filter_updated_duration, 'days').isSameOrBefore(moment(itemElem.updated_at));
         };
 
         this.filterObject['isFlagged'] = (itemElem) => {
@@ -194,16 +209,18 @@ export default {
         getRules() {
             this.filteredRules = _.filter(
                 _.filter(
-                    _.filter(this.allRules, (rule) => {
-                        if(!this.filterText || this.filterText === '') {
-                            return true;
-                        }
-                        return rule.name.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
-                            || rule.content.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1;
-                    }),
-                    this.filterObject['filterByTaxonomyTerm']
-                ),
-                this.filterObject[this.filterOption]
+                    _.filter(
+                        _.filter(this.allRules, (rule) => {
+                            if (!this.filterText || this.filterText === '') {
+                                return true;
+                            }
+                            return rule.name.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
+                                || rule.content.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1;
+                        }),
+                        this.filterObject['filterByTaxonomyTerm']
+                    ),
+                    this.filterObject[this.filterOption]),
+                this.filterObject['filterState'],
             );
             this.page = 1;
         },
@@ -214,6 +231,11 @@ export default {
 
         filterByTaxonomyTerm(taxonomy, term) {
             this.taxonomies[taxonomy] = (term ? term : '');
+            this.getRules();
+        },
+
+        filterByState(dummy, state) {
+            this.filterState = state ? state : '';
             this.getRules();
         },
 
@@ -234,8 +256,10 @@ export default {
             }
             this.filterOption = 'all';
             this.filterText = '';
+            this.filterState = '';
             this.getRules();
             this.$refs.taxonomySelectors.forEach(selector => selector.clearSelected());
+            this.$refs.stateSelector.clearSelected();
         }
     },
 

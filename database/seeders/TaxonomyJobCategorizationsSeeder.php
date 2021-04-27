@@ -22,88 +22,34 @@ class TaxonomyJobCategorizationsSeeder extends Seeder
 
             'Job Categorizations' => [
                 'children' => [
-                    'AIP' => [
-                        'config' => [
-                            'aliases' => ['Artwork Identification Panel', 'Shirtail', 'Header', 'Legend'],
-                        ],
+                    'Artwork Structure Elements' => [
                         'terms' => [
-                            'General information',
-                            'Technical information',
-                            'Colors'
+                            'AIP' => [
+                                'aliases' => ['Artwork Identification Panel', 'Shirtail', 'Header', 'Legend']
+                            ],
+                            'Tech Drawing' => [
+                                'aliases' => ['Technical Drawing', 'Technical Elements', 'Tech Specs']
+                            ],
+                            'Mechanical' => [
+                                'aliases' => ['Mechanical_1',],
+                            ],
+                            'Tech/printer specs' => [
+                                'aliases' => ['Printer specifications', 'Technical specifications'],
+                            ],
+                            'Text' => [
+                                'aliases' => []
+                            ],
+                            'Regulatory' => [
+                                'aliases' => ['Regulatory_1',],
+                            ],
+                            'Visuals' => [
+                                'aliases' => []
+                            ],
+                            'Deliverables' => [
+                                'aliases' => []
+                            ],
                         ]
-                    ],
-                    'Tech Drawing' => [
-                        'config' => [
-                            'aliases' => ['Technical Drawing']
-                        ],
-                        'terms' => [
-                            'Specs (swatch color, stroke size/attributes)',
-                            'Layer management',
-                            'Legend/zones identification',
-                            'Diecut elements (eyemarks/coding areas/printfree areas/step and repeat/print direction)'
-                        ]
-                    ],
-                    'Mechanical' => [
-                        'config' => [
-                            'aliases' => ['Mechanical_1',],
-                        ],
-                        'terms' => [
-                            'Artboards',
-                            'Layers',
-                            'Separation',
-                            'Links',
-                            'Layout',
-                        ]
-                    ],
-                    'Tech/printer specs' => [
-                        'config' => [
-                            'aliases' => ['Printer specifications', 'Technical specifications'],
-                        ],
-                        'terms' => [
-                            'Ink coverage',
-                            'Screen rulings/angles',
-                            'Printer/project specific rules',
-                            'Print process/sub proces',
-                            'Distortion',
-                        ],
-                    ],
-                    'Text' => [
-                        'terms' => [
-                            'Fonts activation (type/version)',
-                            'Technical specs (size/thickness)',
-                            'FIC/INCO - regulatory min font heights*',
-                            'Marketing texts',
-                            'Regulatory texts*',
-                        ],
-                    ],
-                    'Regulatory' => [
-                        'config' => [
-                            'aliases' => ['Regulatory_1',],
-                        ],
-                        'terms' => [
-                            'Codes',
-                            'Barcodes',
-                            'Logos and icons',
-                            'Regulatory texts*',
-                            'FIC/INCO - regulatory min font heights*',
-                        ]
-                    ],
-                    'Visuals' => [
-                        'terms' => [
-                            'Image libraries',
-                            'Do‘s and dont‘s rules',
-                            'Image build rules/guidelines',
-                            'Printer/project specific requirements',
-                        ]
-                    ],
-                    'Deliverables' => [
-                        'terms' => [
-                            'Customer specificities',
-                            'PDFs types (separated, without dieline, HR/LR)',
-                            'Workflows/presets',
-                            'Naming conventions',
-                        ]
-                    ],
+                    ]
                 ]
             ],
 

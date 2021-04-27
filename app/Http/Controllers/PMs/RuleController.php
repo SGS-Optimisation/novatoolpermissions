@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\PMs;
 
+use App\Events\Rules\Updated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateRuleRequest;
 use App\Models\ClientAccount;
@@ -28,8 +29,8 @@ class RuleController extends Controller
     /**
      * TODO: Fix attachments not created in db
      *
-     * @param $request
-     * @param $rule
+     * @param Request $request
+     * @param Rule $rule
      */
     protected function parseContent($request, $rule)
     {
@@ -41,6 +42,11 @@ class RuleController extends Controller
                     $rule
                 );
             };
+        }
+
+        if ($request->state && $rule->state != $request->state) {
+            logger('transitioning rule ' . $rule->id . ' to ' . $request->state);
+            $rule->state->transitionTo($request->state);
         }
     }
 
@@ -62,7 +68,8 @@ class RuleController extends Controller
         return Jetstream::inertia()->render($request, 'ClientAccount/ListRules', [
             'team' => $request->user()->currentTeam,
             'clientAccount' => $client_account,
-            'rules' => $ruleRepo->all($term), //()->orderBy('updated_at', 'DESC')->paginate(50) ?? [],
+            'rules' => $ruleRepo->all($term),
+            'states' => (new Rule)->getStatesFor('state'),
             'search' => optional($term)->name,
         ]);
     }
@@ -79,9 +86,12 @@ class RuleController extends Controller
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
         $this->authorize('create', [Rule::class, $client_account]);
 
+        $rule = new Rule(['content' => '']);
+
         return Jetstream::inertia()->render($request, 'ClientAccount/CreateRule', array_merge([
             'team' => $request->user()->currentTeam,
-            'rule' => new Rule(['content' => ''])
+            'rule' => $rule,
+            'states' => $rule->getStatesFor('state')
         ],
             $this->buildTaxonomyLists($client_account_slug)
         ));
@@ -102,6 +112,7 @@ class RuleController extends Controller
         $this->parseContent($request, $rule);
 
         logger('rule added: '.$rule->id);
+        event(new Updated($rule));
 
         $request->session()->flash('success', 'Rule successfully created!');
 
@@ -156,6 +167,8 @@ class RuleController extends Controller
         return Jetstream::inertia()->render($request, 'ClientAccount/EditRule', array_merge([
             'team' => $request->user()->currentTeam,
             'rule' => $rule,
+            //'states' => $rule->getStatesFor('state')
+            'states' => $rule->state->transitionableStates(),
         ],
             $this->buildTaxonomyLists($client_account_slug)
         ));
@@ -175,6 +188,8 @@ class RuleController extends Controller
         $rule = Rule::find($id);
         $rule->update($rule_fields);
         $this->parseContent($request, $rule);
+
+        event(new Updated($rule));
 
         return $request->wantsJson()
             ? new JsonResponse('', 200)
