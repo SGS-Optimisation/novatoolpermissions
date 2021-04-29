@@ -24,7 +24,6 @@ class Updated
      */
     public function __construct(Rule $rule)
     {
-        logger('[rule updated event triggered]');
         $this->rule = $rule;
     }
 

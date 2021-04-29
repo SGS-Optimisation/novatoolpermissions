@@ -6,6 +6,7 @@ use App\Models\ClientAccount;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\LegacyImport\ClientAccountLegacyImport;
+use App\Services\LegacyImport\RuleLegacyImport;
 use App\Services\LegacyImport\TaxonomyLegacyImport;
 use Illuminate\Database\Seeder;
 use OptimistDigital\NovaSettings\NovaSettings;
@@ -71,14 +72,11 @@ class DatabaseSeeder extends Seeder
 
 
         $this->call(MysgsClientAccountSeeder::class);
-
         $this->call(TaxonomyAccountStructureSeeder::class);
         $this->call(TaxonomyJobCategorizationsSeeder::class);
-        //$this->call(ClientAccountSeeder::class);
-        (new ClientAccountLegacyImport())->handle();
         $this->call(FieldMappingSeeder::class);
 
-
-        (new \App\Services\LegacyImport\RuleLegacyImport())->handle();
+        //(new ClientAccountLegacyImport())->handle();
+        //(new RuleLegacyImport())->handle();
     }
 }

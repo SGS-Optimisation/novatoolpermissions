@@ -10,13 +10,33 @@ use Illuminate\Support\Str;
 
 class ClientAccountLegacyImport extends BaseService
 {
+    public $client_name;
+
+    /**
+     * ClientAccountLegacyImport constructor.
+     * @param $client_name
+     */
+    public function __construct($client_name = null)
+    {
+        $this->client_name = $client_name;
+    }
+
 
     public function handle()
     {
-        Projet::select(['Name', 'Logo'])
+        $projects = Projet::select(['Name', 'Logo'])
             ->where('SoftDeleted', false)
-            ->get()
-            ->each(function ($item) {
+            ->when($this->client_name, function($query) {
+                return $query->whereIn(
+                    'Name',
+                    array_map('trim', explode(',', $this->client_name))
+                );
+            })
+            ->get();
+
+        logger('found ' . count($projects) . ' matching');
+
+        $projects->each(function ($item) {
                 $projet = [
                     'name' => $item->Name,
                     'slug' => Str::slug($item->Name),

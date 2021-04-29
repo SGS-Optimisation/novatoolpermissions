@@ -5,6 +5,7 @@ namespace App\Services\LegacyImport;
 
 
 use App\Exports\ImportedRulesErrors;
+use App\Legacy\Models\Projet;
 use App\Legacy\Models\Specification;
 use App\Models\ClientAccount;
 use App\Services\BaseService;
@@ -13,20 +14,37 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class RuleLegacyImport extends BaseService
 {
-
     use TaxonomyCreationHelper;
 
+    public $client_name;
+
+    public $imported_rules = [];
     public $problem_rules = [];
+    public $num_problems = 0;
+    public $problem_file_name = "";
+
+    /**
+     * ClientAccountLegacyImport constructor.
+     * @param $client_name
+     */
+    public function __construct($client_name = null)
+    {
+        $this->client_name = $client_name;
+    }
+
+
 
     public function handle()
     {
         $this->processRules();
         $this->exportProblems();
+
+        return $this;
     }
 
     public function processRules()
     {
-        Specification::select([
+        $rules = Specification::select([
             "Project",
             "RuleCategorization",
             "SubRuleCategorization",
@@ -34,7 +52,20 @@ class RuleLegacyImport extends BaseService
             "JobDesignations",
             'CreatedAt',
             'UpdatedAt'
-        ])->get()->each(function ($item) {
+        ])
+            ->when($this->client_name, function($query) {
+                $projects = Projet::whereIn(
+                    'Name',
+                    array_map('trim', explode(',', $this->client_name))
+                )->get()->pluck('_id');
+
+                return $query->whereIn('Project', $projects);
+            })
+            ->get();
+
+        logger('found ' . count($rules) . ' matching');
+
+        $rules->each(function ($item) {
             $client_account = ClientAccount::whereLegacyId($item->Project)->first();
 
             if ($client_account) {
@@ -55,6 +86,8 @@ class RuleLegacyImport extends BaseService
                     'created_at' => $item->CreatedAt->toDateTime(),
                     'updated_at' => $item->UpdatedAt->toDateTime(),
                 ]);
+
+                $this->imported_rules[] = $rule;
 
                 $account_structure_success = true;
 
@@ -95,19 +128,28 @@ class RuleLegacyImport extends BaseService
                 }
 
                 if (!$account_structure_success || !$job_categorization_success) {
+                    logger('some issues encountered processing rule');
                     $this->problem_rules[$client_account->name][] = $rule;
+                    $this->num_problems++;
                 }
             } else {
                 // if client is not present log it inside
                 \Log::debug("No Client Available: ".$item->Project);
             }
         });
+
     }
 
     public function exportProblems()
     {
         $exporter = new ImportedRulesErrors($this->problem_rules);
-        Excel::store($exporter, 'import_rules_problems.xlsx', 'public');
+
+        $this->problem_file_name = date('Y-m-d-his').'-import_rules_problems.xlsx';
+        if($this->client_name) {
+            $this->problem_file_name = $this->client_name . '-' . $this->problem_file_name;
+        }
+
+        Excel::store($exporter, $this->problem_file_name, 'public');
     }
 
 }
