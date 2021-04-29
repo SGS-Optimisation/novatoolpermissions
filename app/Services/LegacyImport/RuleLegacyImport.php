@@ -33,7 +33,6 @@ class RuleLegacyImport extends BaseService
     }
 
 
-
     public function handle()
     {
         $this->processRules();
@@ -53,7 +52,7 @@ class RuleLegacyImport extends BaseService
             'CreatedAt',
             'UpdatedAt'
         ])
-            ->when($this->client_name, function($query) {
+            ->when($this->client_name, function ($query) {
                 $projects = Projet::whereIn(
                     'Name',
                     array_map('trim', explode(',', $this->client_name))
@@ -63,7 +62,7 @@ class RuleLegacyImport extends BaseService
             })
             ->get();
 
-        logger('found ' . count($rules) . ' matching');
+        logger('found '.count($rules).' matching');
 
         $rules->each(function ($item) {
             $client_account = ClientAccount::whereLegacyId($item->Project)->first();
@@ -91,14 +90,12 @@ class RuleLegacyImport extends BaseService
 
                 $account_structure_success = true;
 
-                collect($item->JobDesignations)->each(function ($designation) use (
-                    $client_account,
-                    $rule,
-                    &
-                    $account_structure_success
-                ) {
-                    $account_structure_success &= static::createAccountStructureTaxonomy($designation, $client_account,
-                        $rule);
+                collect($item->JobDesignations)->each(function ($designation)
+                use ($client_account, $rule, &$account_structure_success) {
+
+                    $account_structure_success &= static::createAccountStructureTaxonomy(
+                        $designation, $client_account, $rule
+                    );
                 });
 
                 $job_categorization_success = true;
@@ -145,8 +142,8 @@ class RuleLegacyImport extends BaseService
         $exporter = new ImportedRulesErrors($this->problem_rules);
 
         $this->problem_file_name = date('Y-m-d-his').'-import_rules_problems.xlsx';
-        if($this->client_name) {
-            $this->problem_file_name = $this->client_name . '-' . $this->problem_file_name;
+        if ($this->client_name) {
+            $this->problem_file_name = $this->client_name.'-'.$this->problem_file_name;
         }
 
         Excel::store($exporter, $this->problem_file_name, 'public');
