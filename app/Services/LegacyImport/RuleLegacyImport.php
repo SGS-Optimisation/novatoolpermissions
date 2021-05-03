@@ -139,6 +139,10 @@ class RuleLegacyImport extends BaseService
 
     public function exportProblems()
     {
+        if(!count($this->problem_rules)) {
+            return;
+        }
+
         $exporter = new ImportedRulesErrors($this->problem_rules);
 
         $this->problem_file_name = date('Y-m-d-his').'-import_rules_problems.xlsx';

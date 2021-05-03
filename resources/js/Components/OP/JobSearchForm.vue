@@ -51,6 +51,13 @@ export default {
             this.form.post(route('job.rules', this.jobNumber));
         }
     },
+
+    watch: {
+        jobNumber(newVal) {
+            let re = /[^0-9\-]/gi;
+            this.$set(this, 'jobNumber', newVal.replace(re, ''));
+        }
+    }
 }
 </script>
 

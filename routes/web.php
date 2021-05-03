@@ -38,11 +38,11 @@ Route::middleware(['auth:sanctum', 'verified', 'user.permissions'])->group(funct
 
     Route::get( '/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
         ->name('job.rules')
-        ->where('jobNumber', '[0-9]+');
+        ->where('jobNumber', '[0-9\-]+');
 
     Route::post( '/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'search'])
         ->name('job.search')
-        ->where('jobNumber', '[0-9]+');
+        ->where('jobNumber', '[0-9\-]+');
 
 
     Route::post('/rule/{rule}/flag', [\App\Http\Controllers\RuleFlaggingController::class, 'flag'])
