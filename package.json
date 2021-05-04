@@ -35,6 +35,7 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.15.2",
+        "pluralize": "^8.0.0",
         "quill-image-resize": "^3.0.9",
         "text-clipper": "^2.1.0",
         "vue-pagination-2": "^3.0.8",

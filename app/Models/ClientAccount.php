@@ -92,6 +92,16 @@ class ClientAccount extends Model
         return $this->hasMany(Rule::class);
     }
 
+    public function flagged_rules()
+    {
+        return $this->rules()->isFlagged();
+    }
+
+    public function published_rules()
+    {
+        return $this->rules()->isPublished();
+    }
+
     /*public function getImageAttribute()
     {
         return'/' . $this->attributes['image'];

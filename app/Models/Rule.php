@@ -77,6 +77,11 @@ class Rule extends Model implements Auditable
 
     protected $with = ['terms'];
 
+    public function scopeIsFlagged(Builder $query)
+    {
+        return $query->where('flagged', true);
+    }
+
     public function scopeIsPublished(Builder $query)
     {
         return $query->whereState('state', PublishedState::class);

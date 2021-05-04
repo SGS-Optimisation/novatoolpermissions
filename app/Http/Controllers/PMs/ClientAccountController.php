@@ -33,14 +33,30 @@ class ClientAccountController extends Controller
      */
     public function show(Request $request, $client_account_slug)
     {
-        $client_account = ClientAccount::withCount('rules')
-                ->whereSlug($client_account_slug)->first()
-            ?? $request->user()->currentTeam->clientAccount;
+        $client_account = ClientAccount::withCount([
+            'rules',
+            'flagged_rules',
+            'published_rules',
+            'taxonomies',
+            'root_taxonomies',
+            'terms'
+        ])
+            ->whereSlug($client_account_slug)->first();//?? $request->user()->currentTeam->clientAccount;
+
+
+        $teamMembers = collect($client_account->team->allUsers())->map(function ($user) {
+            return collect($user->toArray())->only(['id', 'name', 'email', 'membership'])->all();
+        });
 
         return Jetstream::inertia()->render($request, 'ClientAccount/Dashboard', [
-            'team' => $request->user()->currentTeam,
+            'team' => $client_account->team,
+            'teamMembers' => $teamMembers,
             'clientAccount' => $client_account,
             'rulesCount' => $client_account->rules_count,
+            'flaggedRulesCount' => $client_account->flagged_rules_count,
+            'publishedRulesCount' => $client_account->published_rules_count,
+            'taxonomiesCount' => $client_account->taxonomies_count - $client_account->root_taxonomies_count,
+            'termsCount' => $client_account->terms_count,
         ]);
     }
 

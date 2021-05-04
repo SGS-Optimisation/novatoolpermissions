@@ -53,7 +53,7 @@ class JobClientAccountMatcher
             }
 
             if ($client) {
-                logger('fount client '.$client->name);
+                logger('found client '.$client->name);
                 $job_metadata->client = $client->only(['id', 'name', 'slug', 'image']);
                 $job_metadata->client_found = true;
             } else {

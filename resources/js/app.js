@@ -1,6 +1,7 @@
 require('./bootstrap');
 
 require('moment');
+const pluralize = require('pluralize');
 
 import Vue from 'vue';
 
@@ -55,3 +56,4 @@ new Vue({
 //Object.defineProperty(Vue.prototype, '$_', { value: _ });
 Vue.set(Vue.prototype, '_', _);
 Vue.set(Vue.prototype, 'moment', moment);
+Vue.set(Vue.prototype, 'pluralize', pluralize);
