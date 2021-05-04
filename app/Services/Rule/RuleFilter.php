@@ -7,47 +7,13 @@ namespace App\Services\Rule;
 use App\Models\ClientAccount;
 use App\Models\Job;
 use App\Models\Term;
-use App\Services\MySgs\Mapping\Mapper;
+use App\Services\MySgs\Api\EloquentHelpers\JobClientAccountMatcher;
+use App\Services\MySgs\Api\EloquentHelpers\JobFieldsMapper;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class RuleFilter
 {
-
-    public static function findClient($job)
-    {
-        $customer_name = $job->metadata->basicDetails->retailer->customerName;
-
-        $connection = config('database.default');
-        $driver = config("database.connections.{$connection}.driver");
-
-        switch ($driver) {
-            case 'sqlsrv':
-                $search = 'LOWER("alias") LIKE ?';
-                break;
-            case 'mysql':
-            default:
-                $search = 'LOWER(alias) LIKE ?';
-        }
-        $searchData = ['%'.Str::lower($customer_name).'%'];
-
-        $client = ClientAccount::where('name', 'LIKE', '%'.$customer_name.'%')
-            ->orWhereRaw($search, $searchData)
-            ->first();
-
-        $job_metadata = $job->metadata;
-
-        if ($client) {
-            $job_metadata->client = $client->only(['id', 'name', 'slug', 'image']);
-            $job_metadata->client_found = true;
-        } else {
-            $job_metadata->client_found = false;
-            $job_metadata->client = ['name' => $customer_name];
-        }
-
-        $job->metadata = $job_metadata;
-        $job->save();
-    }
 
     /**
      * @param  Job  $job
@@ -57,7 +23,7 @@ class RuleFilter
     {
         $memoizeMapper = memoize(
             function ($job, $mapping) {
-                $mapper = new Mapper($job, $mapping);
+                $mapper = new JobFieldsMapper($job, $mapping);
                 return $mapper->run();
             }
         );
@@ -65,7 +31,15 @@ class RuleFilter
         $clientRules = [];
 
         if (!$job->metadata->client_found) {
-            static::findClient($job);
+            logger('no client account associated job, searching');
+
+            /** @noinspection PhpExpressionResultUnusedInspection
+             * Self invoked class which
+             *
+             * Can be called again because client account aliases can be updated
+             */
+            (new JobClientAccountMatcher($job))->handle();
+
         }
 
         if ($job->metadata->client_found) {

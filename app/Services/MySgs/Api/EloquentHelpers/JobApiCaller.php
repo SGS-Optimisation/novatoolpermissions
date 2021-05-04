@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Services\Job;
+namespace App\Services\MySgs\Api\EloquentHelpers;
 
 
 use App\Broadcast\RulesFiltered;

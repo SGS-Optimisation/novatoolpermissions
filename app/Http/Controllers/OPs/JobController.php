@@ -4,13 +4,10 @@ namespace App\Http\Controllers\OPs;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\JobRepository;
-use App\Services\Job\JobApiCaller;
 use App\Services\Rule\RuleFilter;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Redirector;
 use Laravel\Jetstream\Jetstream;
 
 class JobController extends Controller
@@ -26,17 +23,12 @@ class JobController extends Controller
     public function show(Request $request, $jobNumber)
     {
         $rules = [];
-
-        //$job = JobApiHandler::handle($jobNumber, 'basicDetails');
-
         $job = JobRepository::findByJobNumber($jobNumber);
 
         if (!$job->metadata->processing_mysgs && !$job->metadata->error_mysgs) {
-            logger('mysgs data available');
+            logger('mysgs data available for '.$jobNumber);
             $rules = RuleFilter::handle($job);
         }
-
-
 
         return $request->wantsJson() ?
             new JsonResponse(['rules' => $rules, 'job' => $job], 200)

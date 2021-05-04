@@ -19,6 +19,7 @@ class LoadMySgsData implements ShouldQueue, ShouldBeUnique
 
     /**
      * @var Job
+     * Don't use `$job` as this is a reserved system word in queues
      */
     public $mysgs_job;
 
@@ -44,7 +45,7 @@ class LoadMySgsData implements ShouldQueue, ShouldBeUnique
 
         logger('handling job '.$this->mysgs_job->job_number);
 
-        DataLoader::handle($this->mysgs_job);
+        (new DataLoader($this->mysgs_job))->handle();
     }
 
     /**

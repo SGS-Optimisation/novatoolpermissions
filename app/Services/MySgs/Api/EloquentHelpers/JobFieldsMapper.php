@@ -1,16 +1,15 @@
 <?php
 
 
-namespace App\Services\MySgs\Mapping;
+namespace App\Services\MySgs\Api\EloquentHelpers;
 
 
 use App\Models\FieldMapping;
 use App\Models\Job;
-use App\Services\Job\JobApiCaller;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
-class Mapper
+class JobFieldsMapper
 {
 
     public $accumulator = [];
@@ -94,7 +93,7 @@ class Mapper
 
         // send the response to resolver to make some changes according to your need to tag
         if ($mapping->resolver_name !== null) {
-            $resolverClass = 'App\Services\MySgs\Resolvers\\'.$mapping->resolver_name;
+            $resolverClass = 'App\Services\MySgs\Api\Resolvers\\'.$mapping->resolver_name;
             $resolver = new $resolverClass;
             $dataToResolve = $resolver::handle($this->accumulator);
         } else {

@@ -106,6 +106,18 @@ return [
             ],
         ],
 
+        'mysgs_warehoused_data' => [
+            'driver' => env('MYSGS_DB_DRIVER'),
+            'host' => env('MYSGS_DB_HOST', '127.0.0.1'),
+            'port' => env('MYSGS_DB_PORT', '3306'),
+            'database' => env('MYSGS_DB_DATABASE', 'forge'),
+            'username' => env('MYSGS_DB_USERNAME', 'forge'),
+            'password' => env('MYSGS_DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
+
     ],
 
     /*
