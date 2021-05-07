@@ -52,7 +52,7 @@ class RuleRepository
             $rules = $rules->get()->each(function ($rule) {
                 $rule->content = str_replace('<img', '<img loading="lazy"', $rule->content);
 
-                if($rule->terms_count === 0) {
+                if($rule->terms_count == 0) {
                     $term = (new Term(['name' => 'No term', 'taxonomy_id' => 0,
                         'taxonomy' => new Taxonomy(['name' => 'No category'])]));
                     $rule->terms->add($term);
