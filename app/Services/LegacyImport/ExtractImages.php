@@ -75,7 +75,7 @@ class ExtractImages
                     base64_decode($base64_data_parts[1])
                 );
 
-            $this->replacements[] = 'src="'.Storage::disk('public')->url($image_path).'"';
+            $this->replacements[] = 'src="'.Storage::disk('azure')->url($image_path).'"';
         }
 
 

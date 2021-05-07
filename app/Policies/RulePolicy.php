@@ -41,9 +41,10 @@ class RulePolicy
      * @param  ClientAccount  $clientAccount
      * @return mixed
      */
-    public function create(User $user, ClientAccount $clientAccount)
+    public function create(User $user, ClientAccount $clientAccount = null)
     {
-        return $user->can('createRules') && $user->belongsToTeam($clientAccount->team)
+        return $clientAccount
+            && $user->can('createRules') && $user->belongsToTeam($clientAccount->team)
             || $user->can('forceCreateRules');
     }
 

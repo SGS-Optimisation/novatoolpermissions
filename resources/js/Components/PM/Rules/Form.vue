@@ -165,7 +165,7 @@ export default {
             formData.append('draftId', this.form.ContentDraftId);
 
             axios({
-                url: "http://dagobah.test/nova-api/rules/trix-attachment/content",
+                url: "/nova-api/rules/trix-attachment/content",
                 method: "POST",
                 data: formData,
             })
