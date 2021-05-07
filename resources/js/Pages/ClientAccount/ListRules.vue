@@ -47,6 +47,10 @@
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isFlagged' }, { 'bg-white text-blue-500' : filterOption !== 'isFlagged' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
                                 Flagged <span title="Total number of flagged rules" class="px-1 rounded-xl bg-pink-300">{{numFlaggedRules}}</span>
                             </button>
+                            <button @click="setFilterDate('isTagError')"
+                                    :class="[{ 'bg-blue-500 text-white' : filterOption === 'isTagError' }, { 'bg-white text-blue-500' : filterOption !== 'isTagError' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
+                                Tagging error <span title="Total number of rules with tagging errors" class="px-1 rounded-xl bg-pink-300">{{numTagError}}</span>
+                            </button>
                             <button @click="setFilterDate('all')"
                                     class="bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
                                 Unfilter
@@ -106,6 +110,7 @@ export default {
         'rules',
         'search',
         'states',
+        'rootTaxonomies',
     ],
 
     data() {
@@ -197,6 +202,17 @@ export default {
             return itemElem.flagged === true;
         };
 
+        this.filterObject['isTagError'] = (itemElem) => {
+            if (itemElem.terms.length === 0) {
+                return true;
+            }
+
+            return _.uniq(_.map(itemElem.terms, function(term) {
+                return term.taxonomy.parent.name;
+            })).length !== this.rootTaxonomies.length;
+
+        };
+
         this.filterObject['all'] = (itemElem) => {
             return true;
         };
@@ -280,6 +296,9 @@ export default {
         },
         numFlaggedRules: function () {
             return (_.filter(this.allRules, this.filterObject.isFlagged)).length;
+        },
+        numTagError: function () {
+            return (_.filter(this.allRules, this.filterObject.isTagError)).length;
         },
     },
 

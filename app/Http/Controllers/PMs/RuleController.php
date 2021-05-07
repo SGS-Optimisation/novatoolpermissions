@@ -71,6 +71,7 @@ class RuleController extends Controller
             'rules' => $ruleRepo->all($term),
             'states' => (new Rule)->getStatesFor('state'),
             'search' => optional($term)->name,
+            'rootTaxonomies' => $client_account->root_taxonomies,
         ]);
     }
 
