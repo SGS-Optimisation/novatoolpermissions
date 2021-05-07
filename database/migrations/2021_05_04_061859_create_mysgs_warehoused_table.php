@@ -17,7 +17,6 @@ class CreateMysgsWarehousedTable extends Migration
             Schema::connection('mysgs_warehoused_data')->create('customers', function (Blueprint $table) {
                 $table->id('CustomerId');
                 $table->string('CustomerName');
-                $table->string('PortfolioGroupId')->nullable();
                 $table->unsignedInteger('PortfolioGroupId')->nullable();
                 $table->string('PortfolioGroupName')->nullable();
                 $table->unsignedInteger('SimplifiedGroupId')->nullable();
