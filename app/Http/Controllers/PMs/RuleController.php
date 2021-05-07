@@ -11,6 +11,7 @@ use App\Models\Term;
 use App\Repositories\RuleRepository;
 use App\Services\ClientAccounts\BuildTaxonomyLists;
 use App\Services\Taxonomy\Traits\TaxonomyBuilder;
+use App\States\Rules\DraftState;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -87,7 +88,9 @@ class RuleController extends Controller
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
         $this->authorize('create', [Rule::class, $client_account]);
 
+        /** @var Rule $rule */
         $rule = new Rule(['content' => '']);
+        $rule->state = DraftState::class;
 
         return Jetstream::inertia()->render($request, 'ClientAccount/CreateRule', array_merge([
             'team' => $request->user()->currentTeam,

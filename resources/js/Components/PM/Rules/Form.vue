@@ -47,18 +47,19 @@
 
                             </div>
                             <div v-for="(state, index) in states" class="flex flew-row px-4">
-                                <input
-                                    v-model="form.state"
-                                    :name="'state-'+index"
-                                    type="radio"
-                                    class="hidden"
-                                    :value="state">
-                                <label class="ml-1 flex items-center cursor-pointer" :for="'state-'+index"
-                                       @click="form.state=state">
-                                    <span class="w-8 h-8 inline-block mr-2 rounded-full border border-grey flex-no-shrink"></span>
-                                    {{ state }}
-                                </label>
-
+                                <template v-if="state !== rule.state">
+                                    <input
+                                        v-model="form.state"
+                                        :name="'state-'+index"
+                                        type="radio"
+                                        class="hidden"
+                                        :value="state">
+                                    <label class="ml-1 flex items-center cursor-pointer" :for="'state-'+index"
+                                           @click="form.state=state">
+                                        <span class="w-8 h-8 inline-block mr-2 rounded-full border border-grey flex-no-shrink"></span>
+                                        {{ state }}
+                                    </label>
+                                </template>
                             </div>
                         </div>
                     </section>

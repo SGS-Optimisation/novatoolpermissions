@@ -203,7 +203,8 @@ export default {
         };
 
         this.filterObject['isTagError'] = (itemElem) => {
-            if (itemElem.terms.length === 0) {
+            if (itemElem.terms.length === 0
+                || (itemElem.terms.length === 1 && itemElem.terms[0].name === 'No term')) {
                 return true;
             }
 
