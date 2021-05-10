@@ -26,6 +26,9 @@ use Illuminate\Support\Facades\Route;
  * When user is unauthenticated, route '/' is handled by Fortify and leads to /login page
  */
 
+Route::get('/login/azure/callback', [\App\Http\Controllers\Auth\AzureAuthController::class, 'handleOauthResponse'])
+    ->middleware(['web']);
+
 Route::middleware(['auth:sanctum', 'verified', 'user.permissions'])->group(function () {
     Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
