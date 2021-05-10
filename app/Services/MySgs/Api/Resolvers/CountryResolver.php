@@ -1,22 +1,28 @@
 <?php
 
 
-namespace App\Services\MySgs\Resolvers;
+namespace App\Services\MySgs\Api\Resolvers;
 
 
 class CountryResolver
 {
 
-    public static function handle($language)
+    public static function handle($data)
     {
-        if ($language && trim($language) !== "") {
-            $tags = explode(',', $language);
-            return array_filter($tags, function ($tag) {
-                return $tag && $tag !== "";
-            });
+        \Log::debug('country resolver received data:'.print_r($data, true));
+
+        $accumulator = [];
+
+        foreach ($data as $language) {
+            if (trim($language) !== "") {
+                $tags = explode(',', $language);
+                $accumulator[] = array_filter($tags, function ($tag) {
+                    return $tag && $tag !== "";
+                });
+            }
         }
 
-        return false;
+        return $accumulator;
     }
 
 }

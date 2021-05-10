@@ -1,7 +1,6 @@
 <template>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-50 shadow-inner border border-orange-200">
         <div class="flex flex-col">
-
             <div class="flex flex-row">
                 <img :src="'/'+job.metadata.client.image" style="max-width: 80px">
                 <h3 class="font-semibold text-lg leading-loose text-gray-800 ">
@@ -21,23 +20,34 @@
                             <div class="">
 
                                 <div class="bg-blue-200 text-green-800 px-2 flex flex-row justify-between"
-                                     :class="job.metadata.matched_taxonomy[item].length ? 'b rounded-tr-lg':'rounded-r-lg'"
+                                     :class="job.metadata.matched_taxonomy[item] && job.metadata.matched_taxonomy[item].length ?
+                                     'b rounded-tr-lg':'rounded-r-lg'"
                                      title="MySGS value">
                                     <div>
-                                        <div class="w-32" v-for="value in values.slice(0, limit)"
-                                             :title="'MySGS value' + (value.length < 20 ? '' : ': ' +value)">
-                                            <span v-if="values.length > 1">- </span>
-                                            {{ shorten(value) }}
-                                        </div>
+                                        <template v-if="typeof values == 'object'">
+                                            <div class="w-32" v-for="value in values.slice(0, limit)"
+                                                 :title="'MySGS value' + (value.length < 20 ? '' : ': ' +value)">
+                                                <span v-if="values.length > 1">- </span>
+                                                {{ shorten(value) }}
+                                            </div>
+
+                                            <div>
+                                                <button v-if="values.length > 1 & limit === 1" @click="limit=12">
+                                                    <i class="fa fa-plus-square"></i>
+                                                </button>
+                                                <button v-if="values.length > 1 && limit !== 1" @click="limit=1">
+                                                    <i class="fa fa-minus-square"></i>
+                                                </button>
+                                            </div>
+                                        </template>
+                                        <template v-else>
+                                            <div class="w-32"
+                                                 :title="'MySGS value' + (values.length < 20 ? '' : ': ' +values)">
+                                                {{ shorten(values) }}
+                                            </div>
+                                        </template>
                                     </div>
-                                    <div>
-                                        <button v-if="values.length > 1 & limit === 1" @click="limit=12">
-                                            <i class="fa fa-plus-square"></i>
-                                        </button>
-                                        <button v-if="values.length > 1 && limit !== 1" @click="limit=1">
-                                            <i class="fa fa-minus-square"></i>
-                                        </button>
-                                    </div>
+
                                 </div>
 
                                 <div v-for="(terms, index) in job.metadata.matched_taxonomy[item]"

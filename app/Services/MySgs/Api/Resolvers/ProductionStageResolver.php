@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Services\MySgs\Resolvers;
+namespace App\Services\MySgs\Api\Resolvers;
 
 
 class ProductionStageResolver
@@ -9,8 +9,9 @@ class ProductionStageResolver
 
     public static function handle($data)
     {
-        \Log::debug('resolver received data:' . print_r($data, true));
+        \Log::debug('stage resolver received data:'.print_r($data, true));
 
-        return implode(', ', $data);
+        // no processing
+        return $data;
     }
 }

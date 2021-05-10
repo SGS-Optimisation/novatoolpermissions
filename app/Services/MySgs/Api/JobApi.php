@@ -29,6 +29,12 @@ class JobApi extends BaseApi
         return static::get('JobVersion/extraDetails/', $jobVersionId, $params);
     }
 
+    public static function jobContacts($jobVersionId, $params = [])
+    {
+        logger('contact job api');
+        return static::get('JobContacts/', $jobVersionId, $params);
+    }
+
     public static function latestStage($jobVersionId, $params = [])
     {
         logger('latest stage job api');

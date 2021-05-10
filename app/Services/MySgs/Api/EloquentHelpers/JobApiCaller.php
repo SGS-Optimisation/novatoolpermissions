@@ -4,11 +4,8 @@
 namespace App\Services\MySgs\Api\EloquentHelpers;
 
 
-use App\Broadcast\RulesFiltered;
-use App\Jobs\JobApiRequest;
 use App\Models\Job;
 use App\Repositories\JobRepository;
-use App\Services\MySgs\Api\JobApi;
 
 class JobApiCaller
 {

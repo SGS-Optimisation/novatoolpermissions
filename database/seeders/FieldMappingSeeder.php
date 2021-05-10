@@ -51,6 +51,30 @@ class FieldMappingSeeder extends Seeder
                 'field_path' => 'brand',
             ],
 
+            [
+                'names' => ['Country',],
+                'api_action' => 'extraDetails',
+                'field_path' => '0.extraDetailsFields.*[fieldName=37_Country].itemValue',
+            ],
+
+            [
+                'names' => ['Category',],
+                'api_action' => 'extraDetails',
+                'field_path' => '0.extraDetailsFields.*[fieldName=03_CategorySpecificCode].itemValue',
+            ],
+
+            [
+                'names' => ['Category Group',],
+                'api_action' => 'extraDetails',
+                'field_path' => '0.extraDetailsFields.*[fieldName=01_CategoryGroup].itemValue',
+            ],
+
+            [
+                'names' => ['Printer',],
+                'api_action' => 'jobContacts',
+                'field_path' => '*',
+            ],
+
         ];
 
         foreach ($bootstrap as $mappingSet) {

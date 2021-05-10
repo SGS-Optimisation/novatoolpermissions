@@ -40,6 +40,7 @@ class DataLoader
          */
         $basicDetails = (new JobApiCaller($this->job))->handle('JobApi', 'basicDetails');
         $extraDetails = (new JobApiCaller($this->job))->handle('JobApi', 'extraDetails');
+        $jobContacts = (new JobApiCaller($this->job))->handle('JobApi', 'jobContacts');
         $jobItems = (new JobApiCaller($this->job))->handle('ProductionApi', 'jobItems');
 
 

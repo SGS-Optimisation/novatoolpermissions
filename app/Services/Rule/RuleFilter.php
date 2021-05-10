@@ -6,6 +6,7 @@ namespace App\Services\Rule;
 
 use App\Models\ClientAccount;
 use App\Models\Job;
+use App\Models\Taxonomy;
 use App\Models\Term;
 use App\Services\MySgs\Api\EloquentHelpers\JobClientAccountMatcher;
 use App\Services\MySgs\Api\EloquentHelpers\JobFieldsMapper;
@@ -33,11 +34,6 @@ class RuleFilter
         if (!$job->metadata->client_found) {
             logger('no client account associated job, searching');
 
-            /** @noinspection PhpExpressionResultUnusedInspection
-             * Self invoked class which
-             *
-             * Can be called again because client account aliases can be updated
-             */
             (new JobClientAccountMatcher($job))->handle();
 
         }
@@ -52,6 +48,9 @@ class RuleFilter
             $job_taxonomy_terms_matches = [];
             $job_taxonomy_terms = [];
 
+            /*
+             *  Match rules against job's metadata
+             */
             foreach ($client->rules()->isPublished()->get() as $rule) {
                 $matched = true;
                 $matchedTaxonomies = [];
@@ -114,6 +113,18 @@ class RuleFilter
 
                 if ($matched || $taxonomyMatch) {
                     $clientRules[] = $rule;
+                }
+            }
+
+            /*
+             * Fill in any unused taxonomy, for display in job identification section
+             */
+            /** @var Taxonomy $taxonomy */
+            foreach ($client->child_taxonomies as $taxonomy) {
+                if(!in_array($taxonomy->name, $job_taxonomy_terms) && $taxonomy->mapping) {
+                    list($mysgsValue, $raw) = $memoizeMapper($job, $taxonomy->mapping);
+
+                    $job_taxonomy_terms[$taxonomy->name] = $mysgsValue;
                 }
             }
 
