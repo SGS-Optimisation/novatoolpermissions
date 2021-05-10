@@ -52,7 +52,7 @@ import Button from "@/Jetstream/Button";
 
 
 export default {
-    name: "CreateRule",
+    name: "EditRule",
 
     components: {
         JetButton,

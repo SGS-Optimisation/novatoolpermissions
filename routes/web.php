@@ -76,7 +76,9 @@ Route::name('pm.')
                 Route::post('/client-account', [ClientAccountController::class, 'store'])
                     ->name('store');
 
-                Route::get('/{id}', [ClientAccountController::class, 'getById'])->name('getById');
+                Route::get('/{id}', [ClientAccountController::class, 'getById'])
+                    ->where('id', '[0-9]+')
+                    ->name('getById');
 
                 Route::prefix('/{clientAccount:slug}')->group(function () {
                     Route::get('/', [ClientAccountController::class, 'show']);
@@ -116,6 +118,12 @@ Route::name('pm.')
 
                         Route::get('/{id}/edit', [RuleController::class, 'edit'])
                             ->name('rules.edit');
+
+                        Route::delete('/{id}/delete', [RuleController::class, 'destroy'])
+                            ->name('rules.delete');
+
+                        Route::put('/{id}/restore', [RuleController::class, 'restore'])
+                            ->name('rules.restore');
 
                         Route::get('/{id}/history', [AuditActivityController::class, 'ruleHistory'])
                             ->name('rules.history');

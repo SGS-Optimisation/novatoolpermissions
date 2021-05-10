@@ -25,7 +25,7 @@ class AuditActivityController extends Controller
     {
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
 
-        $rule = Rule::find($id);
+        $rule = Rule::withTrashed()->find($id);
         $all =  $rule->audits()->orderBy('created_at', 'desc')->with('user')->get();
 
       return Jetstream::inertia()->render($request, 'PM/AuditActivity', [

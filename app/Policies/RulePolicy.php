@@ -70,8 +70,8 @@ class RulePolicy
      */
     public function delete(User $user, Rule $rule)
     {
-        return $user->can('deleteRules')
-            && $user->belongsToTeam($rule->clientAccount->team);
+        return $user->can('deleteRules') && $user->belongsToTeam($rule->clientAccount->team)
+            || $user->can('forceCreateRules');
     }
 
     /**
@@ -83,7 +83,8 @@ class RulePolicy
      */
     public function restore(User $user, Rule $rule)
     {
-        //
+        return $user->can('deleteRules') && $user->belongsToTeam($rule->clientAccount->team)
+            || $user->can('forceCreateRules');
     }
 
     /**

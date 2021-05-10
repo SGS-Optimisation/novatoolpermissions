@@ -1,5 +1,6 @@
 <template>
-    <div class="mx-auto sm:px-6 lg:px-8">
+    <div class="mx-auto sm:px-6 lg:px-8"
+    :class="{'bg-red-500': rule.deleted_at}">
 
         <template>
             <h1 class="text-lg">
@@ -8,7 +9,7 @@
         </template>
 
         <div class="pt-4">
-            <jet-form-section @submitted="pushRuleData">
+            <jet-form-section @submitted="pushRuleData" >
                 <template #title>
                     Rule definition
                 </template>
@@ -67,9 +68,19 @@
                 </template>
 
                 <template #actions>
-                    <jet-action-message :on="form.recentlySuccessful" class="mr-3">
-                        Saved.
-                    </jet-action-message>
+                    <jet-action-message :on="deleteForm.recentlySuccessful" class="mr-3">Deleted.</jet-action-message>
+                    <jet-action-message :on="restoreForm.recentlySuccessful" class="mr-3">Restored.</jet-action-message>
+                    <jet-action-message :on="form.recentlySuccessful" class="mr-3">Saved.</jet-action-message>
+
+                    <i v-if="rule.id && !rule.deleted_at"
+                       title="Delete Rule"
+                       @click="confirmingRuleDeletion=true"
+                       class="mr-3 text-red-600 fa fa-trash cursor-pointer hover:bg-red-600 hover:text-white rounded p-2"/>
+
+                    <i v-if="rule.id && rule.deleted_at"
+                       title="Restore from Trash"
+                       @click="confirmingRuleRestore=true"
+                       class="mr-3 text-green-600 fas fa-trash-restore cursor-pointer hover:bg-green-600 hover:text-white rounded p-2"/>
 
                     <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                         Save
@@ -77,6 +88,52 @@
                 </template>
             </jet-form-section>
         </div>
+
+        <!-- Delete Rule Confirmation Modal -->
+        <jet-confirmation-modal :show="confirmingRuleDeletion" @close="cancelDeleteRule">
+            <template #title>
+                Delete Rule
+            </template>
+
+            <template #content>
+                Are you sure you want to delete this rule?
+            </template>
+
+            <template #footer>
+                <jet-secondary-button @click.native="cancelDeleteRule">
+                    Nevermind
+                </jet-secondary-button>
+
+                <jet-danger-button class="ml-2" @click.native="deleteRule"
+                                   :class="{ 'opacity-25': deleteForm.processing }"
+                                   :disabled="deleteForm.processing">
+                    Delete
+                </jet-danger-button>
+            </template>
+        </jet-confirmation-modal>
+
+        <!-- Restore Rule Confirmation Modal -->
+        <jet-confirmation-modal :show="confirmingRuleRestore" @close="cancelRestoreRule">
+            <template #title>
+                Restore Rule
+            </template>
+
+            <template #content>
+                Are you sure you want to restore this rule?
+            </template>
+
+            <template #footer>
+                <jet-secondary-button @click.native="cancelRestoreRule">
+                    Nevermind
+                </jet-secondary-button>
+
+                <jet-danger-button class="ml-2" @click.native="restoreRule"
+                                   :class="{ 'opacity-25': restoreForm.processing }"
+                                   :disabled="restoreForm.processing">
+                    Restore
+                </jet-danger-button>
+            </template>
+        </jet-confirmation-modal>
 
     </div>
 </template>
@@ -86,6 +143,8 @@ import {Quill, VueEditor} from "vue2-editor";
 import ImageResize from 'quill-image-resize';
 
 import JetButton from '@/Jetstream/Button'
+import JetConfirmationModal from "@/Jetstream/ConfirmationModal";
+import JetDangerButton from '@/Jetstream/DangerButton'
 import JetFormSection from '@/Jetstream/FormSection'
 import JetInput from '@/Jetstream/Input'
 import JetInputError from '@/Jetstream/InputError'
@@ -103,6 +162,8 @@ export default {
 
         JetActionMessage,
         JetButton,
+        JetConfirmationModal,
+        JetDangerButton,
         JetFormSection,
         JetInput,
         JetInputError,
@@ -120,6 +181,9 @@ export default {
 
     data() {
         return {
+            confirmingRuleDeletion: false,
+            confirmingRuleRestore: false,
+
             editorSettings: {
                 modules: {
                     imageResize: {}
@@ -135,10 +199,52 @@ export default {
                 bag: 'pushRuleData',
                 resetOnSuccess: false,
             }),
+
+            deleteForm: this.$inertia.form({
+                id: this.rule.id,
+            }, {
+                bag: 'deleteRule',
+                resetOnSuccess: false,
+            }),
+
+            restoreForm: this.$inertia.form({
+                id: this.rule.id,
+            }, {
+                bag: 'restoreRule',
+                resetOnSuccess: false,
+            }),
         }
     },
 
     methods: {
+        cancelRestoreRule() {
+            this.confirmingRuleRestore = false;
+        },
+
+        restoreRule() {
+            if(this.rule.id) {
+                this.restoreForm.put(route('pm.client-account.rules.restore', {clientAccount: this.clientAccount.slug, id: this.rule.id}), {
+                    preserveScroll: true
+                }).then(() => {
+                    this.cancelRestoreRule();
+                });
+            }
+        },
+
+        cancelDeleteRule() {
+            this.confirmingRuleDeletion = false;
+        },
+
+        deleteRule() {
+            if(this.rule.id) {
+                this.deleteForm.delete(route('pm.client-account.rules.delete', {clientAccount: this.clientAccount.slug, id: this.rule.id}), {
+                    preserveScroll: true
+                }).then(() => {
+                    this.cancelDeleteRule();
+                });
+            }
+        },
+
         pushRuleData: function () {
 
             if (this.rule.id) {
@@ -154,9 +260,6 @@ export default {
         },
 
         handleImageAdded: function(file, Editor, cursorLocation, resetUploader) {
-            // An example of using FormData
-            // NOTE: Your key could be different such as:
-            // formData.append('file', file)
 
             console.log('handling image upload');
 

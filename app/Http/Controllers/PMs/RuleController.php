@@ -147,7 +147,7 @@ class RuleController extends Controller
      */
     public function edit(Request $request, $client_account_slug, $id)
     {
-        $rule = Rule::find($id);
+        $rule = Rule::withTrashed()->find($id);
 
         $this->authorize('update', $rule);
 
@@ -203,11 +203,44 @@ class RuleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param  Request  $request
+     * @param $client_account_slug
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse|RedirectResponse
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(Request $request, $client_account_slug, $id)
     {
-        //
+        $rule = Rule::find($id);
+        $rule->delete();
+
+        event(new Updated($rule));
+
+        return $request->wantsJson()
+            ? new JsonResponse('', 200)
+            : back()->with('status', 'rule-deleted');
+
+    }
+
+    /**
+     * Restore deleted resource
+     *
+     * @param  Request  $request
+     * @param $client_account_slug
+     * @param  int  $id
+     * @return JsonResponse|RedirectResponse
+     * @throws \Exception
+     */
+    public function restore(Request $request, $client_account_slug, $id)
+    {
+        $rule = Rule::withTrashed()->find($id);
+        $rule->restore();
+
+        event(new Updated($rule));
+
+        return $request->wantsJson()
+            ? new JsonResponse('', 200)
+            : back()->with('status', 'rule-restored');
+
     }
 }
