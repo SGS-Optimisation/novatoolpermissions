@@ -18,12 +18,10 @@ class CreateTaxonomiesTable extends Migration
         Schema::create('taxonomies', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            // Disable next entry because azure sqlserver not migrating
-            /*$table->unsignedInteger('parent_id')
+            $table->foreignId('parent_id')
                 ->nullable()
                 ->constrained('taxonomies')
-                ->onDelete('no action');*/
-            $table->unsignedInteger('parent_id')->nullable();
+                ->onDelete('no action');
             $table->json('config')->nullable();
             $table->timestamps();
             $table->softDeletes();
