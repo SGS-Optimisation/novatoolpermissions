@@ -9,7 +9,7 @@ class PrinterResolver
 
     public static function handle($data)
     {
-        \Log::debug('printer resolver received data:'.print_r($data, true));
+        //\Log::debug('printer resolver received data:'.print_r($data, true));
 
         $accumulator = [];
 

@@ -92,15 +92,29 @@ class RuleFilter
                         /**
                          * compare retrieved value with this term
                          */
-                        if (!(Str::contains($termValue, strtolower($mysgsValue))
-                            || Str::contains(strtolower($mysgsValue), $termValue))
-                        ) {
-                            $matched = false;
-                        } else {
-                            $matchedTaxonomies[$term->taxonomy->name] = true;
+                        if(!is_array($mysgsValue)) {
+                            logger('converting mysgs value to array');
+                            $mysgsValue = [$mysgsValue];
+                        }
 
-                            if (!in_array($term->name, $job_taxonomy_terms_matches[$term->taxonomy->name])) {
-                                $job_taxonomy_terms_matches[$term->taxonomy->name][] = $term->name;
+                        foreach ($mysgsValue as $index => $mysgsValue_single) {
+                            if(empty($mysgsValue_single)) {
+                                continue;
+                            }
+                            logger('checking term against mysgs value: ' . print_r($mysgsValue_single, true));
+                            if (!(Str::contains($termValue, strtolower($mysgsValue_single))
+                                || Str::contains(strtolower($mysgsValue_single), $termValue))
+                            ) {
+                                logger(sprintf('rule %s dropped, term %s did not match with %s',
+                                        $rule->id, $termValue, $mysgsValue_single)
+                                );
+                                $matched = false;
+                            } else {
+                                $matchedTaxonomies[$term->taxonomy->name] = true;
+
+                                if (!in_array($term->name, $job_taxonomy_terms_matches[$term->taxonomy->name])) {
+                                    $job_taxonomy_terms_matches[$term->taxonomy->name][] = $term->name;
+                                }
                             }
                         }
                     }
@@ -113,6 +127,10 @@ class RuleFilter
 
                 if ($matched || $taxonomyMatch) {
                     $clientRules[] = $rule;
+                } else {
+                    logger(sprintf('rule %s dropped, matched=%b  taxoMatch=%b ',
+                        $rule->id, $matched, $taxonomyMatch)
+                    );
                 }
             }
 
