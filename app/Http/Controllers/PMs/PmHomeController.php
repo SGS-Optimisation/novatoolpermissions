@@ -18,12 +18,11 @@ class PmHomeController extends Controller
         });
 
         foreach($myTeams as $team) {
-            $team->clientAccount->loadCount('rules');
-            
+            $team->clientAccount->loadCount(['rules', 'omnipresent_rules']);
         }
 
         $otherTeams = Team::with(['clientAccount' => function($query){
-            return $query->withCount('rules');
+            return $query->withCount(['rules', 'omnipresent_rules']);
         }])
             ->whereNotIn('id', $myTeams->pluck('id')->all())
             ->whereHas('clientAccount')

@@ -16,6 +16,11 @@
               title="Number of rules">
             {{ team.client_account.rules_count }}
         </span>
+        <span class="num-rules omnipresent"
+              :class="{'bg-green-100': hasRules,'bg-pink-100': !hasRules}"
+              title="Number of omnipresent rules">
+            {{ team.client_account.omnipresent_rules_count }}
+        </span>
     </jet-nav-link>
 </template>
 
@@ -49,5 +54,9 @@ export default {
     top: -10px;
     right: -10px;
     @apply bg-opacity-50 rounded-xl text-center absolute
+}
+
+.num-rules.omnipresent {
+    top: 10px;
 }
 </style>

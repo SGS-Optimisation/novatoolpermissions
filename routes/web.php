@@ -70,7 +70,6 @@ Route::name('pm.')
             ->name('landing');
 
         Route::name('client-account.')
-            //->prefix('/{clientAccount:slug}')
             ->group(function () {
 
                 Route::get('/client-account/create', [ClientAccountController::class, 'create'])

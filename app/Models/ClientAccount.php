@@ -112,6 +112,11 @@ class ClientAccount extends Model
         return $this->rules()->isPublished();
     }
 
+    public function omnipresent_rules()
+    {
+        return $this->rules()->isOmnipresent();
+    }
+
     /*public function getImageAttribute()
     {
         return'/' . $this->attributes['image'];

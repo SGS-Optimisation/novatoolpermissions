@@ -77,6 +77,19 @@ class Rule extends Model implements Auditable
 
     protected $with = ['terms'];
 
+    /**
+     * @param  Builder  $query
+     * @return Builder
+     *
+     * All terms in the `Account Structure` taxonomy have the value ANY
+     */
+    public function scopeIsOmnipresent(Builder $query)
+    {
+        return $query->whereDoesntHave('accountStructureTerms', function(Builder $termQuery){
+            $termQuery->where('name',  '!=', 'ANY');
+        });
+    }
+
     public function scopeIsFlagged(Builder $query)
     {
         return $query->where('flagged', true);
@@ -97,8 +110,16 @@ class Rule extends Model implements Auditable
                 $query->orderBy('name', 'asc');
             }
         ]);
+    }
 
-        //orderBy('name');
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function accountStructureTerms()
+    {
+        return $this->terms()->whereHas('taxonomy.parent', function(Builder $query){
+            return $query->where('name', 'Account Structure');
+        });
     }
 
     /**

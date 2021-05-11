@@ -21,6 +21,7 @@
                                         <p>Total: {{ rulesCount }}</p>
                                         <p>Flagged: {{ flaggedRulesCount }}</p>
                                         <p>Published: {{ publishedRulesCount }}</p>
+                                        <p>Omnipresent: {{ omnipresentRulesCount }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -86,6 +87,7 @@ export default {
         'rulesCount': Number,
         'flaggedRulesCount': Number,
         'publishedRulesCount': Number,
+        'omnipresentRulesCount': Number,
         'taxonomiesCount': Number,
         'termsCount': Number,
     },

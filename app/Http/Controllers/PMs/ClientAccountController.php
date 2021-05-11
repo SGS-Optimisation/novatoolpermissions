@@ -37,6 +37,7 @@ class ClientAccountController extends Controller
             'rules',
             'flagged_rules',
             'published_rules',
+            'omnipresent_rules',
             'taxonomies',
             'root_taxonomies',
             'terms'
@@ -53,6 +54,7 @@ class ClientAccountController extends Controller
             'teamMembers' => $teamMembers,
             'clientAccount' => $client_account,
             'rulesCount' => $client_account->rules_count,
+            'omnipresentRulesCount' => $client_account->omnipresent_rules_count,
             'flaggedRulesCount' => $client_account->flagged_rules_count,
             'publishedRulesCount' => $client_account->published_rules_count,
             'taxonomiesCount' => $client_account->taxonomies_count - $client_account->root_taxonomies_count,
