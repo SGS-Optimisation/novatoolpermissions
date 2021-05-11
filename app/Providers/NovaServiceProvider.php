@@ -40,6 +40,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             Number::make('Number of days to consider rules as "Updated"', 'rule_filter_updated_duration')
                 ->min(0)->required(),
         ], [], 'rules');
+
+        Nova::style('sgs', asset('css/nova-sgs.css'));
     }
 
     /**

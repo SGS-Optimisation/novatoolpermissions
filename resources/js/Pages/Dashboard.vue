@@ -1,8 +1,8 @@
 <template>
     <app-layout>
 
-        <div class="flex lg:pt-36">
-            <div class="m-auto w-1/3">
+        <div class="flex lg:pt-36 pt-12">
+            <div class="m-auto lg:w-2/5">
 
                     <job-search></job-search>
             </div>
