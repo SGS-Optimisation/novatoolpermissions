@@ -16,8 +16,12 @@
               title="Number of rules">
             {{ team.client_account.rules_count }}
         </span>
-        <span class="num-rules omnipresent"
-              :class="{'bg-green-100': hasRules,'bg-pink-100': !hasRules}"
+        <span class="num-rules omnipresent" v-if="team.client_account.omnipresent_rules_count"
+              :class="{
+                'bg-green-100': omnipresentRulesInfo,
+                'bg-yellow-200': omnipresentRulesWarning,
+                'bg-pink-200': omnipresentRulesDanger,
+              }"
               title="Number of omnipresent rules">
             {{ team.client_account.omnipresent_rules_count }}
         </span>
@@ -36,6 +40,22 @@ export default {
     computed: {
         hasRules: function () {
             return this.team.client_account.rules_count > 0;
+        },
+
+        ratio() {
+            return (this.team.client_account.omnipresent_rules_count/this.team.client_account.rules_count)
+        },
+
+        omnipresentRulesInfo: function () {
+            return this.ratio < 0.1;
+        },
+
+        omnipresentRulesWarning: function () {
+            return this.ratio >= 0.1 && this.ratio <0.2;
+        },
+
+        omnipresentRulesDanger: function () {
+            return this.ratio >= 0.2;
         },
     }
 }
@@ -57,6 +77,6 @@ export default {
 }
 
 .num-rules.omnipresent {
-    top: 10px;
+    top: 5px;
 }
 </style>
