@@ -89,8 +89,7 @@ class ClientAccountController extends Controller
         $image_path = null;
 
         if ($request->hasFile('image')) {
-
-            $image_path = Storage::disk('public')->putFile('logos', $request->file('image'));
+            $image_path = Storage::putFile('logos', $request->file('image'));
         }
 
         $client_account = ClientAccount::create(array_merge(
@@ -132,8 +131,7 @@ class ClientAccountController extends Controller
         $image_path = $client_account->image;
 
         if ($request->hasFile('image')) {
-            \Log::debug('image uploaded');
-            $image_path = Storage::disk('public')->putFile('logos', $request->file('image'));
+            $image_path = Storage::putFile('logos', $request->file('image'));
         }
 
         $client_account->update(array_merge(
