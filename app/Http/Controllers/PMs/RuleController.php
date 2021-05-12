@@ -39,7 +39,7 @@ class RuleController extends Controller
             $callbacks[] = function () use ($request, $rule) {
                 PendingAttachment::persistDraft(
                     $request->ContentDraftId,
-                    (new Trix('Content'))->withFiles(null, 'rules/'),
+                    (new Trix('Content'))->withFiles(config('filesystems.default'), 'rules/'),
                     $rule
                 );
             };
