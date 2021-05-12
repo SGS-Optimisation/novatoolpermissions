@@ -13,7 +13,7 @@ class CreateMysgsWarehousedTable extends Migration
      */
     public function up()
     {
-        if (config('app.env') !== 'production') {
+        if (!Schema::connection('mysgs_warehoused_data')->hasTable('customers')) {
             Schema::connection('mysgs_warehoused_data')->create('customers', function (Blueprint $table) {
                 $table->id('CustomerId');
                 $table->string('CustomerName');
@@ -33,8 +33,6 @@ class CreateMysgsWarehousedTable extends Migration
      */
     public function down()
     {
-        if (config('app.env') !== 'production') {
-            Schema::connection('mysgs_warehoused_data')->dropIfExists('customers');
-        }
+        Schema::connection('mysgs_warehoused_data')->dropIfExists('customers');
     }
 }
