@@ -69,13 +69,12 @@ class ExtractImages
             $image_name = uniqid().'.'.$extension;
             $image_path = 'rules/'.Carbon::now()->format('Y-m-d').'/'.$image_name;
 
-            Storage::disk('public')
-                ->put(
+            Storage::put(
                     $image_path,
                     base64_decode($base64_data_parts[1])
                 );
 
-            $this->replacements[] = 'src="'.Storage::disk('azure')->url($image_path).'"';
+            $this->replacements[] = 'src="'.Storage::url($image_path).'"';
         }
 
 

@@ -26,7 +26,19 @@ class TaxonomyAccountStructureSeeder extends Seeder
                             'aliases' => ['BRAND', 'Brand', 'Brand (Sub)', 'Brand - Sub', 'BRANDS', 'Brands'],
                         ],
                         'terms' => [
-                            'ANY'
+                            'ANY' => ['aliases' => []],
+                            'FENISTIL' => [
+                                'aliases' => ['Fenistil New Design', 'Fenistil Old design'],
+                                'default' => false,
+                            ],
+                            'Otrivin' => [
+                                'aliases' => ['Otrivin 2013', 'Otrivin 2017'],
+                                'default' => false,
+                            ],
+                            'Voltaren' => [
+                                'aliases' => ['Voltaren New Design', 'Voltaren Old design'],
+                                'default' => false,
+                            ]
                         ],
                         'mappings' => [
                             [
@@ -65,29 +77,29 @@ class TaxonomyAccountStructureSeeder extends Seeder
                             ]
                         ],
                         'terms' => [
-                            'ANY',
-                            'Bag',
-                            'Blister',
-                            'Can/Bottle/Tube/Tin (Direct Print)',
-                            'Carton/Box',
-                            'Display (Point of Sale)',
-                            'Distortion/Shrink',
-                            'Envelope',
-                            'Hood',
-                            'Label',
-                            'Leaflet',
-                            'Lid',
-                            'Not Applicable',
-                            'Poster',
-                            'Sachet/Pouch',
-                            'Seal',
-                            'Shipper',
-                            'Sticker',
-                            'Tag',
-                            'TBC',
-                            'Tray',
-                            'Tub',
-                            'Wrap/Overwrap (non-distorted)',
+                            'ANY' => ['aliases' => []],
+                            'Bag' => ['aliases' => []],
+                            'Blister' => ['aliases' => ['FOIL']],
+                            'Can/Bottle/Tube/Tin (Direct Print)' => ['aliases' => ['CAN', 'TUB']],
+                            'Carton/Box' => ['aliases' => ['Carton/Box', 'CTN']],
+                            'Display (Point of Sale)' => ['aliases' => []],
+                            'Distortion/Shrink' => ['aliases' => []],
+                            'Envelope' => ['aliases' => []],
+                            'Hood' => ['aliases' => []],
+                            'Label' => ['aliases' => ['LAB']],
+                            'Leaflet' => ['aliases' => ['PIL']],
+                            'Lid' => ['aliases' => []],
+                            'Not Applicable' => ['aliases' => []],
+                            'Poster' => ['aliases' => []],
+                            'Sachet/Pouch' => ['aliases' => ['SAC']],
+                            'Seal' => ['aliases' => []],
+                            'Shipper' => ['aliases' => []],
+                            'Sticker' => ['aliases' => []],
+                            'Tag' => ['aliases' => []],
+                            'TBC' => ['aliases' => []],
+                            'Tray' => ['aliases' => []],
+                            'Tub' => ['aliases' => []],
+                            'Wrap/Overwrap (non-distorted)' => ['aliases' => []],
                         ],
                         'mappings' => [
                             [
@@ -170,7 +182,7 @@ class TaxonomyAccountStructureSeeder extends Seeder
                             ]
                         ]
                     ],
-                    'Stage' => [
+                    /*'Stage' => [
                         'config' => [
                             'aliases' => ['Production Stage'],
                         ],
@@ -186,7 +198,7 @@ class TaxonomyAccountStructureSeeder extends Seeder
                                 'resolver_name' => 'ProductionStageResolver',
                             ]
                         ]
-                    ],
+                    ],*/
                 ],
             ],
         ];

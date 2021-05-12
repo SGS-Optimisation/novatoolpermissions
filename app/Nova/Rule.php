@@ -89,7 +89,7 @@ class Rule extends Resource
             ,
             Quilljs::make(__('Content'), 'content')
                 ->paddingBottom(30)
-                ->withFiles('azure')
+                ->withFiles(null, 'rules')
                 ->placeholder('please enter here')
                 ->height(300)
             ,
