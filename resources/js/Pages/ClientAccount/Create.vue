@@ -20,6 +20,7 @@ import ClientAccountForm from "@/Components/PM/ClientAccount/Form";
 
 export default {
     name: "CreateClientAccount",
+    title: 'Create Client Account - Dagobah',
 
     components: {
         ClientAccountForm,

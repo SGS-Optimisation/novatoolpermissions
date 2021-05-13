@@ -17,6 +17,9 @@ import AppLayout from '@/Layouts/AppLayout'
 import JobSearch from "@/Components/OP/JobSearchForm";
 
 export default {
+    title() {
+        return "Dagobah";
+    },
     props: [
         'team', ['audits']
     ],

@@ -53,6 +53,9 @@ import Button from "@/Jetstream/Button";
 
 export default {
     name: "EditRule",
+    title() {
+        return `Update rule in ${this.clientAccount.name} - Dagobah`;
+    },
 
     components: {
         JetButton,

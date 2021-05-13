@@ -49,6 +49,7 @@ import ClientAccountLink from "@/Components/PM/ClientAccount/ClientAccountLink";
 
 export default {
     name: "Landing",
+    title: 'Client Accounts - Dagobah',
     props: [
         'team',
         'myTeams',

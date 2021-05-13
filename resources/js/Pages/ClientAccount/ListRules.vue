@@ -104,6 +104,10 @@ import JetInput from "@/Jetstream/Input";
 import JetLabel from "@/Jetstream/Label";
 
 export default {
+    title() {
+        return `Rules for ${this.clientAccount.name} - Dagobah`;
+    },
+
     props: [
         'clientAccount',
         'team',
@@ -199,6 +203,10 @@ export default {
         };
 
         this.filterObject['isFlagged'] = (itemElem) => {
+            return itemElem.flagged === true;
+        };
+
+        this.filterObject['isOmnipresent'] = (itemElem) => {
             return itemElem.flagged === true;
         };
 

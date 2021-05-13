@@ -73,6 +73,7 @@ class FieldMappingSeeder extends Seeder
                 'names' => ['Printer',],
                 'api_action' => 'jobContacts',
                 'field_path' => '*',
+                'resolver_name' => 'PrinterResolver',
             ],
 
         ];
@@ -89,6 +90,7 @@ class FieldMappingSeeder extends Seeder
                         'api_action' => $mappingSet['api_action'],
                         'field_path' => $mappingSet['field_path'],
                         'taxonomy_id' => $taxonomy->id,
+                        'resolver_name' => isset($mappingSet['resolver_name']) ? $mappingSet['resolver_name'] : null,
                     ]);
             }
         }

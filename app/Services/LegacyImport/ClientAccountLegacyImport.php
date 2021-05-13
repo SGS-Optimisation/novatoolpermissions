@@ -27,7 +27,7 @@ class ClientAccountLegacyImport extends BaseService
     {
         $projects = Projet::select(['Name', 'Logo'])
             ->where('SoftDeleted', false)
-            ->when($this->client_name, function($query) {
+            ->when($this->client_name, function ($query) {
                 return $query->whereIn(
                     'Name',
                     array_map('trim', explode(',', $this->client_name))
@@ -35,28 +35,29 @@ class ClientAccountLegacyImport extends BaseService
             })
             ->get();
 
-        logger('found ' . count($projects) . ' matching');
+        logger('found '.count($projects).' matching');
 
 
         $projects->each(function ($item) {
-            $image_path = 'logos/'.Carbon::now()->format('Y-m-d').'/'.$item->Name;
+            $extension = pathinfo($item->Logo, PATHINFO_EXTENSION);
+            $image_path = 'logos/'.Carbon::now()->format('Y-m-d').'/'.Str::slug($item->Name).'.'.$extension;
 
-            \Storage::put($image_path, \Storage::disk('local')->get('public/' . $item->Logo));
+            \Storage::put($image_path, \Storage::disk('local')->get('public/'.$item->Logo));
 
-                $projet = [
-                    'name' => $item->Name,
-                    'slug' => Str::slug($item->Name),
-                    'legacy_id' => $item->_id
-                ];
+            $projet = [
+                'name' => $item->Name,
+                'slug' => Str::slug($item->Name),
+                'legacy_id' => $item->_id
+            ];
 
-                $ca = \App\Models\ClientAccount::firstOrcreate($projet);
+            $ca = \App\Models\ClientAccount::firstOrcreate($projet);
 
-                $ca->update([
-                    'image' => \Storage::url($image_path),
-                ]);
+            $ca->update([
+                'image' => \Storage::url($image_path),
+            ]);
 
 
-            });
+        });
     }
 
 }

@@ -15,8 +15,8 @@
     cd /var/www/dagobah
     git pull origin production
     composer install
-    sudo systemctl restart php-fpm.service
-    php artisan config:clear
-    php artisan migrate --force
+    sudo systemctl restart php80-php-fpm.service
+    php80 artisan config:clear
+    php80 artisan migrate --force
     sudo /usr/local/bin/supervisorctl restart dagobah-queue-worker:
 @endtask

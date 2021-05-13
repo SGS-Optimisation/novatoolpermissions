@@ -11,9 +11,11 @@ import PortalVue from 'portal-vue';
 import moment from "moment";
 import vSelect from 'vue-select'
 import Pagination from 'vue-pagination-2';
+import titleMixin from './mixins/titleMixin'
 
 
 Vue.mixin({ methods: { route } });
+Vue.mixin(titleMixin);
 Vue.use(InertiaApp);
 Vue.use(InertiaForm);
 Vue.use(PortalVue);

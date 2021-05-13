@@ -218,6 +218,10 @@ export default {
         'rules'
     ],
 
+    title() {
+        return `${this.currentJob.job_number} - Dagobah`;
+    },
+
     data() {
         return {
             currentJob: this.job,
