@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-50 shadow-inner border border-orange-200">
         <div class="flex flex-col">
             <div class="flex flex-row">
-                <img :src="'/'+job.metadata.client.image" style="max-width: 80px">
+                <img :src="job.metadata.client.image" style="max-width: 80px">
                 <h3 class="font-semibold text-lg leading-loose text-gray-800 ">
                     {{ job.designation }}
                 </h3>

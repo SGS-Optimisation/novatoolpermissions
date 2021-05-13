@@ -101,7 +101,9 @@ class RuleFilter
                             if(empty($mysgsValue_single)) {
                                 continue;
                             }
-                            logger('checking term against mysgs value: ' . print_r($mysgsValue_single, true));
+                            logger(sprintf('checking taxo %s for term "%s" against mysgs value: %s',
+                                $term->taxonomy->name, $termValue, print_r($mysgsValue_single, true))
+                            );
                             if (!(Str::contains($termValue, strtolower($mysgsValue_single))
                                 || Str::contains(strtolower($mysgsValue_single), $termValue))
                             ) {
