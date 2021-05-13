@@ -94,7 +94,7 @@ class ClientAccountController extends Controller
 
         $client_account = ClientAccount::create(array_merge(
             $request->only(['name', 'slug', 'alias']),
-            ['image' => $image_path]
+            ['image' => Storage::url($image_path)]
         ));
 
         return redirect(route('pm.client-account.dashboard', [$client_account->slug]));
@@ -136,7 +136,7 @@ class ClientAccountController extends Controller
 
         $client_account->update(array_merge(
             $request->only(['name', 'slug', 'alias']),
-            ['image' => $image_path]
+            ['image' => Storage::url($image_path)]
         ));
 
         return $request->wantsJson()
