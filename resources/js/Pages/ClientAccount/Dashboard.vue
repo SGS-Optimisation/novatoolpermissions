@@ -77,6 +77,9 @@
 import ClientLayout from '@/Layouts/ClientAccount'
 
 export default {
+    title() {
+        return `${this.clientAccount.name} - Dagobah`;
+    },
     props: {
         'clientAccount': Object,
         'team': Object,

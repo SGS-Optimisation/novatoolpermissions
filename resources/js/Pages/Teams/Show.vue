@@ -42,6 +42,9 @@ import JetSectionBorder from '@/Jetstream/SectionBorder'
 import UpdateTeamNameForm from './UpdateTeamNameForm'
 
 export default {
+    title() {
+        return `${this.team.name} Settings - Dagobah`;
+    },
     props: [
         'team',
         'availableRoles',

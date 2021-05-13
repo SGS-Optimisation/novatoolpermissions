@@ -35,6 +35,9 @@ import JetNavLink from "@/Jetstream/NavLink";
 
 export default {
     name: "CreateRule",
+    title() {
+        return `New rule in ${this.clientAccount.name} - Dagobah`;
+    },
 
     components: {
         ClientLayout,

@@ -42,6 +42,10 @@ import Tab from "@/Components/Tab";
 import TaxonomyDefinition from "@/Components/PM/ClientAccount/TaxonomyDefinition";
 
 export default {
+    title() {
+        return `Categories for ${this.clientAccount.name} - Dagobah`;
+    },
+
     props: [
         'clientAccount',
         'team',

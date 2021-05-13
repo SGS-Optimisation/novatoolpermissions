@@ -15,6 +15,9 @@ import ClientLayout from '@/Layouts/ClientAccount'
 
 export default {
     name: "UpdateClientAccount",
+    title() {
+        return `Settings for ${this.clientAccount.name} - Dagobah`;
+    },
 
     components: {
         ClientLayout,
