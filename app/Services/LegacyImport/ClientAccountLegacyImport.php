@@ -6,6 +6,7 @@ namespace App\Services\LegacyImport;
 
 use App\Legacy\Models\Projet;
 use App\Services\BaseService;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 class ClientAccountLegacyImport extends BaseService
@@ -36,15 +37,25 @@ class ClientAccountLegacyImport extends BaseService
 
         logger('found ' . count($projects) . ' matching');
 
+
         $projects->each(function ($item) {
+            $image_path = 'logos/'.Carbon::now()->format('Y-m-d').'/'.$item->Name;
+
+            \Storage::put($image_path, \Storage::disk('local')->get('public/' . $item->Logo));
+
                 $projet = [
                     'name' => $item->Name,
                     'slug' => Str::slug($item->Name),
-                    'image' => $item->Logo,
                     'legacy_id' => $item->_id
                 ];
 
-                \App\Models\ClientAccount::firstOrcreate($projet);
+                $ca = \App\Models\ClientAccount::firstOrcreate($projet);
+
+                $ca->update([
+                    'image' => \Storage::url($image_path),
+                ]);
+
+
             });
     }
 
