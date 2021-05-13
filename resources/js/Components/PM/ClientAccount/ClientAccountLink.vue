@@ -4,7 +4,7 @@
         :href="route('pm.client-account.dashboard', {clientAccount: team.client_account.slug })">
 
         <img v-if="team.client_account.image"
-             :src="'/storage/'+ team.client_account.image"
+             :src="team.client_account.image"
              :alt="team.client_account.name"
              :title="team.client_account.name"
              class="client-logo">
