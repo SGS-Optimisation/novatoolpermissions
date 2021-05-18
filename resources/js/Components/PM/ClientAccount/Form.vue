@@ -22,8 +22,8 @@
                                 <jet-input-error :message="form.error('name')" class="mt-2"/>
                             </div>
 
-                            <div class="col-span-6 sm:col-span-8">
-                                <jet-label for="slug" value="Slug"/>
+                            <div class="col-span-6 sm:col-span-8 hidden">
+                                <jet-label for="slug" value="Page address"/>
                                 <jet-input id="slug" type="text" disabled
                                            class="mt-1 block w-full"
                                            v-model="form.slug"
@@ -101,7 +101,7 @@ export default {
                 alias: this.client.alias,
                 image: this.client.image,
             }, {
-                bag: 'pushClientData',
+                //bag: 'pushClientData',
                 resetOnSuccess: false,
             }),
         }

@@ -78,7 +78,10 @@ class ClientAccount extends Resource
             Textarea::make(__('Alias'), 'alias')
                 ->hideFromIndex()
             ,
-            Image::make(__('Image'), 'image')
+            Image::make(__('Image'), 'image')->thumbnail(function () {
+                return $this->image;
+            })->squared()
+            ->onlyOnIndex()
             ,
             BelongsToMany::make('Taxonomy', 'taxonomies')
                 ->rules('required')

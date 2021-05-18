@@ -39,7 +39,7 @@ export default {
             jobNumber: "",
 
             form: this.$inertia.form({}, {
-                    bag: 'findJob'
+                    //bag: 'findJob'
                 }
             ),
         }

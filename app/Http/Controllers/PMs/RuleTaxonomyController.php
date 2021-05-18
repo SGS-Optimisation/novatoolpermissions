@@ -17,7 +17,7 @@ class RuleTaxonomyController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $rule_id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function update(Request $request, $client_account_slug, $rule_id)
     {
