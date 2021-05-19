@@ -11,18 +11,21 @@
 
                         </template>
                         <template #form>
+                            <div v-if="!client.id" class="col-span-6 sm:col-span-8">
+                                <jet-label for="name" value="Name"/>
+                                <customer-selector @customerSelected="setClient"/>
+                            </div>
 
-                            <div class="col-span-6 sm:col-span-8">
+                            <div v-else class="col-span-6 sm:col-span-8">
                                 <jet-label for="name" value="Name"/>
                                 <jet-input id="name" type="text" required
                                            v-model="form.name"
                                            @input="updateName"
-                                           autocomplete="off"
                                            class="mt-1 block w-full"/>
                                 <jet-input-error :message="form.error('name')" class="mt-2"/>
                             </div>
 
-                            <div class="col-span-6 sm:col-span-8 hidden">
+                            <div class="col-span-6 sm:col-span-8">
                                 <jet-label for="slug" value="Page address"/>
                                 <jet-input id="slug" type="text" disabled
                                            class="mt-1 block w-full"
@@ -72,6 +75,7 @@ import JetInputError from '@/Jetstream/InputError'
 import JetLabel from '@/Jetstream/Label'
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import CustomerSelector from "@/Components/PM/ClientAccount/CustomerSelector";
 
 const slugify = text => _.kebabCase(text.replace(/&/g, '-and-'));
 
@@ -79,6 +83,7 @@ export default {
     name: "ClientAccountForm",
 
     components: {
+        CustomerSelector,
         JetActionMessage,
         JetButton,
         JetFormSection,
@@ -108,6 +113,12 @@ export default {
     },
 
     methods: {
+        setClient(name, aliases) {
+            this.form.name = name;
+            this.form.alias = aliases ? aliases.join("\r\n") : '';
+            this.updateName(name);
+        },
+
         updateName: function (name) {
             this.form.slug = slugify(name);
         },
