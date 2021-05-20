@@ -13,7 +13,7 @@ class ImportProject extends Command
      *
      * @var string
      */
-    protected $signature = 'import:project';
+    protected $signature = 'import:project {name?} {--rules}';
 
     /**
      * The console command description.
@@ -38,16 +38,24 @@ class ImportProject extends Command
      * @return int
      */
     public function handle()
-    {;
-        $project_names = Projet::pluck('Name')->sort()->all();
-        $project_names = array_combine($project_names, $project_names);
+    {
+        if(! ($name = $this->argument('name'))) {
+            $project_names = Projet::pluck('Name')->sort()->all();
+            $project_names = array_combine($project_names, $project_names);
 
-        $selection = $this->menu('Select Client Account', $project_names)
-            ->setWidth(80)
-            ->open();
+            $name = $this->menu('Select Client Account', $project_names)
+                ->setWidth(80)
+                ->open();
+        }
 
-        (new ClientAccountLegacyImport($selection))->handle();
-        $this->info('Import finished: ' . $selection);
+        (new ClientAccountLegacyImport($name))->handle();
+        $this->info('Client Import finished: ' . $name);
+
+        if($this->option('rules')) {
+            \Artisan::call('import:rules', ['name' => $name]);
+        }
+
+
         return 0;
     }
 }

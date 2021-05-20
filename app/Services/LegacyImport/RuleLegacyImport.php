@@ -78,13 +78,15 @@ class RuleLegacyImport extends BaseService
 
                 $content = (new ExtractImages($item->Description))->handle()->updated_content;
 
-                $rule = \App\Models\Rule::create([
+                $rule = \App\Models\Rule::make([
                     'client_account_id' => $client_account->id,
                     'name' => $name ? $name : $item->_id,
                     'content' => $content,
                     'created_at' => $item->CreatedAt->toDateTime(),
                     'updated_at' => $item->UpdatedAt->toDateTime(),
                 ]);
+
+                $rule->saveQuietly();
 
                 $this->imported_rules[] = $rule;
 

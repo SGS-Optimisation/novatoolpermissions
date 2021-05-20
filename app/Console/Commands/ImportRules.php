@@ -13,7 +13,7 @@ class ImportRules extends Command
      *
      * @var string
      */
-    protected $signature = 'import:rules';
+    protected $signature = 'import:rules {name?}';
 
     /**
      * The console command description.
@@ -39,22 +39,24 @@ class ImportRules extends Command
      */
     public function handle()
     {
-        $project_names = Projet::pluck('Name')->sort()->all();
-        $project_names = array_combine($project_names, $project_names);
+        if (!($name = $this->argument('name'))) {
+            $project_names = Projet::pluck('Name')->sort()->all();
+            $project_names = array_combine($project_names, $project_names);
 
-        $selection = $this->menu('Select Client Account', $project_names)
-            ->setWidth(80)
-            ->open();
+            $name = $this->menu('Select Client Account', $project_names)
+                ->setWidth(80)
+                ->open();
+        }
 
-        $importer = (new RuleLegacyImport($selection))->handle();
+        $importer = (new RuleLegacyImport($name))->handle();
 
-        $this->info(count($importer->imported_rules)  . ' rules imported');
+        $this->info(count($importer->imported_rules).' rules imported');
 
-        if($importer->num_problems) {
-            $this->warn(count($importer->imported_rules)  . ' rules has issues');
+        if ($importer->num_problems) {
+            $this->warn(count($importer->imported_rules).' rules has issues');
 
         }
-        $this->info('Download report: ' . asset('storage/' . $importer->problem_file_name));
+        $this->info('Download report: '.asset('storage/'.$importer->problem_file_name));
 
         return 0;
     }
