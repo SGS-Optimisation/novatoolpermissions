@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Laravel\Jetstream\Events\TeamCreated;
 use Laravel\Jetstream\Events\TeamDeleted;
 use Laravel\Jetstream\Events\TeamUpdated;
@@ -65,6 +66,11 @@ class Team extends JetstreamTeam
         'updated' => TeamUpdated::class,
         'deleted' => TeamDeleted::class,
     ];
+
+    public function scopePersonal(Builder $query, $personal = true)
+    {
+        return $query->where('personal_team', $personal);
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

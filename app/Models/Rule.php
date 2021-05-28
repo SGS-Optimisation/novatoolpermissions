@@ -23,6 +23,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string $content
  * @property array $metadata
  * @property bool $flagged
+ * @property RuleState $state
  * @property \Carbon\Carbon $deleted_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at

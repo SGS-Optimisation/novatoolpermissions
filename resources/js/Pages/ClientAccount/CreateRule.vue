@@ -5,6 +5,7 @@
 
                 <rule-form :rule="rule"
                            :states="states"
+                           :allowed-states="allowedStates"
                            :client-account="clientAccount"
                            :taxonomy-hierarchy="taxonomyHierarchy"
                            :top-taxonomies="topTaxonomies"
@@ -52,6 +53,7 @@ export default {
         'topTaxonomies',
         'rule',
         'states',
+        'allowedStates',
     ],
 
 }
