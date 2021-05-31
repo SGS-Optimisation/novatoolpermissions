@@ -40,7 +40,8 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         collect([
-            'forceCreateRules', 'createRules', 'updateRules', 'deleteRules',
+            'forceCreateRules',
+            'createRules', 'updateRules', 'deleteRules', 'publishRules',
             'createClientAccounts', 'updateClientAccounts', 'deleteClientAccounts',
             'accessPM',
             'viewTaxonomies', 'manageTaxonomies',

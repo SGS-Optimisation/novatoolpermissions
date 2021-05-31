@@ -71,7 +71,7 @@ class DatabaseSeeder extends Seeder
         }
 
 
-        $this->call(MysgsClientAccountSeeder::class);
+        //$this->call(MysgsClientAccountSeeder::class);
         $this->call(TaxonomyAccountStructureSeeder::class);
         $this->call(TaxonomyJobCategorizationsSeeder::class);
         $this->call(FieldMappingSeeder::class);

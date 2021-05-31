@@ -26,6 +26,8 @@ class Term extends Resource
      */
     public static $title = 'name';
 
+    public static $group = 'Tagging';
+
     /**
      * The columns that should be searched.
      *

@@ -30,8 +30,8 @@ class RuleController extends Controller
     /**
      * TODO: Fix attachments not created in db
      *
-     * @param Request $request
-     * @param Rule $rule
+     * @param  Request  $request
+     * @param  Rule  $rule
      */
     protected function parseContent($request, $rule)
     {
@@ -46,9 +46,29 @@ class RuleController extends Controller
         }
 
         if ($request->state && $rule->state != $request->state) {
-            logger('transitioning rule ' . $rule->id . ' to ' . $request->state);
+            logger('transitioning rule '.$rule->id.' to '.$request->state);
             $rule->state->transitionTo($request->state);
         }
+    }
+
+
+    protected static function buildStates(Rule $rule)
+    {
+        $transitionable_states = $rule->state->transitionableStates();
+        $currentState = $rule->state->getMorphClass();
+        $shown_states = [];
+
+        foreach ($transitionable_states as $state) {
+            $transitionClass = $rule->state->config()->resolveTransitionClass($currentState, $state);
+
+            if (!$transitionClass
+                || (new $transitionClass($rule, auth()->user()))->canTransition()
+            ) {
+               $shown_states[] = $state;
+            }
+        }
+
+        return $shown_states;
     }
 
     /**
@@ -95,7 +115,8 @@ class RuleController extends Controller
         return Jetstream::inertia()->render($request, 'ClientAccount/CreateRule', array_merge([
             'team' => $request->user()->currentTeam,
             'rule' => $rule,
-            'states' => $rule->getStatesFor('state')
+            'states' => $rule->getStatesFor('state'),
+            'allowedStates' => static::buildStates($rule),
         ],
             $this->buildTaxonomyLists($client_account_slug)
         ));
@@ -173,6 +194,7 @@ class RuleController extends Controller
             'rule' => $rule,
             //'states' => $rule->getStatesFor('state')
             'states' => $rule->state->transitionableStates(),
+            'allowedStates' => static::buildStates($rule),
         ],
             $this->buildTaxonomyLists($client_account_slug)
         ));

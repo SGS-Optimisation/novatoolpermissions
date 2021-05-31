@@ -12,6 +12,7 @@ import moment from "moment";
 import vSelect from 'vue-select'
 import Pagination from 'vue-pagination-2';
 import titleMixin from './mixins/titleMixin'
+import VueInstant from 'vue-instant'
 
 
 Vue.mixin({ methods: { route } });
@@ -19,6 +20,8 @@ Vue.mixin(titleMixin);
 Vue.use(InertiaApp);
 Vue.use(InertiaForm);
 Vue.use(PortalVue);
+Vue.use(VueInstant)
+
 Vue.component('v-select', vSelect);
 Vue.component('pagination', Pagination);
 

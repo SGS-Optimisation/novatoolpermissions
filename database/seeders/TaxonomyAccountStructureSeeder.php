@@ -121,7 +121,63 @@ class TaxonomyAccountStructureSeeder extends Seeder
                             'aliases' => ['Market', 'REGION/MARKET', 'Region'],
                         ],
                         'terms' => [
-                            'ANY',
+                            'ANY' => ['aliases' => [], 'default' => true,],
+                            'Australia-AUS' => ['aliases' => ['AU', 'AU - NZ'], 'default' => false],
+                            'Austria-AUT' => ['aliases' => ['AT'], 'default' => false],
+                            'Azerbaijan-AZE' => ['aliases' => ['AZ'], 'default' => false],
+                            'Belgium-BEL' => ['aliases' => ['BE'], 'default' => false],
+                            'Belize-BLZ' => ['aliases' => ['BZ'], 'default' => false],
+                            'Bosnia and Herzegovina-BIH' => ['aliases' => ['BA'], 'default' => false],
+                            'Brazil-BRA' => ['aliases' => ['BR'], 'default' => false],
+                            'Bulgaria-BGR' => ['aliases' => ['BG'], 'default' => false],
+                            'Canada-CAN' => ['aliases' => ['CA'], 'default' => false],
+                            'Croatia-HRV' => ['aliases' => ['HR'], 'default' => false],
+                            'Czech Republic-CZE' => ['aliases' => ['CZ'], 'default' => false],
+                            'Estonia-EST' => ['aliases' => ['EE'], 'default' => false],
+                            'Finland-FIN' => ['aliases' => ['FI'], 'default' => false],
+                            'France-FRA' => ['aliases' => ['FR'], 'default' => false],
+                            'Germany-DEU' => ['aliases' => ['DE'], 'default' => false],
+                            'Hong Kong-HKG' => ['aliases' => ['HK'], 'default' => false],
+                            'Hungary-HUN' => ['aliases' => ['HU'], 'default' => false],
+                            'Indonesia-IDN' => ['aliases' => ['ID'], 'default' => false],
+                            'Ireland-IRL' => ['aliases' => ['IE'], 'default' => false],
+                            'Israel-ISR' => ['aliases' => ['IL'], 'default' => false],
+                            'Italy-ITA' => ['aliases' => ['IT'], 'default' => false],
+                            'Japan-JPN' => ['aliases' => ['JP'], 'default' => false],
+                            'Kazakstan-KAZ' => ['aliases' => ['KZ'], 'default' => false],
+                            'Latvia-LVA' => ['aliases' => ['LV'], 'default' => false],
+                            'Lebanon-LBN' => ['aliases' => ['LB'], 'default' => false],
+                            'Lithuania-LTU' => ['aliases' => ['LT'], 'default' => false],
+                            'Malaysia-MYS' => ['aliases' => ['MY'], 'default' => false],
+                            'Mexico-MEX' => ['aliases' => ['MX'], 'default' => false],
+                            'Netherlands-NLD' => ['aliases' => ['NL'], 'default' => false],
+                            'New Zealand-NZL' => ['aliases' => ['AU - NZ', 'NZ'], 'default' => false],
+                            'Norway-NOR' => ['aliases' => ['NO'], 'default' => false],
+                            'Palestine-PSE' => ['aliases' => ['PS'], 'default' => false],
+                            'Peru-PER' => ['aliases' => ['PE'], 'default' => false],
+                            'Philippines-PHL' => ['aliases' => ['PH'], 'default' => false],
+                            'Poland-POL' => ['aliases' => ['PL'], 'default' => false],
+                            'Portugal-PRT' => ['aliases' => ['PT'], 'default' => false],
+                            'Romania-ROM' => ['aliases' => ['RO'], 'default' => false],
+                            'Russia-RUS' => ['aliases' => ['RU'], 'default' => false],
+                            'Saudi Arabia-SAU' => ['aliases' => ['SA'], 'default' => false],
+                            'Serbia-SRB' => ['aliases' => ['RS'], 'default' => false],
+                            'Singapore-SGP' => ['aliases' => ['SG'], 'default' => false],
+                            'Slovakia-SVK' => ['aliases' => ['SK'], 'default' => false],
+                            'Slovenia-SVN' => ['aliases' => ['SL', 'SI'], 'default' => false],
+                            'South Africa-ZAF' => ['aliases' => ['ZA'], 'default' => false],
+                            'South Korea-KOR' => ['aliases' => ['KR'], 'default' => false],
+                            'Spain-ESP' => ['aliases' => ['ES'], 'default' => false],
+                            'Sweden-SWE' => ['aliases' => ['SE'], 'default' => false],
+                            'Switzerland-CHE' => ['aliases' => ['CH'], 'default' => false],
+                            'Taiwan-TWN' => ['aliases' => ['TW'], 'default' => false],
+                            'Thailand-THA' => ['aliases' => ['TH'], 'default' => false],
+                            'Turkey-TUR' => ['aliases' => ['TR'], 'default' => false],
+                            'Ukraine-UKR' => ['aliases' => ['UA'], 'default' => false],
+                            'United Kingdom-GBR' => ['aliases' => ['GB', 'UK'], 'default' => false],
+                            'United States-USA' => ['aliases' => ['USA'], 'default' => false],
+                            'Venezuela-VEN' => ['aliases' => ['VE'], 'default' => false],
+                            'Vietnam-VNM' => ['aliases' => ['VN'], 'default' => false],
                         ],
                         'mappings' => [
                             [
@@ -145,7 +201,42 @@ class TaxonomyAccountStructureSeeder extends Seeder
                             'aliases' => ['Production Site', 'PRODUCTION SITE/FACTORY', 'FACTORY'],
                         ],
                         'terms' => [
-                            'ANY'
+                            'ANY' => ['aliases' => [], 'default' => true,],
+                            'Abdi Ibrahim' => ['aliases' => ['AbdiIbrahim – TR'], 'default' => false],
+                            'CATALENT_SCHORNDORF_GERMANY' => ['aliases' => ['Catalent Schorndorf GmbH – DE, Catalent'], 'default' => false],
+                            'Catalent-R.P.SCHERER (EBERBACH GMBH)' => ['aliases' => ['Catalent Eberbach GmbH – DE, Catalent'], 'default' => false],
+
+                            'Delpharm' => ['aliases' => ['Delpharm Huningue S.A.S. – FR',
+                                'Delpharm Orleans'], 'default' => false],
+
+                            'Dojin' => ['aliases' => ['Dojin – JP'], 'default' => false],
+                            'Doppel Rozzano' => ['aliases' => ['Doppel Farmaceutici S.r.l. – IT', 'Doppel Cortemaggiore'], 'default' => false],
+
+                            'Famar Anthoussa' => ['aliases' => ['Famar Anthoussa – GR'], 'default' => false],
+                            'Famar Avlona 48' => ['aliases' => ['Famar Greece 48km – GR', 'Famar Avlona 48 - Greece'], 'default' => false],
+                            'Famar Italy' => ['aliases' => ['Famar Italia S.p.A – IT', 'Famar Italia (Baranzate)'], 'default' => false],
+
+                            'Fidia (Giuliani)' => ['aliases' => ['Fidia Bouty - IT, Fidia Bouty - IT'], 'default' => false],
+
+                            'Gebro' => ['aliases' => ['NCH Gebro Pharma – AT'], 'default' => false],
+
+                            'Levice & Maidenhead' => ['aliases' => ['Maidenhead and Levice', 'Levice', 'Maidenhead',
+                                'Maidenhead And Levice', 'Maidenhead, UK'], 'default' => false],
+
+                            'LTS Lohmann' => ['aliases' => ['Lohmann GmbH – DE'], 'default' => false],
+
+                            'NOVARTIS KURTKOY' => ['aliases' => ['Novartis Pharma Kurtköy – TR'], 'default' => false],
+                            'Nyon' => ['aliases' => ['GSK Nyon – CH'], 'default' => false],
+
+                            'Perrigo' => ['aliases' => ['Perrigo – GB'], 'default' => false],
+
+                            'Purna' => ['aliases' => ['PURNA'], 'default' => false],
+
+                            'Sanofi Ilac' => ['aliases' => ['Sanofi – TR'], 'default' => false],
+
+                            'SPPH' => ['aliases' => ['SPPH – FR'], 'default' => false],
+
+                            'Swissco' => ['aliases' => ['SwissCo AG – CH'], 'default' => false],
                         ],
                         'mappings' => [
                             [

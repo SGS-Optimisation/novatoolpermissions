@@ -15,7 +15,7 @@ return [
 
     'stateful' => explode(',', env(
         'SANCTUM_STATEFUL_DOMAINS',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1'
+        'dagobah.test,dagobah.test:3000,dagobah-v2.sgsco.com,dagobah.sgsco.com,dagobah-staging.sgsco.com'
     )),
 
     /*

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\SimplifiedCustomerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,10 +20,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::group([
-    'auth',
-    'prefix' => 'rule/'
-], function () {
-    Route::get('search/{jobNumber}', [\App\Http\Controllers\OPs\JobController::class, 'search'])
-        ->name('rule_search');
-});
+Route::name('api.')
+    ->middleware([
+        'auth:sanctum',
+        //'verified',
+        //'user.permissions',
+        //'cache.headers:public;max_age=3600;etag',
+    ])->group(function () {
+
+        Route::name('simplified-customer.')
+            ->prefix('/simplified-customer')
+            ->group(function () {
+
+                Route::get('/', [SimplifiedCustomerController::class, 'index'])->name('index');
+            });
+
+    });

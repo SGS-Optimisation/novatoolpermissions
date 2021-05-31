@@ -4,6 +4,7 @@
             <div class="mx-auto sm:px-6 lg:px-8">
                 <rule-form :rule="rule"
                            :states="states"
+                           :allowed-states="allowedStates"
                            :client-account="clientAccount"
                            :taxonomy-hierarchy="taxonomyHierarchy"
                            :top-taxonomies="topTaxonomies"
@@ -75,6 +76,7 @@ export default {
         'topTaxonomies',
         'rule',
         'states',
+        'allowedStates',
 
 
     ],

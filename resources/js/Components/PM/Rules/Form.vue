@@ -47,7 +47,7 @@
                                 </label>
 
                             </div>
-                            <div v-for="(state, index) in states" class="flex flew-row px-4">
+                            <div v-for="(state, index) in allowedStates" class="flex flew-row px-4">
                                 <template v-if="state !== rule.state">
                                     <input
                                         v-model="form.state"
@@ -177,6 +177,7 @@ export default {
         'topTaxonomies',
         'rule',
         'states',
+        'allowedStates',
     ],
 
     data() {

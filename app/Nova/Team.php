@@ -9,6 +9,7 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 
 class Team extends Resource
@@ -55,6 +56,18 @@ class Team extends Resource
     public static function singularLabel()
     {
         return __('Team');
+    }
+
+    /**
+     * Build an "index" query for the given resource.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        return parent::indexQuery($request, $query->personal(false));
     }
 
     /**
