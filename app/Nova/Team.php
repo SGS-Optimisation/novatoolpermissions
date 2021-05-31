@@ -67,7 +67,7 @@ class Team extends Resource
      */
     public static function indexQuery(NovaRequest $request, $query)
     {
-        return $query->personal(false);
+        return parent::indexQuery($request, $query->personal(false));
     }
 
     /**

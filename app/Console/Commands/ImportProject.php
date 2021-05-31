@@ -52,7 +52,7 @@ class ImportProject extends Command
         $this->info('Client Import finished: ' . $name);
 
         if($this->option('rules')) {
-            \Artisan::call('import:rules', ['name' => $name]);
+            $this->call('import:rules', ['name' => $name]);
         }
 
 

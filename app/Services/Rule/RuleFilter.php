@@ -92,21 +92,22 @@ class RuleFilter
                         /**
                          * compare retrieved value with this term
                          */
-                        if(!is_array($mysgsValue)) {
+                        if (!is_array($mysgsValue)) {
                             logger('converting mysgs value to array');
                             $mysgsValue = [$mysgsValue];
                         }
 
                         foreach ($mysgsValue as $index => $mysgsValue_single) {
-                            if(empty($mysgsValue_single)) {
+                            if (empty($mysgsValue_single)) {
                                 continue;
                             }
                             logger(sprintf('checking taxo %s for term "%s" against mysgs value: %s',
-                                $term->taxonomy->name, $termValue, print_r($mysgsValue_single, true))
+                                    $term->taxonomy->name, $termValue, print_r($mysgsValue_single, true))
                             );
-                            if (!(Str::contains($termValue, strtolower($mysgsValue_single))
-                                || Str::contains(strtolower($mysgsValue_single), $termValue))
-                            ) {
+                            if (!(Str::is($termValue, Str::lower($mysgsValue_single))
+                                || isset($term->config['aliases'])
+                                && in_array($termValue, array_map('Str::lower', $term->config['aliases']))
+                            )) {
                                 logger(sprintf('rule %s dropped, term %s did not match with %s',
                                         $rule->id, $termValue, $mysgsValue_single)
                                 );
@@ -131,7 +132,7 @@ class RuleFilter
                     $clientRules[] = $rule;
                 } else {
                     logger(sprintf('rule %s dropped, matched=%b  taxoMatch=%b ',
-                        $rule->id, $matched, $taxonomyMatch)
+                            $rule->id, $matched, $taxonomyMatch)
                     );
                 }
             }
@@ -141,7 +142,7 @@ class RuleFilter
              */
             /** @var Taxonomy $taxonomy */
             foreach ($client->child_taxonomies as $taxonomy) {
-                if(!in_array($taxonomy->name, $job_taxonomy_terms) && $taxonomy->mapping) {
+                if (!in_array($taxonomy->name, $job_taxonomy_terms) && $taxonomy->mapping) {
                     list($mysgsValue, $raw) = $memoizeMapper($job, $taxonomy->mapping);
 
                     $job_taxonomy_terms[$taxonomy->name] = $mysgsValue;

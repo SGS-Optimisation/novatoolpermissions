@@ -121,30 +121,6 @@ class TaxonomyAccountStructureSeeder extends Seeder
                             'aliases' => ['Market', 'REGION/MARKET', 'Region'],
                         ],
                         'terms' => [
-                            'ANY',
-                        ],
-                        'mappings' => [
-                            [
-                                'api_name' => 'JobApi',
-                                'api_version' => '1.0',
-                                'api_action' => 'extraDetails',
-                                'field_path' => '0.extraDetailsFields.*[fieldName=Market].itemValue',
-                            ]
-                        ]
-                    ],
-                    'Printer' => [
-                        'terms' => [
-                            'ANY'
-                        ],
-                        'mappings' => [
-                            // TODO: find MYSGS API for this
-                        ]
-                    ],
-                    'Factory' => [
-                        'config' => [
-                            'aliases' => ['Production Site', 'PRODUCTION SITE/FACTORY', 'FACTORY'],
-                        ],
-                        'terms' => [
                             'ANY' => ['aliases' => [], 'default' => true,],
                             'Australia-AUS' => ['aliases' => ['AU', 'AU - NZ'], 'default' => false],
                             'Austria-AUT' => ['aliases' => ['AT'], 'default' => false],
@@ -202,6 +178,65 @@ class TaxonomyAccountStructureSeeder extends Seeder
                             'United States-USA' => ['aliases' => ['USA'], 'default' => false],
                             'Venezuela-VEN' => ['aliases' => ['VE'], 'default' => false],
                             'Vietnam-VNM' => ['aliases' => ['VN'], 'default' => false],
+                        ],
+                        'mappings' => [
+                            [
+                                'api_name' => 'JobApi',
+                                'api_version' => '1.0',
+                                'api_action' => 'extraDetails',
+                                'field_path' => '0.extraDetailsFields.*[fieldName=Market].itemValue',
+                            ]
+                        ]
+                    ],
+                    'Printer' => [
+                        'terms' => [
+                            'ANY'
+                        ],
+                        'mappings' => [
+                            // TODO: find MYSGS API for this
+                        ]
+                    ],
+                    'Factory' => [
+                        'config' => [
+                            'aliases' => ['Production Site', 'PRODUCTION SITE/FACTORY', 'FACTORY'],
+                        ],
+                        'terms' => [
+                            'ANY' => ['aliases' => [], 'default' => true,],
+                            'Abdi Ibrahim' => ['aliases' => ['AbdiIbrahim – TR'], 'default' => false],
+                            'CATALENT_SCHORNDORF_GERMANY' => ['aliases' => ['Catalent Schorndorf GmbH – DE, Catalent'], 'default' => false],
+                            'Catalent-R.P.SCHERER (EBERBACH GMBH)' => ['aliases' => ['Catalent Eberbach GmbH – DE, Catalent'], 'default' => false],
+
+                            'Delpharm' => ['aliases' => ['Delpharm Huningue S.A.S. – FR',
+                                'Delpharm Orleans'], 'default' => false],
+
+                            'Dojin' => ['aliases' => ['Dojin – JP'], 'default' => false],
+                            'Doppel Rozzano' => ['aliases' => ['Doppel Farmaceutici S.r.l. – IT', 'Doppel Cortemaggiore'], 'default' => false],
+
+                            'Famar Anthoussa' => ['aliases' => ['Famar Anthoussa – GR'], 'default' => false],
+                            'Famar Avlona 48' => ['aliases' => ['Famar Greece 48km – GR', 'Famar Avlona 48 - Greece'], 'default' => false],
+                            'Famar Italy' => ['aliases' => ['Famar Italia S.p.A – IT', 'Famar Italia (Baranzate)'], 'default' => false],
+
+                            'Fidia (Giuliani)' => ['aliases' => ['Fidia Bouty - IT, Fidia Bouty - IT'], 'default' => false],
+
+                            'Gebro' => ['aliases' => ['NCH Gebro Pharma – AT'], 'default' => false],
+
+                            'Levice & Maidenhead' => ['aliases' => ['Maidenhead and Levice', 'Levice', 'Maidenhead',
+                                'Maidenhead And Levice', 'Maidenhead, UK'], 'default' => false],
+
+                            'LTS Lohmann' => ['aliases' => ['Lohmann GmbH – DE'], 'default' => false],
+
+                            'NOVARTIS KURTKOY' => ['aliases' => ['Novartis Pharma Kurtköy – TR'], 'default' => false],
+                            'Nyon' => ['aliases' => ['GSK Nyon – CH'], 'default' => false],
+
+                            'Perrigo' => ['aliases' => ['Perrigo – GB'], 'default' => false],
+
+                            'Purna' => ['aliases' => ['PURNA'], 'default' => false],
+
+                            'Sanofi Ilac' => ['aliases' => ['Sanofi – TR'], 'default' => false],
+
+                            'SPPH' => ['aliases' => ['SPPH – FR'], 'default' => false],
+
+                            'Swissco' => ['aliases' => ['SwissCo AG – CH'], 'default' => false],
                         ],
                         'mappings' => [
                             [
