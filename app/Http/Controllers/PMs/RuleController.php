@@ -47,7 +47,7 @@ class RuleController extends Controller
 
         if ($request->state && $rule->state != $request->state) {
             logger('transitioning rule '.$rule->id.' to '.$request->state);
-            $rule->state->transitionTo($request->state);
+            $rule->state->transitionTo($request->state, $request->user());
         }
     }
 
