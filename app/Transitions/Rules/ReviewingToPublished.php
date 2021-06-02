@@ -5,6 +5,7 @@ namespace App\Transitions\Rules;
 
 
 use App\Models\Rule;
+use App\Models\Team;
 use App\Models\User;
 use App\States\Rules\PublishedState;
 use Spatie\ModelStates\Transition;
@@ -37,8 +38,10 @@ class ReviewingToPublished extends Transition
 
     public function canTransition(): bool
     {
+        $team = $this->rule->clientAccount ?? new Team();
+
         return $this->user->hasRoleWithPermission('publishRules')
-            || $this->user->hasTeamPermission($this->rule->clientAccount->team, 'publishRules');
+            || $this->user->hasTeamPermission($team, 'publishRules');
     }
 
 }
