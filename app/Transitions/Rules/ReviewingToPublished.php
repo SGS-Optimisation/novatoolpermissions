@@ -38,7 +38,7 @@ class ReviewingToPublished extends Transition
 
     public function canTransition(): bool
     {
-        $team = $this->rule->clientAccount ?? new Team();
+        $team = $this->rule->clientAccount ? $this->rule->clientAccount->team : new Team();
 
         return $this->user->hasRoleWithPermission('publishRules')
             || $this->user->hasTeamPermission($team, 'publishRules');
