@@ -183,11 +183,12 @@ class RuleController extends Controller
                 '</ul>',
                 '<li>',
                 '</li>',
-                '</span>'
+                '</span>',
             ],
             ['', '', '', '', '', '', '', '', '', '</span><br/>'],
-            $rule->content
+            strip_tags($rule->content, '<p><img><a><span><br><i><strong><b>')
         );
+
 
         return Jetstream::inertia()->render($request, 'ClientAccount/EditRule', array_merge([
             'team' => $request->user()->currentTeam,
