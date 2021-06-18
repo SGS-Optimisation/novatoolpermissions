@@ -83,7 +83,7 @@
                        class="mr-3 text-green-600 fas fa-trash-restore cursor-pointer hover:bg-green-600 hover:text-white rounded p-2"/>
 
                     <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                        Save
+                        Save Content
                     </jet-button>
                 </template>
             </jet-form-section>
