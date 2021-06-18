@@ -105,8 +105,9 @@ class RuleFilter
                                     $term->taxonomy->name, $termValue, print_r($mysgsValue_single, true))
                             );
                             if (!(Str::is($termValue, Str::lower($mysgsValue_single))
-                                || isset($term->config['aliases'])
-                                && in_array($termValue, array_map('Str::lower', $term->config['aliases']))
+                                || (isset($term->config['aliases'])
+                                    && in_array($mysgsValue_single, array_map('Str::lower', $term->config['aliases']))
+                                )
                             )) {
                                 logger(sprintf('rule %s dropped, term %s did not match with %s',
                                         $rule->id, $termValue, $mysgsValue_single)
@@ -114,6 +115,10 @@ class RuleFilter
                                 $matched = false;
                             } else {
                                 $matchedTaxonomies[$term->taxonomy->name] = true;
+
+                                logger(sprintf('rule %s added, term %s matched with %s',
+                                        $rule->id, $termValue, $mysgsValue_single)
+                                );
 
                                 if (!in_array($term->name, $job_taxonomy_terms_matches[$term->taxonomy->name])) {
                                     $job_taxonomy_terms_matches[$term->taxonomy->name][] = $term->name;
