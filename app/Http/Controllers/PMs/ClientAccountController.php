@@ -53,12 +53,12 @@ class ClientAccountController extends Controller
             'team' => $client_account->team,
             'teamMembers' => $teamMembers,
             'clientAccount' => $client_account,
-            'rulesCount' => $client_account->rules_count,
-            'omnipresentRulesCount' => $client_account->omnipresent_rules_count,
-            'flaggedRulesCount' => $client_account->flagged_rules_count,
-            'publishedRulesCount' => $client_account->published_rules_count,
-            'taxonomiesCount' => $client_account->taxonomies_count - $client_account->root_taxonomies_count,
-            'termsCount' => $client_account->terms_count,
+            'rulesCount' => (int) $client_account->rules_count,
+            'omnipresentRulesCount' => (int) $client_account->omnipresent_rules_count,
+            'flaggedRulesCount' => (int) $client_account->flagged_rules_count,
+            'publishedRulesCount' => (int) $client_account->published_rules_count,
+            'taxonomiesCount' => (int) $client_account->taxonomies_count - $client_account->root_taxonomies_count,
+            'termsCount' => (int) $client_account->terms_count,
         ]);
     }
 
