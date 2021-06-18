@@ -29,7 +29,6 @@
 
 <script>
 import ClientLayout from '@/Layouts/ClientAccount'
-import TermDefinition from "@/Components/PM/ClientAccount/TermDefinition";
 import JetButton from '@/Jetstream/Button'
 import JetFormSection from '@/Jetstream/FormSectionNoGrid'
 import JetInput from '@/Jetstream/Input'
@@ -55,7 +54,6 @@ export default {
 
     components: {
         ClientLayout,
-        TermDefinition,
         JetActionMessage,
         JetButton,
         JetFormSection,

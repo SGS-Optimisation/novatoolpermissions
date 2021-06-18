@@ -6,7 +6,10 @@
 
                 <i v-if="termData.clientRulesCount === 0"
                    @click="confirmTermDeletion(termData.id, termData.name)"
-                   class="text-red-600 fa fa-times cursor-pointer hover:bg-red-800 p-1 rounded-xl">
+                   class="cursor-pointer text-red-500 hover:text-red-800 pr-1 rounded-xl inline-block w-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
                 </i>
 
                 <span @click="editTerm(termData.id, termData.name)"
@@ -30,7 +33,10 @@
             </div>
 
             <i @click="creatingTerm=true"
-               class="cursor-pointer pt-3 align-middle text-blue-400 hover:text-blue-700 fa fa-plus-circle">
+               class="cursor-pointer pt-3 align-middle text-blue-400 hover:text-blue-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+                </svg>
             </i>
         </div>
 
@@ -84,9 +90,16 @@
 
             <template #content>
                 <div class="mt-4">
-                    <jet-input type="text" class="mt-1 block w-3/4"
+                    <jet-label for="name" value="Name"/>
+                    <jet-input id="name" type="text" class="mt-1 block w-3/4"
                                :value="editTermForm.name"
                                v-model="editTermForm.name"/>
+
+                </div>
+                    <div class="mt-4">
+                    <jet-label for="aliases" value="Aliases"/>
+                    <jet-input id="aliases" type="text" class="mt-1 block w-3/4" disabled
+                               :value="editTermForm.aliases"/>
 
                 </div>
             </template>
@@ -140,10 +153,11 @@ import JetButton from '@/Jetstream/Button'
 import JetDangerButton from '@/Jetstream/DangerButton'
 import JetInput from '@/Jetstream/Input'
 import JetInputError from '@/Jetstream/InputError'
+import JetLabel from '@/Jetstream/Label'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 
 export default {
-    name: "TermDefinition",
+    name: "TermsList",
     props: [
         'taxonomyName',
         'terms',
@@ -160,6 +174,7 @@ export default {
         JetDangerButton,
         JetInput,
         JetInputError,
+        JetLabel,
         JetSecondaryButton,
     },
 
@@ -189,6 +204,7 @@ export default {
                 termId: null,
                 clientAccountId: this.clientAccount.id,
                 name: null,
+                aliases: null,
 
             }, {
                 bag: 'editTerm'
@@ -228,9 +244,12 @@ export default {
 
 
         editTerm(id, name) {
+            const term = _.find(this.terms, {id: id});
+
             this.editingTerm = true;
             this.editTermForm.termId = id;
-            this.editTermForm.name = name;
+            this.editTermForm.name = term.name;
+            this.editTermForm.aliases = term.aliases;
             this.editingTermName = name; //keep original term for display in modal title
         },
 
