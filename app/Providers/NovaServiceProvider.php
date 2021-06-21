@@ -3,6 +3,11 @@
 namespace App\Providers;
 
 use Anaseqal\NovaImport\NovaImport;
+use App\Nova\Metrics\FlaggedRules;
+use App\Nova\Metrics\NewUsers;
+use App\Nova\Metrics\PublishedRules;
+use App\Nova\Metrics\RulesPerAccount;
+use App\Nova\Metrics\RulesPerWeek;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Laravel\Nova\Cards\Help;
@@ -81,7 +86,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     protected function cards()
     {
         return [
-            new Help,
+            (new PublishedRules())->width('1/6'),
+            (new FlaggedRules)->width('1/6'),
+            new RulesPerWeek,
+            new RulesPerAccount,
+            new NewUsers,
         ];
     }
 

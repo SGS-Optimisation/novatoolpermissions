@@ -125,4 +125,12 @@ class User extends Authenticatable implements Auditable
     protected $auditExclude = [
         'published',
     ];
+
+
+    public function clientTeams()
+    {
+        return $this->allTeams()->filter(function($value, $key) {
+            return $value->personal_team == 0;
+        });
+    }
 }

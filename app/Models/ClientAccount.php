@@ -36,6 +36,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read int|null $rules_count
  * @property-read \App\Models\Team|null $team
  * @method static \Database\Factories\ClientAccountFactory factory(...$parameters)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Taxonomy[] $child_taxonomies
+ * @property-read int|null $child_taxonomies_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Taxonomy[] $root_taxonomies
+ * @property-read int|null $root_taxonomies_count
  */
 class ClientAccount extends Model
 {

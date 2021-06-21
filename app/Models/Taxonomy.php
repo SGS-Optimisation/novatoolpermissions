@@ -45,6 +45,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\FieldMapping[] $mappings
  * @property-read int|null $mappings_count
  * @method static \Database\Factories\TaxonomyFactory factory(...$parameters)
+ * @method static Builder|Taxonomy children()
  */
 class Taxonomy extends Model
 {
