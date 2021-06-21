@@ -5,7 +5,7 @@
               @click="creatingTaxonomy=true"
         >
             <i class="text-white w-5 inline-block">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="pt-3 h-6 w-6" viewBox="0 0 18 18" fill="currentColor">
   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
 </svg>
             </i> New Category
@@ -40,6 +40,7 @@
                            @click="confirmTaxonomyDeletion(taxonomyData.id, name)"
                            class="text-red-600 cursor-pointer hover:text-red-800 p-1 rounded-xl w-5 inline-block">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <title>Delete Taxonomy</title>
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                         </i>
@@ -144,7 +145,7 @@
               @click="creatingTaxonomy=true"
         >
             <i class="text-white w-5 inline-block">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="pt-3 h-6 w-6" viewBox="0 0 18 18" fill="currentColor">
   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
 </svg>
             </i> New Category
