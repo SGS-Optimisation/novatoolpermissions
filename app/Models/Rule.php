@@ -49,6 +49,13 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property-read \Illuminate\Database\Eloquent\Collection|\OwenIt\Auditing\Models\Audit[] $audits
  * @property-read int|null $audits_count
  * @method static \Database\Factories\RuleFactory factory(...$parameters)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Term[] $accountStructureTerms
+ * @property-read int|null $account_structure_terms_count
+ * @method static Builder|Rule isFlagged()
+ * @method static Builder|Rule isOmnipresent()
+ * @method static Builder|Rule isPublished()
+ * @method static Builder|Rule whereNotState(string $column, $states)
+ * @method static Builder|Rule whereState($value)
  */
 class Rule extends Model implements Auditable
 {

@@ -32,7 +32,9 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'email',
+        'id',
+        'name',
+        'email',
     ];
 
     /**
@@ -44,19 +46,41 @@ class User extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
+            ID::make()->sortable()->hideFromIndex(),
 
-            Gravatar::make()->maxWidth(50),
+            //Gravatar::make()->maxWidth(50),
 
             Text::make('Name')
                 ->sortable()
                 ->rules('required', 'max:255'),
 
+            Text::make('Job Title')
+                ->sortable()
+                ->rules('required', 'max:255'),
+
+            Text::make('Office Location')
+                ->sortable()
+                ->rules('required', 'max:255'),
+
+            Text::make('Roles',
+                function () {
+                    return implode(',', $this->roles()->pluck('name')->all());
+                }
+            )
+                ->onlyOnIndex(),
+
+            Text::make('Teams',
+                function () {
+                    return implode(',', $this->clientTeams()->pluck('name')->all());
+                }
+            )
+                ->onlyOnIndex(),
+
             Text::make('Email')
                 ->sortable()
                 ->rules('required', 'email', 'max:254')
                 ->creationRules('unique:users,email')
-                ->updateRules('unique:users,email,{{resourceId}}'),
+                ->updateRules('unique:users,email,{{resourceId}}')->hideFromIndex(),
 
             Password::make('Password')
                 ->onlyOnForms()
@@ -65,12 +89,7 @@ class User extends Resource
 
             BelongsToMany::make('Roles', 'roles', Role::class),
 
-            Text::make('Roles',
-                function () {
-                    return implode(',', $this->roles()->pluck('name')->all());
-                }
-            )
-                ->onlyOnIndex()
+
         ];
     }
 

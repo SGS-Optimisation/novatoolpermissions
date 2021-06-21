@@ -80,8 +80,9 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
                 $data[$taxonomy->name]['terms'][] = [
                     'id' => $term->id,
                     'name' => $term->name,
-                    'globalRulesCount' => $term->rules_count,
-                    'clientRulesCount' => $client_rules_count,
+                    'globalRulesCount' => (int) $term->rules_count,
+                    'clientRulesCount' =>  (int) $client_rules_count,
+                    'aliases' => $term->config['aliases'] ?? []
                 ];
             }
 

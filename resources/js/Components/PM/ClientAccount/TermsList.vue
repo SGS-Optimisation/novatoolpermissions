@@ -6,7 +6,12 @@
 
                 <i v-if="termData.clientRulesCount === 0"
                    @click="confirmTermDeletion(termData.id, termData.name)"
-                   class="text-red-600 fa fa-times cursor-pointer hover:bg-red-800 p-1 rounded-xl">
+                   class="cursor-pointer text-red-500 hover:text-red-800 pr-1 rounded-xl inline-block w-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
                 </i>
 
                 <span @click="editTerm(termData.id, termData.name)"
@@ -22,7 +27,8 @@
                         <span title="Number of rules using this term for this client account. Click to view rules.">
                             {{ termData.clientRulesCount }}
                         </span>
-                        <span v-if="termData.clientRulesCount !== termData.globalRulesCount" title="Number of rules using this term across all client accounts. Click to view rules.">
+                        <span v-if="termData.clientRulesCount !== termData.globalRulesCount"
+                              title="Number of rules using this term across all client accounts. Click to view rules.">
                             &nbsp;({{ termData.globalRulesCount }})
                         </span>
                     </jet-nav-link>
@@ -30,7 +36,12 @@
             </div>
 
             <i @click="creatingTerm=true"
-               class="cursor-pointer pt-3 align-middle text-blue-400 hover:text-blue-700 fa fa-plus-circle">
+               class="cursor-pointer pt-3 align-middle text-blue-400 hover:text-blue-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                          clip-rule="evenodd"/>
+                </svg>
             </i>
         </div>
 
@@ -82,13 +93,28 @@
                 Edit Term {{ editingTermName }}
             </template>
 
-            <template #content>
+            <template #content v-if="editingTerm">
                 <div class="mt-4">
-                    <jet-input type="text" class="mt-1 block w-3/4"
+                    <jet-label for="term-name" value="Name"/>
+                    <jet-input id="term-name" type="text" class="mt-1 block w-3/4"
                                :value="editTermForm.name"
                                v-model="editTermForm.name"/>
 
                 </div>
+                <div class="mt-4">
+                    <jet-label value="Aliases"/>
+                    <p class="text-xs">Separate entry with <b>;</b> or by pressing return</p>
+                    <vue-tags-input
+                        v-model="tag"
+                        :tags="tags"
+                        :save-on-key="saveOnKey"
+                        :add-on-key="saveOnKey"
+                        @tags-changed="newTags => tags = newTags"
+                    />
+
+
+                </div>
+
             </template>
 
             <template #footer>
@@ -138,12 +164,15 @@ import JetDialogModal from '@/Jetstream/DialogModal'
 import JetActionSection from '@/Jetstream/ActionSection'
 import JetButton from '@/Jetstream/Button'
 import JetDangerButton from '@/Jetstream/DangerButton'
+import JetFormSection from '@/Jetstream/FormSection'
 import JetInput from '@/Jetstream/Input'
 import JetInputError from '@/Jetstream/InputError'
+import JetLabel from '@/Jetstream/Label'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import VueTagsInput from '@johmun/vue-tags-input';
 
 export default {
-    name: "TermDefinition",
+    name: "TermsList",
     props: [
         'taxonomyName',
         'terms',
@@ -158,9 +187,12 @@ export default {
         JetConfirmationModal,
         JetDialogModal,
         JetDangerButton,
+        JetFormSection,
         JetInput,
         JetInputError,
+        JetLabel,
         JetSecondaryButton,
+        VueTagsInput,
     },
 
     data() {
@@ -185,10 +217,15 @@ export default {
                 bag: 'createTerm'
             }),
 
+            tag: '',
+            tags: [],
+            saveOnKey: [13, ';'],
+
             editTermForm: this.$inertia.form({
                 termId: null,
                 clientAccountId: this.clientAccount.id,
                 name: null,
+                aliases: [],
 
             }, {
                 bag: 'editTerm'
@@ -228,9 +265,12 @@ export default {
 
 
         editTerm(id, name) {
+            const term = _.find(this.terms, {id: id});
             this.editingTerm = true;
             this.editTermForm.termId = id;
-            this.editTermForm.name = name;
+            this.editTermForm.name = term.name;
+            this.editTermForm.aliases = [];
+            this.tags = term.aliases.map(item => { return {text: item} });
             this.editingTermName = name; //keep original term for display in modal title
         },
 
@@ -239,10 +279,14 @@ export default {
             this.editingTermName = null
             this.editTermForm.termId = null;
             this.editTermForm.name = null;
+            this.editTermForm.aliases = [];
+            this.tags = [];
         },
 
         updateTerm() {
             console.log('updating term ' + this.editTermForm.termId + ' from ' + this.editingTermName + ' to ' + this.editTermForm.name);
+
+            this.editTermForm.aliases = this.tags.map((item) => item.text);
 
             this.editTermForm.put(route('pm.terms.update', this.editTermForm.termId), {
                 preserveScroll: true

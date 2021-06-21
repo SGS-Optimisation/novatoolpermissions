@@ -53,7 +53,11 @@ class TermController extends Controller
         $client_account = ClientAccount::find($request->clientAccountId);
         $term = Term::find($id);
 
-        $term->update(['name' => $request->name]);
+        $config = $term->config;
+        $config['aliases'] = $request->get('aliases', []);
+        $term->config = $config;
+
+        $term->update(['name' => $request->name, 'config' => $config]);
 
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
