@@ -65,7 +65,7 @@ class RuleFilter
                     }
 
                     /*
-                     * If a rule applies to any/all jobs, it should be displayed, skip further checks
+                     * If a rule's taxo term applies to any/all jobs, it should be displayed, skip further checks
                      */
                     if (Str::lower($term->name) === 'any' || Str::lower($term->name) === 'all') {
                         $matchedTaxonomies[$term->taxonomy->name] = true;
@@ -93,7 +93,7 @@ class RuleFilter
                          * compare retrieved value with this term
                          */
                         if (!is_array($mysgsValue)) {
-                            logger('converting mysgs value to array');
+                            //logger('converting mysgs value to array');
                             $mysgsValue = [$mysgsValue];
                         }
 
@@ -101,24 +101,24 @@ class RuleFilter
                             if (empty($mysgsValue_single)) {
                                 continue;
                             }
-                            logger(sprintf('checking taxo %s for term "%s" against mysgs value: %s',
+                            /*logger(sprintf('checking taxo %s for term "%s" against mysgs value: %s',
                                     $term->taxonomy->name, $termValue, print_r($mysgsValue_single, true))
-                            );
+                            );*/
                             if (!(Str::is($termValue, Str::lower($mysgsValue_single))
                                 || (isset($term->config['aliases'])
                                     && in_array($mysgsValue_single, array_map('Str::lower', $term->config['aliases']))
                                 )
                             )) {
-                                logger(sprintf('rule %s dropped, term %s did not match with %s',
+                                /*logger(sprintf('rule %s dropped, term %s did not match with %s',
                                         $rule->id, $termValue, $mysgsValue_single)
-                                );
+                                );*/
                                 $matched = false;
                             } else {
                                 $matchedTaxonomies[$term->taxonomy->name] = true;
 
-                                logger(sprintf('rule %s added, term %s matched with %s',
+                                /*logger(sprintf('rule %s added, term %s matched with %s',
                                         $rule->id, $termValue, $mysgsValue_single)
-                                );
+                                );*/
 
                                 if (!in_array($term->name, $job_taxonomy_terms_matches[$term->taxonomy->name])) {
                                     $job_taxonomy_terms_matches[$term->taxonomy->name][] = $term->name;
@@ -136,9 +136,9 @@ class RuleFilter
                 if ($matched || $taxonomyMatch) {
                     $clientRules[] = $rule;
                 } else {
-                    logger(sprintf('rule %s dropped, matched=%b  taxoMatch=%b ',
+                    /*logger(sprintf('rule %s dropped, matched=%b  taxoMatch=%b ',
                             $rule->id, $matched, $taxonomyMatch)
-                    );
+                    );*/
                 }
             }
 

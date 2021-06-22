@@ -43,6 +43,10 @@ Route::middleware(['auth:sanctum', 'verified', 'user.permissions'])->group(funct
         ->name('job.rules')
         ->where('jobNumber', '[0-9\-]+');
 
+    Route::get( '/{jobNumber}/status', [\App\Http\Controllers\OPs\JobController::class, 'status'])
+        ->name('job.rules.status')
+        ->where('jobNumber', '[0-9\-]+');
+
     Route::post( '/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'search'])
         ->name('job.search')
         ->where('jobNumber', '[0-9\-]+');

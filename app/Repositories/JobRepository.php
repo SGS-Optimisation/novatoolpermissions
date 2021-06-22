@@ -31,15 +31,13 @@ class JobRepository
 
         if (!$job) {
             $job = static::createFromJobNumber($job_number);
+            // TODO: check if not better to dispatch loading of data instead of using of queued events
+            event(new NewJobSearched($job));
+
         } elseif ($job->metadata->processing_mysgs) {
-            logger($job_number . ' still processing, adding to queue, if running it will not re-trigger');
+            logger($job_number . ' still processing');
         }
 
-        event(new NewJobSearched($job));
-        // TODO: check if not better to dispatch loading of data instead of using of queued events
-
         return $job;
-
-
     }
 }

@@ -7,7 +7,7 @@ namespace App\Services\MySgs\Api\EloquentHelpers;
 use App\Models\Job;
 use App\Repositories\JobRepository;
 
-class JobApiCaller
+class MysgsApiCaller
 {
     /**
      * @var Job
@@ -23,17 +23,24 @@ class JobApiCaller
     public function __construct($job)
     {
         if (is_string($job)) {
-            $job = JobRepository::createFromJobNumber($job);
+            $job = JobRepository::findByJobNumber($job);
         }
 
         $this->job = $job;
     }
 
 
+    public function generateUrl($apiName, $apiAction)
+    {
+        logger('generating api url call ' . $apiName  . '::' . $apiAction . ' on job ' . $this->job->id);
+
+    }
+
+
     /**
      * @param $apiName
      * @param $apiAction
-     * @return JobApiCaller
+     * @return MysgsApiCaller
      */
     public function handle($apiName, $apiAction)
     {
@@ -44,7 +51,7 @@ class JobApiCaller
         $param = static::getApiParam($apiName, $apiAction, $this->job);
 
 
-        $this->response = $response = $api::$apiAction($param);
+        $this->response = $api::$apiAction($param);
 
         $job_metadata = $this->job->metadata;
 

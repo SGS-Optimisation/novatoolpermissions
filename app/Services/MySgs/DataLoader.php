@@ -5,13 +5,13 @@ namespace App\Services\MySgs;
 
 use App\Models\ClientAccount;
 use App\Models\Job;
-use App\Services\MySgs\Api\EloquentHelpers\JobApiCaller;
+use App\Services\MySgs\Api\EloquentHelpers\MysgsApiCaller;
 use App\Services\MySgs\Api\EloquentHelpers\JobClientAccountMatcher;
 use Illuminate\Support\Str;
 
 class DataLoader
 {
-    public $job;
+    public Job $job;
 
     /**
      * DataLoader constructor.
@@ -28,7 +28,7 @@ class DataLoader
         /*
          * Essential as this returns the jobVersionId, required for various other endpoints
          */
-        $basicInfo = (new JobApiCaller($this->job))->handle('JobApi', 'basicInfo');
+        $basicInfo = (new MysgsApiCaller($this->job))->handle('JobApi', 'basicInfo');
 
         if (!$basicInfo->response) {
             static::fail('Job not found');
@@ -38,24 +38,24 @@ class DataLoader
         /*
          * Pre-call all other endpoints
          */
-        $basicDetails = (new JobApiCaller($this->job))->handle('JobApi', 'basicDetails');
-        $extraDetails = (new JobApiCaller($this->job))->handle('JobApi', 'extraDetails');
-        $jobContacts = (new JobApiCaller($this->job))->handle('JobApi', 'jobContacts');
-        $jobItems = (new JobApiCaller($this->job))->handle('ProductionApi', 'jobItems');
+        $basicDetails = (new MysgsApiCaller($this->job))->handle('JobApi', 'basicDetails');
+        $extraDetails = (new MysgsApiCaller($this->job))->handle('JobApi', 'extraDetails');
+        $jobContacts = (new MysgsApiCaller($this->job))->handle('JobApi', 'jobContacts');
+        $jobItems = (new MysgsApiCaller($this->job))->handle('ProductionApi', 'jobItems');
 
 
-        static::augmentMeta($this->job, $basicInfo, $basicDetails, $extraDetails, $jobItems);
+        static::augmentMeta($basicInfo, $basicDetails, $extraDetails, $jobItems);
     }
 
 
-    protected function augmentMeta($job, $basicInfo, $basicDetails, $extraDetails, $jobItems)
+    protected function augmentMeta($basicInfo, $basicDetails, $extraDetails, $jobItems)
     {
-        $job->designation = $basicInfo->response->jobDescription;
-        $job_metadata = $job->metadata;
+        $this->job->designation = $basicInfo->response->jobDescription;
+        $job_metadata = $this->job->metadata;
         $job_metadata->processing_mysgs = false;
 
-        $job->metadata = $job_metadata;
-        $job->save();
+        $this->job->metadata = $job_metadata;
+        $this->job->save();
 
         /** @noinspection PhpExpressionResultUnusedInspection
          * Self invoked class which
