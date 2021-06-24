@@ -75,53 +75,58 @@ class RuleFilter
                     /*
                      * Otherwise, check if the field matches
                      */
-                    if ($term->taxonomy->mapping) {
+                    if ($term->taxonomy->mappings()->count()) {
+
                         if (!Arr::exists($job_taxonomy_terms_matches, $term->taxonomy->name)) {
                             $job_taxonomy_terms_matches[$term->taxonomy->name] = [];
                             $job_taxonomy_terms[$term->taxonomy->name] = [];
                         }
 
-                        /**
-                         * retrieve value from mysgs response with help of taxonomy
-                         */
-                        list($mysgsValue, $raw) = $memoizeMapper($job, $term->taxonomy->mapping);
+                        foreach ($term->taxonomy->mappings as $mapping) {
+                            logger('rule comparison using mapping ' . $mapping->id);
+                            /**
+                             * retrieve value from mysgs response with help of taxonomy
+                             */
+                            list($mysgsValue, $raw) = $memoizeMapper($job, $mapping);
 
-                        $termValue = Str::lower($term->name);
-                        $job_taxonomy_terms[$term->taxonomy->name] = $raw;
+                            $termValue = Str::lower($term->name);
+                            $job_taxonomy_terms[$term->taxonomy->name] = $raw;
 
-                        /**
-                         * compare retrieved value with this term
-                         */
-                        if (!is_array($mysgsValue)) {
-                            //logger('converting mysgs value to array');
-                            $mysgsValue = [$mysgsValue];
-                        }
-
-                        foreach ($mysgsValue as $index => $mysgsValue_single) {
-                            if (empty($mysgsValue_single)) {
-                                continue;
+                            /**
+                             * compare retrieved value with this term
+                             */
+                            if (!is_array($mysgsValue)) {
+                                //logger('converting mysgs value to array');
+                                $mysgsValue = [$mysgsValue];
                             }
-                            /*logger(sprintf('checking taxo %s for term "%s" against mysgs value: %s',
-                                    $term->taxonomy->name, $termValue, print_r($mysgsValue_single, true))
-                            );*/
-                            if (!(Str::is($termValue, Str::lower($mysgsValue_single))
-                                || (isset($term->config['aliases'])
-                                    && in_array($mysgsValue_single, array_map('Str::lower', $term->config['aliases']))
-                                )
-                            )) {
-                                /*logger(sprintf('rule %s dropped, term %s did not match with %s',
-                                        $rule->id, $termValue, $mysgsValue_single)
-                                );*/
-                                $matched = false;
-                            } else {
-                                $matchedTaxonomies[$term->taxonomy->name] = true;
 
-                                /*logger(sprintf('rule %s added, term %s matched with %s',
-                                        $rule->id, $termValue, $mysgsValue_single)
+                            foreach ($mysgsValue as $index => $mysgsValue_single) {
+                                if (empty($mysgsValue_single)) {
+                                    continue;
+                                }
+                                /*logger(sprintf('checking taxo %s for term "%s" against mysgs value: %s',
+                                        $term->taxonomy->name, $termValue, print_r($mysgsValue_single, true))
                                 );*/
+                                if (!(Str::is($termValue, Str::lower($mysgsValue_single))
+                                    || (isset($term->config['aliases'])
+                                        && in_array($mysgsValue_single,
+                                            array_map('Str::lower', $term->config['aliases']))
+                                    )
+                                )) {
+                                    /*logger(sprintf('rule %s dropped, term %s did not match with %s',
+                                            $rule->id, $termValue, $mysgsValue_single)
+                                    );*/
+                                    $matched = false;
+                                } else {
+                                    $matchedTaxonomies[$term->taxonomy->name] = true;
 
-                                if (!in_array($term->name, $job_taxonomy_terms_matches[$term->taxonomy->name])) {
-                                    $job_taxonomy_terms_matches[$term->taxonomy->name][] = $term->name;
+                                    /*logger(sprintf('rule %s added, term %s matched with %s',
+                                            $rule->id, $termValue, $mysgsValue_single)
+                                    );*/
+
+                                    if (!in_array($term->name, $job_taxonomy_terms_matches[$term->taxonomy->name])) {
+                                        $job_taxonomy_terms_matches[$term->taxonomy->name][] = $term->name;
+                                    }
                                 }
                             }
                         }
@@ -147,10 +152,27 @@ class RuleFilter
              */
             /** @var Taxonomy $taxonomy */
             foreach ($client->child_taxonomies as $taxonomy) {
-                if (!in_array($taxonomy->name, $job_taxonomy_terms) && $taxonomy->mapping) {
-                    list($mysgsValue, $raw) = $memoizeMapper($job, $taxonomy->mapping);
+                if (!in_array($taxonomy->name, $job_taxonomy_terms) && $taxonomy->mappings()->count()) {
 
-                    $job_taxonomy_terms[$taxonomy->name] = $mysgsValue;
+                    foreach ($taxonomy->mappings as $mapping) {
+                        logger('fill using mapping ' . $mapping->id);
+                        list($mysgsValue, $raw) = $memoizeMapper($job, $mapping);
+
+                        if ($mysgsValue) {
+
+                            if (!is_array($mysgsValue)) {
+                                //logger('converting mysgs value to array');
+                                $mysgsValue = [$mysgsValue];
+                            }
+
+                            foreach ($mysgsValue as $index => $mysgsValue_single) {
+                                logger('mysgsvalue:' . print_r($mysgsValue_single, true));
+                                $job_taxonomy_terms[$taxonomy->name] = $mysgsValue_single;    
+                            }
+
+                        }
+                    }
+
                 }
             }
 
