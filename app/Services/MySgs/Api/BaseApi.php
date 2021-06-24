@@ -5,13 +5,15 @@ namespace App\Services\MySgs\Api;
 
 
 use Carbon\Carbon;
+use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class BaseApi
 {
 
-    public static $api_name;
+    public static string $api_name;
 
     public static function buildBaseUrl()
     {
@@ -20,7 +22,7 @@ class BaseApi
         );
     }
 
-    public static function buildRequest()
+    public static function buildRequest(): PendingRequest
     {
         AuthApi::appAuth();
 
@@ -41,11 +43,13 @@ class BaseApi
     public static function get($api_action, $query, $params, $array_mode = false)
     {
         $url = static::buildBaseUrl().$api_action.$query;
+        $parsed_response = Cache::get($key = $url.print_r($params, true));
 
-        $parsed_response = Cache::get($url.print_r($params, true));
-
-        if(!$parsed_response) {
-            Cache::forget($url.print_r($params, true));
+        /*
+         * If cached response is an error, get rid of it
+         */
+        if (!$parsed_response) {
+            Cache::forget($key);
             $parsed_response = static::call($url, $params, $array_mode);
         }
 
@@ -71,7 +75,11 @@ class BaseApi
         );
     }
 
-
+    /**
+     * @param Response $response
+     * @param $array_mode
+     * @return mixed
+     */
     public static function parseResponse($response, $array_mode)
     {
         return !is_array($response->body()) ?

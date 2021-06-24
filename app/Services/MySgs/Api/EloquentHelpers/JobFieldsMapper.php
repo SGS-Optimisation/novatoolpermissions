@@ -60,7 +60,7 @@ class JobFieldsMapper
             $data = $job->metadata->{$mapping->api_action};
         } else {
             logger('no stored data for mapping ' . $mapping->id);
-            $api_data = (new JobApiCaller($job))->handle($mapping->api_name, $mapping->api_action);
+            $api_data = (new MysgsApiCaller($job))->handle($mapping->api_name, $mapping->api_action);
             $data = $api_data->response;
         }
 

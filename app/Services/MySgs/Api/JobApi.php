@@ -4,7 +4,7 @@ namespace App\Services\MySgs\Api;
 
 class JobApi extends BaseApi
 {
-    public static $api_name = 'jobapi';
+    public static string $api_name = 'jobapi';
 
     public static function jobSearch($query, $params = [])
     {
@@ -17,10 +17,20 @@ class JobApi extends BaseApi
         return static::get('Job/basicInfo/formattedJobNumber/', $formattedJobNumber, $params, $array_mode);
     }
 
+    public static function basicInfoRoute($formattedJobNumber)
+    {
+        return static::buildBaseUrl() . 'Job/basicInfo/formattedJobNumber/' . $formattedJobNumber;
+    }
+
     public static function basicDetails($jobVersionId, $params = [])
     {
         logger('basic details job api');
         return static::get('JobVersion/basicDetails/', $jobVersionId, $params);
+    }
+
+    public static function basicDetailsRoute($jobVersionId)
+    {
+        return static::buildBaseUrl() . 'JobVersion/basicDetails/' . $jobVersionId;
     }
 
     public static function extraDetails($jobVersionId, $params = [])
@@ -29,15 +39,30 @@ class JobApi extends BaseApi
         return static::get('JobVersion/extraDetails/', $jobVersionId, $params);
     }
 
+    public static function extraDetailsRoute($jobVersionId)
+    {
+        return static::buildBaseUrl() . 'JobVersion/extraDetails/' . $jobVersionId;
+    }
+
     public static function jobContacts($jobVersionId, $params = [])
     {
         logger('contact job api');
         return static::get('JobContacts/', $jobVersionId, $params);
     }
 
+    public static function jobContactsRoute($jobVersionId)
+    {
+        return static::buildBaseUrl() . 'JobContacts/' . $jobVersionId;
+    }
+
     public static function latestStage($jobVersionId, $params = [])
     {
         logger('latest stage job api');
         return static::get('JobStage/LatestStage/', $jobVersionId, $params);
+    }
+
+    public static function latestStageRoute($jobVersionId)
+    {
+        return static::buildBaseUrl() . 'JobStage/LatestStage/' . $jobVersionId;
     }
 }

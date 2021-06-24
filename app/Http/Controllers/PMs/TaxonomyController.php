@@ -24,7 +24,7 @@ class TaxonomyController extends Controller
         $client_account = ClientAccount::find($request->clientAccountId);
 
         /** @var Term $term */
-        $taxonomy = $client_account->taxonomies()->withTrashed()
+        $taxonomy = Taxonomy::withTrashed()
             ->firstOrCreate([
                 'name' => $request->name,
                 'parent_id' => $request->parentTaxonomyId

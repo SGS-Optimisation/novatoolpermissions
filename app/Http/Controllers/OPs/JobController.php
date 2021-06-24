@@ -40,6 +40,13 @@ class JobController extends Controller
             ]);
     }
 
+    public function status(Request $request, $jobNumber)
+    {
+        $job = JobRepository::findByJobNumber($jobNumber);
+
+        return new JsonResponse(['processing_mysgs' => $job->metadata->processing_mysgs] );
+    }
+
     /**
      * Helper to redirect to show.
      *

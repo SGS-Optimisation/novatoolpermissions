@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Http;
 class AuthApi extends BaseApi
 {
 
-    public static $api_name = 'authapi';
+    public static string $api_name = 'authapi';
 
     public static function appAuth()
     {
