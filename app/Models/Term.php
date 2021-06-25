@@ -12,7 +12,7 @@ use Jenssegers\Mongodb\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $taxonomy_id
  * @property string $name
- * @property string $config
+ * @property array $config
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ClientAccount[] $client_accounts
