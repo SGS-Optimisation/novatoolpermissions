@@ -2,7 +2,7 @@
     <div>
         <div class="flex flex-row flex-wrap">
             <div class="text-xs mx-2 border-blue-50 border my-1 bg-yellow-50 rounded-xl px-2 py-1"
-                 v-for="termData in _.sortBy(terms, function(term) {return term.name})">
+                 v-for="termData in displayedTerms">
 
                 <i v-if="termData.clientRulesCount === 0"
                    @click="confirmTermDeletion(termData.id, termData.name)"
@@ -33,6 +33,12 @@
                         </span>
                     </jet-nav-link>
                 </span>
+            </div>
+            <div v-if="shouldTruncate && truncateMode" class="w-full text-center">
+                <a @click="truncateMode=false" class="cursor-pointer text-white block bg-green-200 hover:bg-green-400">Show all</a>
+            </div>
+            <div v-if="shouldTruncate && !truncateMode" class="w-full text-center">
+                <a @click="truncateMode=true" class="cursor-pointer text-white block bg-green-200 hover:bg-green-400">Show less</a>
             </div>
 
             <i @click="creatingTerm=true"
@@ -197,12 +203,15 @@ export default {
 
     data() {
         return {
+            sortedTerms: _.sortBy(this.terms, function(term) {return term.name}),
             creatingTerm: false,
 
             confirmingTermDeletion: false,
             deletingTermId: null,
             deletingTermName: null,
             deleting: false,
+
+            truncateMode: false,
 
             editingTerm: false,
             editingTermId: null,
@@ -239,8 +248,26 @@ export default {
         }
     },
 
-    mounted() {
+    computed: {
+        shouldTruncate() {
+            return this.terms.length > 24;
+        },
 
+        displayedTerms() {
+            if(this.shouldTruncate && this.truncateMode) {
+                return _.slice(this.sortedTerms, 0, 24);
+            }
+            else {
+                return this.sortedTerms;
+            }
+        }
+
+    },
+
+    mounted() {
+        if(this.shouldTruncate) {
+            this.truncateMode = true;
+        }
     },
 
     methods: {
