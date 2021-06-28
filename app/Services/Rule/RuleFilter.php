@@ -83,7 +83,7 @@ class RuleFilter
                         }
 
                         foreach ($term->taxonomy->mappings as $mapping) {
-                            logger('rule comparison using mapping '.$mapping->id);
+                            //logger('rule comparison using mapping '.$mapping->id);
                             /**
                              * retrieve value from mysgs response with help of taxonomy
                              */
@@ -109,7 +109,7 @@ class RuleFilter
                                 );*/
                                 if (!(Str::is($termValue, Str::lower($mysgsValue_single))
                                     || (isset($term->config['aliases'])
-                                        && in_array($mysgsValue_single,
+                                        && in_array( Str::lower($mysgsValue_single),
                                             array_map('Str::lower', $term->config['aliases']))
                                     )
                                 )) {
@@ -155,7 +155,7 @@ class RuleFilter
                 if (!in_array($taxonomy->name, $job_taxonomy_terms) && $taxonomy->mappings()->count()) {
 
                     foreach ($taxonomy->mappings as $mapping) {
-                        logger('fill using mapping '.$mapping->id);
+                        //logger('fill using mapping '.$mapping->id);
                         list($mysgsValue, $raw) = $memoizeMapper($job, $mapping);
 
                         if ($mysgsValue) {
@@ -166,7 +166,7 @@ class RuleFilter
                             }
 
                             foreach ($mysgsValue as $index => $mysgsValue_single) {
-                                logger('mysgsvalue:'.print_r($mysgsValue_single, true));
+                                //logger('mysgsvalue:'.print_r($mysgsValue_single, true));
                                 $job_taxonomy_terms[$taxonomy->name] = $mysgsValue_single;
                             }
 
