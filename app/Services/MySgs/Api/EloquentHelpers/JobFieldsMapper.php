@@ -112,14 +112,15 @@ class JobFieldsMapper
     protected function parseFieldPathSection($field_path_sections, $data)
     {
         $section = array_shift($field_path_sections);
-
         if ($section === null) {
             $this->accumulator[] = $data;
         }
 
         if (is_int($section) || $section === "0") {
-            if (isset($data[$section])) {
+            if (is_array($data) && isset($data[$section])) {
                 static::parseFieldPathSection($field_path_sections, $data[$section]);
+            } elseif(is_object($data) && isset($data->$section)) {
+                static::parseFieldPathSection($field_path_sections, $data->$section);
             }
         } elseif (Str::startsWith($section, '*')) {
 

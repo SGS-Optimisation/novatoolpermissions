@@ -61,6 +61,7 @@ class FieldMapping extends Resource
                     'JobApi' => 'Job',
                     'ProductionApi' => 'Production',
                     'CustomerApi' => 'Customer',
+                    'IntegrationsApi' => 'Integrations',
                 ])
                 ->rules('required')
                 ->sortable()
