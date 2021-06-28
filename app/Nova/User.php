@@ -93,6 +93,16 @@ class User extends Resource
         ];
     }
 
+    public static function authorizedToCreate(Request $request)
+    {
+        return false;
+    }
+
+    public function authorizedToDelete(Request $request)
+    {
+        return false;
+    }
+
     /**
      * Get the cards available for the request.
      *
