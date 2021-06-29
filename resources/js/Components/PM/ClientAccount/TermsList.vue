@@ -203,7 +203,6 @@ export default {
 
     data() {
         return {
-            sortedTerms: _.sortBy(this.terms, function(term) {return term.name}),
             creatingTerm: false,
 
             confirmingTermDeletion: false,
@@ -260,6 +259,10 @@ export default {
             else {
                 return this.sortedTerms;
             }
+        },
+
+        sortedTerms() {
+            return _.sortBy(this.terms, function(term) {return term.name});
         }
 
     },

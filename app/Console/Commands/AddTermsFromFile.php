@@ -51,7 +51,7 @@ class AddTermsFromFile extends Command
                 $this->call('term:create:single', [
                     'clientName' => $this->argument('clientName'),
                     'taxonomy' => $this->argument('taxonomy'),
-                    'term' => $term,
+                    'term' => trim($term),
                     '--auto-aliasing' => $this->option('auto-aliasing')
                 ]);
             }

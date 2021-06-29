@@ -115,7 +115,7 @@
                 </jet-action-section>
 
                 <!-- Delete Taxonomy Confirmation Modal -->
-                <jet-confirmation-modal :show="confirmingTaxonomyDeletion" @close="cancelDeleteTaxonomy">
+                <jet-confirmation-modal :show="confirmingTaxonomyDeletion" @close="resetDeleteTaxonomy">
                     <template #title>
                         Delete Vocabulary
                     </template>
@@ -125,7 +125,7 @@
                     </template>
 
                     <template #footer>
-                        <jet-secondary-button @click.native="cancelDeleteTaxonomy">
+                        <jet-secondary-button @click.native="resetDeleteTaxonomy">
                             Nevermind
                         </jet-secondary-button>
 
@@ -273,7 +273,7 @@ export default {
             this.deletingTaxonomyName = name;
         },
 
-        cancelDeleteTaxonomy() {
+        resetDeleteTaxonomy() {
             this.confirmingTaxonomyDeletion = false;
             this.deletingTaxonomyId = null;
             this.deletingTaxonomyName = null;
@@ -285,7 +285,7 @@ export default {
             this.deleteForm.put(route('pm.taxonomies.destroy', this.deletingTaxonomyId), {
                 preserveScroll: true
             }).then(() => {
-                this.cancelDeleteTaxonomy();
+                this.resetDeleteTaxonomy();
             });
         },
     }
