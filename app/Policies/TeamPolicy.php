@@ -41,7 +41,7 @@ class TeamPolicy
      */
     public function create(User $user)
     {
-        return true;
+        return $user->can('manageTeams');
     }
 
     /**
@@ -67,7 +67,7 @@ class TeamPolicy
     {
         return $user->ownsTeam($team)
             || $user->hasTeamPermission($team, 'addMembers')
-            || $user->can('manageTeams');;
+            || $user->can('manageTeams');
     }
 
     /**
