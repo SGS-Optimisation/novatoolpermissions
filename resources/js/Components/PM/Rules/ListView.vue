@@ -15,14 +15,16 @@
                     {{ rule.name }}</h2>
 
                 <div class="flex">
-                    <div class="flex-shrink cursor-default align-bottom text-xs border-dashed border-b border-gray-500"
-                         :title="date()">
-                        Last updated {{ humanDate() }}
-                    </div>
-                    <nav-link
+                    <a class="inline-flex border-dashed border-b border-gray-500 items-center px-1 pt-1 text-sm font-medium leading-5 text-gray-900 focus:outline-none transition duration-150 ease-in-out"
                         :href="route('pm.client-account.rules.edit',  {clientAccount: clientAccount.slug, id: rule.id })">
-                        <i class="fa fa-pen"></i>
-                    </nav-link>
+                        <div class="flex-shrinkalign-bottom text-xs pr-1"
+                             :title="date()">
+                            Last updated {{ humanDate() }}
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                        </svg>
+                    </a>
                     <div v-if="rule.flagged">
                         <a @click="showFlagReason" class="cursor-pointer"><i class="text-red-700">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
