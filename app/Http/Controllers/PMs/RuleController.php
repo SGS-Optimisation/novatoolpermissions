@@ -10,6 +10,7 @@ use App\Models\Rule;
 use App\Models\Term;
 use App\Repositories\RuleRepository;
 use App\Services\ClientAccounts\BuildTaxonomyLists;
+use App\Services\LegacyImport\ExtractImages;
 use App\Services\Taxonomy\Traits\TaxonomyBuilder;
 use App\States\Rules\DraftState;
 use Illuminate\Contracts\Foundation\Application;
@@ -132,7 +133,9 @@ class RuleController extends Controller
     {
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
 
-        $rule_fields = $request->only(['name', 'content', 'flagged', 'metadata']);
+        $rule_fields = $request->only(['name', 'flagged', 'metadata']);
+        $rule_fields['content'] = (new ExtractImages($request->get('content')))->handle()->updated_content;
+
         $rule = $client_account->rules()->create($rule_fields);
         $this->parseContent($request, $rule);
 
@@ -210,7 +213,8 @@ class RuleController extends Controller
      */
     public function update(Request $request, $client_account_slug, $id)
     {
-        $rule_fields = $request->only(['name', 'content', 'flagged', 'metadata']);
+        $rule_fields = $request->only(['name', 'flagged', 'metadata']);
+        $rule_fields['content'] = (new ExtractImages($request->get('content')))->handle()->updated_content;
 
         $rule = Rule::find($id);
         $rule->update($rule_fields);
