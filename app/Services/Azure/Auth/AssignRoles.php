@@ -30,6 +30,7 @@ class AssignRoles
             'Project Manager',
             'Manager',
             'Chef de Projet',
+            'Systems Engineer',
         ];
 
         foreach ($TL_titles as $title) {
@@ -43,7 +44,8 @@ class AssignRoles
 
     protected static function checkTitleStringForRole(User $user, $title, $role)
     {
-        if (Str::contains($user->job_title, $title) || Str::contains($title, $user->job_title)) {
+        if (Str::contains(Str::lower($user->job_title), Str::lower($title))
+            || Str::contains(Str::lower($title), Str::lower($user->job_title))) {
             $user->assignRole($role);
         }
     }
