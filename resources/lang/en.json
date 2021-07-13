@@ -1,5 +1,5 @@
 {
-    "viewNova": "Access Admin",
+    "viewNova": "View Backoffice [required for file uploads]",
     "viewRoles": "View Roles",
     "manageRoles": "Manage Roles",
     "assignRoles": "Assign Roles",
@@ -17,6 +17,7 @@
     "deleteClientAccounts": "Delete Client Accounts",
 
     "accessPM": "Access Project Manager Section",
+    "accessBackend": "Manage Resources in Backend",
     "manageFieldMappings": "Manage Field Mappings",
     "manageSettings":  "Manage Settings",
     "manageTaxonomies": "Manage Taxonomies",

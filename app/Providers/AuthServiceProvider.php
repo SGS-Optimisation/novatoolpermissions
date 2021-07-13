@@ -44,6 +44,7 @@ class AuthServiceProvider extends ServiceProvider
             'createRules', 'updateRules', 'deleteRules', 'publishRules',
             'createClientAccounts', 'updateClientAccounts', 'deleteClientAccounts',
             'accessPM',
+            'accessBackend',
             'viewTaxonomies', 'manageTaxonomies',
             'viewTerms', 'manageTerms',
             'viewFieldMappings', 'manageFieldMappings',
