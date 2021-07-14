@@ -360,14 +360,20 @@ export default {
             axios.get(route('job.rules', this.jobNumber))
                 .then(({data}) => {
                     console.log(data);
-                    if (!data.job.metadata.processing_mysgs) {
+                    if (!data.job.metadata.processing_mysgs && !data.job.metadata.error_mysgs) {
                         clearTimeout(this.timeOut);
 
                         this.currentJob = data.job;
                         this.currentRules = data.rules;
                         this.newRulesLoaded();
                         this.initRulesParsing();
-                    } else {
+                    } else if(data.job.metadata.error_mysgs){
+                        this.currentJob = data.job;
+                        this.currentJob.metadata.error_mysgs = data.job.metadata.error_mysgs;
+                        console.log('mysgs error, halt');
+                        clearTimeout(this.timeOut);
+                    }
+                    else{
                         this.waitMode();
                     }
                 })

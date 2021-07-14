@@ -7,6 +7,7 @@ namespace App\Repositories;
 use App\Events\Jobs\NewJobSearched;
 use App\Listeners\Jobs\LoadMySgsData;
 use App\Models\Job;
+use Carbon\Carbon;
 
 class JobRepository
 {
@@ -31,10 +32,17 @@ class JobRepository
 
         if (!$job) {
             $job = static::createFromJobNumber($job_number);
-            // TODO: check if not better to dispatch loading of data instead of using of queued events
             event(new NewJobSearched($job));
-
-        } elseif ($job->metadata->processing_mysgs) {
+        }
+        elseif ($job->metadata->error_mysgs
+            && $job->created_at->lessThan(Carbon::now()->subMinute())
+        ) {
+            logger($job_number . ' was in error, should prune and recreate');
+            $job->delete();
+            $job = static::createFromJobNumber($job_number);
+            event(new NewJobSearched($job));
+        }
+        elseif ($job->metadata->processing_mysgs) {
             logger($job_number . ' still processing');
         }
 

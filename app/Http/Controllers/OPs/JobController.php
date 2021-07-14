@@ -31,7 +31,12 @@ class JobController extends Controller
         }
 
         return $request->wantsJson() ?
-            new JsonResponse(['rules' => $rules, 'job' => $job], 200)
+            new JsonResponse([
+                'rules' => $rules,
+                'job' => $job,
+                'processing_mysgs' => $job->metadata->processing_mysgs,
+                'error_mysgs' => $job->metadata->error_mysgs,
+            ], 200)
             : Jetstream::inertia()->render($request, 'OP/JobRules', [
                 'team' => $request->user()->currentTeam,
                 'jobNumber' => $jobNumber,
@@ -44,7 +49,10 @@ class JobController extends Controller
     {
         $job = JobRepository::findByJobNumber($jobNumber);
 
-        return new JsonResponse(['processing_mysgs' => $job->metadata->processing_mysgs] );
+        return new JsonResponse([
+            'processing_mysgs' => $job->metadata->processing_mysgs,
+            'error_mysgs' => $job->metadata->error_mysgs,
+        ]);
     }
 
     /**
