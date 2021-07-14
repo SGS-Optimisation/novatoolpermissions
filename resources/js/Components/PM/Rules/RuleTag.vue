@@ -40,7 +40,6 @@
 export default {
     name: "RuleTag",
     props: [
-        'taxonomy',
         'terms',
     ],
     data: function () {
@@ -52,6 +51,10 @@ export default {
     },
 
     computed: {
+
+        taxonomy() {
+            return this.terms[0].taxonomy.name;
+        },
 
         shouldTruncate() {
             return this.terms.length > 4;
