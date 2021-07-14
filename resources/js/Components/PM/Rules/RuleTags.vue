@@ -1,10 +1,8 @@
 <template>
     <div class="flex flex-wrap">
-        <div v-for="(taxonomyTerms, taxonomy) in _.groupBy(rule.terms, function(item){
-                            return item.taxonomy ? item.taxonomy.name : 'ERROR';
-                        })">
+        <div v-for="taxonomyTerms in sortedTaxonomyTerms">
 
-            <rule-tag :terms="taxonomyTerms" :taxonomy="taxonomy"/>
+            <rule-tag :terms="taxonomyTerms"/>
 
         </div>
     </div>
@@ -12,10 +10,42 @@
 
 <script>
 import RuleTag from "@/Components/PM/Rules/RuleTag";
+
 export default {
     name: "RuleTags",
     components: {RuleTag},
     props: ['rule'],
+    data: function () {
+        return {}
+    },
+
+    computed: {
+        termsByTaxonomy() {
+            return _.groupBy(this.rule.terms, function (item) {
+                return item.taxonomy ? item.taxonomy.name : 'ERROR';
+            })
+        },
+
+        taxonomyTerms() {
+            return _.values(this.termsByTaxonomy);
+        },
+
+        sortedTaxonomyTerms() {
+            return _.orderBy(
+                this.taxonomyTerms,
+                [
+                    (termLists) => termLists[0].taxonomy.parent.name,
+                    (termLists) => termLists.length,
+                    (termLists) => termLists[0].taxonomy.name,
+                ],
+                [
+                    'desc',
+                    'asc',
+                    'asc'
+                ]
+            )
+        }
+    }
 }
 </script>
 
