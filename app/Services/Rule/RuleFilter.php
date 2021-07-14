@@ -108,9 +108,12 @@ class RuleFilter
                                         $term->taxonomy->name, $termValue, print_r($mysgsValue_single, true))
                                 );*/
                                 if (!(Str::is($termValue, Str::lower($mysgsValue_single))
-                                    || (isset($term->config['aliases'])
-                                        && in_array( Str::lower($mysgsValue_single),
-                                            array_map('Str::lower', $term->config['aliases']))
+                                    || (
+                                        isset($term->config['aliases'])
+                                        && in_array(
+                                            Str::lower($mysgsValue_single),
+                                            array_map('Str::lower', $term->config['aliases'])
+                                        )
                                     )
                                 )) {
                                     /*logger(sprintf('rule %s dropped, term %s did not match with %s',
@@ -133,9 +136,9 @@ class RuleFilter
                     }
                 }
 
-                $taxonomyMatch = true;
+                $taxonomyMatch = false;
                 foreach ($matchedTaxonomies as $taxonomy => $state) {
-                    $taxonomyMatch &= $state;
+                    $taxonomyMatch |= $state;
                 }
 
                 if ($matched || $taxonomyMatch) {
