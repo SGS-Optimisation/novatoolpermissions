@@ -48,7 +48,10 @@ class Job extends Resource
             Code::make(__('Metadata'), 'metadata')
                 ->json()
                 ->sortable()
-                ->hideFromIndex()
+            ,
+            Text::make('Client', function () {
+                return isset($this->metadata->client) ? $this->metadata->client->name : '';
+            })->onlyOnIndex(),
         ];
     }
 
