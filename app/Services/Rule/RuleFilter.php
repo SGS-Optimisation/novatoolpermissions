@@ -56,7 +56,7 @@ class RuleFilter
                 $matchedTaxonomies = [];
 
                 /** @var Term $term */
-                foreach ($rule->terms as $term) {
+                foreach ($rule->accountStructureTerms as $term) {
                     /*
                      * Initialize array key, there might be many terms for the same taxonomy
                      */
