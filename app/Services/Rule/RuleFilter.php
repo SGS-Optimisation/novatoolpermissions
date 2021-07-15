@@ -100,53 +100,50 @@ class RuleFilter
                                 $mysgsValue = [$mysgsValue];
                             }
 
-                            $matchedAtLeastOnce = false;
                             foreach ($mysgsValue as $index => $mysgsValue_single) {
                                 if (empty($mysgsValue_single)) {
                                     continue;
                                 }
-                                logger(sprintf('checking taxo %s for term "%s" against mysgs value: %s',
+                                /*logger(sprintf('checking taxo "%s" for term "%s" against mysgs value: "%s"',
                                         $term->taxonomy->name, $termValue, print_r($mysgsValue_single, true))
-                                );
+                                );*/
                                 if (!(Str::is($termValue, Str::lower($mysgsValue_single))
-                                    || (
-                                        isset($term->config['aliases'])
-                                        && in_array(
-                                            Str::lower($mysgsValue_single),
-                                            array_map('Str::lower', $term->config['aliases'])
-                                        )
+                                    || (isset($term->config['aliases'])
+                                        && in_array( Str::lower($mysgsValue_single),
+                                            array_map('Str::lower', $term->config['aliases']))
                                     )
                                 )) {
-                                    logger(sprintf('rule %s dropped, term %s did not match with %s',
+                                    /*logger(sprintf('rule "%s": term "%s" did not match with "%s"',
                                             $rule->id, $termValue, $mysgsValue_single)
-                                    );
+                                    );*/
                                     $matched = false;
                                 } else {
                                     $matchedTaxonomies[$term->taxonomy->name] = true;
-                                    $matchedAtLeastOnce = true;
 
-                                    logger(sprintf('rule %s added, term %s matched with %s',
+                                    /*logger(sprintf('rule "%s": term "%s" matched with "%s"',
                                             $rule->id, $termValue, $mysgsValue_single)
-                                    );
+                                    );*/
 
                                     if (!in_array($term->name, $job_taxonomy_terms_matches[$term->taxonomy->name])) {
                                         $job_taxonomy_terms_matches[$term->taxonomy->name][] = $term->name;
                                     }
                                 }
                             }
-
-                            $matched = ($matched || $matchedAtLeastOnce);
                         }
                     }
                 }
 
                 $taxonomyMatch = true;
+                //logger('$matchedTaxonomies: ' . print_r($matchedTaxonomies, true));
                 foreach ($matchedTaxonomies as $taxonomy => $state) {
                     $taxonomyMatch &= $state;
                 }
 
                 if ($matched || $taxonomyMatch) {
                     $clientRules[] = $rule;
+                    logger(sprintf('rule %s added, matched=%b  taxoMatch=%b ',
+                            $rule->id, $matched, $taxonomyMatch)
+                    );
                 } else {
                     logger(sprintf('rule %s dropped, matched=%b  taxoMatch=%b ',
                             $rule->id, $matched, $taxonomyMatch)
