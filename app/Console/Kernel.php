@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->call(function () {
-            (new PruneStaleAttachments)();
+            //(new PruneStaleAttachments)();
         })->daily();
 
         $schedule->command('cache:clear')->lastDayOfMonth();
