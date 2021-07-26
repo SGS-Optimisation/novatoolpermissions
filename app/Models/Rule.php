@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -12,7 +13,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use Altek\Accountant\Contracts\Recordable;
+
 
 /**
  * App\Models\Rule
@@ -57,9 +59,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @method static Builder|Rule whereNotState(string $column, $states)
  * @method static Builder|Rule whereState($value)
  */
-class Rule extends Model implements Auditable
+class Rule extends Model implements Recordable
 {
-    use HasFactory, SoftDeletes, HasStates, \OwenIt\Auditing\Auditable;
+    use HasFactory, SoftDeletes, HasStates, \Altek\Accountant\Recordable, \Altek\Eventually\Eventually;
 
 
     /**
@@ -81,6 +83,17 @@ class Rule extends Model implements Auditable
         'flagged' => 'boolean',
         'state' => RuleState::class,
 
+    ];
+    protected $recordableEvents = [
+        'created',
+        'updated',
+        'restored',
+        'deleted',
+        'synced',
+        'forceDeleted',
+        'existingPivotUpdated',
+        'attached',
+        'detached',
     ];
 
     protected $with = ['terms'];

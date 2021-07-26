@@ -12,7 +12,7 @@ use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use OwenIt\Auditing\Contracts\Auditable;
 use Silvanite\Brandenburg\Traits\HasRoles;
-
+use Altek\Accountant\Contracts\Identifiable;
 /**
  * App\Models\User
  *
@@ -73,10 +73,10 @@ use Silvanite\Brandenburg\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeLocation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereSurname($value)
  */
-class User extends Authenticatable implements Auditable
+class User extends Authenticatable implements Identifiable
 {
     use HasApiTokens, HasFactory, HasProfilePhoto, HasTeams, Notifiable, TwoFactorAuthenticatable,
-        HasRoles, \OwenIt\Auditing\Auditable;
+        HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -132,5 +132,9 @@ class User extends Authenticatable implements Auditable
         return $this->allTeams()->filter(function($value, $key) {
             return $value->personal_team == 0;
         });
+    }
+    public function getIdentifier()
+    {
+        return $this->getKey();
     }
 }
