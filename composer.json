@@ -10,6 +10,8 @@
     "require": {
         "php": "^8.0",
         "ext-json": "*",
+        "altek/accountant": "^3.0",
+        "altek/eventually": "^2.0",
         "awobaz/compoships": "^2.0",
         "barryvdh/laravel-ide-helper": "^2.9",
         "binarytorch/larecipe": "^2.4",

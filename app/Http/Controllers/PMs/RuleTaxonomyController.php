@@ -5,10 +5,12 @@ namespace App\Http\Controllers\PMs;
 use App\Http\Controllers\Controller;
 use App\Models\ClientAccount;
 use App\Models\Rule;
+use App\Models\RuleTerm;
 use App\Models\Taxonomy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class RuleTaxonomyController extends Controller
 {
@@ -25,9 +27,16 @@ class RuleTaxonomyController extends Controller
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
 
         $taxonomy_fields = $request->only(['taxonomy'])['taxonomy'];
-
+       // $deleted = DB::delete('delete from rule_term where rule_id='.$rule_id);
+       // RuleTerm::where('rule_id',$rule_id)->get();
+        $deleted = RuleTerm::where("rule_id",$rule_id)->get();
+        foreach($deleted as $del){
+         // RuleTerm::find($del->id)->delete();
+       }
+      //  logger('deleted'.$deleted);
+       // exit;
         $rule->terms()->detach();
-
+       // exit;
         foreach ($taxonomy_fields as $taxonomy_name => $terms) {
             logger('checking taxonomy name '.$taxonomy_name);
 
@@ -46,12 +55,24 @@ class RuleTaxonomyController extends Controller
                     $term = $taxonomy->terms()->where('name', $term_name)->first();
 
                     if ($term) {
-                        $rule->terms()->attach($term->id);
+                      //  $user = RuleTerm::updateOrCreate(
+                       //     ['rule_id' => $rule_id, 'term_id'=>$term->id],
+                        //    ['rule_id' => $rule_id, 'term_id'=>$term->id]
+                       // );
+                      //  RuleTerm::create(["rule_id"=>$rule_id,'term_id'=>$term->id]);
+                        $term_id[] = $term->id;
+
                     }
 
                 }
+
+
+
             }
 
+        }
+        if($term_id){
+            $rule->terms()->attach($term_id);
         }
 
         //logger($taxonomy_fields['taxonomy']);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -6,6 +7,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Altek\Accountant\Contracts\Recordable;
+
+
 
 /**
  * App\Models\Taxonomy
@@ -47,9 +51,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Database\Factories\TaxonomyFactory factory(...$parameters)
  * @method static Builder|Taxonomy children()
  */
-class Taxonomy extends Model
+class Taxonomy extends Model implements Recordable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, \Altek\Accountant\Recordable, \Altek\Eventually\Eventually;
+
 
     /**
      * The attributes that aren't mass assignable.
@@ -68,7 +73,16 @@ class Taxonomy extends Model
         'parent_id' => 'integer',
         'config' => 'array',
     ];
-
+    protected $recordableEvents = [
+        'created',
+        'updated',
+        'restored',
+        'deleted',
+        'forceDeleted',
+        'existingPivotUpdated',
+        'attached',
+        'detached',
+    ];
     protected $with = ['parent'];
 
     protected $appends = ['requiresMapping'];
