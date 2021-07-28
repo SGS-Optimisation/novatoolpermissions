@@ -28,7 +28,7 @@
 
 
                                     On {{ item.created_at | date }},
-                                    {{ item.user.name }} with <strong>IP:</strong>{{ item.ip_address }}
+                                    {{ item.user_name }} with <strong>IP:</strong>{{ item.ip_address }}
 
 
                                     <table class="table-fixed w-full border-collapse border border-gray-400">
@@ -45,12 +45,22 @@
                                             </th>
                                         </tr>
                                         </thead>
-                                        <tbody>
-                                        <tr v-for="(key, value) in item.old_values" class="border-collapse border border-gray-400">
+                                        <tbody v-if="item.tax_names">
+
+                                        <tr v-for="(key, value) in item.tax_names" class="border-collapse border border-gray-400">
+                                            <td class=" ">{{ value }}</td>
+                                            <td><span class="  text-red-700" v-html="key.old"></span></td>
+                                            <td><span class="  text-blue-700" v-html="key.new"></span></td>
+                                        </tr>
+                                        </tbody>
+                                        <tbody v-else>
+
+                                        <tr v-for="(key, value) in item.audit.properties" class="border-collapse border border-gray-400">
                                             <td class=" ">{{ value }}</td>
                                             <td><span class="  text-red-700" v-html="key"></span></td>
-                                            <td><span class="  text-blue-700" v-html="item.new_values[value]"></span></td>
+                                            <td><span class="  text-blue-700" v-html="key"></span></td>
                                         </tr>
+
                                         </tbody>
                                     </table>
 

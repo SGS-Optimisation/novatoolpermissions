@@ -32,45 +32,45 @@ class AuditActivityController extends Controller
         $rules = $rule->ledgers()->whereIn('event', [
             'attached',
             'detached',
-        ])
-
+            'created',
+            'updated'
+        ])->with('user')
         ->get();
-        //$rule_term = RuleTerm::where("rule_id",$id)->get();
-        $terms = [];
-        //dd($rules);
-
+        $data=[];
         foreach($rules as $key => $rt){
-            //dd($rt->getPivotData());
-            if($rt->event=='attached'){
-                $pivoted = $rt->getPivotData();
-                $taxonomy = [];
-                foreach($pivoted['properties'] as $piv){
-                    $tax = Term::with('taxonomy')->where('id',$piv['term_id'])->first();
-                    //dd($tax->taxonomy);
-                    logger("test tset".$piv['term_id']);
-                    $taxonomy[] = array("taxonomy_name"=>$tax->taxonomy->name,"term_name"=>$tax->name,"term_id"=>$piv['term_id']);
-                }
+            $tax_name =[];
+            $pivoted = $rt->getPivotData();
+            if($pivoted && $pivoted['properties']!=""){
+                if($rt->event=='attached' ) {
+                    $pivoted_old = $rules[($key)-1]->getPivotData();
+                    if($pivoted_old['properties']) {
+                        foreach ($pivoted_old['properties'] as $piv) {
 
-                $pivot = $rt->pivot;
+                            $tax_old = Term::with('taxonomy')->where('id', $piv['term_id'])->first();
+                            $tax_name[ $tax_old->taxonomy->name]['old'][] = $tax_old->name;
+                             }
+                    }
+                        foreach ($pivoted['properties'] as $piv) {
+                            logger("test tset" . $piv['term_id']);
+                            $tax = Term::with('taxonomy')->where('id', $piv['term_id'])->first();
+                            $tax_name[ $tax->taxonomy->name]['new'][] = $tax->name;
+
+                        }
+
+                }
+            }
+            if($rt->event=='attached'){
+                 $data[] = array("user_name"=>$rt->user->name,"created_at"=>$rt->created_at,"tax_names"=>$tax_name,"ip_address"=>$rt->ip_address);
+            }else{
+                $data[] = array("user_name"=>$rt->user->name,"created_at"=>$rt->created_at,"tax_names"=>"","ip_address"=>$rt->ip_address,"audit"=>$rt);
 
             }
-
-           // $rt_id[] = $rt->id;
-           // $led = RuleTerm::find($rt->id)->ledgers()->latest()->first();
-           // $properties = $led->properties;
-          //  $term =  Term::where("id",$properties['term_id'])->with('taxonomy')->first();
-           // $data = array("event",$led->event);
-          //  $terms[$led->event][] = array('taxonomy'=>$term->taxonomy->name,"term"=>$term->name);
-          //  logger("test tset".$term->name);
-
-
         }
-        //dd($rt_id);
-        dd($taxonomy);
+//dd($data);
       return Jetstream::inertia()->render($request, 'PM/AuditActivity', [
           'team' => $request->user()->currentTeam,
           'clientAccount' => $client_account,
-          'audits' => $all,
+          'audits' => $data,
           'ruleId'=>$id,
 
         ]);
