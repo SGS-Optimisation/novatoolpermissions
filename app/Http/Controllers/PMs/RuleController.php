@@ -31,8 +31,8 @@ class RuleController extends Controller
     /**
      * TODO: Fix attachments not created in db
      *
-     * @param  Request  $request
-     * @param  Rule  $rule
+     * @param Request $request
+     * @param Rule $rule
      */
     protected function parseContent($request, $rule)
     {
@@ -47,7 +47,7 @@ class RuleController extends Controller
         }
 
         if ($request->state && $rule->state != $request->state) {
-            logger('transitioning rule '.$rule->id.' to '.$request->state);
+            logger('transitioning rule ' . $rule->id . ' to ' . $request->state);
             $rule->state->transitionTo($request->state, $request->user());
         }
     }
@@ -65,7 +65,7 @@ class RuleController extends Controller
             if (!$transitionClass
                 || (new $transitionClass($rule, auth()->user()))->canTransition()
             ) {
-               $shown_states[] = $state;
+                $shown_states[] = $state;
             }
         }
 
@@ -73,7 +73,7 @@ class RuleController extends Controller
     }
 
     /**
-     * @param  Request  $request
+     * @param Request $request
      * @param $client_account_slug
      * @return \Inertia\Response
      */
@@ -100,7 +100,7 @@ class RuleController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @param $client_account_slug
      * @return \Inertia\Response
      */
@@ -126,7 +126,7 @@ class RuleController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return Application|JsonResponse|RedirectResponse|Redirector
      */
     public function store(CreateRuleRequest $request, $client_account_slug)
@@ -139,7 +139,7 @@ class RuleController extends Controller
         $rule = $client_account->rules()->create($rule_fields);
         $this->parseContent($request, $rule);
 
-        logger('rule added: '.$rule->id);
+        logger('rule added: ' . $rule->id);
         event(new Updated($rule));
 
         $request->session()->flash('success', 'Rule successfully created!');
@@ -153,7 +153,7 @@ class RuleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -164,9 +164,9 @@ class RuleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @param $client_account_slug
-     * @param  int  $id
+     * @param int $id
      * @return \Inertia\Response
      */
     public function edit(Request $request, $client_account_slug, $id)
@@ -182,14 +182,19 @@ class RuleController extends Controller
                 '<div>&nbsp;</div>',
                 '<p></p>',
                 '<p><br></p>',
-                '<ul>',
-                '</ul>',
-                '<li>',
-                '</li>',
                 '</span>',
             ],
-            ['', '', '', '', '', '', '', '', '', '</span><br/>'],
-            strip_tags($rule->content, '<p><img><a><span><br><i><strong><b>')
+            ['', '', '', '', '', '</span><br/>'],
+            strip_tags(
+                $rule->content,
+                [
+                    'p', 'img', 'a', 'span', 'br',
+                    'i', 'strong', 'b', 'u', 's',
+                    'ul', 'ol', 'li',
+                    'blockquote', 'pre',
+                    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                ]
+            )
         );
 
 
@@ -207,8 +212,8 @@ class RuleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return JsonResponse|RedirectResponse
      */
     public function update(Request $request, $client_account_slug, $id)
@@ -230,9 +235,9 @@ class RuleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @param $client_account_slug
-     * @param  int  $id
+     * @param int $id
      * @return JsonResponse|RedirectResponse
      * @throws \Exception
      */
@@ -252,9 +257,9 @@ class RuleController extends Controller
     /**
      * Restore deleted resource
      *
-     * @param  Request  $request
+     * @param Request $request
      * @param $client_account_slug
-     * @param  int  $id
+     * @param int $id
      * @return JsonResponse|RedirectResponse
      * @throws \Exception
      */
