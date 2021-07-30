@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Anaseqal\NovaImport\NovaImport;
+use App\Models\ClientAccount;
+use App\Nova\Dashboards\ClientDashboard;
 use App\Nova\Metrics\FlaggedRules;
 use App\Nova\Metrics\NewUsers;
 use App\Nova\Metrics\PublishedRules;
@@ -85,13 +87,19 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     protected function cards()
     {
-        return [
+        $client_cards = [];
+
+        foreach (ClientAccount::all() as $clientAccount) {
+            $client_cards[] = new RulesPerWeek($clientAccount);
+        }
+
+        return array_merge([
             (new PublishedRules())->width('1/6'),
             (new FlaggedRules)->width('1/6'),
-            new RulesPerWeek,
             new RulesPerAccount,
             new NewUsers,
-        ];
+        ],
+            $client_cards);
     }
 
     /**
@@ -101,7 +109,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     protected function dashboards()
     {
-        return [];
+        $dashboards = [];
+        /*foreach(ClientAccount::all() as $clientAccount) {
+            $dashboards[] = new ClientDashboard($clientAccount);
+        }*/
+
+        return $dashboards;
     }
 
     /**

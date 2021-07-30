@@ -56,6 +56,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @method static Builder|Rule isPublished()
  * @method static Builder|Rule whereNotState(string $column, $states)
  * @method static Builder|Rule whereState($value)
+ * @method static Builder|Rule forClient(\App\Models\ClientAccount $clientAccount)
  */
 class Rule extends Model implements Auditable
 {
@@ -96,6 +97,11 @@ class Rule extends Model implements Auditable
         return $query->whereDoesntHave('accountStructureTerms', function(Builder $termQuery){
             $termQuery->where('name',  '!=', 'ANY');
         });
+    }
+
+    public function scopeForClient(Builder $query, ClientAccount $clientAccount)
+    {
+        return $query->where('client_account_id', $clientAccount->id);
     }
 
     public function scopeIsFlagged(Builder $query)
