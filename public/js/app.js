@@ -7676,6 +7676,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -84426,49 +84429,55 @@ var render = function() {
                                             }),
                                             0
                                           )
-                                        : _c(
+                                        : item.audit
+                                        ? _c(
                                             "tbody",
-                                            _vm._l(
-                                              item.audit.properties,
-                                              function(key, value) {
-                                                return _c(
-                                                  "tr",
-                                                  {
-                                                    staticClass:
-                                                      "border-collapse border border-gray-400"
-                                                  },
-                                                  [
-                                                    _c(
-                                                      "td",
-                                                      { staticClass: " " },
-                                                      [_vm._v(_vm._s(value))]
-                                                    ),
-                                                    _vm._v(" "),
-                                                    _c("td", [
-                                                      _c("span", {
-                                                        staticClass:
-                                                          "  text-red-700",
-                                                        domProps: {
-                                                          innerHTML: _vm._s(key)
-                                                        }
-                                                      })
-                                                    ]),
-                                                    _vm._v(" "),
-                                                    _c("td", [
-                                                      _c("span", {
-                                                        staticClass:
-                                                          "  text-blue-700",
-                                                        domProps: {
-                                                          innerHTML: _vm._s(key)
-                                                        }
-                                                      })
-                                                    ])
-                                                  ]
-                                                )
-                                              }
-                                            ),
+                                            _vm._l(item.audit, function(
+                                              key,
+                                              value
+                                            ) {
+                                              return _c(
+                                                "tr",
+                                                {
+                                                  staticClass:
+                                                    "border-collapse border border-gray-400"
+                                                },
+                                                [
+                                                  _c(
+                                                    "td",
+                                                    { staticClass: " " },
+                                                    [_vm._v(_vm._s(value))]
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c("td", [
+                                                    _c("span", {
+                                                      staticClass:
+                                                        "text-red-700",
+                                                      domProps: {
+                                                        innerHTML: _vm._s(
+                                                          key.old
+                                                        )
+                                                      }
+                                                    })
+                                                  ]),
+                                                  _vm._v(" "),
+                                                  _c("td", [
+                                                    _c("span", {
+                                                      staticClass:
+                                                        "text-blue-700",
+                                                      domProps: {
+                                                        innerHTML: _vm._s(
+                                                          key.new
+                                                        )
+                                                      }
+                                                    })
+                                                  ])
+                                                ]
+                                              )
+                                            }),
                                             0
                                           )
+                                        : _vm._e()
                                     ]
                                   ),
                                   _vm._v(" "),
