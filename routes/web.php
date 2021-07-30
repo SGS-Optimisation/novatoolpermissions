@@ -39,15 +39,15 @@ Route::middleware(['auth:sanctum', 'verified', 'user.permissions'])->group(funct
     Route::put('/current-team', [CurrentTeamController::class, 'update'])
         ->name('current-team.update');
 
-    Route::get( '/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
+    Route::get('/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
         ->name('job.rules')
         ->where('jobNumber', '[0-9\-]+');
 
-    Route::get( '/{jobNumber}/status', [\App\Http\Controllers\OPs\JobController::class, 'status'])
+    Route::get('/{jobNumber}/status', [\App\Http\Controllers\OPs\JobController::class, 'status'])
         ->name('job.rules.status')
         ->where('jobNumber', '[0-9\-]+');
 
-    Route::post( '/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'search'])
+    Route::post('/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'search'])
         ->name('job.search')
         ->where('jobNumber', '[0-9\-]+');
 
@@ -172,6 +172,18 @@ Route::name('pm.')
             });
     });
 
+Route::name('stats.')
+    ->prefix('stats/')
+    ->middleware([
+        'auth:sanctum',
+        'verified',
+        'user.permissions'
+        //'cache.headers:public;max_age=3600;etag',
+    ])->group(function () {
+
+        Route::get('/', [\App\Http\Controllers\Stats\StatsController::class, 'index'])
+            ->name('index');
+    });
 
 Route::get('nova/login', function () {
     return redirect('/login/microsoft');

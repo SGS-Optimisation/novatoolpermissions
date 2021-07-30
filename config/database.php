@@ -113,6 +113,7 @@ return [
             'database' => env('MYSGS_DB_DATABASE', 'forge'),
             'username' => env('MYSGS_DB_USERNAME', 'forge'),
             'password' => env('MYSGS_DB_PASSWORD', ''),
+            'unix_socket' => env('MYSGS_DB_SOCKET', ''),
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
