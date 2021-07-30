@@ -2,12 +2,32 @@
 
 namespace App\Nova\Metrics;
 
+use App\Models\ClientAccount;
 use App\Models\Rule;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Trend;
 
 class RulesPerWeek extends Trend
 {
+
+    public ClientAccount $client_account;
+
+    /**
+     * RulesPerWeek constructor.
+     * @param  ClientAccount  $client_account
+     */
+    public function __construct(ClientAccount $client_account)
+    {
+        $this->client_account = $client_account;
+        parent::__construct();
+    }
+
+
+    public function name()
+    {
+        return $this->client_account->name . ' Rules Per Week';
+    }
+
     /**
      * Calculate the value of the metric.
      *
@@ -16,7 +36,8 @@ class RulesPerWeek extends Trend
      */
     public function calculate(NovaRequest $request)
     {
-        return $this->countByWeeks($request, Rule::class);
+        logger(print_r($request->all(), true));
+        return $this->countByWeeks($request, Rule::forClient($this->client_account));
     }
 
     /**
