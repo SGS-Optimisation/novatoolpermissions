@@ -53,12 +53,15 @@
                                             <td><span class="  text-blue-700" v-html="key.new"></span></td>
                                         </tr>
                                         </tbody>
-                                        <tbody v-else>
+                                        <tbody v-else-if="item.audit">
 
-                                        <tr v-for="(key, value) in item.audit.properties" class="border-collapse border border-gray-400">
-                                            <td class=" ">{{ value }}</td>
-                                            <td><span class="  text-red-700" v-html="key"></span></td>
-                                            <td><span class="  text-blue-700" v-html="key"></span></td>
+                                        <tr v-for="(key, value) in item.audit" class="border-collapse border border-gray-400">
+
+
+                                                <td class=" ">{{ value }}</td>
+                                                <td><span class="text-red-700" v-html="key.old"></span></td>
+                                                <td><span class="text-blue-700" v-html="key.new"></span></td>
+
                                         </tr>
 
                                         </tbody>

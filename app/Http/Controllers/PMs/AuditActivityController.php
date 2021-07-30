@@ -29,20 +29,42 @@ class AuditActivityController extends Controller
 
         $rule = Rule::withTrashed()->find($id);
         //$all =  $rule->audits()->orderBy('created_at', 'desc')->with('user')->get();
-        $rules = $rule->ledgers()->whereIn('event', [
+        $rules_relation = $rule->ledgers()->whereIn('event', [
             'attached',
             'detached',
             'created',
             'updated'
         ])->with('user')
         ->get();
+        $rules = $rule->ledgers()->whereIn('event', [
+            'created',
+            'updated'
+        ])->with('user')
+            ->get();
         $data=[];
-        foreach($rules as $key => $rt){
+        $new_key=0;
+        $audit_new1=[];
+        foreach($rules as $key1 =>$rule){
+                foreach($rule->properties as $key=> $pro){
+                    // dd($key2);
+                    if(in_array($key,$rule->modified) && $rule->event=='updated' && ($key=="content" || $key=="state" || $key=="name")){
+                        $audit_new1[$key1][$key]= array("new"=>$pro,"old"=>$audit_new1[$key1-1][$key]['new']);
+                    }else{
+                        $audit_new1[$key1][$key] = array("new" => $pro, "old" => "");
+                    }
+                }
+                $new_key++;
+            $data[] = array("user_name"=>$rule->user->name,"created_at"=>$rule->created_at,"tax_names"=>"","ip_address"=>$rule->ip_address,"audit"=>$audit_new1[$key1],"r_id"=>$rule->id);
+
+
+        }
+        //dd($data);
+        foreach($rules_relation as $key => $rt){
             $tax_name =[];
             $pivoted = $rt->getPivotData();
             if($pivoted && $pivoted['properties']!=""){
                 if($rt->event=='attached' ) {
-                    $pivoted_old = $rules[($key)-1]->getPivotData();
+                    $pivoted_old = $rules_relation[($key)-1]->getPivotData();
                     if($pivoted_old['properties']) {
                         foreach ($pivoted_old['properties'] as $piv) {
 
@@ -59,15 +81,11 @@ class AuditActivityController extends Controller
 
                 }
             }
-            if($rt->event=='attached'){
-                 $data[] = array("user_name"=>$rt->user->name,"created_at"=>$rt->created_at,"tax_names"=>$tax_name,"ip_address"=>$rt->ip_address);
-            }else{
-                $data[] = array("user_name"=>$rt->user->name,"created_at"=>$rt->created_at,"tax_names"=>"","ip_address"=>$rt->ip_address,"audit"=>$rt);
-
+            if($tax_name) {
+                $data[] = array("user_name" => $rt->user->name, "created_at" => $rt->created_at, "tax_names" => $tax_name, "ip_address" => $rt->ip_address, "r_id" => $rt->id);
             }
         }
-//dd($data);
-      return Jetstream::inertia()->render($request, 'PM/AuditActivity', [
+ return Jetstream::inertia()->render($request, 'PM/AuditActivity', [
           'team' => $request->user()->currentTeam,
           'clientAccount' => $client_account,
           'audits' => $data,
