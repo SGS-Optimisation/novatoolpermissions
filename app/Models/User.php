@@ -127,6 +127,15 @@ class User extends Authenticatable implements Auditable
     ];
 
 
+    public function rules()
+    {
+        return $this->belongsToMany(Rule::class)
+            ->as('contributor')
+            ->withPivot(['metadata'])
+            ->withTimestamps();
+    }
+
+
     public function clientTeams()
     {
         return $this->allTeams()->filter(function($value, $key) {

@@ -126,6 +126,14 @@ class Rule extends Model implements Auditable
         ]);
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class)
+            ->as('contributor')
+            ->withPivot(['metadata'])
+            ->withTimestamps();
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

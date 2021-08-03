@@ -39,7 +39,7 @@ class RuleRepository
         return Cache::tags($tags)
             ->remember($cacheTag, 60*60*24*30, function () use ($term) {
 
-            $rules = $this->client_account->rules()->with('terms.taxonomy')->withCount('terms');
+            $rules = $this->client_account->rules()->with('terms.taxonomy', 'users')->withCount('terms');
 
             if($term){
                 $rules = $rules->whereHas('terms', function ($query) use ($term) {
