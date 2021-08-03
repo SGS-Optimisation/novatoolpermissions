@@ -43,7 +43,7 @@
                             </button>
                         </template>
                         <template #content>
-                            <jet-dropdown-link v-for="team in clientAccount.teams"
+                            <jet-dropdown-link v-for="team in clientAccount.teams" :key=team.id
                                                :href="route('teams.show', team.id)">
                                 {{team.name}}
                             </jet-dropdown-link>
