@@ -48,7 +48,7 @@ class AuditActivityController extends Controller
                 foreach($rule->properties as $key=> $pro){
                     // dd($key2);
                     if(in_array($key,$rule->modified) && $rule->event=='updated' && ($key=="content" || $key=="state" || $key=="name")){
-                        $audit_new1[$key1][$key]= array("new"=>$pro,"old"=>$audit_new1[$key1-1][$key]['new']);
+                        $audit_new1[$key1][$key]= ["new"=>$pro,"old"=>$audit_new1[$key1-1][$key]['new']];
                     }else{
                         $audit_new1[$key1][$key] = array("new" => $pro, "old" => "");
                     }
