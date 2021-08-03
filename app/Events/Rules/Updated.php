@@ -3,6 +3,7 @@
 namespace App\Events\Rules;
 
 use App\Models\Rule;
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -17,14 +18,17 @@ class Updated
 
     public $rule;
 
+    public $user;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Rule $rule)
+    public function __construct(Rule $rule, User $user = null)
     {
         $this->rule = $rule;
+        $this->user = $user ?? (!\Auth::guest() ? \Auth::user() : null);
     }
 
     /**
