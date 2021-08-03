@@ -47,14 +47,14 @@ class AuditActivityController extends Controller
         foreach($rules as $key1 =>$rule){
                 foreach($rule->properties as $key=> $pro){
                     // dd($key2);
-                    if(in_array($key,$rule->modified) && $rule->event=='updated' && ($key=="content" || $key=="state" || $key=="name")){
-                        $audit_new1[$key1][$key]= ["new"=>$pro,"old"=>$audit_new1[$key1-1][$key]['new']];
+                    if(in_array($key,$rule->modified) && $rule->event=='updated' && ($key=="content" || $key=="state" || $key=="name" || $key=="metadata")){
+                        $audit_new1[$key1][$key]= ["new"=>$pro,"old"=>isset($audit_new1[$key1-1][$key])?$audit_new1[$key1-1][$key]['new']:""];
                     }else{
                         $audit_new1[$key1][$key] = ["new" => $pro, "old" => ""];
                     }
                 }
                 $new_key++;
-            $data[] = ["user_name"=>$rule->user->name,"created_at"=>$rule->created_at,"tax_names"=>"","ip_address"=>$rule->ip_address,"audit"=>$audit_new1[$key1],"r_id"=>$rule->id];
+            $data[] = ["user_name"=>($rule->user)?$rule->user->name:"","created_at"=>$rule->created_at,"tax_names"=>"","ip_address"=>$rule->ip_address,"audit"=>$audit_new1[$key1],"r_id"=>$rule->id];
 
 
         }
@@ -82,7 +82,7 @@ class AuditActivityController extends Controller
                 }
             }
             if($tax_name) {
-                $data[] = ["user_name" => $rt->user->name, "created_at" => $rt->created_at, "tax_names" => $tax_name, "ip_address" => $rt->ip_address, "r_id" => $rt->id];
+                $data[] = ["user_name" => ($rt->user)?$rt->user->name:"", "created_at" => $rt->created_at, "tax_names" => $tax_name, "ip_address" => $rt->ip_address, "r_id" => $rt->id];
             }
         }
  return Jetstream::inertia()->render($request, 'PM/AuditActivity', [

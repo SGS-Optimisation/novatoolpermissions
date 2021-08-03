@@ -79,7 +79,7 @@ return [
     |
     */
 
-    'contexts' => Altek\Accountant\Context::WEB,
+    'contexts' => Altek\Accountant\Context::CLI | Altek\Accountant\Context::WEB,
 
     /*
     |--------------------------------------------------------------------------

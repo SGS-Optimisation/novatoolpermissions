@@ -86,7 +86,7 @@ class RuleLegacyImport extends BaseService
                     'updated_at' => $item->UpdatedAt->toDateTime(),
                 ]);
 
-                $rule->saveQuietly();
+                $rule->save();
 
                 $this->imported_rules[] = $rule;
 
