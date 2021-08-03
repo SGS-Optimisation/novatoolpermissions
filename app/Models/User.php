@@ -133,4 +133,18 @@ class User extends Authenticatable implements Auditable
             return $value->personal_team == 0;
         });
     }
+
+    /**
+     * @param  ClientAccount  $clientAccount
+     * @return bool
+     */
+    public function belongsToOneOfClientTeams(ClientAccount $clientAccount) {
+        foreach($clientAccount->teams as $team) {
+            if($this->belongsToTeam($team)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

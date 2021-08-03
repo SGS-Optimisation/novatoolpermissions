@@ -40,7 +40,8 @@ class ClientAccountController extends Controller
             'omnipresent_rules',
             'taxonomies',
             'root_taxonomies',
-            'terms'
+            'terms',
+            'teams',
         ])
             ->whereSlug($client_account_slug)->first();//?? $request->user()->currentTeam->clientAccount;
 
@@ -51,6 +52,7 @@ class ClientAccountController extends Controller
 
         return Jetstream::inertia()->render($request, 'ClientAccount/Dashboard', [
             'team' => $client_account->team,
+            'teams' => $client_account->teams,
             'teamMembers' => $teamMembers,
             'clientAccount' => $client_account,
             'rulesCount' => (int) $client_account->rules_count,
