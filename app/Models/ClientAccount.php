@@ -61,7 +61,7 @@ class ClientAccount extends Model
         'id' => 'integer',
     ];
 
-    protected $with = ['team'];
+    protected $with = ['team', 'teams'];
 
 
     /**
@@ -99,6 +99,12 @@ class ClientAccount extends Model
     public function team()
     {
         return $this->hasOne(Team::class);
+    }
+
+
+    public function teams()
+    {
+        return $this->hasMany(Team::class);
     }
 
     public function rules()

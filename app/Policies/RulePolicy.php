@@ -44,7 +44,7 @@ class RulePolicy
     public function create(User $user, ClientAccount $clientAccount = null)
     {
         return $clientAccount
-            && $user->can('createRules') && $user->belongsToTeam($clientAccount->team)
+            && $user->can('createRules') && $user->belongsToOneOfClientTeams($clientAccount)
             || $user->can('forceCreateRules');
     }
 
@@ -57,7 +57,7 @@ class RulePolicy
      */
     public function update(User $user, Rule $rule)
     {
-        return $user->can('updateRules') && $user->belongsToTeam($rule->clientAccount->team)
+        return $user->can('updateRules') && $user->belongsToOneOfClientTeams($rule->clientAccount)
             || $user->can('forceCreateRules');
     }
 
@@ -70,7 +70,7 @@ class RulePolicy
      */
     public function delete(User $user, Rule $rule)
     {
-        return $user->can('deleteRules') && $user->belongsToTeam($rule->clientAccount->team)
+        return $user->can('deleteRules') && $user->belongsToOneOfClientTeams($rule->clientAccount)
             || $user->can('forceCreateRules');
     }
 
@@ -83,7 +83,7 @@ class RulePolicy
      */
     public function restore(User $user, Rule $rule)
     {
-        return $user->can('deleteRules') && $user->belongsToTeam($rule->clientAccount->team)
+        return $user->can('deleteRules') && $user->belongsToOneOfClientTeams($rule->clientAccount)
             || $user->can('forceCreateRules');
     }
 
