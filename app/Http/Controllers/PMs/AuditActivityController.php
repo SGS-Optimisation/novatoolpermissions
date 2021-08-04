@@ -31,9 +31,7 @@ class AuditActivityController extends Controller
         //$all =  $rule->audits()->orderBy('created_at', 'desc')->with('user')->get();
         $rules_relation = $rule->ledgers()->whereIn('event', [
             'attached',
-            'detached',
-            'created',
-            'updated'
+            'detached'
         ])->with('user')
         ->get();
         $rules = $rule->ledgers()->whereIn('event', [
@@ -58,26 +56,26 @@ class AuditActivityController extends Controller
 
 
         }
-        //dd($data);
-        foreach($rules_relation as $key => $rt){
+       foreach($rules_relation as $key => $rt){
             $tax_name =[];
             $pivoted = $rt->getPivotData();
             if($pivoted && $pivoted['properties']!=""){
                 if($rt->event=='attached' ) {
-                    $pivoted_old = $rules_relation[($key)-1]->getPivotData();
-                    if($pivoted_old['properties']) {
-                        foreach ($pivoted_old['properties'] as $piv) {
+                    if ($key != 0) {
+                        $pivoted_old = $rules_relation[($key) - 1]->getPivotData();
+                        if ($pivoted_old['properties']) {
+                            foreach ($pivoted_old['properties'] as $piv) {
 
-                            $tax_old = Term::with('taxonomy')->where('id', $piv['term_id'])->first();
-                            $tax_name[ $tax_old->taxonomy->name]['old'][] = $tax_old->name;
-                             }
-                    }
-                        foreach ($pivoted['properties'] as $piv) {
-                            logger("test tset" . $piv['term_id']);
-                            $tax = Term::with('taxonomy')->where('id', $piv['term_id'])->first();
-                            $tax_name[ $tax->taxonomy->name]['new'][] = $tax->name;
-
+                                $tax_old = Term::with('taxonomy')->where('id', $piv['term_id'])->first();
+                                $tax_name[$tax_old->taxonomy->name]['old'][] = $tax_old->name;
+                            }
                         }
+                    }
+                    foreach ($pivoted['properties'] as $piv) {
+                        $tax = Term::with('taxonomy')->where('id', $piv['term_id'])->first();
+                        $tax_name[ $tax->taxonomy->name]['new'][] = $tax->name;
+
+                    }
 
                 }
             }
