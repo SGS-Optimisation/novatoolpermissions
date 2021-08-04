@@ -40,6 +40,7 @@
         "socialiteproviders/microsoft-azure": "^4.0",
         "softcreatr/jsonpath": "^0.5 || ^0.7",
         "spatie/laravel-model-states": "^2.1",
+        "staudenmeir/eloquent-has-many-deep": "^1.7",
         "tightenco/ziggy": "^0.9.4",
         "wehaa/custom-links": "^0.1.1"
     },

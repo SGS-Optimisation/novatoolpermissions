@@ -135,6 +135,11 @@ class User extends Authenticatable implements Auditable
             ->withTimestamps();
     }
 
+    public function clientAccountTeams()
+    {
+        return $this->teams()->whereNotNull('client_account_id');
+    }
+
 
     public function clientTeams()
     {
