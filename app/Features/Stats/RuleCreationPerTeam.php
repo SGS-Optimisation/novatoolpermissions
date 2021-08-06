@@ -24,11 +24,13 @@ class RuleCreationPerTeam extends Trend
     /**
      * RuleCreationPerTeam constructor.
      * @param  int  $range
-     * @param  string  $count
+     * @param  string  $view_by
      */
     public function __construct(
-        public ?string $count = self::BY_WEEKS,
+        public ?string $view_by = self::BY_WEEKS,
         public ?int $range = 24,
+        public ?string $function = 'count',
+        public ?bool $cumulative = true,
         public ?string $column = 'created_at'
     ) {
         parent::__construct();
@@ -38,10 +40,21 @@ class RuleCreationPerTeam extends Trend
     public function handle()
     {
         foreach(Team::personal(false)->with(['clientAccount'])->get()  as $team) {
+
+            $trend = $this->processTeam($team)->trend;
+
+            if($this->cumulative) {
+                $cumul = 0;
+                foreach($trend as $item => $value) {
+                    $cumul += $value;
+                    $trend[$item] = $cumul;
+                }
+            }
+
             $this->dataset[$team->name] = [
                 'client_id' => $team->clientAccount->id,
                 'created_at' => $team->created_at->format('Y-m-d H:i:s'),
-                'trend' => $this->processTeam($team)->trend
+                'trend' => $trend,
             ];
         }
 
@@ -55,7 +68,7 @@ class RuleCreationPerTeam extends Trend
         $request = new Request();
         $request->merge(['range' => $this->range, 'twelveHourTime' => false, 'timezone' => 'UTC']);
 
-        return $this->{'countBy'.Str::title(Str::plural($this->count))}($request, $query, 'rules.'.$this->column);
+        return $this->{$this->function.'By'.Str::title(Str::plural($this->view_by))}($request, $query, 'rules.'.$this->column);
     }
 
     public function ranges()
