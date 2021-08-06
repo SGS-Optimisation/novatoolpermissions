@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Laravel\Jetstream\Events\TeamCreated;
 use Laravel\Jetstream\Events\TeamDeleted;
 use Laravel\Jetstream\Events\TeamUpdated;
@@ -37,6 +38,8 @@ use Laravel\Jetstream\Team as JetstreamTeam;
  */
 class Team extends JetstreamTeam
 {
+    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+
     /**
      * The attributes that should be cast to native types.
      *
@@ -79,5 +82,29 @@ class Team extends JetstreamTeam
     public function clientAccount()
     {
         return $this->belongsTo(\App\Models\ClientAccount::class);
+    }
+
+    public function caRules()
+    {
+        return $this
+            ->hasManyDeepFromRelations($this->clientAccount(), (new ClientAccount)->rules())
+            ->join('users', 'users.id', '=', 'rule_user.user_id')
+            ->leftJoin('team_user', 'team_user.team_id', '=', 'teams.id')
+
+            //->join('rule_user', 'users.id', '=', 'rule_user.user_id')//->whereRaw('rules.id=rule_user.rule_id')
+            ;
+    }
+
+    public function rules()
+    {
+        return $this->hasManyDeepFromRelations($this->users(), (new User)->rules())
+            ->join('teams', function (\Illuminate\Database\Query\JoinClause $join) {
+                $join->on('teams.user_id', '=', 'users.id')
+                    ->orOn('teams.id', '=', 'team_user.team_id')
+                ;
+            })
+            ->whereRaw('rules.client_account_id=teams.client_account_id')
+            ->distinct()//->whereRaw('teams.client_account_id=rules.client_account_id')
+            ;
     }
 }
