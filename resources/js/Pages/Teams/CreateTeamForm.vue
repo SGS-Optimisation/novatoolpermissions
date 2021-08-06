@@ -27,6 +27,17 @@
                 <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name" autofocus />
                 <jet-input-error :message="form.error('name')" class="mt-2" />
             </div>
+
+            <div class="col-span-6 sm:col-span-4">
+                <jet-label for="region" value="Region" />
+                <select id="region" v-model="form.region">
+                    <option>APAC</option>
+                    <option>EMEA</option>
+                    <option>LATAM</option>
+                    <option>NA</option>
+                </select>
+                <jet-input-error :message="form.error('region')" class="mt-2" />
+            </div>
         </template>
 
         <template #actions>
@@ -63,6 +74,7 @@
             return {
                 form: this.$inertia.form({
                     name: '',
+                    region: '',
                 }, {
                     bag: 'createTeam',
                     resetOnSuccess: false,

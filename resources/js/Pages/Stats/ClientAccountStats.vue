@@ -39,21 +39,18 @@
                         </div>
 
                         <div class="col-span-1 sm:col-span-1">
+                            <switch-flag @on-switch="onChangeCumul"
+                                         :initial-state=form.cumulative
+                                         name="Cumulative"
+                                         left-text="No"
+                                         right-text="Yes"/>
+                        </div>
+
+                        <div class="col-span-1 sm:col-span-1">
                             <jet-label for="column" value="Rule Status" />
                             <select id="column" v-model="form.column">
                                 <option value="created_at">Created</option>
                                 <option value="updated_at">Updated</option>
-                            </select>
-                        </div>
-
-                        <div class="col-span-1 sm:col-span-1">
-                            <jet-label for="region" value="Region" />
-                            <select id="region" v-model="form.region">
-                                <option selected >ALL</option>
-                                <option>APAC</option>
-                                <option>EMEA</option>
-                                <option>LATAM</option>
-                                <option>NA</option>
                             </select>
                         </div>
 
@@ -65,13 +62,18 @@
                             </select>
                         </div>
 
-                        <div class="col-span-1 sm:col-span-1">
-                            <switch-flag @on-switch="onChangeCumul"
-                                         :initial-state=form.cumulative
-                                         name="Cumulative"
-                                         left-text="No"
-                                         right-text="Yes"/>
+                        <div v-if="form.level === 'team'" class="col-span-1 sm:col-span-1">
+                            <jet-label for="region" value="Region" />
+                            <select id="region" v-model="form.region">
+                                <option value="">ALL</option>
+                                <option>APAC</option>
+                                <option>EMEA</option>
+                                <option>LATAM</option>
+                                <option>NA</option>
+                            </select>
                         </div>
+
+
 
                         <!--<div class="col-span-1 sm:col-span-1">
                             <jet-label for="function" value="Function" />
