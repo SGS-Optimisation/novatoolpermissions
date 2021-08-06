@@ -22,13 +22,23 @@ class CreateRuleUserTable extends Migration
             $table->timestamps();
         });
 
-        DB::table('audits')->where('auditable_type', 'App\Models\Rule')->get()->each(function($row){$user = \App\Models\User::find($row->user_id);$user->rules()->syncWithoutDetaching($row->auditable_id);});
+        Schema::enableForeignKeyConstraints();
 
-        /** @var \App\Models\User $user */
-        foreach(\App\Models\User::all() as $user){
+        DB::table('audits')->where('auditable_type', 'App\Models\Rule')
+            ->get()
+            ->each(function ($row) {
+                $user = \App\Models\User::find($row->user_id);
+                $user->rules()->syncWithoutDetaching($row->auditable_id);
+            });
+
+        /**
+         * Remove user if they are external to the client team (e.g admins)
+         * @var \App\Models\User $user
+         */
+        foreach (\App\Models\User::all() as $user) {
             /** @var \App\Models\Rule $rule */
-            foreach($user->rules as $rule) {
-                if(!$user->belongsToOneOfClientTeams($rule->clientAccount)) {
+            foreach ($user->rules as $rule) {
+                if (!$user->belongsToOneOfClientTeams($rule->clientAccount)) {
                     $rule->users()->detach($user->id);
                 }
             }

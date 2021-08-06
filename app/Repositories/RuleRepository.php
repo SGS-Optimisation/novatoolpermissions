@@ -41,7 +41,7 @@ class RuleRepository
             ->remember($cacheTag, 60*60*24*30, function () use ($term) {
 
             $rules_query = Rule::forClient($this->client_account)
-                ->with(['terms.taxonomy', 'users', 'teams', 'teamsLeaders'])
+                ->with(['terms.taxonomy', 'users', 'teams'])
                 ->withCount('terms');
 
             if($term){

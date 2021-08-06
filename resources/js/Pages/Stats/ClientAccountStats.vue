@@ -25,22 +25,22 @@
 
                     <template #form>
                         <div class="col-span-1 sm:col-span-1">
-                            <jet-label for="count" value="View By" />
-                            <select id="count" v-model="form.count">
+                            <jet-label for="view_by" value="View By" />
+                            <select id="view_by" v-model="form.view_by">
                                 <option>Day</option>
                                 <option>Week</option>
                                 <option>Month</option>
                             </select>
                         </div>
 
-                        <div class="col-span-2 sm:col-span-2">
+                        <div class="col-span-1 sm:col-span-1">
                             <jet-label for="range" value="Time Range" />
                             <jet-input id="range" type="number" increment="1" min="0" class="mt-1 block w-full" v-model="form.range"/>
                         </div>
 
                         <div class="col-span-1 sm:col-span-1">
                             <jet-label for="column" value="Rule Status" />
-                            <select v-model="form.column">
+                            <select id="column" v-model="form.column">
                                 <option value="created_at">Created</option>
                                 <option value="updated_at">Updated</option>
                             </select>
@@ -49,7 +49,7 @@
                         <div class="col-span-1 sm:col-span-1">
                             <jet-label for="region" value="Region" />
                             <select id="region" v-model="form.region">
-                                <option selected>ALL</option>
+                                <option selected >ALL</option>
                                 <option>APAC</option>
                                 <option>EMEA</option>
                                 <option>LATAM</option>
@@ -58,12 +58,28 @@
                         </div>
 
                         <div class="col-span-1 sm:col-span-1">
-                            <jet-label for="mode" value="Level" />
-                            <select v-model="form.mode">
+                            <jet-label for="level" value="Level" />
+                            <select id="level" v-model="form.level">
                                 <option value="client">Account</option>
                                 <option value="team">Job Team</option>
                             </select>
                         </div>
+
+                        <div class="col-span-1 sm:col-span-1">
+                            <switch-flag @on-switch="onChangeCumul"
+                                         :initial-state=form.cumulative
+                                         name="Cumulative"
+                                         left-text="No"
+                                         right-text="Yes"/>
+                        </div>
+
+                        <!--<div class="col-span-1 sm:col-span-1">
+                            <jet-label for="function" value="Function" />
+                            <select v-model="form.function">
+                                <option value="count">Count</option>
+                                <option value="sum">Sum</option>
+                            </select>
+                        </div>-->
                     </template>
 
                     <template #actions>
@@ -90,19 +106,13 @@ import JetFormSection from '@/Jetstream/FormSection'
 import JetInput from '@/Jetstream/Input'
 import JetInputError from '@/Jetstream/InputError'
 import JetLabel from '@/Jetstream/Label'
+import SwitchFlag from "../../Components/SwitchFlag";
 
 export default {
     name: "RulesActivityPerClientAccountStats",
     title: 'Rules Activity per Client Account- Dagobah Stats',
-    props: [
-        'stats',
-        'count',
-        'range',
-        'column',
-        'mode',
-    ],
-
     components: {
+        SwitchFlag,
         AppLayout,
         JetNavLink,
         RulesLineChart,
@@ -113,15 +123,26 @@ export default {
         JetInputError,
         JetLabel,
     },
+    props: [
+        'stats',
+        'view_by',
+        'range',
+        'column',
+        'level',
+        'region',
+        'cumulative',
+    ],
     data() {
         return {
             datacollection: null,
 
             form: this.$inertia.form({
-                count: this.count,
+                view_by: this.view_by,
                 range: this.range,
                 column: this.column,
-                mode: this.mode,
+                level: this.level,
+                region: this.region,
+                cumulative: this.cumulative,
             }, {
                 bag: 'clientAccountStats',
                 resetOnSuccess: false,
@@ -135,11 +156,19 @@ export default {
         updateStats()
         {
             this.$inertia.get(route('stats.index'), {
-                count: this.form.count,
+                view_by: this.form.view_by,
                 range: this.form.range,
                 column: this.form.column,
-                mode: this.form.mode,
+                level: this.form.level,
+                region: this.form.region,
+                cumulative: this.form.cumulative,
             });
+        },
+
+        onChangeCumul(state) {
+            //this.cumulMode = state;
+
+            this.form.cumulative = state ? 1 : 0;
         },
 
         fillData() {
@@ -151,7 +180,7 @@ export default {
                 datasets.push({
                     label: client,
                     data: Object.values(this.stats[client]['trend']),
-                    tension: 0.3,
+                    tension: 0.1,
                     borderColor: this.makeColour(client),
                     fill: false,
                 });

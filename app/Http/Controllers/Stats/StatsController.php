@@ -14,22 +14,29 @@ class StatsController extends Controller
 {
     public function index(Request $request)
     {
-        $count = $request->get('count', 'week');
-        $range = $request->get('range', 24);
+        logger(print_r($request->all(), true));
+        $view_by = $request->get('view_by', 'week');
+        $range = $request->get('range', 5);
         $column = $request->get('column', 'created_at');
-        $mode = $request->get('mode', 'client');
+        $level = $request->get('level', 'client');
+        $region = $request->get('region');
+        $function = $request->get('function', 'count');
+        $cumulative = $request->get('cumulative', 1);
 
-        $statsBuilder = match($mode){
+        logger('cumulative: ' . $cumulative);
+
+        $statsBuilder = match($level){
             'client' => RuleCreationPerClientAccount::class,
             'team' => RuleCreationPerTeam::class
         };
 
         return Jetstream::inertia()->render($request, 'Stats/ClientAccountStats', [
-            'stats' => (new $statsBuilder($count, $range, $column))->handle(),
-            'count' => Str::title($count),
+            'stats' => (new $statsBuilder($view_by, $range, $function, $cumulative, $column))->handle(),
+            'view_by' => Str::title($view_by),
             'range' => $range,
             'column' => $column,
-            'mode' => $mode,
+            'level' => $level,
+            'cumulative' => $cumulative
         ]);
     }
 }
