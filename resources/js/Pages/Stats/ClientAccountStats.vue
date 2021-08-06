@@ -24,8 +24,8 @@
                     </template>
 
                     <template #form>
-                        <div class="col-span-2 sm:col-span-2">
-                            <jet-label for="count" value="Count By" />
+                        <div class="col-span-1 sm:col-span-1">
+                            <jet-label for="count" value="View By" />
                             <select id="count" v-model="form.count">
                                 <option>Day</option>
                                 <option>Week</option>
@@ -34,15 +34,34 @@
                         </div>
 
                         <div class="col-span-2 sm:col-span-2">
-                            <jet-label for="range" value="Range" />
+                            <jet-label for="range" value="Time Range" />
                             <jet-input id="range" type="number" increment="1" min="0" class="mt-1 block w-full" v-model="form.range"/>
                         </div>
 
-                        <div class="col-span-2 sm:col-span-2">
-                            <jet-label for="column" value="Mode" />
+                        <div class="col-span-1 sm:col-span-1">
+                            <jet-label for="column" value="Rule Status" />
                             <select v-model="form.column">
                                 <option value="created_at">Created</option>
                                 <option value="updated_at">Updated</option>
+                            </select>
+                        </div>
+
+                        <div class="col-span-1 sm:col-span-1">
+                            <jet-label for="region" value="Region" />
+                            <select id="region" v-model="form.region">
+                                <option selected>ALL</option>
+                                <option>APAC</option>
+                                <option>EMEA</option>
+                                <option>LATAM</option>
+                                <option>NA</option>
+                            </select>
+                        </div>
+
+                        <div class="col-span-1 sm:col-span-1">
+                            <jet-label for="mode" value="Level" />
+                            <select v-model="form.mode">
+                                <option value="client">Account</option>
+                                <option value="team">Job Team</option>
                             </select>
                         </div>
                     </template>
@@ -80,6 +99,7 @@ export default {
         'count',
         'range',
         'column',
+        'mode',
     ],
 
     components: {
@@ -101,6 +121,7 @@ export default {
                 count: this.count,
                 range: this.range,
                 column: this.column,
+                mode: this.mode,
             }, {
                 bag: 'clientAccountStats',
                 resetOnSuccess: false,
@@ -117,6 +138,7 @@ export default {
                 count: this.form.count,
                 range: this.form.range,
                 column: this.form.column,
+                mode: this.form.mode,
             });
         },
 
