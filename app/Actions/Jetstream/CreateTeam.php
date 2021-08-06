@@ -22,6 +22,7 @@ class CreateTeam implements CreatesTeams
 
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
+            'region' => ['required', 'string', 'max:255'],
         ])->validateWithBag('createTeam');
 
         return $user->ownedTeams()->create([

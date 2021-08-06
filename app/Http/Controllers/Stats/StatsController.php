@@ -19,7 +19,7 @@ class StatsController extends Controller
         $range = $request->get('range', 5);
         $column = $request->get('column', 'created_at');
         $level = $request->get('level', 'client');
-        $region = $request->get('region');
+        $region = $request->get('region', '');
         $function = $request->get('function', 'count');
         $cumulative = $request->get('cumulative', 1);
 
@@ -36,6 +36,7 @@ class StatsController extends Controller
             'range' => $range,
             'column' => $column,
             'level' => $level,
+            'region' => $region,
             'cumulative' => $cumulative
         ]);
     }
