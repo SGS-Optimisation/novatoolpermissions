@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Stats;
 
 use App\Features\Stats\RuleCreationPerClientAccount;
+use App\Features\Stats\RuleCreationPerRegion;
 use App\Features\Stats\RuleCreationPerTeam;
 use App\Http\Controllers\Controller;
 use App\Models\ClientAccount;
@@ -23,15 +24,25 @@ class StatsController extends Controller
         $function = $request->get('function', 'count');
         $cumulative = $request->get('cumulative', 1);
 
-        logger('cumulative: ' . $cumulative);
+        logger('cumulative: '.$cumulative);
 
-        $statsBuilder = match($level){
+        $statsBuilder = match ($level) {
             'client' => RuleCreationPerClientAccount::class,
-            'team' => RuleCreationPerTeam::class
+            'team' => RuleCreationPerTeam::class,
+            'region' => RuleCreationPerRegion::class,
         };
 
+        $stats = (new $statsBuilder(
+            view_by: $view_by,
+            range: $range,
+            function: $function,
+            cumulative: $cumulative,
+            region: $region,
+            column: $column)
+        )->handle();
+
         return Jetstream::inertia()->render($request, 'Stats/ClientAccountStats', [
-            'stats' => (new $statsBuilder($view_by, $range, $function, $cumulative, $column))->handle(),
+            'stats' => $stats,
             'view_by' => Str::title($view_by),
             'range' => $range,
             'column' => $column,

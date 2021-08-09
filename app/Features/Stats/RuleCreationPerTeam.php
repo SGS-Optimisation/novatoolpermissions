@@ -31,6 +31,7 @@ class RuleCreationPerTeam extends Trend
         public ?int $range = 24,
         public ?string $function = 'count',
         public ?bool $cumulative = true,
+        public ?string $region = null,
         public ?string $column = 'created_at'
     ) {
         parent::__construct();
@@ -39,7 +40,14 @@ class RuleCreationPerTeam extends Trend
 
     public function handle()
     {
-        foreach(Team::personal(false)->with(['clientAccount'])->get()  as $team) {
+        $teams = Team::personal(false)
+            ->with(['clientAccount'])
+            ->when($this->region, function($query)  {
+                $query->where('region', $this->region);
+            })
+            ->get();
+
+        foreach($teams as $team) {
 
             $trend = $this->processTeam($team)->trend;
 
@@ -63,7 +71,7 @@ class RuleCreationPerTeam extends Trend
 
     public function processTeam($team)
     {
-        $query = \App\Services\Rule\GetRulesByTeam::handle($team);
+        $query = \App\Services\Rule\GetRulesForTeam::handle($team, $this->region);
 
         $request = new Request();
         $request->merge(['range' => $this->range, 'twelveHourTime' => false, 'timezone' => 'UTC']);
