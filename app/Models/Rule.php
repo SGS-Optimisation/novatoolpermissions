@@ -135,6 +135,14 @@ class Rule extends Model implements Auditable
             ->withTimestamps();
     }
 
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class)
+            ->as('contributorTeam')
+            ->withPivot(['metadata'])
+            ->withTimestamps();
+    }
+
     /**
      * Alias for users many-many relationship
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany*
@@ -144,7 +152,16 @@ class Rule extends Model implements Auditable
         return $this->users();
     }
 
-    public function teams()
+    /**
+     * Alias for teams many-many relationship
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany*
+     */
+    public function contributorTeams()
+    {
+        return $this->teams();
+    }
+
+    public function teamsViaUsers()
     {
         /*return $this->clientAccount->teams()->whereHas('users', function (Builder $query) {
             return $query->whereIn('users.id', $this->users()->select('id')->get()->pluck('id')->all());
@@ -182,7 +199,7 @@ class Rule extends Model implements Auditable
      */
     public function contributingTeams()
     {
-        return $this->teams();
+        return $this->teamsViaUsers();
     }
 
     /**

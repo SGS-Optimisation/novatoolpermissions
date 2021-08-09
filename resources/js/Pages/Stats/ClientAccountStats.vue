@@ -59,6 +59,7 @@
                             <select id="level" v-model="form.level">
                                 <option value="client">Account</option>
                                 <option value="team">Job Team</option>
+                                <option value="region">Region</option>
                             </select>
                         </div>
 
@@ -90,7 +91,7 @@
                         </jet-button>
                     </template>
                 </jet-form-section>
-                <div class="small">
+                <div class="small" v-if="datacollection">
                     <rules-line-chart :height="200" :chart-data="datacollection"></rules-line-chart>
                 </div>
             </div>
@@ -201,7 +202,7 @@ export default {
         makeColour(client) {
             //return '#' + this.intToRGB(parseInt(this.rgbVal(this.stats[client].client_id) + this.rgbVal(this.stats[client].created_at)));
             return this.LightenDarkenColor(
-                '#' + this.intToRGB(this.hashCode(client + this.stats[client].created_at)),
+                '#' + this.intToRGB(this.hashCode(  (client.length < 4 ? 'AA': '') + client.substring(0, 8) + this.stats[client].created_at)),
                 25);
         },
 

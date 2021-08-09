@@ -84,18 +84,15 @@ class Team extends JetstreamTeam
         return $this->belongsTo(\App\Models\ClientAccount::class);
     }
 
-    public function caRules()
+    public function rules()
     {
-        return $this
-            ->hasManyDeepFromRelations($this->clientAccount(), (new ClientAccount)->rules())
-            ->join('users', 'users.id', '=', 'rule_user.user_id')
-            ->leftJoin('team_user', 'team_user.team_id', '=', 'teams.id')
-
-            //->join('rule_user', 'users.id', '=', 'rule_user.user_id')//->whereRaw('rules.id=rule_user.rule_id')
-            ;
+        return $this->belongsToMany(User::class)
+            ->as('contributorTeam')
+            ->withPivot(['metadata'])
+            ->withTimestamps();
     }
 
-    public function rules()
+    public function rulesViaUsers()
     {
         return $this->hasManyDeepFromRelations($this->users(), (new User)->rules())
             ->join('teams', function (\Illuminate\Database\Query\JoinClause $join) {
