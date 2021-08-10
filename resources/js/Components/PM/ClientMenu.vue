@@ -8,8 +8,8 @@
                     Overview
                 </sub-nav-link>
 
-                <sub-nav-link :href="route('pm.client-account.rules', {clientAccount: clientAccount.slug })"
-                              :active="route().current('pm.client-account.rules')">
+                <sub-nav-link :href="route('pm.client-account.rules.index', {clientAccount: clientAccount.slug })"
+                              :active="route().current('pm.client-account.rules.index')">
                     Rules
                 </sub-nav-link>
 

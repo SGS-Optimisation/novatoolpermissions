@@ -1,7 +1,7 @@
 <template>
     <jet-form-section @submitted="updateTeamName">
         <template #title>
-            Team Name
+            Team Details
         </template>
 
         <template #description>
@@ -34,6 +34,18 @@
                             :disabled="! permissions.canUpdateTeam" />
 
                 <jet-input-error :message="form.error('name')" class="mt-2" />
+            </div>
+
+            <div class="col-span-6 sm:col-span-4">
+                <jet-label for="region" value="Region" />
+                <select required id="region" v-model="form.region">
+                    <option :value=null disabled>-Select-</option>
+                    <option value="APAC">APAC</option>
+                    <option value="EMEA">EMEA</option>
+                    <option value="LATAM">LATAM</option>
+                    <option value="NA">NA</option>
+                </select>
+                <jet-input-error :message="form.error('region')" class="mt-2" />
             </div>
         </template>
 
@@ -73,6 +85,7 @@
             return {
                 form: this.$inertia.form({
                     name: this.team.name,
+                    region: this.team.region,
                 }, {
                     bag: 'updateTeamName',
                     resetOnSuccess: false,

@@ -24,17 +24,18 @@
 
             <div class="col-span-6 sm:col-span-4">
                 <jet-label for="name" value="Team Name" />
-                <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name" autofocus />
+                <jet-input required id="name" type="text" class="mt-1 block w-full" v-model="form.name" autofocus />
                 <jet-input-error :message="form.error('name')" class="mt-2" />
             </div>
 
             <div class="col-span-6 sm:col-span-4">
                 <jet-label for="region" value="Region" />
-                <select id="region" v-model="form.region">
-                    <option>APAC</option>
-                    <option>EMEA</option>
-                    <option>LATAM</option>
-                    <option>NA</option>
+                <select required id="region" v-model="form.region">
+                    <option :value=null disabled>-Select-</option>
+                    <option value="APAC">APAC</option>
+                    <option value="EMEA">EMEA</option>
+                    <option value="LATAM">LATAM</option>
+                    <option value="NA">NA</option>
                 </select>
                 <jet-input-error :message="form.error('region')" class="mt-2" />
             </div>
@@ -70,11 +71,16 @@
             JetLabel,
         },
 
+        props: [
+            'clientAccount',
+        ],
+
         data() {
             return {
                 form: this.$inertia.form({
                     name: '',
-                    region: '',
+                    region: null,
+                    client_account_id: this.clientAccount.id,
                 }, {
                     bag: 'createTeam',
                     resetOnSuccess: false,
@@ -84,7 +90,7 @@
 
         methods: {
             createTeam() {
-                this.form.post(route('teams.store'), {
+                this.form.post(route('pm.client-account.teams.store', {clientAccount: this.clientAccount.slug}), {
                     preserveScroll: true
                 });
             },
