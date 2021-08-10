@@ -27,6 +27,8 @@ class CreateTeam implements CreatesTeams
 
         return $user->ownedTeams()->create([
             'name' => $input['name'],
+            'region' => $input['region'],
+            'client_account_id' => $input['client_account_id'],
             'personal_team' => false,
         ]);
     }

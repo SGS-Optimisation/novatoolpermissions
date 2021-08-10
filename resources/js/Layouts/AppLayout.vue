@@ -93,10 +93,10 @@
                                                 Team Settings
                                             </jet-dropdown-link>
 
-                                            <jet-dropdown-link :href="route('teams.create')"
+<!--                                            <jet-dropdown-link :href="route('teams.create')"
                                                                v-if="$page.jetstream.canCreateTeams">
                                                 Create New Team
-                                            </jet-dropdown-link>
+                                            </jet-dropdown-link>-->
 
                                             <div class="border-t border-gray-100"></div>
 
