@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\PMs;
 
+use App\Features\Stats\RuleCreationPerTeam;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateClientAccountRequest;
 use App\Http\Requests\UpdateClientAccountRequest;
@@ -11,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Laravel\Jetstream\Jetstream;
 
@@ -50,6 +52,16 @@ class ClientAccountController extends Controller
             return collect($user->toArray())->only(['id', 'name', 'email', 'membership'])->all();
         });
 
+        $stats = (new RuleCreationPerTeam(
+            view_by: $request->get('view_by', 'week'),
+            range: $request->get('range', 5),
+            function: $request->get('function', 'count'),
+            cumulative: $request->get('cumulative', 1),
+            region: $request->get('region', ''),
+            column: $request->get('column', 'created_at'),
+            client_account_id: $client_account->id
+        ))->handle();
+
         return Jetstream::inertia()->render($request, 'ClientAccount/Dashboard', [
             'team' => $client_account->team,
             'teams' => $client_account->teams,
@@ -61,6 +73,15 @@ class ClientAccountController extends Controller
             'publishedRulesCount' => (int) $client_account->published_rules_count,
             'taxonomiesCount' => (int) $client_account->taxonomies_count - $client_account->root_taxonomies_count,
             'termsCount' => (int) $client_account->terms_count,
+
+            'stats' => $stats,
+            'view_by' => Str::title($request->get('view_by', 'week')),
+            'range' => $request->get('range', 5),
+            'column' => $request->get('column', 'created_at'),
+            'level' => 'team',
+            'region' => $request->get('region', ''),
+            'cumulative' => $request->get('cumulative', 1),
+            'mode' => 'account-specific',
         ]);
     }
 
