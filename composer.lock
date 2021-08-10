@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1cd910acd5b5bf9d26fe02bbf420df2d",
+    "content-hash": "5870b96d948cac9485c9843d35ffc7cf",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3578,17 +3578,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "3.26.1",
+            "version": "3.28.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "ff97c586d46a33edc8dca05705aa80040ef87adc"
+                "reference": "5d353d051ebe2d2ea86c78239f61c54eea0c7962"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-ff97c586d46a33edc8dca05705aa80040ef87adc-zip-7cbc3e.zip",
-                "reference": "ff97c586d46a33edc8dca05705aa80040ef87adc",
-                "shasum": "eac1ea168633fda597c04f4173f94311263d3bcd"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-5d353d051ebe2d2ea86c78239f61c54eea0c7962-zip-1ab4ea.zip",
+                "reference": "5d353d051ebe2d2ea86c78239f61c54eea0c7962",
+                "shasum": "08729abe7b4ce4f9ec953a2963c0529f3d074f8f"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -3667,9 +3667,9 @@
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/laravel/nova/tree/v3.26.1"
+                "source": "https://github.com/laravel/nova/tree/v3.28.0"
             },
-            "time": "2021-06-02T06:53:07+00:00"
+            "time": "2021-08-04T16:12:19+00:00"
         },
         {
             "name": "laravel/sanctum",
@@ -8807,6 +8807,58 @@
                 }
             ],
             "time": "2020-11-03T13:23:06+00:00"
+        },
+        {
+            "name": "staudenmeir/eloquent-has-many-deep",
+            "version": "v1.13.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/staudenmeir/eloquent-has-many-deep.git",
+                "reference": "c0c9b6bd5c39d08e8adddc7eb8625962bd67a3da"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/staudenmeir/eloquent-has-many-deep/zipball/c0c9b6bd5c39d08e8adddc7eb8625962bd67a3da",
+                "reference": "c0c9b6bd5c39d08e8adddc7eb8625962bd67a3da",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^8.0",
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "illuminate/pagination": "^8.0",
+                "phpunit/phpunit": "^9.3",
+                "staudenmeir/eloquent-eager-limit": "^1.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Staudenmeir\\EloquentHasManyDeep\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonas Staudenmeir",
+                    "email": "mail@jonas-staudenmeir.de"
+                }
+            ],
+            "description": "Laravel Eloquent HasManyThrough relationships with unlimited levels",
+            "support": {
+                "issues": "https://github.com/staudenmeir/eloquent-has-many-deep/issues",
+                "source": "https://github.com/staudenmeir/eloquent-has-many-deep/tree/v1.13.1"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/JonasStaudenmeir",
+                    "type": "custom"
+                }
+            ],
+            "time": "2020-11-22T18:51:29+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",

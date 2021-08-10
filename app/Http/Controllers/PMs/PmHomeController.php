@@ -15,18 +15,25 @@ class PmHomeController extends Controller
         $myTeams = $request->user()->allTeams()
             ->filter(function ($team) {
             return $team->clientAccount != null;
-        });
+        })->unique();
+
+        $myClientAccountNames = [];
 
         foreach($myTeams as $team) {
             $team->clientAccount->loadCount(['rules', 'omnipresent_rules']);
+            $myClientAccountNames[] = $team->clientAccount->name;
         }
 
         $otherTeams = Team::with(['clientAccount' => function($query){
             return $query->withCount(['rules', 'omnipresent_rules']);
         }])
-            ->whereNotIn('id', $myTeams->pluck('id')->all())
+            //->whereNotIn('id', $myTeams->pluck('id')->all())
+            ->whereDoesntHave('clientAccount', function($query) use ($myClientAccountNames) {
+                return $query->whereIn('name', $myClientAccountNames);
+            })
             ->whereHas('clientAccount')
-            ->get();
+            ->get()
+            ->unique('clientAccount.id');
 
         return Jetstream::inertia()->render($request, 'PM/Landing', [
             'team' => $request->user()->currentTeam,

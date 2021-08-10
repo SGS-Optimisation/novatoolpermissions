@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 
 use App\Models\ClientAccount;
+use App\Models\Rule;
 use App\Models\Taxonomy;
 use App\Models\Term;
 use Illuminate\Support\Facades\Cache;
@@ -39,17 +40,19 @@ class RuleRepository
         return Cache::tags($tags)
             ->remember($cacheTag, 60*60*24*30, function () use ($term) {
 
-            $rules = $this->client_account->rules()->with('terms.taxonomy')->withCount('terms');
+            $rules_query = Rule::forClient($this->client_account)
+                ->with(['terms.taxonomy', 'users', 'teams'])
+                ->withCount('terms');
 
             if($term){
-                $rules = $rules->whereHas('terms', function ($query) use ($term) {
+                $rules_query->whereHas('terms', function ($query) use ($term) {
                     return $query->where('id', '=', $term->id);
                 });
             }
 
             logger('built rule repo for ' . $this->client_account->name);
 
-            $rules = $rules->get()->each(function ($rule) {
+            $rules = $rules_query->get()->each(function ($rule) {
                 $rule->content = str_replace('<img', '<img loading="lazy"', $rule->content);
 
                 if($rule->terms_count == 0) {

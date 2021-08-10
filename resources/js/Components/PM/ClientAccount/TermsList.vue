@@ -23,7 +23,7 @@
 
                 <span v-if="termData.globalRulesCount" class="text-xs px-2 bg-red-200 text-red-800 rounded-full">
                     <jet-nav-link
-                        :href="route('pm.client-account.rules', {clientAccount: clientAccount.slug }) + `?term=${termData.id}`">
+                        :href="route('pm.client-account.rules.index', {clientAccount: clientAccount.slug }) + `?term=${termData.id}`">
                         <span title="Number of rules using this term for this client account. Click to view rules.">
                             {{ termData.clientRulesCount }}
                         </span>

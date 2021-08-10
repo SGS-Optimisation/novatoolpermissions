@@ -8,6 +8,7 @@ use App\Http\Controllers\PMs\PmHomeController;
 use App\Http\Controllers\PMs\RuleController;
 use App\Http\Controllers\PMs\RuleTaxonomyController;
 use App\Http\Controllers\PMs\TaxonomyController;
+use App\Http\Controllers\PMs\TeamController;
 use App\Http\Controllers\PMs\TermController;
 use Illuminate\Support\Facades\Route;
 
@@ -110,35 +111,48 @@ Route::name('pm.')
                     /*
                      * Rules section
                      */
-                    Route::group(['prefix' => '/rules'], function () {
+                    Route::name('rules.')->prefix('/rules')
+                        ->group(function () {
 
                         Route::get('/', [RuleController::class, 'index'])
                             //->middleware('cache.headers:public;max_age=300;etag')
-                            ->name('rules');
+                            ->name('index');
 
                         Route::get('/create', [RuleController::class, 'create'])
-                            ->name('rules.create');
+                            ->name('create');
 
                         Route::post('/store', [RuleController::class, 'store'])
-                            ->name('rules.store');
+                            ->name('store');
 
                         Route::get('/{id}/edit', [RuleController::class, 'edit'])
-                            ->name('rules.edit');
+                            ->name('edit');
 
                         Route::delete('/{id}/delete', [RuleController::class, 'destroy'])
-                            ->name('rules.delete');
+                            ->name('delete');
 
                         Route::put('/{id}/restore', [RuleController::class, 'restore'])
-                            ->name('rules.restore');
+                            ->name('restore');
 
                         Route::get('/{id}/history', [AuditActivityController::class, 'ruleHistory'])
-                            ->name('rules.history');
+                            ->name('history');
 
                         Route::put('/{id}/update', [RuleController::class, 'update'])
-                            ->name('rules.update');
+                            ->name('update');
 
                         Route::put('/{id}/taxonomy/update', [RuleTaxonomyController::class, 'update'])
-                            ->name('rules.taxonomy.update');
+                            ->name('taxonomy.update');
+                    });
+
+                    /*
+                     * Teams section
+                     */
+                    Route::name('teams.')->prefix('/teams')
+                        ->group(function () {
+                        Route::get('/create', [TeamController::class, 'create'])
+                            ->name('create');
+
+                        Route::post('/store', [TeamController::class, 'store'])
+                            ->name('store');
                     });
                 });
 

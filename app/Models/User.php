@@ -127,10 +127,38 @@ class User extends Authenticatable implements Auditable
     ];
 
 
+    public function rules()
+    {
+        return $this->belongsToMany(Rule::class)
+            ->as('contributor')
+            ->withPivot(['metadata'])
+            ->withTimestamps();
+    }
+
+    public function clientAccountTeams()
+    {
+        return $this->teams()->whereNotNull('client_account_id');
+    }
+
+
     public function clientTeams()
     {
         return $this->allTeams()->filter(function($value, $key) {
             return $value->personal_team == 0;
         });
+    }
+
+    /**
+     * @param  ClientAccount  $clientAccount
+     * @return bool
+     */
+    public function belongsToOneOfClientTeams(ClientAccount $clientAccount) {
+        foreach($clientAccount->teams as $team) {
+            if($this->belongsToTeam($team)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

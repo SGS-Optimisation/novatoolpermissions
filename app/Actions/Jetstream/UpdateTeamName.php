@@ -26,6 +26,7 @@ class UpdateTeamName implements UpdatesTeamNames
 
         $team->forceFill([
             'name' => $input['name'],
+            'region' => $input['region'],
         ])->save();
     }
 }

@@ -36,7 +36,6 @@ class RulesPerWeek extends Trend
      */
     public function calculate(NovaRequest $request)
     {
-        logger(print_r($request->all(), true));
         return $this->countByWeeks($request, Rule::forClient($this->client_account));
     }
 
@@ -71,6 +70,6 @@ class RulesPerWeek extends Trend
      */
     public function uriKey()
     {
-        return 'rules-per-week';
+        return 'rules-per-week-' . $this->client_account->slug;
     }
 }

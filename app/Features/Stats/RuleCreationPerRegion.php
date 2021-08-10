@@ -7,6 +7,7 @@ namespace App\Features\Stats;
 use App\Features\BaseFeature;
 use App\Models\ClientAccount;
 use App\Models\Rule;
+use App\Models\Team;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
@@ -16,18 +17,18 @@ use Illuminate\Support\Str;
 use Laravel\Nova\Metrics\Trend;
 use Laravel\Nova\Metrics\TrendDateExpressionFactory;
 
-class RuleCreationPerClientAccount extends Trend
+class RuleCreationPerRegion extends Trend
 {
     public $dataset = [];
 
     /**
-     * RuleCreationPerClientAccount constructor.
+     * RuleCreationPerRegion constructor.
      * @param  int  $range
      * @param  string  $view_by
      */
     public function __construct(
         public ?string $view_by = self::BY_WEEKS,
-        public ?int $range = 5,
+        public ?int $range = 24,
         public ?string $function = 'count',
         public ?bool $cumulative = true,
         public ?string $region = null,
@@ -39,9 +40,11 @@ class RuleCreationPerClientAccount extends Trend
 
     public function handle()
     {
-        foreach (ClientAccount::withCount('rules')->get() as $client_account) {
+        $regions = Team::whereNotNull('region')->get()->pluck('region')->unique();
 
-            $trend = $this->processClientAccount($client_account)->trend;
+        foreach($regions as $region) {
+
+            $trend = $this->processRegion($region)->trend;
 
             if($this->cumulative) {
                 $cumul = 0;
@@ -51,10 +54,10 @@ class RuleCreationPerClientAccount extends Trend
                 }
             }
 
-            $this->dataset[$client_account->name] = [
-                'client_id' => $client_account->id,
-                'rules_count' => $client_account->rules_count,
-                'created_at' => $client_account->created_at->format('Y-m-d H:i:s'),
+
+            $this->dataset[$region] = [
+                'client_id' => $region,
+                'created_at' => Team::firstWhere('region', $region)->created_at->format('Y-m-d H:i:s'),
                 'trend' => $trend,
             ];
         }
@@ -62,14 +65,14 @@ class RuleCreationPerClientAccount extends Trend
         return $this->dataset;
     }
 
-    public function processClientAccount($client_account)
+    public function processRegion($region)
     {
-        $query = Rule::forClient($client_account);
+        $query = \App\Services\Rule\GetRulesForRegion::handle($region);
 
         $request = new Request();
         $request->merge(['range' => $this->range, 'twelveHourTime' => false, 'timezone' => 'UTC']);
 
-        return $this->{$this->function.'By'.Str::title(Str::plural($this->view_by))}($request, $query, $this->column);
+        return $this->{$this->function.'By'.Str::title(Str::plural($this->view_by))}($request, $query, 'rules.'.$this->column);
     }
 
     public function ranges()
