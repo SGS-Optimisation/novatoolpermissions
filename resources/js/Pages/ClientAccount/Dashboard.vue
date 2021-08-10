@@ -67,6 +67,10 @@
                     </div>
                 </div>
 
+                <h3 class="h3">Rule stats</h3>
+                <rule-stats :stats="stats" :view_by="view_by" :range="range" :column="column" :cumulative="cumulative"
+                            :level="level" :region="region" :mode="mode"/>
+
             </div>
         </template>
     </client-layout>
@@ -75,6 +79,7 @@
 <script>
 
 import ClientLayout from '@/Layouts/ClientAccount'
+import RuleStats from "../../Components/Stats/RuleStats";
 
 export default {
     title() {
@@ -93,9 +98,19 @@ export default {
         'omnipresentRulesCount': Number,
         'taxonomiesCount': Number,
         'termsCount': Number,
+
+        'stats': Object,
+        'view_by': String,
+        'range': String,
+        'column': String,
+        'level': String,
+        'region': String,
+        'cumulative': String,
+        'mode': String,
     },
 
     components: {
+        RuleStats,
         ClientLayout,
     },
 

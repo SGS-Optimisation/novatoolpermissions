@@ -32,7 +32,8 @@ class RuleCreationPerTeam extends Trend
         public ?string $function = 'count',
         public ?bool $cumulative = true,
         public ?string $region = null,
-        public ?string $column = 'created_at'
+        public ?string $column = 'created_at',
+        public ?int $client_account_id = null
     ) {
         parent::__construct();
     }
@@ -44,6 +45,8 @@ class RuleCreationPerTeam extends Trend
             ->with(['clientAccount'])
             ->when($this->region, function($query)  {
                 $query->where('region', $this->region);
+            })->when($this->client_account_id, function($query)  {
+                $query->where('client_account_id', $this->client_account_id);
             })
             ->get();
 

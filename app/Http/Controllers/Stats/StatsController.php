@@ -15,7 +15,6 @@ class StatsController extends Controller
 {
     public function index(Request $request)
     {
-        logger(print_r($request->all(), true));
         $view_by = $request->get('view_by', 'week');
         $range = $request->get('range', 5);
         $column = $request->get('column', 'created_at');
@@ -24,8 +23,6 @@ class StatsController extends Controller
         $function = $request->get('function', 'count');
         $cumulative = $request->get('cumulative', 1);
 
-        logger('cumulative: '.$cumulative);
-
         $statsBuilder = match ($level) {
             'client' => RuleCreationPerClientAccount::class,
             'team' => RuleCreationPerTeam::class,
@@ -33,13 +30,13 @@ class StatsController extends Controller
         };
 
         $stats = (new $statsBuilder(
-            view_by: $view_by,
-            range: $range,
-            function: $function,
-            cumulative: $cumulative,
-            region: $region,
-            column: $column)
-        )->handle();
+            view_by: $request->get('view_by', 'week'),
+            range: $request->get('range', 5),
+            function: $request->get('function', 'count'),
+            cumulative: $request->get('cumulative', 1),
+            region: $request->get('region', ''),
+            column: $request->get('column', 'created_at')
+        ))->handle();
 
         return Jetstream::inertia()->render($request, 'Stats/ClientAccountStats', [
             'stats' => $stats,
@@ -48,7 +45,8 @@ class StatsController extends Controller
             'column' => $column,
             'level' => $level,
             'region' => $region,
-            'cumulative' => $cumulative
+            'cumulative' => $cumulative,
+            'mode' => 'global',
         ]);
     }
 }

@@ -23,7 +23,7 @@
                                     Project Manager
                                 </jet-nav-link>
                                 <jet-nav-link v-if="$page.user_permissions.accessStats"
-                                              :href="route('stats.index')" :active="route().current('pm.landing')">
+                                              :href="route('stats.index')" :active="route().current('stats.index')">
                                     Stats
                                 </jet-nav-link>
                                 <a v-if="$page.user_permissions.accessBackend"
