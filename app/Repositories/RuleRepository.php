@@ -46,7 +46,7 @@ class RuleRepository
 
             if($term){
                 $rules_query->whereHas('terms', function ($query) use ($term) {
-                    return $query->where('id', '=', $term->id);
+                    return $query->where('terms.id', '=', $term->id);
                 });
             }
 
