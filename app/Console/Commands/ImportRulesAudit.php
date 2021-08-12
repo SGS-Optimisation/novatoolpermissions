@@ -78,8 +78,8 @@ class ImportRulesAudit extends Command
                     'pivot' => '[]',
                     'extra' => '[]',
                     'signature' => $this->sign($data->toArray()),
-                    'created_at' => Carbon::now()->toDateTimeString(),
-                    'updated_at' => Carbon::now()->toDateTimeString(),
+                    'created_at' => $data->created_at,
+                    'updated_at' => $data->updated_at,
                 ];
                 DB::table('ledgers')->insert($insert_data);
 
