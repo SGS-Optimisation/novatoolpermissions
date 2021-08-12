@@ -13,10 +13,12 @@ class AddIdToRuleTermTable extends Migration
      */
     public function up()
     {
-        Schema::table('rule_term', function (Blueprint $table) {
-            //
-            $table->increments('id');
-        });
+        if (!Schema::hasColumn('rule_term', 'id')) {
+            Schema::table('rule_term', function (Blueprint $table) {
+                //
+                $table->increments('id');
+            });
+        }
     }
 
     /**
