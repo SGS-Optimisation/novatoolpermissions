@@ -4,8 +4,8 @@
             <div class="mx-auto sm:px-6 lg:px-8">
 
 
-            <div class="flex lg:pt-36">
-                <div class="m-auto w-2/3">
+            <div class="flex pt-2">
+                <div class="m-auto w-4/5">
                     <div class="container">
                         <div class="panel panel-info">
                             <!-- Default panel contents -->
@@ -23,12 +23,12 @@
 
 
                             <ul class="list-group" v-if="audits.length !== 0">
-                                <li class="list-group-item mb-4 pb-5" v-for="(item, index) in audits"
+                                <li class="list-group-item mb-4 pb-5" v-for="(item, index) in _.orderBy(audits, 'created_at', 'desc')"
                                     :key="index">
 
 
-                                    On {{ item.created_at | date }},
-                                    {{ item.user_name }} with <strong>IP:</strong>{{ item.ip_address }}
+                                    On {{ item.created_at | date }} by
+                                    {{ item.user_name }}
 
 
                                     <table class="table-fixed w-full border-collapse border border-gray-400">
