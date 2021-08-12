@@ -61,7 +61,7 @@ class Term extends Model implements Recordable
         'created',
         'updated',
         'restored',
-        'sync',
+        'synced',
         'deleted',
         'forceDeleted',
         'existingPivotUpdated',
@@ -92,7 +92,7 @@ class Term extends Model implements Recordable
      */
     public function rules()
     {
-        return $this->belongsToMany(\App\Models\Rule::class);
+        return $this->belongsToMany(\App\Models\Rule::class)->using(RuleTerm::class);
     }
 
     public function getNameAttribute()

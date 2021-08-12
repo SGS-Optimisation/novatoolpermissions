@@ -31,14 +31,18 @@ class AuditActivityController extends Controller
         //$all =  $rule->audits()->orderBy('created_at', 'desc')->with('user')->get();
         $rules_relation = $rule->ledgers()->whereIn('event', [
             'attached',
-            'detached'
+            'detached',
+            'synced'
         ])->with('user')
         ->get();
+
         $rules = $rule->ledgers()->whereIn('event', [
             'created',
-            'updated'
+            'updated',
+            'synced'
         ])->with('user')
             ->get();
+
         $data=[];
         $new_key=0;
         $audit_new1=[];

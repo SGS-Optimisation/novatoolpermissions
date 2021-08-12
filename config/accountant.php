@@ -104,6 +104,8 @@ return [
     'events' => [
         'created',
         'updated',
+        'synced',
+        'existingPivotUpdated',
         'restored',
         'deleted',
         'forceDeleted',

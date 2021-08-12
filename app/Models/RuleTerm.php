@@ -6,6 +6,7 @@ use Altek\Accountant\Contracts\Recordable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 
 /**
@@ -14,10 +15,12 @@ use Jenssegers\Mongodb\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $taxonomy_id
  */
-class RuleTerm extends Model implements Recordable
+class RuleTerm extends Pivot implements Recordable
 {
-use \Altek\Accountant\Recordable, \Altek\Eventually\Eventually;
+    use \Altek\Accountant\Recordable, \Altek\Eventually\Eventually;
+
     protected $table = 'rule_term';
+
     /**
      * The attributes that aren't mass assignable.
      *
@@ -32,14 +35,12 @@ use \Altek\Accountant\Recordable, \Altek\Eventually\Eventually;
         'updated',
         'restored',
         'deleted',
-        'sync',
-        'forceDeleted',
+        'synced',
         'existingPivotUpdated',
         'attached',
         'detached',
+        'forceDeleted',
     ];
-
-
 
 
 }

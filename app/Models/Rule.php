@@ -128,7 +128,7 @@ class Rule extends Model implements Recordable
             'taxonomy' => function ($query) {
                 $query->orderBy('name', 'asc');
             }
-        ]);
+        ])->using(RuleTerm::class);
     }
 
     /**
