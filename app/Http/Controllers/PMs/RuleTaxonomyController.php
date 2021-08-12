@@ -27,56 +27,31 @@ class RuleTaxonomyController extends Controller
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
 
         $taxonomy_fields = $request->only(['taxonomy'])['taxonomy'];
-       // $deleted = DB::delete('delete from rule_term where rule_id='.$rule_id);
-       // RuleTerm::where('rule_id',$rule_id)->get();
-        $deleted = RuleTerm::where("rule_id",$rule_id)->get();
-        foreach($deleted as $del){
-         // RuleTerm::find($del->id)->delete();
-       }
-      //  logger('deleted'.$deleted);
-       // exit;
-        $rule->terms()->detach();
-       // exit;
+
         foreach ($taxonomy_fields as $taxonomy_name => $terms) {
-            logger('checking taxonomy name '.$taxonomy_name);
+            //logger('checking taxonomy name '.$taxonomy_name);
 
             /** @var Taxonomy $taxonomy */
             $taxonomy = $client_account->taxonomies()->where('name', $taxonomy_name)->first();
 
             if ($taxonomy) {
-                logger('taxonomy id:'.$taxonomy->id);
-
-                $taxonomy_terms_to_sync = [];
+                //logger('taxonomy id:'.$taxonomy->id);
 
                 foreach ($terms as $term_name) {
-                    logger('checking term '.$term_name);
-
-                    //$possible_terms = $client_account->terms()->where('name', $term_name)->get();
+                    //logger('checking term '.$term_name);
                     $term = $taxonomy->terms()->where('name', $term_name)->first();
 
                     if ($term) {
-                      //  $user = RuleTerm::updateOrCreate(
-                       //     ['rule_id' => $rule_id, 'term_id'=>$term->id],
-                        //    ['rule_id' => $rule_id, 'term_id'=>$term->id]
-                       // );
-                      //  RuleTerm::create(["rule_id"=>$rule_id,'term_id'=>$term->id]);
                         $term_id[] = $term->id;
-
                     }
-
                 }
-
-
-
             }
-
         }
         if($term_id){
-            $rule->terms()->attach($term_id);
+            $result = $rule->terms()->sync($term_id);
+
+            logger(print_r($result, true));
         }
-
-        //logger($taxonomy_fields['taxonomy']);
-
 
         Cache::tags(['rules'])->clear();
 
