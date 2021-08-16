@@ -6,6 +6,7 @@ namespace App\Services\MySgs;
 
 use App\Services\MySgs\Api\BaseApi;
 use App\Services\MySgs\Api\EloquentHelpers\MysgsApiCaller;
+use App\Services\MySgs\Api\IntegrationsApi;
 use App\Services\MySgs\Api\JobApi;
 use App\Services\MySgs\Api\ProductionApi;
 use Illuminate\Http\Client\PendingRequest;
@@ -52,6 +53,9 @@ class ConcurrentDataLoader extends DataLoader
 
             $pool->as('jobItems')->withHeaders($headers)->withToken($token)
                 ->get(ProductionApi::jobItemsRoute($jobVersionId)),
+
+            $pool->as('importedContent')->withHeaders($headers)->withToken($token)
+                ->get(IntegrationsApi::importedContentRoute($jobVersionId)),
         ]);
 
         $basicDetails = Cache::remember(JobApi::basicDetailsRoute($jobVersionId).print_r([], true), 3600,
@@ -72,6 +76,10 @@ class ConcurrentDataLoader extends DataLoader
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['jobItems'], false);
             });
+        $importedContent = Cache::remember(IntegrationsApi::importedContentRoute($jobVersionId).print_r([], true), 3600,
+            function () use ($responses) {
+                return BaseApi::parseResponse($responses['importedContent'], false);
+            });
 
         $job_metadata = $this->job->metadata;
 
@@ -79,6 +87,7 @@ class ConcurrentDataLoader extends DataLoader
         $job_metadata->extraDetails = $extraDetails;
         $job_metadata->jobContacts = $jobContacts;
         $job_metadata->jobItems = $jobItems;
+        $job_metadata->importedContent = $importedContent;
 
         $this->job->metadata = $job_metadata;
         $this->job->save();
