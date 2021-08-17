@@ -56,7 +56,7 @@ class JobFieldsMapper
             && $job->metadata->{$mapping->api_action} != ''
             && $job->updated_at->isAfter(Carbon::now()->subHours(4))
         ) {
-            logger('using stored data for mapping ' . $mapping->id);
+            //logger('using stored data for mapping ' . $mapping->id);
             $data = $job->metadata->{$mapping->api_action};
         } else {
             logger('no stored data for mapping ' . $mapping->id);

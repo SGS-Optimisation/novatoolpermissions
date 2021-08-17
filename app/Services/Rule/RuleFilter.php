@@ -22,172 +22,199 @@ class RuleFilter
      */
     public static function handle(Job $job): array
     {
-        $memoizeMapper = memoize(
-            function ($job, $mapping) {
-                $mapper = new JobFieldsMapper($job, $mapping);
-                return $mapper->run();
-            }
-        );
+        $cache_key = 'rules-job-'. $job->job_number;
+        $cached_rules = cache($cache_key);
 
-        $clientRules = [];
+        if($cached_rules === null || !count($cached_rules)) {
+            $cached_rules = \Cache::remember($cache_key, 5*60, function() use($job) {
+                $start = microtime(true);
 
-        if (!$job->metadata->client_found) {
-            logger('no client account associated job, searching');
-
-            (new JobClientAccountMatcher($job))->handle();
-
-        }
-
-        if ($job->metadata->client_found) {
-
-            $client = ClientAccount::find($job->metadata->client->id);
-            logger('loaded client '.$client->name);
-
-            $metadata = $job->metadata;
-
-            $job_taxonomy_terms_matches = [];
-            $job_taxonomy_terms = [];
-
-            /*
-             *  Match rules against job's metadata
-             */
-            foreach ($client->rules()->isPublished()->get() as $rule) {
-                $matched = true;
-                $matchedTaxonomies = [];
-
-                /** @var Term $term */
-                foreach ($rule->accountStructureTerms as $term) {
-                    /*
-                     * Initialize array key, there might be many terms for the same taxonomy
-                     */
-                    if (!Arr::exists($matchedTaxonomies, $term->taxonomy->name)) {
-                        $matchedTaxonomies[$term->taxonomy->name] = false;
+                $memoizeMapper = memoize(
+                    function ($job, $mapping) {
+                        $mapper = new JobFieldsMapper($job, $mapping);
+                        return $mapper->run();
                     }
+                );
+
+                $clientRules = [];
+
+                if (!$job->metadata->client_found) {
+                    logger('no client account associated job, searching');
+
+                    (new JobClientAccountMatcher($job))->handle();
+
+                }
+
+                if ($job->metadata->client_found) {
+
+                    $client = ClientAccount::find($job->metadata->client->id);
+                    logger('loaded client '.$client->name);
+
+                    $metadata = $job->metadata;
+
+                    $job_taxonomy_terms_matches = [];
 
                     /*
-                     * If a rule's taxo term applies to any/all jobs, it should be displayed, skip further checks
+                     * Data for display to users
                      */
-                    if (Str::lower($term->name) === 'any' || Str::lower($term->name) === 'all') {
-                        $matchedTaxonomies[$term->taxonomy->name] = true;
-                        continue;
-                    }
+                    $job_taxonomy_terms = [];
+
+                    /**
+                     * More complex data for debugging
+                     */
+                    $job_taxonomy_terms_extra = [];
 
                     /*
-                     * Otherwise, check if the field matches
+                     *  Match rules against job's metadata
                      */
-                    if ($term->taxonomy->mappings()->count()) {
+                    foreach ($client->rules()->isPublished()->get() as $rule) {
+                        $matched = true;
+                        $matchedTaxonomies = [];
 
-                        if (!Arr::exists($job_taxonomy_terms_matches, $term->taxonomy->name)) {
-                            $job_taxonomy_terms_matches[$term->taxonomy->name] = [];
-                            $job_taxonomy_terms[$term->taxonomy->name] = [];
-                        }
-
-                        foreach ($term->taxonomy->mappings as $mapping) {
-                            //logger('rule comparison using mapping '.$mapping->id);
-                            /**
-                             * retrieve value from mysgs response with help of taxonomy
+                        /** @var Term $term */
+                        foreach ($rule->accountStructureTerms as $term) {
+                            /*
+                             * Initialize array key, there might be many terms for the same taxonomy
                              */
-                            list($mysgsValue, $raw) = $memoizeMapper($job, $mapping);
-
-                            $termValue = Str::lower($term->name);
-                            $job_taxonomy_terms[$term->taxonomy->name] = $raw;
-
-                            /**
-                             * compare retrieved value with this term
-                             */
-                            if (!is_array($mysgsValue)) {
-                                //logger('converting mysgs value to array');
-                                $mysgsValue = [$mysgsValue];
+                            if (!Arr::exists($matchedTaxonomies, $term->taxonomy->name)) {
+                                $matchedTaxonomies[$term->taxonomy->name] = false;
                             }
 
-                            foreach ($mysgsValue as $index => $mysgsValue_single) {
-                                if (empty($mysgsValue_single)) {
-                                    continue;
+                            /*
+                             * If a rule's taxo term applies to any/all jobs, it should be displayed, skip further checks
+                             */
+                            if (Str::lower($term->name) === 'any' || Str::lower($term->name) === 'all') {
+                                $matchedTaxonomies[$term->taxonomy->name] = true;
+                                continue;
+                            }
+
+                            /*
+                             * Otherwise, check if the field matches
+                             */
+                            if ($term->taxonomy->mappings()->count()) {
+
+                                if (!Arr::exists($job_taxonomy_terms_matches, $term->taxonomy->name)) {
+                                    $job_taxonomy_terms_matches[$term->taxonomy->name] = [];
+                                    $job_taxonomy_terms[$term->taxonomy->name] = [];
                                 }
-                                /*logger(sprintf('checking taxo "%s" for term "%s" against mysgs value: "%s"',
-                                        $term->taxonomy->name, $termValue, print_r($mysgsValue_single, true))
-                                );*/
-                                if (!(Str::is($termValue, Str::lower($mysgsValue_single))
-                                    || (isset($term->config['aliases'])
-                                        && in_array( Str::lower($mysgsValue_single),
-                                            array_map('Str::lower', $term->config['aliases']))
-                                    )
-                                )) {
-                                    /*logger(sprintf('rule "%s": term "%s" did not match with "%s"',
-                                            $rule->id, $termValue, $mysgsValue_single)
-                                    );*/
-                                    $matched = false;
-                                } else {
-                                    $matchedTaxonomies[$term->taxonomy->name] = true;
 
-                                    /*logger(sprintf('rule "%s": term "%s" matched with "%s"',
-                                            $rule->id, $termValue, $mysgsValue_single)
-                                    );*/
+                                foreach ($term->taxonomy->mappings as $mapping) {
+                                    //logger('rule comparison using mapping '.$mapping->id);
+                                    /**
+                                     * retrieve value from mysgs response with help of taxonomy
+                                     */
+                                    list($mysgsValue, $raw) = $memoizeMapper($job, $mapping);
 
-                                    if (!in_array($term->name, $job_taxonomy_terms_matches[$term->taxonomy->name])) {
-                                        $job_taxonomy_terms_matches[$term->taxonomy->name][] = $term->name;
+                                    $termValue = Str::lower($term->name);
+                                    $job_taxonomy_terms[$term->taxonomy->name] = $raw;
+
+                                    /**
+                                     * compare retrieved value with this term
+                                     */
+                                    if (!is_array($mysgsValue)) {
+                                        //logger('converting mysgs value to array');
+                                        $mysgsValue = [$mysgsValue];
+                                    }
+
+                                    foreach ($mysgsValue as $index => $mysgsValue_single) {
+                                        if (empty($mysgsValue_single)) {
+                                            continue;
+                                        }
+                                        /*logger(sprintf('checking taxo "%s" for term "%s" against mysgs value: "%s"',
+                                                $term->taxonomy->name, $termValue, print_r($mysgsValue_single, true))
+                                        );*/
+                                        if (!(Str::is($termValue, Str::lower($mysgsValue_single))
+                                            || (isset($term->config['aliases'])
+                                                && in_array(Str::lower($mysgsValue_single),
+                                                    array_map('Str::lower', $term->config['aliases']))
+                                            )
+                                        )) {
+                                            /*logger(sprintf('rule "%s": term "%s" did not match with "%s"',
+                                                    $rule->id, $termValue, $mysgsValue_single)
+                                            );*/
+                                            $matched = false;
+                                        } else {
+                                            $matchedTaxonomies[$term->taxonomy->name] = true;
+
+                                            /*logger(sprintf('rule "%s": term "%s" matched with "%s"',
+                                                    $rule->id, $termValue, $mysgsValue_single)
+                                            );*/
+
+                                            if (!in_array($term->name, $job_taxonomy_terms_matches[$term->taxonomy->name])) {
+                                                $job_taxonomy_terms_matches[$term->taxonomy->name][] = $term->name;
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
+
+                        $taxonomyMatch = true;
+                        //logger('$matchedTaxonomies: ' . print_r($matchedTaxonomies, true));
+                        foreach ($matchedTaxonomies as $taxonomy => $state) {
+                            $taxonomyMatch &= $state;
+                        }
+
+                        if ($matched || $taxonomyMatch) {
+                            $clientRules[] = $rule;
+                            logger(sprintf('rule %s added, matched=%b  taxoMatch=%b ',
+                                    $rule->id, $matched, $taxonomyMatch)
+                            );
+                        } else {
+                            logger(sprintf('rule %s dropped, matched=%b  taxoMatch=%b ',
+                                    $rule->id, $matched, $taxonomyMatch)
+                            );
+                        }
                     }
-                }
 
-                $taxonomyMatch = true;
-                //logger('$matchedTaxonomies: ' . print_r($matchedTaxonomies, true));
-                foreach ($matchedTaxonomies as $taxonomy => $state) {
-                    $taxonomyMatch &= $state;
-                }
+                    /*
+                     * Fill in any unused taxonomy, for display in job identification section
+                     */
+                    /** @var Taxonomy $taxonomy */
+                    foreach ($client->child_taxonomies as $taxonomy) {
+                        if (!in_array($taxonomy->name, $job_taxonomy_terms) && $taxonomy->mappings()->count()) {
 
-                if ($matched || $taxonomyMatch) {
-                    $clientRules[] = $rule;
-                    logger(sprintf('rule %s added, matched=%b  taxoMatch=%b ',
-                            $rule->id, $matched, $taxonomyMatch)
-                    );
-                } else {
-                    logger(sprintf('rule %s dropped, matched=%b  taxoMatch=%b ',
-                            $rule->id, $matched, $taxonomyMatch)
-                    );
-                }
-            }
+                            foreach ($taxonomy->mappings as $mapping) {
+                                //logger('fill using mapping '.$mapping->id);
+                                list($mysgsValue, $raw) = $memoizeMapper($job, $mapping);
 
-            /*
-             * Fill in any unused taxonomy, for display in job identification section
-             */
-            /** @var Taxonomy $taxonomy */
-            foreach ($client->child_taxonomies as $taxonomy) {
-                if (!in_array($taxonomy->name, $job_taxonomy_terms) && $taxonomy->mappings()->count()) {
+                                if ($mysgsValue) {
 
-                    foreach ($taxonomy->mappings as $mapping) {
-                        //logger('fill using mapping '.$mapping->id);
-                        list($mysgsValue, $raw) = $memoizeMapper($job, $mapping);
+                                    if (!is_array($mysgsValue)) {
+                                        //logger('converting mysgs value to array');
+                                        $mysgsValue = [$mysgsValue];
+                                    }
 
-                        if ($mysgsValue) {
+                                    foreach ($mysgsValue as $index => $mysgsValue_single) {
+                                        //logger('mysgsvalue:'.print_r($mysgsValue_single, true));
+                                        if (!isset($job_taxonomy_terms[$taxonomy->name]) || !in_array($mysgsValue_single, $job_taxonomy_terms[$taxonomy->name])) {
+                                            $job_taxonomy_terms[$taxonomy->name][] = $mysgsValue_single;
+                                        }
+                                        $job_taxonomy_terms_extra[$taxonomy->name][$mapping->slug.'/'.$mapping->field_path] = $mysgsValue_single;
+                                    }
 
-                            if (!is_array($mysgsValue)) {
-                                //logger('converting mysgs value to array');
-                                $mysgsValue = [$mysgsValue];
-                            }
-
-                            foreach ($mysgsValue as $index => $mysgsValue_single) {
-                                //logger('mysgsvalue:'.print_r($mysgsValue_single, true));
-                                $job_taxonomy_terms[$taxonomy->name] = $mysgsValue_single;
+                                }
                             }
 
                         }
                     }
 
+                    $metadata->job_taxonomy = $job_taxonomy_terms;
+                    $metadata->job_taxonomy_extra = $job_taxonomy_terms_extra;
+                    $metadata->matched_taxonomy = $job_taxonomy_terms_matches;
+
+                    $job->metadata = $metadata;
+                    $job->save();
                 }
-            }
 
-            $metadata->job_taxonomy = $job_taxonomy_terms;
-            $metadata->matched_taxonomy = $job_taxonomy_terms_matches;
+                logger('filtering done in ' . microtime(true) - $start);
 
-            $job->metadata = $metadata;
-            $job->save();
+                return $clientRules;
+            });
         }
 
-        return $clientRules;
+        return $cached_rules;
+
     }
 
 }
