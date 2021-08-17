@@ -23,23 +23,33 @@
                                      :class="job.metadata.matched_taxonomy[item] && job.metadata.matched_taxonomy[item].length ?
                                      'b rounded-tr-lg':'rounded-r-lg'"
                                      title="MySGS value">
-                                    <div>
+                                    <div class="flex flex-row">
                                         <template v-if="typeof values == 'object'">
-                                            <div class="w-32" v-for="value in values.slice(0, limit)"
-                                                 :title="'MySGS value' + (value.length < 20 ? '' : ': ' +value)">
-                                                <span v-if="values.length > 1">- </span>
-                                                {{ shorten(value) }}
+                                            <div class="flex flex-col">
+                                                <div class="w-32" v-for="value in values.slice(0, limit)"
+                                                     :title="'MySGS value' + (value.length < 20 ? '' : ': ' +value)">
+                                                    <span v-if="values.length > 1">- </span>
+                                                    {{ shorten(value) }}
+                                                </div>
                                             </div>
 
                                             <div>
-                                                <button v-if="values.length > 1 & limit === 1" @click="limit=12">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                                                <button class="" v-if="values.length > 1 & limit === 1"
+                                                        @click="limit=12">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                                                         viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd"
+                                                              d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                                              clip-rule="evenodd"/>
                                                     </svg>
                                                 </button>
-                                                <button v-if="values.length > 1 && limit !== 1" @click="limit=1">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clip-rule="evenodd" />
+                                                <button class="" v-if="values.length > 1 && limit !== 1"
+                                                        @click="limit=1">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                                                         viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd"
+                                                              d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z"
+                                                              clip-rule="evenodd"/>
                                                     </svg>
                                                 </button>
                                             </div>
