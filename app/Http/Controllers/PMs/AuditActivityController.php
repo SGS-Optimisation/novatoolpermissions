@@ -81,14 +81,18 @@ class AuditActivityController extends Controller
 
                     if ($pivoted_old['properties']) {
                         foreach ($pivoted_old['properties'] as $piv) {
-                            $tax_old = Term::with('taxonomy')->where('id', $piv['term_id'])->first();
-                            $tax_name[$tax_old->taxonomy->name]['old'][] = $tax_old->name;
+                            if (isset($piv['term_id'])) {
+                                $tax_old = Term::with('taxonomy')->where('id', $piv['term_id'])->first();
+                                $tax_name[$tax_old->taxonomy->name]['old'][] = $tax_old->name;
+                            }
                         }
                     }
                 }
                 foreach ($pivoted['properties'] as $piv) {
-                    $tax = Term::with('taxonomy')->where('id', $piv['term_id'])->first();
-                    $tax_name[$tax->taxonomy->name]['new'][] = $tax->name;
+                    if (isset($piv['term_id'])) {
+                        $tax = Term::with('taxonomy')->where('id', $piv['term_id'])->first();
+                        $tax_name[$tax->taxonomy->name]['new'][] = $tax->name;
+                    }
                 }
 
             }

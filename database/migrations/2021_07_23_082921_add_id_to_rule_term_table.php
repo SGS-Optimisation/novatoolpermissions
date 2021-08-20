@@ -19,6 +19,8 @@ class AddIdToRuleTermTable extends Migration
                 $table->increments('id');
             });
         }
+
+        Artisan::call('import:rules_audit');
     }
 
     /**

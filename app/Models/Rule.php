@@ -96,6 +96,8 @@ class Rule extends Model implements Recordable
         'detached',
     ];
 
+    protected $appends = ['dagId'];
+
     //protected $with = ['terms'];
 
     /**
@@ -265,5 +267,10 @@ class Rule extends Model implements Recordable
         $this->timestamps = false;
 
         $this->save();
+    }
+
+    public function getDagIdAttribute()
+    {
+        return str_pad($this->id, 6, '0', STR_PAD_LEFT) . 'D';
     }
 }
