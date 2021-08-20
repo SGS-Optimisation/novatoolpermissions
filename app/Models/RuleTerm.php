@@ -15,9 +15,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property int $id
  * @property int $taxonomy_id
  */
-class RuleTerm extends Pivot implements Recordable
+class RuleTerm extends Pivot // implements Recordable
 {
-    use \Altek\Accountant\Recordable, \Altek\Eventually\Eventually;
+    //use \Altek\Accountant\Recordable, \Altek\Eventually\Eventually;
 
     protected $table = 'rule_term';
 
@@ -30,7 +30,7 @@ class RuleTerm extends Pivot implements Recordable
     public $incrementing = true;
     public $timestamps = false;
 
-    protected $recordableEvents = [
+    /*protected $recordableEvents = [
         'created',
         'updated',
         'restored',
@@ -40,7 +40,7 @@ class RuleTerm extends Pivot implements Recordable
         'attached',
         'detached',
         'forceDeleted',
-    ];
+    ];*/
 
 
 }

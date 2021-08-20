@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use OwenIt\Auditing\Models\Audit;
 use Laravel\Jetstream\Jetstream;
+
 //use Inertia\Inertia;
 
 class AuditActivityController extends Controller
@@ -29,69 +30,84 @@ class AuditActivityController extends Controller
 
         $rule = Rule::withTrashed()->find($id);
         //$all =  $rule->audits()->orderBy('created_at', 'desc')->with('user')->get();
-        $rules_relation = $rule->ledgers()->whereIn('event', [
+
+        $content_ledgers = $rule->ledgers()->whereIn('event', [
+            'created',
+            'updated',
+        ])->with('user')
+            ->get();
+
+        $data = [];
+        $content_changes = [];
+        foreach ($content_ledgers as $index => $ledger) {
+            foreach ($ledger->properties as $key => $value) {
+                // dd($key2);
+                if (in_array($key, $ledger->modified)
+                    && $ledger->event == 'updated'
+                    && ($key == "content" || $key == "state" || $key == "name" || $key == "metadata")) {
+                    $content_changes[$index][$key] = [
+                        "new" => $value,
+                        "old" => isset($content_changes[$index - 1][$key]) ? $content_changes[$index - 1][$key]['new'] : ""
+                    ];
+                } else {
+                    $content_changes[$index][$key] = ["new" => $value, "old" => ""];
+                }
+            }
+            $data[] = [
+                "user_name" => ($ledger->user) ? $ledger->user->name : "",
+                "created_at" => $ledger->created_at,
+                "tax_names" => "",
+                "ip_address" => $ledger->ip_address,
+                "audit" => $content_changes[$index],
+                //"r_id" => $ledger->id
+            ];
+
+
+        }
+
+        $relations_ledgers = $rule->ledgers()->whereIn('event', [
             'attached',
             'detached',
             'synced'
         ])->with('user')
-        ->get();
-
-        $rules = $rule->ledgers()->whereIn('event', [
-            'created',
-            'updated',
-            'synced'
-        ])->with('user')
             ->get();
 
-        $data=[];
-        $new_key=0;
-        $audit_new1=[];
-        foreach($rules as $key1 =>$rule){
-                foreach($rule->properties as $key=> $pro){
-                    // dd($key2);
-                    if(in_array($key,$rule->modified) && $rule->event=='updated' && ($key=="content" || $key=="state" || $key=="name" || $key=="metadata")){
-                        $audit_new1[$key1][$key]= ["new"=>$pro,"old"=>isset($audit_new1[$key1-1][$key])?$audit_new1[$key1-1][$key]['new']:""];
-                    }else{
-                        $audit_new1[$key1][$key] = ["new" => $pro, "old" => ""];
-                    }
-                }
-                $new_key++;
-            $data[] = ["user_name"=>($rule->user)?$rule->user->name:"","created_at"=>$rule->created_at,"tax_names"=>"","ip_address"=>$rule->ip_address,"audit"=>$audit_new1[$key1],"r_id"=>$rule->id];
+        foreach ($relations_ledgers as $index => $ledger) {
+            $tax_name = [];
+            $pivoted = $ledger->getPivotData();
+            if ($pivoted && $pivoted['properties'] != "") {
+                if ($index != 0) {
+                    $pivoted_old = $relations_ledgers[($index) - 1]->getPivotData();
 
-
-        }
-       foreach($rules_relation as $key => $rt){
-            $tax_name =[];
-            $pivoted = $rt->getPivotData();
-            if($pivoted && $pivoted['properties']!=""){
-                if($rt->event=='attached' ) {
-                    if ($key != 0) {
-                        $pivoted_old = $rules_relation[($key) - 1]->getPivotData();
-                        if ($pivoted_old['properties']) {
-                            foreach ($pivoted_old['properties'] as $piv) {
-
-                                $tax_old = Term::with('taxonomy')->where('id', $piv['term_id'])->first();
-                                $tax_name[$tax_old->taxonomy->name]['old'][] = $tax_old->name;
-                            }
+                    if ($pivoted_old['properties']) {
+                        foreach ($pivoted_old['properties'] as $piv) {
+                            $tax_old = Term::with('taxonomy')->where('id', $piv['term_id'])->first();
+                            $tax_name[$tax_old->taxonomy->name]['old'][] = $tax_old->name;
                         }
                     }
-                    foreach ($pivoted['properties'] as $piv) {
-                        $tax = Term::with('taxonomy')->where('id', $piv['term_id'])->first();
-                        $tax_name[ $tax->taxonomy->name]['new'][] = $tax->name;
-
-                    }
-
                 }
+                foreach ($pivoted['properties'] as $piv) {
+                    $tax = Term::with('taxonomy')->where('id', $piv['term_id'])->first();
+                    $tax_name[$tax->taxonomy->name]['new'][] = $tax->name;
+                }
+
             }
-            if($tax_name) {
-                $data[] = ["user_name" => ($rt->user)?$rt->user->name:"", "created_at" => $rt->created_at, "tax_names" => $tax_name, "ip_address" => $rt->ip_address, "r_id" => $rt->id];
+
+            if ($tax_name) {
+                $data[] = [
+                    "user_name" => ($ledger->user) ? $ledger->user->name : "",
+                    "created_at" => $ledger->created_at,
+                    "tax_names" => $tax_name,
+                    "ip_address" => $ledger->ip_address,
+                    //"r_id" => $ledger->id
+                ];
             }
         }
- return Jetstream::inertia()->render($request, 'PM/AuditActivity', [
-          'team' => $request->user()->currentTeam,
-          'clientAccount' => $client_account,
-          'audits' => $data,
-          'ruleId'=>$id,
+        return Jetstream::inertia()->render($request, 'PM/AuditActivity', [
+            'team' => $request->user()->currentTeam,
+            'clientAccount' => $client_account,
+            'audits' => $data,
+            'ruleId' => $id,
 
         ]);
     }
