@@ -171,7 +171,7 @@ class RuleController extends Controller
      */
     public function edit(Request $request, $client_account_slug, $id)
     {
-        $rule = Rule::withTrashed()->find($id);
+        $rule = Rule::withTrashed()->with(['terms'])->find($id);
 
         $this->authorize('update', $rule);
 
@@ -193,6 +193,7 @@ class RuleController extends Controller
                     'ul', 'ol', 'li',
                     'blockquote', 'pre',
                     'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                    'table', 'thead', 'tbody', 'th', 'tr', 'td',
                 ]
             )
         );

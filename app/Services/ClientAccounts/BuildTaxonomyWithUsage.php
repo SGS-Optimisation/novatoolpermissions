@@ -31,7 +31,7 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
             foreach ($top_taxonomy->taxonomies()
                          ->whereHas('client_accounts', function ($query) use ($client_account) {
                              return $query->whereIn('id', [$client_account->id]);
-                         })->with('mapping')
+                         })->with('mappings')
                          ->get() as $taxonomy) {
 
                 $this->taxonomy_hierarchy[$top_taxonomy->name]['children'][] = static::processTaxonomy($taxonomy);

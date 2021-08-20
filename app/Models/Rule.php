@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use App\States\HasStates;
@@ -12,7 +11,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use Altek\Accountant\Contracts\Recordable;
+
 
 /**
  * App\Models\Rule
@@ -58,9 +58,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @method static Builder|Rule whereState($value)
  * @method static Builder|Rule forClient(\App\Models\ClientAccount $clientAccount)
  */
-class Rule extends Model implements Auditable
+class Rule extends Model implements Recordable
 {
-    use HasFactory, SoftDeletes, HasStates, \OwenIt\Auditing\Auditable,
+    use HasFactory, SoftDeletes, HasStates, \Altek\Accountant\Recordable, \Altek\Eventually\Eventually,
         \Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 
@@ -84,6 +84,19 @@ class Rule extends Model implements Auditable
         'state' => RuleState::class,
 
     ];
+    protected $recordableEvents = [
+        'created',
+        'updated',
+        'restored',
+        'deleted',
+        'synced',
+        'forceDeleted',
+        'existingPivotUpdated',
+        'attached',
+        'detached',
+    ];
+
+    protected $appends = ['dagId'];
 
     //protected $with = ['terms'];
 
@@ -124,7 +137,7 @@ class Rule extends Model implements Auditable
             'taxonomy' => function ($query) {
                 $query->orderBy('name', 'asc');
             }
-        ]);
+        ])->using(RuleTerm::class);
     }
 
     public function users()
@@ -254,5 +267,10 @@ class Rule extends Model implements Auditable
         $this->timestamps = false;
 
         $this->save();
+    }
+
+    public function getDagIdAttribute()
+    {
+        return str_pad($this->id, 6, '0', STR_PAD_LEFT) . 'D';
     }
 }

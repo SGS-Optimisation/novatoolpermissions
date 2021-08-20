@@ -12,10 +12,11 @@
                                 :name="topTaxonomy.name"
                                 :selected="index == 0"
                             >
-                                <taxonomy-definition :parent-taxonomy="topTaxonomy"
-                                                     :taxonomy-hierarchy="taxonomyHierarchy"
-                                                     :client-account="clientAccount">
-                                </taxonomy-definition>
+                                <child-taxonomies-section
+                                    :parent-taxonomy="topTaxonomy"
+                                    :taxonomy-hierarchy="taxonomyHierarchy"
+                                    :client-account="clientAccount">
+                                </child-taxonomies-section>
                             </tab>
                         </tabs>
 
@@ -38,7 +39,7 @@ import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import Tabs from "@/Components/Tabs";
 import Tab from "@/Components/Tab";
-import TaxonomyDefinition from "@/Components/PM/ClientAccount/TaxonomyDefinition";
+import ChildTaxonomiesSection from "@/Components/PM/ClientAccount/ChildTaxonomiesSection";
 
 export default {
     title() {
@@ -62,7 +63,7 @@ export default {
         JetLabel,
         Tabs,
         Tab,
-        TaxonomyDefinition
+        ChildTaxonomiesSection
     },
 }
 </script>

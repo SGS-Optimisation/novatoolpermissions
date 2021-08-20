@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Altek\Accountant\Contracts\Recordable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\SoftDeletes;
@@ -34,9 +35,9 @@ use Jenssegers\Mongodb\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Term whereDeletedAt($value)
  * @method static \Database\Factories\TermFactory factory(...$parameters)
  */
-class Term extends Model
+class Term extends Model implements Recordable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, \Altek\Accountant\Recordable, \Altek\Eventually\Eventually;
 
     /**
      * The attributes that aren't mass assignable.
@@ -56,6 +57,17 @@ class Term extends Model
         'config' => 'array',
     ];
 
+    protected $recordableEvents = [
+        'created',
+        'updated',
+        'restored',
+        'synced',
+        'deleted',
+        'forceDeleted',
+        'existingPivotUpdated',
+        'attached',
+        'detached',
+    ];
     protected $with = ['taxonomy'];
 
     /**
@@ -80,7 +92,7 @@ class Term extends Model
      */
     public function rules()
     {
-        return $this->belongsToMany(\App\Models\Rule::class);
+        return $this->belongsToMany(\App\Models\Rule::class)->using(RuleTerm::class);
     }
 
     public function getNameAttribute()
