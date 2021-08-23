@@ -67,7 +67,7 @@ class RuleFilter
                     /*
                      *  Match rules against job's metadata
                      */
-                    foreach ($client->rules()->isPublished()->get() as $rule) {
+                    foreach ($client->rules()->with(['terms'])->isPublished()->get() as $rule) {
                         $matched = true;
                         $matchedTaxonomies = [];
 

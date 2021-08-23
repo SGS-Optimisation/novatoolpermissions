@@ -11,13 +11,15 @@
         </div>
         <div class="flex items-center justify-between">
             <div class="description">
-                <h2 @click="detailsOpen = !detailsOpen; $emit('toggle')" class="cursor-pointer text-xl font-bold">
-                    {{ rule.name }}</h2>
+                <h2 @click="detailsOpen = !detailsOpen; $emit('toggle')" class="cursor-pointer">
+                    <span class="text-xs" title="Rule ID">{{rule.dagId}}</span>
+                    <span class="text-xl font-bold">{{ rule.name }}</span>
+                </h2>
 
-                <div class="flex">
+                <div class="flex flex-row">
                     <a class="inline-flex border-dashed border-b border-gray-500 items-center px-1 pt-1 text-sm font-medium leading-5 text-gray-900 focus:outline-none transition duration-150 ease-in-out"
                         :href="route('pm.client-account.rules.edit',  {clientAccount: clientAccount.slug, id: rule.id })">
-                        <div class="flex-shrinkalign-bottom text-xs pr-1"
+                        <div class="flex-shrink align-bottom text-xs pr-1"
                              :title="date()">
                             Last updated {{ humanDate() }}
                         </div>
@@ -25,6 +27,13 @@
                             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                         </svg>
                     </a>
+                    <!--<template v-if="rule.users">
+                        <div v-for="user in rule.users" class="text-xs text-gray-600 bg-green-200 rounded-full px-1 m-1">
+                            <span class="inline-block align-baseline cursor-pointer" :title="user.name + ' is a contributor for this rule'">
+                                {{user.given_name[0]}}{{user.surname[0]}}
+                            </span>
+                        </div>
+                    </template>-->
                     <div v-if="rule.flagged">
                         <a @click="showFlagReason" class="cursor-pointer"><i class="text-red-700">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

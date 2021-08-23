@@ -118,7 +118,10 @@
             <template #title>
                 <div v-if="currentRule" class="flex justify-between">
                     <div class="flex-grow border-gray-200 border-b-2 mr-6">
-                        <p class="font-bold">{{currentRule.name}}</p>
+                        <p class="font-bold">
+                            <span class="text-xs" title="Rule ID">[{{currentRule.dagId}}]</span>
+                            {{currentRule.name}}
+                        </p>
                     </div>
                     <jet-secondary-button @click.native="closeRuleModal">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -161,8 +164,9 @@
 
         <!-- Rule Flagging Modal -->
         <jet-dialog-modal :show="isFlaggingRule" @close="closeFlagModal">
-            <template #title>
-                <span v-if="currentFlaggingRule">Flag rule {{ currentFlaggingRule.name }}</span>
+            <template #title v-if="currentFlaggingRule">
+                <span>Flag rule {{ currentFlaggingRule.name }}</span>
+                <br><span class="text-xs">Rule ID: {{ currentFlaggingRule.dagId }}</span>
             </template>
             <template #content>
                 <div class="mt-4">

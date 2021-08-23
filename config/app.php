@@ -195,6 +195,8 @@ return [
          * MongoDB service provider
          */
         Jenssegers\Mongodb\MongodbServiceProvider::class,
+        Altek\Accountant\AccountantServiceProvider::class,
+
     ],
 
     /*

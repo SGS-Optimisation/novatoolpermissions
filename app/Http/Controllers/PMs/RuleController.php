@@ -81,7 +81,7 @@ class RuleController extends Controller
     {
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
 
-        $term = $request->query('term');
+        $search_term = $request->query('term');
 
         $ruleRepo = new RuleRepository($client_account);
 
@@ -90,9 +90,9 @@ class RuleController extends Controller
         return Jetstream::inertia()->render($request, 'ClientAccount/ListRules', [
             'team' => $request->user()->currentTeam,
             'clientAccount' => $client_account,
-            'rules' => $ruleRepo->all($term),
+            'rules' => $ruleRepo->all($search_term),
             'states' => (new Rule)->getStatesFor('state'),
-            'search' => optional($term)->name,
+            'search' => optional($search_term)->name,
             'rootTaxonomies' => $client_account->root_taxonomies,
         ]);
     }
@@ -171,7 +171,7 @@ class RuleController extends Controller
      */
     public function edit(Request $request, $client_account_slug, $id)
     {
-        $rule = Rule::withTrashed()->find($id);
+        $rule = Rule::withTrashed()->with(['terms'])->find($id);
 
         $this->authorize('update', $rule);
 
@@ -193,6 +193,7 @@ class RuleController extends Controller
                     'ul', 'ol', 'li',
                     'blockquote', 'pre',
                     'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                    'table', 'thead', 'tbody', 'th', 'tr', 'td',
                 ]
             )
         );
@@ -201,6 +202,7 @@ class RuleController extends Controller
         return Jetstream::inertia()->render($request, 'ClientAccount/EditRule', array_merge([
             'team' => $request->user()->currentTeam,
             'rule' => $rule,
+            'contributors' => $rule->users,
             //'states' => $rule->getStatesFor('state')
             'states' => $rule->state->transitionableStates(),
             'allowedStates' => static::buildStates($rule),

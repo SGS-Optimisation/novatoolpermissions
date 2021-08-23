@@ -10,6 +10,8 @@
     "require": {
         "php": "^8.0",
         "ext-json": "*",
+        "altek/accountant": "^3.0",
+        "altek/eventually": "^2.0",
         "awobaz/compoships": "^2.0",
         "barryvdh/laravel-ide-helper": "^2.9",
         "binarytorch/larecipe": "^2.4",
@@ -40,6 +42,7 @@
         "socialiteproviders/microsoft-azure": "^4.0",
         "softcreatr/jsonpath": "^0.5 || ^0.7",
         "spatie/laravel-model-states": "^2.1",
+        "staudenmeir/eloquent-has-many-deep": "^1.7",
         "tightenco/ziggy": "^0.9.4",
         "wehaa/custom-links": "^0.1.1"
     },

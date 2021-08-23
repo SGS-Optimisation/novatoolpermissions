@@ -12,6 +12,9 @@
                 <jet-dropdown-link v-if="clientAccount" :href="route('pm.client-account.rules.create', {clientAccount: clientAccount.slug })">
                     Rule
                 </jet-dropdown-link>
+                <jet-dropdown-link v-if="clientAccount" :href="route('pm.client-account.teams.create', {clientAccount: clientAccount.slug })">
+                    Team
+                </jet-dropdown-link>
                 <jet-dropdown-link v-if="$page.user_permissions.createClientAccounts" :href="route('pm.client-account.create')">
                     Client Account
                 </jet-dropdown-link>

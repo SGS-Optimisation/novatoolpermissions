@@ -240,7 +240,8 @@ export default {
                                 return true;
                             }
                             return rule.name.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
-                                || rule.content.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1;
+                                || rule.content.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
+                                || rule.dagId.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1;
                         }),
                         this.filterObject['filterByTaxonomyTerm']
                     ),

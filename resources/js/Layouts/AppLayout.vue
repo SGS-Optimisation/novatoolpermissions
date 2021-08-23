@@ -23,7 +23,7 @@
                                     Project Manager
                                 </jet-nav-link>
                                 <jet-nav-link v-if="$page.user_permissions.accessStats"
-                                              :href="route('stats.index')" :active="route().current('pm.landing')">
+                                              :href="route('stats.index')" :active="route().current('stats.index')">
                                     Stats
                                 </jet-nav-link>
                                 <a v-if="$page.user_permissions.accessBackend"
@@ -93,10 +93,10 @@
                                                 Team Settings
                                             </jet-dropdown-link>
 
-                                            <jet-dropdown-link :href="route('teams.create')"
+<!--                                            <jet-dropdown-link :href="route('teams.create')"
                                                                v-if="$page.jetstream.canCreateTeams">
                                                 Create New Team
-                                            </jet-dropdown-link>
+                                            </jet-dropdown-link>-->
 
                                             <div class="border-t border-gray-100"></div>
 

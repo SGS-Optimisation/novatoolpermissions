@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use App\States\HasStates;
@@ -12,7 +11,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use Altek\Accountant\Contracts\Recordable;
+
 
 /**
  * App\Models\Rule
@@ -58,9 +58,10 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @method static Builder|Rule whereState($value)
  * @method static Builder|Rule forClient(\App\Models\ClientAccount $clientAccount)
  */
-class Rule extends Model implements Auditable
+class Rule extends Model implements Recordable
 {
-    use HasFactory, SoftDeletes, HasStates, \OwenIt\Auditing\Auditable;
+    use HasFactory, SoftDeletes, HasStates, \Altek\Accountant\Recordable, \Altek\Eventually\Eventually,
+        \Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 
     /**
@@ -83,8 +84,21 @@ class Rule extends Model implements Auditable
         'state' => RuleState::class,
 
     ];
+    protected $recordableEvents = [
+        'created',
+        'updated',
+        'restored',
+        'deleted',
+        'synced',
+        'forceDeleted',
+        'existingPivotUpdated',
+        'attached',
+        'detached',
+    ];
 
-    protected $with = ['terms'];
+    protected $appends = ['dagId'];
+
+    //protected $with = ['terms'];
 
     /**
      * @param  Builder  $query
@@ -94,8 +108,8 @@ class Rule extends Model implements Auditable
      */
     public function scopeIsOmnipresent(Builder $query)
     {
-        return $query->whereDoesntHave('accountStructureTerms', function(Builder $termQuery){
-            $termQuery->where('name',  '!=', 'ANY');
+        return $query->whereDoesntHave('accountStructureTerms', function (Builder $termQuery) {
+            $termQuery->where('name', '!=', 'ANY');
         });
     }
 
@@ -123,7 +137,82 @@ class Rule extends Model implements Auditable
             'taxonomy' => function ($query) {
                 $query->orderBy('name', 'asc');
             }
-        ]);
+        ])->using(RuleTerm::class);
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class)
+            ->as('contributor')
+            ->withPivot(['metadata'])
+            ->withTimestamps();
+    }
+
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class)
+            ->as('contributorTeam')
+            ->withPivot(['metadata'])
+            ->withTimestamps();
+    }
+
+    /**
+     * Alias for users many-many relationship
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany*
+     */
+    public function contributors()
+    {
+        return $this->users();
+    }
+
+    /**
+     * Alias for teams many-many relationship
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany*
+     */
+    public function contributorTeams()
+    {
+        return $this->teams();
+    }
+
+    public function teamsViaUsers()
+    {
+        /*return $this->clientAccount->teams()->whereHas('users', function (Builder $query) {
+            return $query->whereIn('users.id', $this->users()->select('id')->get()->pluck('id')->all());
+        });*/
+
+        return $this->hasManyDeepFromRelations($this->users(), (new User)->teams())
+            ->join('rules', 'rules.id', '=', 'rule_user.rule_id')
+            ->whereRaw('rules.client_account_id=teams.client_account_id')
+            ->distinct()
+            //->whereRaw('teams.client_account_id=rules.client_account_id')
+        ;
+    }
+
+    /**
+     * TODO: merge this query into teams() relationship
+     * @return \Staudenmeir\EloquentHasManyDeep\HasManyDeep
+     */
+    public function teamsLeaders()
+    {
+        /*return $this->clientAccount->teams()->whereHas('users', function (Builder $query) {
+            return $query->whereIn('users.id', $this->users()->select('id')->get()->pluck('id')->all());
+        });*/
+
+        return $this->hasManyDeepFromRelations($this->users(), (new User)->ownedTeams())
+            ->join('rules', 'rules.id', '=', 'rule_user.rule_id')
+            ->whereRaw('rules.client_account_id=teams.client_account_id')
+            ->distinct()
+            //->whereRaw('teams.client_account_id=rules.client_account_id')
+        ;
+    }
+
+    /**
+     * Alias for teams relationship
+     * @return Builder|\Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function contributingTeams()
+    {
+        return $this->teamsViaUsers();
     }
 
     /**
@@ -131,7 +220,7 @@ class Rule extends Model implements Auditable
      */
     public function accountStructureTerms()
     {
-        return $this->terms()->whereHas('taxonomy.parent', function(Builder $query){
+        return $this->terms()->whereHas('taxonomy.parent', function (Builder $query) {
             return $query->where('name', 'Account Structure');
         });
     }
@@ -178,5 +267,10 @@ class Rule extends Model implements Auditable
         $this->timestamps = false;
 
         $this->save();
+    }
+
+    public function getDagIdAttribute()
+    {
+        return str_pad($this->id, 6, '0', STR_PAD_LEFT) . 'D';
     }
 }
