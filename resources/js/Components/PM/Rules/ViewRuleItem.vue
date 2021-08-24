@@ -14,7 +14,7 @@
                 <div class="w-full">
                     <div class="cursor-pointer" @click="$emit('on-click-view', rule)">
                         <p class="text-sm font-bold text-gray-900">{{ rule.name }}</p>
-                        <p class="text-xs text-gray-700" v-html="excerpt(rule)"/>
+                        <p class="text-xs text-gray-700 break-words" v-html="excerpt(rule)"/>
                     </div>
                     <div class="text-xs text-gray-500 flex flex-row justify-between">
                         <div class="flex flex-row">
