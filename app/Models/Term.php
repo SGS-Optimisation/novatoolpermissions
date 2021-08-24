@@ -34,6 +34,8 @@ use Jenssegers\Mongodb\Eloquent\SoftDeletes;
  * @property-read int|null $rules_count
  * @method static \Illuminate\Database\Eloquent\Builder|Term whereDeletedAt($value)
  * @method static \Database\Factories\TermFactory factory(...$parameters)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Altek\Accountant\Models\Ledger[] $ledgers
+ * @property-read int|null $ledgers_count
  */
 class Term extends Model implements Recordable
 {

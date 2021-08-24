@@ -72,6 +72,8 @@ use Altek\Accountant\Contracts\Identifiable;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereMobilePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeLocation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereSurname($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Rule[] $rules
+ * @property-read int|null $rules_count
  */
 class User extends Authenticatable implements Identifiable
 {

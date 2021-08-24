@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\FlaggedRulesReminder;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Laravel\Nova\Trix\PruneStaleAttachments;
@@ -29,6 +30,10 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             //(new PruneStaleAttachments)();
         })->daily();
+
+        $schedule->call(function() {
+            (new FlaggedRulesReminder)();
+        })->weeklyOn(1, '8:00');
 
         $schedule->command('cache:clear')->lastDayOfMonth();
         $schedule->command('cache:warmup')->hourly();

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "93f072f7a158b57b22ab75e49859c0e1",
+    "content-hash": "6ec067964d9fcec1e4146e2787d3808a",
     "packages": [
         {
             "name": "altek/accountant",
@@ -12218,6 +12218,65 @@
                 }
             ],
             "time": "2021-07-27T01:56:02+00:00"
+        },
+        {
+            "name": "thomasjohnkane/snooze",
+            "version": "1.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thomasjohnkane/snooze.git",
+                "reference": "b938359560f66d1be63b00d318b05d41e1e13928"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thomasjohnkane/snooze/zipball/b938359560f66d1be63b00d318b05d41e1e13928",
+                "reference": "b938359560f66d1be63b00d318b05d41e1e13928",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~6.0 || ~7.0 || ~8.0",
+                "php": ">=7.2.5"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~4.0|| ~5.0 || ~6.0",
+                "phpunit/phpunit": "^9.0",
+                "timacdonald/log-fake": "^1.7"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Thomasjohnkane\\Snooze\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Thomasjohnkane\\Snooze\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas Kane",
+                    "email": "thomasjohnkane@gmail.com"
+                }
+            ],
+            "description": "Schedule future notifications and reminders in Laravel",
+            "keywords": [
+                "delayed notifications",
+                "notifications",
+                "scheduled",
+                "snooze"
+            ],
+            "support": {
+                "issues": "https://github.com/thomasjohnkane/snooze/issues",
+                "source": "https://github.com/thomasjohnkane/snooze/tree/1.0.6"
+            },
+            "time": "2021-06-28T00:49:35+00:00"
         },
         {
             "name": "tightenco/ziggy",

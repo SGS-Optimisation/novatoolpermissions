@@ -28,7 +28,7 @@ class EventServiceProvider extends ServiceProvider
 
         'App\\Events\\Rules\\Flagged' => [
             'App\\Listeners\\Rules\\RebuildRuleCache',
-            'App\\Listeners\\Rules\\NotifyRuleEditors',
+            'App\\Listeners\\Rules\\NotifyRuleContributor',
             'App\\Listeners\\Rules\\NotifyTeamOwner',
         ],
 

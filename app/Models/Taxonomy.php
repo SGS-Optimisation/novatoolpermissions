@@ -48,6 +48,8 @@ use Altek\Accountant\Contracts\Recordable;
  * @property-read int|null $mappings_count
  * @method static \Database\Factories\TaxonomyFactory factory(...$parameters)
  * @method static Builder|Taxonomy children()
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Altek\Accountant\Models\Ledger[] $ledgers
+ * @property-read int|null $ledgers_count
  */
 class Taxonomy extends Model implements Recordable
 {

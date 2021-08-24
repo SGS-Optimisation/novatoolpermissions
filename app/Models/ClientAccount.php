@@ -40,6 +40,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read int|null $child_taxonomies_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Taxonomy[] $root_taxonomies
  * @property-read int|null $root_taxonomies_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Team[] $teams
+ * @property-read int|null $teams_count
  */
 class ClientAccount extends Model
 {
