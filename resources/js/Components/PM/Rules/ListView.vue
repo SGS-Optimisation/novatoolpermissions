@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white shadow-md my-4 p-3 rounded relative" :data-rule-id="rule.id">
+    <div class="rule bg-white shadow-md my-4 p-3 rounded relative" :data-rule-id="rule.id">
         <div class="ribbon z-0">
             <span class="text-xxs text-white font-semibold text-center"
             :class="{

@@ -189,7 +189,7 @@ class RuleController extends Controller
                 $rule->content,
                 [
                     'p', 'img', 'a', 'span', 'br',
-                    'i', 'strong', 'b', 'u', 's',
+                    'i', 'strong', 'b', 'u', 's', 'em',
                     'ul', 'ol', 'li',
                     'blockquote', 'pre',
                     'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
