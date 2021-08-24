@@ -1,5 +1,5 @@
 <template>
-    <div class="rule bg-white shadow-md my-4 p-3 rounded relative" :data-rule-id="rule.id">
+    <div class="bg-white shadow-md my-4 p-3 rounded relative" :data-rule-id="rule.id">
         <div class="ribbon z-0">
             <span class="text-xxs text-white font-semibold text-center"
             :class="{
@@ -62,7 +62,7 @@
         </div>
 
         <!-- Collapsed content -->
-        <div class="w-full flex flex-col mt-4">
+        <div class="rule-content w-full flex flex-col mt-4">
             <hr class="mb-4 border-gray-300">
             <template v-if="detailsOpen">
                 <div v-html="rule.content"/>
