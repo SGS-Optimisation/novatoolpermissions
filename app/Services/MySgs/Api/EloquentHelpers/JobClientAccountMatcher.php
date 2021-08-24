@@ -62,7 +62,7 @@ class JobClientAccountMatcher
         } catch (\Exception $e) {
             logger($e->getMessage());
             $job_metadata->client_found = false;
-            $job_metadata->client = ['name' => $customer_name];
+            $job_metadata->client = ['name' => $customer_name ?? '[Unset]'];
         }
 
 

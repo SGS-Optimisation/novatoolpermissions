@@ -35,6 +35,10 @@ use Laravel\Jetstream\Team as JetstreamTeam;
  * @property int $client_account_id
  * @method static \Illuminate\Database\Eloquent\Builder|Team whereClientAccountId($value)
  * @method static Builder|Team personal($personal = true)
+ * @property string|null $region
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $rules
+ * @property-read int|null $rules_count
+ * @method static Builder|Team whereRegion($value)
  */
 class Team extends JetstreamTeam
 {

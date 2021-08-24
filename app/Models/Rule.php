@@ -57,6 +57,14 @@ use Altek\Accountant\Contracts\Recordable;
  * @method static Builder|Rule whereNotState(string $column, $states)
  * @method static Builder|Rule whereState($value)
  * @method static Builder|Rule forClient(\App\Models\ClientAccount $clientAccount)
+ * @property-read mixed $dag_id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Altek\Accountant\Models\Ledger[] $ledgers
+ * @property-read int|null $ledgers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Team[] $teams
+ * @property-read int|null $teams_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $contributors
+ * @property-read int|null $users_count
  */
 class Rule extends Model implements Recordable
 {
@@ -272,5 +280,11 @@ class Rule extends Model implements Recordable
     public function getDagIdAttribute()
     {
         return str_pad($this->id, 6, '0', STR_PAD_LEFT) . 'D';
+    }
+
+
+    public function getUrlAttribute()
+    {
+        return route('pm.client-account.rules.edit', [$this->clientAccount->slug, $this->id]);
     }
 }

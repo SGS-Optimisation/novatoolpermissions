@@ -14,6 +14,15 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  *
  * @property int $id
  * @property int $taxonomy_id
+ * @property int $rule_id
+ * @property int $term_id
+ * @method static \Illuminate\Database\Eloquent\Builder|RuleTerm newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|RuleTerm newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|RuleTerm query()
+ * @method static \Illuminate\Database\Eloquent\Builder|RuleTerm whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RuleTerm whereRuleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RuleTerm whereTermId($value)
+ * @mixin \Eloquent
  */
 class RuleTerm extends Pivot // implements Recordable
 {

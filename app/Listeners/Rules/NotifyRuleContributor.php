@@ -3,10 +3,12 @@
 namespace App\Listeners\Rules;
 
 use App\Events\Rules\Flagged;
+use App\Notifications\FlaggedRuleNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Notification;
 
-class NotifyRuleEditors
+class NotifyRuleContributor implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -26,6 +28,6 @@ class NotifyRuleEditors
      */
     public function handle(Flagged $event)
     {
-        //
+        Notification::send($event->rule->contributors, new FlaggedRuleNotification($event->rule));
     }
 }
