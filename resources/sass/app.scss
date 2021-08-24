@@ -22,3 +22,15 @@ button:focus {
 .focus\:shadow-outline:focus {
     box-shadow: none;
 }
+
+.rule {
+    ol, ul {
+        list-style: disc;
+        padding-top: 0;
+        padding-inline-start: 40px;
+    }
+
+    ol, .ql-indent-1 {
+        padding-inline-start: 40px;
+    }
+}
