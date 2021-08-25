@@ -10,15 +10,22 @@
                                        :terms="terms"
                                        @termSelected="filterByTaxonomyTerm"
                                        ref="taxonomySelectors"
-                    >
-                    </taxonomy-selector>
+                    />
                     <taxonomy-selector :taxonomy-name="'State'"
                                        :terms="states"
                                        @termSelected="filterByState"
                                        ref="stateSelector"
-                    >
-                    </taxonomy-selector>
-
+                    />
+                    <taxonomy-selector taxonomy-name="Contributor"
+                                       :terms="users"
+                                       @termSelected="filterByContributor"
+                                       ref="contributorSelector"
+                    />
+                    <taxonomy-selector taxonomy-name="Team"
+                                       :terms="allTeams"
+                                       @termSelected="filterByTeam"
+                                       ref="teamSelector"
+                    />
 
                     <filter-condition @on-change-filter-condition="onChangeFilterCondition"/>
 
@@ -77,7 +84,7 @@
 
                 <div v-for="(rule, ruleKey) in _.drop(filteredRules, ((page-1)*perPage)).slice(0, perPage)"
                      :key="ruleKey">
-                    <view-rule :rule="rule" :client-account="clientAccount" @updated="getRules"/>
+                    <view-rule :rule="rule" :client-account="clientAccount" :show-contributors="showContributors" @updated="getRules"/>
                 </div>
 
                 <div class="px-2 pb-16 pt-4">
@@ -111,10 +118,12 @@ export default {
     props: [
         'clientAccount',
         'team',
+        'allTeams',
         'rules',
         'search',
         'states',
         'rootTaxonomies',
+        'users',
     ],
 
     data() {
@@ -141,11 +150,30 @@ export default {
             filterOption: 'all',
             filterText: "",
             filterState: "",
+            filterContributor: "",
+            filterTeam: "",
             filterObject: {},
             taxonomies: {},
             termsByTaxonomies: {},
             filterCondition: true, // true = AND, false = OR
+
+            showContributors: false,
         }
+    },
+
+    mounted() {
+        this._keyListener = function(e) {
+            if (e.key === "l" && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault(); // present "Save Page" from getting triggered.
+                console.log('shortcut ctrl+ detected');
+                this.toggleContributorVisibility();
+            }
+        };
+
+        document.addEventListener('keydown', this._keyListener.bind(this));
+    },
+    beforeDestroy() {
+        document.removeEventListener('keydown', this._keyListener);
     },
 
     created() {
@@ -190,6 +218,14 @@ export default {
             return itemElem.terms.some(term => this.taxonomies[term.taxonomy.name] === term.name);
         };
 
+        this.filterObject['filterContributor'] = (itemElem) => {
+            return !this.filterContributor || itemElem.users.some(user => user.name === this.filterContributor);
+        };
+
+        this.filterObject['filterTeam'] = (itemElem) => {
+            return !this.filterTeam || itemElem.teams.some(team => team.name === this.filterTeam);
+        };
+
         this.filterObject['filterState'] = (itemElem) => {
             return !this.filterState || itemElem.state === this.filterState;
         };
@@ -231,23 +267,26 @@ export default {
 
     methods: {
 
+        toggleContributorVisibility() {
+            this.showContributors = !this.showContributors;
+        },
+
         getRules() {
-            this.filteredRules = _.filter(
-                _.filter(
-                    _.filter(
-                        _.filter(this.allRules, (rule) => {
-                            if (!this.filterText || this.filterText === '') {
-                                return true;
-                            }
-                            return rule.name.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
-                                || rule.content.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
-                                || rule.dagId.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1;
-                        }),
-                        this.filterObject['filterByTaxonomyTerm']
-                    ),
-                    this.filterObject[this.filterOption]),
-                this.filterObject['filterState'],
-            );
+            this.filteredRules =
+                _.filter(this.allRules, (rule) => {
+                    if (!this.filterText || this.filterText === '') {
+                        return true;
+                    }
+                    return rule.name.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
+                        || rule.content.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
+                        || rule.dagId.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1;
+                })
+                    .filter(this.filterObject['filterByTaxonomyTerm'])
+                    .filter(this.filterObject[this.filterOption])
+                    .filter(this.filterObject['filterState'])
+                    .filter(this.filterObject['filterContributor'])
+                    .filter(this.filterObject['filterTeam']);
+
             this.page = 1;
         },
 
@@ -262,6 +301,16 @@ export default {
 
         filterByState(dummy, state) {
             this.filterState = state ? state : '';
+            this.getRules();
+        },
+
+        filterByContributor(dummy, contributor) {
+            this.filterContributor = contributor ? contributor : '';
+            this.getRules();
+        },
+
+        filterByTeam(dummy, team) {
+            this.filterTeam = team ? team : '';
             this.getRules();
         },
 
@@ -283,9 +332,15 @@ export default {
             this.filterOption = 'all';
             this.filterText = '';
             this.filterState = '';
-            this.getRules();
+            this.filterTeam = '';
+            this.filterContributor = '';
+
             this.$refs.taxonomySelectors.forEach(selector => selector.clearSelected());
             this.$refs.stateSelector.clearSelected();
+            this.$refs.contributorSelector.clearSelected();
+            this.$refs.teamSelector.clearSelected();
+
+            this.getRules();
         }
     },
 
