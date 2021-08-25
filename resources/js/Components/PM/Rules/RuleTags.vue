@@ -31,6 +31,10 @@ export default {
         },
 
         sortedTaxonomyTerms() {
+            if(!this.taxonomyTerms || !this.taxonomyTerms.taxonomy) {
+                return this.taxonomyTerms;
+            }
+
             return _.orderBy(
                 this.taxonomyTerms,
                 [

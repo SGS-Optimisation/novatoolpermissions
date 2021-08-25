@@ -27,13 +27,13 @@
                             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                         </svg>
                     </a>
-                    <!--<template v-if="rule.users">
+                    <template v-if="showContributors && rule.users">
                         <div v-for="user in rule.users" class="text-xs text-gray-600 bg-green-200 rounded-full px-1 m-1">
                             <span class="inline-block align-baseline cursor-pointer" :title="user.name + ' is a contributor for this rule'">
                                 {{user.given_name[0]}}{{user.surname[0]}}
                             </span>
                         </div>
-                    </template>-->
+                    </template>
                     <div v-if="rule.flagged">
                         <a @click="showFlagReason" class="cursor-pointer"><i class="text-red-700">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -159,7 +159,18 @@ import NavLink from "@/Jetstream/NavLink";
 
 export default {
     name: "Rule",
-    props: ['rule', 'clientAccount'],
+    props: {
+        rule:{
+            type: Object,
+        },
+        clientAccount: {
+            type: Object
+        },
+        showContributors: {
+            type: Boolean,
+            default: false
+        },
+    },
 
     components: {
         RuleTags,

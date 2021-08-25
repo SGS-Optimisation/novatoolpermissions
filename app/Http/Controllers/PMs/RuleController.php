@@ -79,16 +79,18 @@ class RuleController extends Controller
      */
     public function index(Request $request, $client_account_slug)
     {
-        $client_account = ClientAccount::whereSlug($client_account_slug)->first();
+        $client_account = ClientAccount::whereSlug($client_account_slug)->with(['teams', 'users'])->first();
 
         $search_term = $request->query('term');
 
         $ruleRepo = new RuleRepository($client_account);
 
-        \Log::debug('rules index');
-
         return Jetstream::inertia()->render($request, 'ClientAccount/ListRules', [
             'team' => $request->user()->currentTeam,
+            'allTeams' => $client_account->teams->pluck('name', 'id')->sort()->values()->all(),
+            'users' => $client_account->users->pluck('name', 'id')
+                ->merge($client_account->teamOwners->pluck('name', 'id'))
+                ->sort()->values()->all(),
             'clientAccount' => $client_account,
             'rules' => $ruleRepo->all($search_term),
             'states' => (new Rule)->getStatesFor('state'),

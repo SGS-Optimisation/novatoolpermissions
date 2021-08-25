@@ -45,7 +45,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ClientAccount extends Model
 {
-    use HasFactory;
+    use HasFactory, \Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
     /**
      * The attributes that aren't mass assignable.
@@ -98,21 +98,40 @@ class ClientAccount extends Model
         return $this->belongsToMany(\App\Models\Term::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function team()
     {
         return $this->hasOne(Team::class);
     }
 
-
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function teams()
     {
         return $this->hasMany(Team::class);
     }
 
+    public function users()
+    {
+        return $this->hasManyDeepFromRelations($this->team(), (new Team)->users());
+    }
+
+    public function teamOwners()
+    {
+        return $this->hasManyDeepFromRelations($this->team(), (new Team)->owner());
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function rules()
     {
         return $this->hasMany(Rule::class);
     }
+
 
     public function flagged_rules()
     {
