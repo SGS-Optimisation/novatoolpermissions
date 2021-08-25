@@ -332,9 +332,15 @@ export default {
             this.filterOption = 'all';
             this.filterText = '';
             this.filterState = '';
-            this.getRules();
+            this.filterTeam = '';
+            this.filterContributor = '';
+
             this.$refs.taxonomySelectors.forEach(selector => selector.clearSelected());
             this.$refs.stateSelector.clearSelected();
+            this.$refs.contributorSelector.clearSelected();
+            this.$refs.teamSelector.clearSelected();
+
+            this.getRules();
         }
     },
 
