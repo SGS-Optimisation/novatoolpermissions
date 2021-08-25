@@ -2,21 +2,51 @@
 
     <div>
         <span>{{ taxonomyName }}</span>
-        <v-select v-model="selection"
-                  multiple
-                  :appendToBody=true
-                  :options="terms"
-                  @input="setSelected"/>
+        <div class="flex flex-row items-center">
+            <div class="flex-grow">
+                <multiselect v-model="selection"
+                          ref="select"
+                          :multiple="multiple"
+                          :close-on-select="!multiple"
+                          :appendToBody=true
+                          :options="terms"
+                          @input="setSelected"/>
+            </div>
+            <div class="flex flex-col flex-shrink ml-3">
+                <button type="button" @click="selectAll"
+                        class="px-1 text-xs border rounded-full border-gray-50 bg-gray-100 hover:bg-gray-200"
+                        v-if="multiple">
+                    Select&nbsp;All
+                </button>
+                <button type="button" @click="removeAll"
+                        class="px-1 text-xs border rounded-full border-gray-50 bg-gray-100 hover:bg-gray-200"
+                        v-if="multiple"
+                        :disabled="terms.length===0">
+                    Remove&nbsp;All
+                </button>
+                <button type="button" @click="getTaxonomyTermsFromRule"
+                        class="px-1 text-xs border rounded-full border-gray-50 bg-gray-100 hover:bg-gray-200"
+                        >
+                    Reset
+                </button>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
+import JetButton from "@/Jetstream/Button";
+
 export default {
     name: "Term",
+    components: {
+        JetButton,
+    },
     props: [
         'rule',
         'taxonomyName',
         'terms',
+        'multiple'
     ],
 
     data() {
@@ -30,13 +60,23 @@ export default {
     },
 
     methods: {
-        getTaxonomyTermsFromRule()
-        {
+        selectAll() {
+            this.selection = this.terms;
+            this.setSelected(this.selection);
+        },
+
+        removeAll() {
+            console.log('removing all');
+            this.selection = [];
+            this.setSelected(this.selection);
+        },
+
+        getTaxonomyTermsFromRule() {
             this.selection = _.filter(_.map(this.rule.terms, (term, key) => {
-                  if (term.taxonomy.name == this.taxonomyName) {
-                      return term.name;
-                  }
-              }));
+                if (term.taxonomy.name == this.taxonomyName) {
+                    return term.name;
+                }
+            }));
 
             /*
              * hack to populate parent
@@ -52,7 +92,7 @@ export default {
 
             this.$emit('selected', {
                 taxonomy: this.taxonomyName,
-                terms: value
+                terms: this.selection
             });
         }
     },

@@ -90,8 +90,7 @@ class Taxonomy extends Resource
                 ->rules('required')
                 ->sortable()
             ,
-            Code::make(__('Config'), 'config')
-                ->sortable()
+            Code::make(__('Config'), 'config')->json()
             ,
             BelongsToMany::make('Client Accounts')
             ,

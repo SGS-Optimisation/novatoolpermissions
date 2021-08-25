@@ -1,18 +1,23 @@
 @import '~vue-select/src/scss/vue-select';
 @import '~vue-instant/dist/vue-instant';
+@import 'vue-multiselect/dist/vue-multiselect.min.css';
 
-@import '~bootstrap/scss/functions';
+/*@import '~bootstrap/scss/functions';
 @import '~bootstrap/scss/mixins/';
 @import '~bootstrap/scss/variables';
-@import '~bootstrap/scss/pagination';
+@import '~bootstrap/scss/pagination';*/
 
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 @import './ribbons';
 
-.vs__selected {
+.vs__selected, .multiselect__tag {
     font-size:12px;
+}
+
+.multiselect__content-wrapper {
+    background-color: #cfd8e3;
 }
 
 button:focus {
