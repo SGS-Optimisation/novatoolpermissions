@@ -43,20 +43,23 @@
                             <button @click="setFilterDate('isNew')"
                                     :title="$page.settings.rule_filter_new_duration + ' days'"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
-                                New <span title="Total number of rules considered new" class="px-1 rounded-xl bg-pink-300">{{numNewRules}}</span>
+                                New <span title="Total number of rules considered new"
+                                          class="px-1 rounded-xl bg-pink-300">{{ numNewRules }}</span>
                             </button>
                             <button @click="setFilterDate('isUpdated')"
                                     :title="$page.settings.rule_filter_updated_duration + ' days'"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isUpdated' }, { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
-                                Updated <span title="Total number of rules considered updated" class="px-1 rounded-xl bg-pink-300">{{numUpdatedRules}}</span>
+                                Updated <span title="Total number of rules considered updated"
+                                              class="px-1 rounded-xl bg-pink-300">{{ numUpdatedRules }}</span>
                             </button>
                             <button @click="setFilterDate('isFlagged')"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isFlagged' }, { 'bg-white text-blue-500' : filterOption !== 'isFlagged' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
-                                Flagged <span title="Total number of flagged rules" class="px-1 rounded-xl bg-pink-300">{{numFlaggedRules}}</span>
+                                Flagged <span title="Total number of flagged rules" class="px-1 rounded-xl bg-pink-300">{{ numFlaggedRules }}</span>
                             </button>
                             <button @click="setFilterDate('isTagError')"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isTagError' }, { 'bg-white text-blue-500' : filterOption !== 'isTagError' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
-                                Tagging error <span title="Total number of rules with tagging errors" class="px-1 rounded-xl bg-pink-300">{{numTagError}}</span>
+                                Tagging error <span title="Total number of rules with tagging errors"
+                                                    class="px-1 rounded-xl bg-pink-300">{{ numTagError }}</span>
                             </button>
                             <button @click="setFilterDate('all')"
                                     class="bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
@@ -75,16 +78,45 @@
                     <p>Showing rules for {{ search }}</p>
                 </div>
 
-                <div class="px-2">
+                <div class="flex flex-row w-full items-end">
                     <pagination v-model="page"
                                 :options="paginationOptions"
                                 :per-page="perPage"
                                 :records="numFilteredRules"/>
+
+                    <div v-if="selectedRules.length > 0" class="ml-auto">
+                        Possible actions:
+                        <template
+                            v-if="$page.user_permissions.publishRules && _.every(selectedRules, ['state', 'Reviewing'])">
+                            <button @click="confirmingPublish = true"
+                                    class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
+                            rounded-md font-semibold text-xs text-white uppercase tracking-widest
+                            hover:bg-gray-700 active:bg-gray-900
+                            focus:outline-none focus:border-gray-900 focus:shadow-outline-gray
+                            transition ease-in-out duration-150">
+                                Publish
+                            </button>
+                        </template>
+                        <template v-else>
+                            None
+                        </template>
+                    </div>
                 </div>
 
                 <div v-for="(rule, ruleKey) in _.drop(filteredRules, ((page-1)*perPage)).slice(0, perPage)"
                      :key="ruleKey">
-                    <view-rule :rule="rule" :client-account="clientAccount" :show-contributors="showContributors" @updated="getRules"/>
+                    <div class="flex flex-row items-center">
+                        <div class="flex-shrink mr-1">
+                            <input type="checkbox" :value="rule" v-model="selectedRules"
+                                   @change="selectRule($event, rule)">
+                        </div>
+                        <div class="flex-grow">
+                            <view-rule :rule="rule" :client-account="clientAccount"
+                                       :selected="rule.selected"
+                                       ref="viewRule"
+                                       :show-contributors="showContributors" @updated="getRules"/>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="px-2 pb-16 pt-4">
@@ -95,6 +127,29 @@
                 </div>
 
             </div>
+
+            <!-- Publish confirmation modal -->
+            <jet-confirmation-modal :show="confirmingPublish" @close="cancelPublish">
+                <template #title>
+                    Publish Rules
+                </template>
+
+                <template #content>
+                    Are you sure you want to publish these rules?
+                </template>
+
+                <template #footer>
+                    <jet-secondary-button @click.native="cancelPublish">
+                        Nevermind
+                    </jet-secondary-button>
+
+                    <jet-danger-button class="ml-2" @click.native="publishRules"
+                                       :class="{ 'opacity-25': publishForm.processing }"
+                                       :disabled="publishForm.processing">
+                        Publish
+                    </jet-danger-button>
+                </template>
+            </jet-confirmation-modal>
         </template>
     </client-layout>
 </template>
@@ -106,9 +161,16 @@ import moment from 'moment'
 import TaxonomyFilter from '@/Components/PM/Rules/TaxonomyFilter'
 import TaxonomySelector from "@/Components/PM/Rules/TaxonomySelector";
 import FilterCondition from "@/Components/PM/Rules/FilterCondition";
-import JetButton from "@/Jetstream/Button";
-import JetInput from "@/Jetstream/Input";
-import JetLabel from "@/Jetstream/Label";
+import JetButton from '@/Jetstream/Button'
+import JetConfirmationModal from "@/Jetstream/ConfirmationModal";
+import JetDangerButton from '@/Jetstream/DangerButton'
+import JetFormSection from '@/Jetstream/FormSection'
+import JetInput from '@/Jetstream/Input'
+import JetInputError from '@/Jetstream/InputError'
+import JetLabel from '@/Jetstream/Label'
+import JetActionMessage from '@/Jetstream/ActionMessage'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import TailwindPagination from "../../Components/TailwindPagination";
 
 export default {
     title() {
@@ -139,6 +201,7 @@ export default {
                     prevChunk: '<<'
                 },
                 theme: 'bootstrap4',
+                template: TailwindPagination,
             },
             page: 1,
             perPage: 25,
@@ -158,11 +221,21 @@ export default {
             filterCondition: true, // true = AND, false = OR
 
             showContributors: false,
+
+            selectedRules: [],
+            confirmingPublish: false,
+
+            publishForm: this.$inertia.form({
+                rule_ids: [],
+            }, {
+                bag: 'publishData',
+                resetOnSuccess: false,
+            }),
         }
     },
 
     mounted() {
-        this._keyListener = function(e) {
+        this._keyListener = function (e) {
             if (e.key === "l" && (e.ctrlKey || e.metaKey)) {
                 e.preventDefault(); // present "Save Page" from getting triggered.
                 console.log('shortcut ctrl+ detected');
@@ -180,7 +253,7 @@ export default {
 
         this.allRules.forEach(rule => {
             rule.terms.forEach(term => {
-                if(!term.taxonomy) {
+                if (!term.taxonomy) {
                     console.log('term has no taxonomy!', {term, rule});
                     return;
                 }
@@ -210,7 +283,7 @@ export default {
                         let matchingTaxonomy = itemElem.terms.map(term => term.taxonomy.name).includes(taxonomy[0])
                         if (!matchingTaxonomy) return false
                         let matchingTerms = itemElem.terms.map(term => term.name).includes(taxonomy[1])
-                        if (!matchingTerms) return false
+                        if (!matchingTerms) return faxlse
                     }
                 }
                 return true;
@@ -252,7 +325,7 @@ export default {
                 return true;
             }
 
-            return _.uniq(_.map(itemElem.terms, function(term) {
+            return _.uniq(_.map(itemElem.terms, function (term) {
                 return term.taxonomy.parent.name;
             })).length !== this.rootTaxonomies.length;
 
@@ -266,6 +339,33 @@ export default {
     },
 
     methods: {
+        selectRule(e, rule) {
+            console.log(e, rule);
+            if (!rule.hasOwnProperty('selected')) {
+                rule.selected = true;
+            } else {
+                rule.selected = !rule.selected;
+            }
+        },
+
+        publishRules() {
+            this.publishForm.rule_ids = _.map(this.selectedRules, 'id');
+
+            this.publishForm.post(route('pm.client-account.rules.publish', {clientAccount: this.clientAccount.slug}))
+                .then(() => {
+                    this.confirmingPublish = false;
+
+                    _.forEach(this.selectedRules, function(rule) {
+                        rule.state = "Published";
+                    });
+
+                    this.$refs.viewRule.$forceUpdate();
+                })
+        },
+
+        cancelPublish() {
+            this.confirmingPublish = false;
+        },
 
         toggleContributorVisibility() {
             this.showContributors = !this.showContributors;
@@ -290,7 +390,7 @@ export default {
             this.page = 1;
         },
 
-        debounceGetRules: _.debounce( function(e) {
+        debounceGetRules: _.debounce(function (e) {
             this.getRules()
         }, 300),
 
@@ -373,9 +473,15 @@ export default {
         ViewRule,
         TaxonomyFilter,
         TaxonomySelector,
+        JetActionMessage,
         JetButton,
+        JetConfirmationModal,
+        JetDangerButton,
+        JetFormSection,
         JetInput,
+        JetInputError,
         JetLabel,
+        JetSecondaryButton,
     },
 }
 </script>

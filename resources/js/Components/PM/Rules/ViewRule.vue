@@ -1,7 +1,7 @@
 <template>
     <div v-if="rule">
         <rule-tags :rule="rule"/>
-        <div class="mt-6" v-html="rule.content"/>
+        <div class="mt-6 rule-content" v-html="rule.content"/>
     </div>
 </template>
 

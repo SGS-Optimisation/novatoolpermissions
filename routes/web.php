@@ -124,6 +124,9 @@ Route::name('pm.')
                         Route::post('/store', [RuleController::class, 'store'])
                             ->name('store');
 
+                        Route::post('/publish', [RuleController::class, 'massPublish'])
+                            ->name('publish');
+
                         Route::get('/{id}/edit', [RuleController::class, 'edit'])
                             ->name('edit');
 

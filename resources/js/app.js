@@ -9,7 +9,8 @@ import { InertiaApp } from '@inertiajs/inertia-vue';
 import { InertiaForm } from 'laravel-jetstream';
 import PortalVue from 'portal-vue';
 import moment from "moment";
-import vSelect from 'vue-select'
+import vSelect from 'vue-select';
+import Multiselect from 'vue-multiselect';
 import Pagination from 'vue-pagination-2';
 import titleMixin from './mixins/titleMixin'
 import VueInstant from 'vue-instant'
@@ -23,6 +24,7 @@ Vue.use(PortalVue);
 Vue.use(VueInstant)
 
 Vue.component('v-select', vSelect);
+Vue.component('multiselect', Multiselect)
 Vue.component('pagination', Pagination);
 
 import DateFilter from './filters/date' // Import date

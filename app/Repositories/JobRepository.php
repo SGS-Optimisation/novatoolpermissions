@@ -37,6 +37,7 @@ class JobRepository
         $metadata->error_mysgs_reason = null;
 
         $job->metadata = $metadata;
+        $job->save();
 
         return $job;
     }
