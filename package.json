@@ -42,6 +42,7 @@
         "quill-image-resize": "^3.0.9",
         "text-clipper": "^2.1.0",
         "vue-instant": "^1.0.4",
+        "vue-multiselect": "^2.1.6",
         "vue-pagination-2": "^3.0.91",
         "vue-select": "^3.11.2",
         "vue2-editor": "^2.10.2",

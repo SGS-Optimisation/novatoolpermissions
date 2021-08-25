@@ -17,6 +17,7 @@
                                 <template v-for="(taxonomyData, name) in taxonomyGroup">
                                     <term :terms="taxonomyData.terms"
                                           :taxonomy-name="name"
+                                          :multiple="getMultipleMode(taxonomyData)"
                                           :rule="rule"
                                           @selected="termSelected"
                                     >
@@ -28,7 +29,7 @@
                 </template>
 
                 <template #actions v-if="index === topTaxonomies.length - 1">
-                    <jet-action-message :on="form.recentlySuccessful" class="mr-3">
+                    <jet-action-message :on="form.recentlySuccessful" class="mr-3 bg-green-300 text-center flex-grow">
                         Saved.
                     </jet-action-message>
 
@@ -90,6 +91,14 @@ export default {
     },
 
     methods: {
+        getMultipleMode(taxonomyData) {
+            if(! taxonomyData.taxonomy.config || !taxonomyData.taxonomy.config.hasOwnProperty('multiple')) {
+                return true;
+            }
+
+            return taxonomyData.taxonomy.config.multiple;
+        },
+
         termSelected(data) {
             console.log('term updated', data);
             this.taxonomy[data.taxonomy] = data.terms;

@@ -28,6 +28,8 @@ class RuleTaxonomyController extends Controller
 
         $taxonomy_fields = $request->only(['taxonomy'])['taxonomy'];
 
+        $term_id = [];
+
         foreach ($taxonomy_fields as $taxonomy_name => $terms) {
             //logger('checking taxonomy name '.$taxonomy_name);
 
@@ -36,6 +38,9 @@ class RuleTaxonomyController extends Controller
 
             if ($taxonomy) {
                 //logger('taxonomy id:'.$taxonomy->id);
+                if(!is_array($terms)) {
+                    $terms = [$terms];
+                }
 
                 foreach ($terms as $term_name) {
                     //logger('checking term '.$term_name);
@@ -47,11 +52,11 @@ class RuleTaxonomyController extends Controller
                 }
             }
         }
-        if($term_id){
-            $result = $rule->terms()->sync($term_id);
 
-            logger(print_r($result, true));
-        }
+        $result = $rule->terms()->sync($term_id);
+
+        logger(print_r($result, true));
+
 
         Cache::tags(['rules'])->clear();
 

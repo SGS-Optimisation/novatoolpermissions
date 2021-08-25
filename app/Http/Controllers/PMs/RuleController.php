@@ -13,6 +13,7 @@ use App\Services\ClientAccounts\BuildTaxonomyLists;
 use App\Services\LegacyImport\ExtractImages;
 use App\Services\Taxonomy\Traits\TaxonomyBuilder;
 use App\States\Rules\DraftState;
+use App\States\Rules\PublishedState;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -234,6 +235,22 @@ class RuleController extends Controller
         return $request->wantsJson()
             ? new JsonResponse('', 200)
             : back()->with('status', 'rule-updated');
+    }
+
+    public function massPublish(Request $request, $client_account_slug)
+    {
+        $rule_ids = $request->get('rule_ids');
+        $rules = Rule::whereIn('id', $rule_ids)->get();
+
+        foreach($rules as $rule) {
+            $rule->state->transitionTo(PublishedState::class, $request->user());
+            event(new Updated($rule));
+        }
+
+        return $request->wantsJson()
+            ? new JsonResponse('', 200)
+            : back()->with('status', 'rule-updated');
+
     }
 
     /**
