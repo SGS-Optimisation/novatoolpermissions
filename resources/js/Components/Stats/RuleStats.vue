@@ -3,6 +3,9 @@
         <div class="flex flex-col w-4/5 py-12">
             <jet-form-section @submitted="updateStats">
                 <template #title>
+                    Rule Stats
+                </template>
+                <template #description>
                     Chart Parameters
                 </template>
 
@@ -75,7 +78,7 @@
                 </template>
             </jet-form-section>
             <div class="small" v-if="datacollection">
-                <rules-line-chart :height="200" :chart-data="datacollection"></rules-line-chart>
+                <rules-line-chart :height="chartHeight" :chart-data="datacollection"></rules-line-chart>
             </div>
         </div>
     </div>
@@ -105,16 +108,36 @@ export default {
         JetInputError,
         JetLabel,
     },
-    props: [
-        'stats',
-        'view_by',
-        'range',
-        'column',
-        'level',
-        'region',
-        'cumulative',
-        'mode',
-    ],
+    props: {
+        stats: {
+            type: Object
+        },
+        view_by : {
+            type: String,
+        },
+        range : {
+            type: Number
+        },
+        column : {
+            type: String
+        },
+        level : {
+            type: String
+        },
+        region : {
+            type: String
+        },
+        cumulative : {
+            type: Number
+        },
+        mode : {
+            type: String
+        },
+        chartHeight: {
+            type: Number,
+            default: 200,
+        }
+    },
     data() {
         return {
             datacollection: null,

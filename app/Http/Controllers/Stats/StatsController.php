@@ -41,11 +41,11 @@ class StatsController extends Controller
         return Jetstream::inertia()->render($request, 'Stats/ClientAccountStats', [
             'stats' => $stats,
             'view_by' => Str::title($view_by),
-            'range' => $range,
+            'range' => (int) $range,
             'column' => $column,
             'level' => $level,
             'region' => $region,
-            'cumulative' => $cumulative,
+            'cumulative' => (int) $cumulative,
             'mode' => 'global',
         ]);
     }
