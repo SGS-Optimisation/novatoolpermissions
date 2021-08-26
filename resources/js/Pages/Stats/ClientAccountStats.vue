@@ -4,7 +4,7 @@
             <div class="flex justify-between">
                 <div class="flex flex-row content-center">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                        Rules activity per client account
+                        Rules activity
                     </h2>
                 </div>
 

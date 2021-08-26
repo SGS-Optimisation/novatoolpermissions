@@ -76,11 +76,11 @@ class ClientAccountController extends Controller
 
             'stats' => $stats,
             'view_by' => Str::title($request->get('view_by', 'week')),
-            'range' => $request->get('range', 5),
+            'range' => (int) $request->get('range', 5),
             'column' => $request->get('column', 'created_at'),
             'level' => 'team',
             'region' => $request->get('region', ''),
-            'cumulative' => $request->get('cumulative', 1),
+            'cumulative' => (int) $request->get('cumulative', 1),
             'mode' => 'account-specific',
         ]);
     }
