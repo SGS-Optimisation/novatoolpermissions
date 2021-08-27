@@ -8,6 +8,7 @@ use App\Features\BaseFeature;
 use App\Models\ClientAccount;
 use App\Models\Rule;
 use App\Models\Team;
+use App\Services\Rule\GetRulesForRegion;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
@@ -67,7 +68,7 @@ class RuleCreationPerRegion extends Trend
 
     public function processRegion($region)
     {
-        $query = \App\Services\Rule\GetRulesForRegion::handle($region);
+        $query = GetRulesForRegion::handle($region);
 
         $request = new Request();
         $request->merge(['range' => $this->range, 'twelveHourTime' => false, 'timezone' => 'UTC']);

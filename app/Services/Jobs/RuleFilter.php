@@ -1,14 +1,14 @@
 <?php
 
 
-namespace App\Services\Rule;
+namespace App\Services\Jobs;
 
 
 use App\Models\ClientAccount;
 use App\Models\Job;
 use App\Models\Taxonomy;
 use App\Models\Term;
-use App\Services\MySgs\Api\EloquentHelpers\JobClientAccountMatcher;
+use App\Operations\Jobs\MatchClientAccountOperation;
 use App\Services\MySgs\Api\EloquentHelpers\JobFieldsMapper;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -41,7 +41,7 @@ class RuleFilter
                 if (!$job->metadata->client_found) {
                     logger('no client account associated job, searching');
 
-                    (new JobClientAccountMatcher($job))->handle();
+                    (new MatchClientAccountOperation($job))->handle();
 
                 }
 
@@ -200,7 +200,7 @@ class RuleFilter
                     }
 
                     $metadata->job_taxonomy = $job_taxonomy_terms;
-                    $metadata->job_taxonomy_extra = $job_taxonomy_terms_extra;
+                    //$metadata->job_taxonomy_extra = $job_taxonomy_terms_extra;
                     $metadata->matched_taxonomy = $job_taxonomy_terms_matches;
 
                     $job->metadata = $metadata;

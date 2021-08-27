@@ -4,7 +4,7 @@ namespace App\Http\Controllers\OPs;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\JobRepository;
-use App\Services\Rule\RuleFilter;
+use App\Services\Jobs\RuleFilter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

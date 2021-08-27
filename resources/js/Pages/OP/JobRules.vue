@@ -36,8 +36,9 @@
         </div>
         <div v-else-if="currentJob.metadata.client_found === false">
             <div class="h-64 bg-white flex justify-center align-middle">
-                <p class="mt-16 text-red-700">"{{ currentJob.metadata.client.name }}" was not matched with any client
-                    account.</p>
+                <p class="mt-16 text-red-700">
+                    "{{ currentJob.metadata.client.name }}" was not matched with any client account.
+                </p>
             </div>
         </div>
         <div v-else>
@@ -60,6 +61,7 @@
 
                 <div class="flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mb-2">
 
+                    <!-- Filters -->
                     <div class="flex flex-grow text-xs mx-2" role="group">
                         <button @click="filterButtonClicked('isNew')"
                                 :title="$page.settings.rule_filter_new_duration + ' days'"
@@ -93,6 +95,7 @@
                             Unfilter
                         </button>
                     </div>
+                    <!-- End Filters -->
 
                     <isotope ref="cpt" id="root_isotope" class="w-full m-2"
                              v-if="Object.keys(filterObject).length"
@@ -111,7 +114,6 @@
                 </div>
             </div>
         </div>
-
 
         <!-- Rule Viewing Modal -->
         <jet-dialog-modal :show="isOpen && currentRule" max-width="6xl" @close="closeRuleModal">
@@ -160,7 +162,6 @@
                 </jet-secondary-button>
             </template>
         </jet-dialog-modal>
-
 
         <!-- Rule Flagging Modal -->
         <jet-dialog-modal :show="isFlaggingRule" @close="closeFlagModal">
@@ -300,8 +301,6 @@ export default {
             } else {
                 this.waitMode();
             }
-
-
         },
 
         newRulesLoaded() {
@@ -415,7 +414,7 @@ export default {
         },
 
         filterButtonClicked(filterName) {
-            console.log('filter button clicked');
+            console.log('filter button clicked', filterName);
 
             if (this.filterOptionTracker !== '' && this.filterOptionTracker === filterName) {
                 this.unfilter();

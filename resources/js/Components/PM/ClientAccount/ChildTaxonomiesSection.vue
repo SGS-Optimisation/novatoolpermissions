@@ -51,6 +51,7 @@
             <template #content>
                 <div class="mt-4">
                     <jet-input type="text" class="mt-1 block w-3/4"
+                               autofocus
                                :value="createForm.name"
                                v-model="createForm.name"/>
 
