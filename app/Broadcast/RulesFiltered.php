@@ -5,7 +5,7 @@ namespace App\Broadcast;
 
 
 use App\Models\Job;
-use App\Services\Rule\RuleFilter;
+use App\Services\Jobs\RuleFilter;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;

@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\ClientAccount;
 use App\Models\Rule;
 use App\Models\Term;
-use App\Services\Rule\LegacyImport;
+use App\Services\Jobs\LegacyImport;
 use Illuminate\Database\Seeder;
 
 class RuleSeeder extends Seeder

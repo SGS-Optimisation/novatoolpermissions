@@ -36,8 +36,9 @@
         </div>
         <div v-else-if="currentJob.metadata.client_found === false">
             <div class="h-64 bg-white flex justify-center align-middle">
-                <p class="mt-16 text-red-700">"{{ currentJob.metadata.client.name }}" was not matched with any client
-                    account.</p>
+                <p class="mt-16 text-red-700">
+                    "{{ currentJob.metadata.client.name }}" was not matched with any client account.
+                </p>
             </div>
         </div>
         <div v-else>
@@ -60,38 +61,62 @@
 
                 <div class="flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mb-2">
 
-                    <div class="flex flex-grow text-xs mx-2" role="group">
-                        <button @click="filterButtonClicked('isNew')"
-                                :title="$page.settings.rule_filter_new_duration + ' days'"
-                                class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg"
+                    <div class="flex flex-col w-full">
+                        <!-- Stage filter -->
+                        <div class="flex flex-grow text-xs mx-2 mb-2" role="group">
+                            <button
+                                v-for="(stage, index) in stages"
+                                @click="filterStageButtonClicked(stage)"
+                                class="flex-grow hover:bg-blue-400 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
                                 :class="[
+                                    {'rounded-l-lg' : index === 0 },
+                                    { 'bg-blue-500 text-white' : $data[`filterStage${stage}`] },
+                                    { 'bg-white text-blue-500' : !$data[`filterStage${stage}`] },
+                                    {'bg-green-100' : !$data[`filterStage${stage}`] && currentJob.metadata.hasOwnProperty('stages') && currentJob.metadata.stages.includes(stage) },
+                                ]">
+                                {{stage}}
+                            </button>
+                            <button @click="resetStage"
+                                class="rounded-r-lg flex-grow hover:bg-blue-400 hover:text-white text-blue-500 border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline">
+                                Reset
+                            </button>
+                        </div>
+
+                        <!-- Artwork structure and date Filters -->
+                        <div class="flex flex-grow text-xs mx-2" role="group">
+                            <button @click="filterArtworkStructureButtonClicked('isNew')"
+                                    :title="$page.settings.rule_filter_new_duration + ' days'"
+                                    class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg"
+                                    :class="[
                                     { 'bg-blue-500 text-white' : filterOption === 'isNew' },
                                     { 'bg-white text-blue-500' : filterOption !== 'isNew' }
                                 ]">
-                            New
-                        </button>
-                        <button @click="filterButtonClicked('isUpdated')"
-                                :title="$page.settings.rule_filter_updated_duration + ' days'"
-                                class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
-                                :class="[
+                                New
+                            </button>
+                            <button @click="filterArtworkStructureButtonClicked('isUpdated')"
+                                    :title="$page.settings.rule_filter_updated_duration + ' days'"
+                                    class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
+                                    :class="[
                                     { 'bg-blue-500 text-white' : filterOption === 'isUpdated' },
                                     { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }
                                 ]">
-                            Updated
-                        </button>
-                        <button
-                            v-for="taxonomy in taxonomies"
-                            @click="filterButtonClicked(taxonomy)"
-                            class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
-                            :class="[
-                                { 'bg-blue-500 text-white' : filterOption === taxonomy },
-                                 { 'bg-white text-blue-500' : filterOption !== taxonomy  }, ]">
-                            {{ taxonomy }}
-                        </button>
-                        <button @click="unfilter"
-                                class="flex-grow bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
-                            Unfilter
-                        </button>
+                                Updated
+                            </button>
+                            <button
+                                v-for="term in artworkStructureTerms"
+                                @click="filterArtworkStructureButtonClicked(term)"
+                                class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
+                                :class="[
+                                { 'bg-blue-500 text-white' : filterOption === term },
+                                 { 'bg-white text-blue-500' : filterOption !== term  }, ]">
+                                {{ term }}
+                            </button>
+                            <button @click="unfilter"
+                                    class="flex-grow bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
+                                Unfilter
+                            </button>
+                        </div>
+                        <!-- End Filters -->
                     </div>
 
                     <isotope ref="cpt" id="root_isotope" class="w-full m-2"
@@ -102,7 +127,12 @@
 
                         <div class="w-1/3 rounded"
                              v-for="(ruleGroup, ruleIndex) in Object.entries(rulesByTaxonomies)" :key="ruleIndex">
-                            <view-rule-item :rules="ruleGroup[1]" :group="ruleGroup[0]" :filter-flag="filterFlag"
+                            <view-rule-item :rules="ruleGroup[1]"
+                                            :group="ruleGroup[0]"
+                                            :filter-flag="filterFlag"
+                                            :filter-stage-pa="filterStagePA"
+                                            :filter-stage-pp="filterStagePP"
+                                            :filter-stage-pf="filterStagePF"
                                             @on-click-view="openRuleModal"/>
                         </div>
 
@@ -112,20 +142,21 @@
             </div>
         </div>
 
-
         <!-- Rule Viewing Modal -->
         <jet-dialog-modal :show="isOpen && currentRule" max-width="6xl" @close="closeRuleModal">
             <template #title>
                 <div v-if="currentRule" class="flex justify-between">
                     <div class="flex-grow border-gray-200 border-b-2 mr-6">
                         <p class="font-bold">
-                            <span class="text-xs" title="Rule ID">[{{currentRule.dagId}}]</span>
-                            {{currentRule.name}}
+                            <span class="text-xs" title="Rule ID">[{{ currentRule.dagId }}]</span>
+                            {{ currentRule.name }}
                         </p>
                     </div>
                     <jet-secondary-button @click.native="closeRuleModal">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd"
+                                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                  clip-rule="evenodd"/>
                         </svg>
                     </jet-secondary-button>
                 </div>
@@ -160,7 +191,6 @@
                 </jet-secondary-button>
             </template>
         </jet-dialog-modal>
-
 
         <!-- Rule Flagging Modal -->
         <jet-dialog-modal :show="isFlaggingRule" @close="closeFlagModal">
@@ -242,10 +272,20 @@ export default {
             // isotope integration
             sortOption: null,
             filterOption: null,
+            filterStage: [],
+            filterStagePA: false,
+            filterStagePP: false,
+            filterStagePF: false,
             filterOptionTracker: null,
             filterText: "",
             filterObject: {},
-            taxonomies: [],
+
+            /* Contains alls the terms used under job categorizations taxonomies, for indexing */
+            artworkStructureTerms: [],
+            stages: ['PA', 'PP', 'PF'],
+
+            /* Contains terms grouped by taxonomy under job categoizations, for filtering */
+            taxonomies: {},
 
             rulesByTaxonomies: {},
 
@@ -258,6 +298,8 @@ export default {
             }, {
                 bag: 'sendFlagRule'
             }),
+
+            isotopeFixRanOnce: false,
         }
     },
 
@@ -275,10 +317,6 @@ export default {
             console.log('detected job number change');
             this.initJobLoaded();
         }
-    },
-
-    created() {
-
     },
 
     mounted() {
@@ -300,23 +338,45 @@ export default {
             } else {
                 this.waitMode();
             }
-
-
         },
 
         newRulesLoaded() {
             this.searchedRules = [..._.orderBy(this.currentRules, 'created_at', 'desc')];
             this.searching = false;
+
+            if(this.currentJob.metadata.hasOwnProperty('stages')) {
+                for (let index in this.currentJob.metadata.stages) {
+                    this.$data[`filterStage${this.currentJob.metadata.stages[index]}`] = true;
+                }
+            }
         },
 
         initRulesParsing() {
             this.searchedRules.forEach(rule => {
-                rule.terms.forEach(term => {
-                    if (term.taxonomy.parent.name === 'Job Categorizations') {
-                        if (!this.taxonomies.includes(term.name)) {
-                            this.taxonomies.push(term.name);
-                        }
+                rule.job_categorizations_terms.forEach(term => {
+                    //if (term.taxonomy.name === 'Artwork Structure Elements') {
 
+                    /*
+                    Collect filterable terms
+                    */
+                    if (!this.artworkStructureTerms.includes(term.name) && term.taxonomy.name === 'Artwork Structure Elements') {
+                        this.artworkStructureTerms.push(term.name);
+                    }
+
+                    /*
+                    Group terms by parent taxonomy
+                     */
+                    if (!this.taxonomies.hasOwnProperty(term.taxonomy.name)) {
+                        this.taxonomies[term.taxonomy.name] = [];
+                    }
+                    if (!this.taxonomies[term.taxonomy.name].includes(term.name)) {
+                        this.taxonomies[term.taxonomy.name].push(term.name);
+                    }
+
+                    /*
+                    Group rules by Artwork Structure Elements terms
+                     */
+                    if(term.taxonomy.name === 'Artwork Structure Elements'){
                         if (this.rulesByTaxonomies[term.name] === undefined) {
                             this.rulesByTaxonomies[term.name] = [];
                         }
@@ -324,7 +384,7 @@ export default {
                         this.rulesByTaxonomies[term.name].push(rule);
                     }
                 });
-                this.taxonomies.forEach(taxonomy => {
+                this.artworkStructureTerms.forEach(taxonomy => {
                     this.filterObject[taxonomy] = itemElem => {
                         return itemElem[0] === taxonomy;
                     }
@@ -371,13 +431,12 @@ export default {
                         this.currentRules = data.rules;
                         this.newRulesLoaded();
                         this.initRulesParsing();
-                    } else if(data.job.metadata.error_mysgs){
+                    } else if (data.job.metadata.error_mysgs) {
                         this.currentJob = data.job;
                         this.currentJob.metadata.error_mysgs = data.job.metadata.error_mysgs;
                         console.log('mysgs error, halt');
                         clearTimeout(this.timeOut);
-                    }
-                    else{
+                    } else {
                         this.waitMode();
                     }
                 })
@@ -399,7 +458,7 @@ export default {
         runningSearch() {
             this.currentJob = {metadata: {}};
             this.searching = true;
-            this.taxonomies = [];
+            this.artworkStructureTerms = [];
             this.rulesByTaxonomies = {};
         },
         reloadPage() {
@@ -414,8 +473,8 @@ export default {
             //this.currentRule = null;
         },
 
-        filterButtonClicked(filterName) {
-            console.log('filter button clicked');
+        filterArtworkStructureButtonClicked(filterName) {
+            console.log('filter taxomy button clicked', filterName);
 
             if (this.filterOptionTracker !== '' && this.filterOptionTracker === filterName) {
                 this.unfilter();
@@ -437,6 +496,19 @@ export default {
             }
         },
 
+        filterStageButtonClicked(stage) {
+            console.log('filter stage button clicked', stage);
+
+            this.$data[`filterStage${stage}`] = !this.$data[`filterStage${stage}`];
+
+            if(!this.isotopeFixRanOnce) {
+                this.isotopeFix = setTimeout( () => this.$refs.cpt.unfilter(), 300);
+                this.isotopeFixRanOnce = true;
+            }
+
+            this.$forceUpdate();
+        },
+
         filterByNew() {
             this.$refs.cpt.filter('isNew');
             this.filterFlag = "new";
@@ -447,14 +519,31 @@ export default {
         },
         filterByTaxonomy(taxonomy) {
             console.log('filtering by taxonomy', taxonomy);
-            this.$refs.cpt.filter(taxonomy)
+            this.$refs.cpt.filter(taxonomy);
             this.filterFlag = null;
+        },
+        filterByStage(stage) {
+            console.log('filtering by stage', stage);
+            this.$refs.cpt.filter(stage);
         },
         unfilter() {
             this.filterOptionTracker = '';
             this.filterFlag = null;
             this.$refs.cpt.filter('all');
             this.$refs.cpt.unfilter();
+        },
+
+        resetStage() {
+
+            console.log('resetting to initial stage', this.filterStage);
+            this.filterStagePA = false;
+            this.filterStagePP = false;
+            this.filterStagePF = false;
+            for(let index in this.currentJob.metadata.stages) {
+                this.$data[`filterStage${this.currentJob.metadata.stages[index]}`] = true;
+            }
+
+            this.$forceUpdate();
         },
 
         flagRule(rule) {

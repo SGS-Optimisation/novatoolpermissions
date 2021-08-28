@@ -8,6 +8,7 @@ use App\Features\BaseFeature;
 use App\Models\ClientAccount;
 use App\Models\Rule;
 use App\Models\Team;
+use App\Services\Rule\GetRulesForTeam;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
@@ -74,7 +75,7 @@ class RuleCreationPerTeam extends Trend
 
     public function processTeam($team)
     {
-        $query = \App\Services\Rule\GetRulesForTeam::handle($team, $this->region);
+        $query = GetRulesForTeam::handle($team, $this->region);
 
         $request = new Request();
         $request->merge(['range' => $this->range, 'twelveHourTime' => false, 'timezone' => 'UTC']);

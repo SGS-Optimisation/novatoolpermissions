@@ -234,6 +234,16 @@ class Rule extends Model implements Recordable
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function jobCategorizationsTerms()
+    {
+        return $this->terms()->whereHas('taxonomy.parent', function (Builder $query) {
+            return $query->where('name', 'Job Categorizations');
+        });
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function clientAccount()

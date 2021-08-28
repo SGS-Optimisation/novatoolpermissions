@@ -66,9 +66,10 @@ import clip from "text-clipper";
 
 export default {
     name: "ViewRuleItem",
-    props: ['group', 'rules', 'filterFlag'],
+    props: ['group', 'rules', 'filterFlag', 'filterStagePa', 'filterStagePp', 'filterStagePf'],
     data() {
-        return {}
+        return {
+        }
     },
     methods: {
         excerpt(rule) {
@@ -77,17 +78,44 @@ export default {
     },
     computed: {
         taxonomyRules() {
-            return _.orderBy([...this.filterFlag ? this.rules.filter(rule => {
-                let time = (this.filterFlag === 'updated') ? moment(rule.updated_at) : moment(rule.created_at);
-                let numDays = (this.filterFlag === 'updated') ?
-                    this.$page.settings.rule_filter_updated_duration
-                    : this.$page.settings.rule_filter_new_duration;
+            let filteredRules = this.rules;
 
-                return moment().subtract(parseInt(numDays), 'days').isSameOrBefore(time)
-                    && (this.filterFlag !== 'updated' || rule.created_at !== rule.updated_at)
-            }) : this.rules], 'updated_at', 'desc')
+            if(this.filterFlag) {
+                filteredRules = filteredRules.filter(rule => {
+                    let time = (this.filterFlag === 'updated') ? moment(rule.updated_at) : moment(rule.created_at);
+                    let numDays = (this.filterFlag === 'updated') ?
+                        this.$page.settings.rule_filter_updated_duration
+                        : this.$page.settings.rule_filter_new_duration;
+
+                    return moment().subtract(parseInt(numDays), 'days').isSameOrBefore(time)
+                        && (this.filterFlag !== 'updated' || rule.created_at !== rule.updated_at)
+                })
+            }
+
+            if(this.filterStage.length) {
+                filteredRules = filteredRules.filter(rule => {
+                    return _.every(rule.job_categorizations_terms, (term) => term.taxonomy.name !== 'Stage')
+                    || _.some(rule.job_categorizations_terms, (term) => this.filterStage.includes(term.name));
+                });
+            }
+
+            return _.orderBy([...filteredRules], 'updated_at', 'desc')
         },
 
+        filterStage() {
+            let stages = [];
+            if(this.filterStagePa) {
+                stages.push('PA');
+            }
+            if(this.filterStagePp) {
+                stages.push('PP');
+            }
+            if(this.filterStagePf) {
+                stages.push('PF');
+            }
+
+            return stages;
+        },
 
     }
     // created(){

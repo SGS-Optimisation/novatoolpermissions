@@ -1,16 +1,19 @@
 <?php
 
 
-namespace App\Services\MySgs\Api\EloquentHelpers;
+namespace App\Operations\Jobs;
 
 
 use App\Models\ClientAccount;
 use App\Models\Job;
+use App\Operations\BaseOperation;
 use App\Services\MySgs\WarehousedData\Customers\PortfolioGroupNameFinder;
 use App\Services\MySgs\WarehousedData\Customers\SimplifiedGroupNameFinder;
 use Illuminate\Support\Str;
+use function config;
+use function logger;
 
-class JobClientAccountMatcher
+class MatchClientAccountOperation extends BaseOperation
 {
     /** @var Job */
     public $job;

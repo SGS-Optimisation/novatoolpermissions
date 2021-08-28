@@ -54,7 +54,7 @@ class JobFieldsMapper
         if (isset($job->metadata->{$mapping->api_action})
             && $job->metadata->{$mapping->api_action} != []
             && $job->metadata->{$mapping->api_action} != ''
-            && $job->updated_at->isAfter(Carbon::now()->subHours(4))
+            && $job->updated_at->isAfter(Carbon::now()->subHours(1))
         ) {
             //logger('using stored data for mapping ' . $mapping->id);
             $data = $job->metadata->{$mapping->api_action};
@@ -77,14 +77,12 @@ class JobFieldsMapper
             $value = null;
         }
 
-
         return [$value, $this->accumulator];
     }
 
 
     protected function parseMapping($mapping, $data)
     {
-
         $field_path_sections = explode('.', $mapping->field_path);
 
         static::parseFieldPathSection($field_path_sections, $data);
@@ -151,8 +149,6 @@ class JobFieldsMapper
                         }
                     }
                 }
-
-
 
             } else {
                 foreach($data as $item) {
