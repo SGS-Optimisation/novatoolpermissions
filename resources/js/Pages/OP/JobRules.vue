@@ -63,7 +63,7 @@
 
                     <div class="flex flex-col w-full">
                         <!-- Stage filter -->
-                        <div class="flex flex-grow text-xs mx-2 mb-2" role="group">
+                        <div class="flex flex-grow text-xs mx-2 mb-2" role="group" v-if="showStage">
                             <button
                                 v-for="(stage, index) in stages"
                                 @click="filterStageButtonClicked(stage)"
@@ -272,7 +272,6 @@ export default {
             // isotope integration
             sortOption: null,
             filterOption: null,
-            filterStage: [],
             filterStagePA: false,
             filterStagePP: false,
             filterStagePF: false,
@@ -344,7 +343,7 @@ export default {
             this.searchedRules = [..._.orderBy(this.currentRules, 'created_at', 'desc')];
             this.searching = false;
 
-            if(this.currentJob.metadata.hasOwnProperty('stages')) {
+            if(this.currentJob.metadata.hasOwnProperty('stages') && this.currentJob.metadata.stages.length) {
                 for (let index in this.currentJob.metadata.stages) {
                     this.$data[`filterStage${this.currentJob.metadata.stages[index]}`] = true;
                 }
@@ -566,8 +565,12 @@ export default {
                 this.closeFlagModal();
             });
         },
+    },
 
-
+    computed: {
+        showStage() {
+            return this.taxonomies.hasOwnProperty('Stage');
+        },
     },
 
     components: {
