@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -80,6 +81,28 @@ class ClientAccount extends Model
     public function child_taxonomies()
     {
         return $this->taxonomies()->whereNotNull('parent_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function account_structure_child_taxonomies()
+    {
+        return $this->taxonomies()->whereNotNull('parent_id')
+            ->whereHas('parent', function (Builder $query) {
+                return $query->where('name', 'Account Structure');
+            });
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function job_categorizations_child_taxonomies()
+    {
+        return $this->taxonomies()->whereNotNull('parent_id')
+            ->whereHas('parent', function (Builder $query) {
+                return $query->where('name', 'Job Categorizations');
+            });
     }
 
     /**
