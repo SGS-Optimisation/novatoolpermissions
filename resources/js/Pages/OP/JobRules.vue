@@ -18,7 +18,7 @@
             </div>
         </template>
 
-        <div v-if="searching">
+        <div v-if="searching || !currentJob.hasOwnProperty('metadata')">
             <loader></loader>
         </div>
         <div v-else-if="currentJob.metadata.processing_mysgs">

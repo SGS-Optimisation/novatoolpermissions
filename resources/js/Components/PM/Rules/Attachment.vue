@@ -109,7 +109,7 @@ export default {
 
     computed: {
         filesize() {
-            return prettyBytes(this.attachment.filesize);
+            return prettyBytes(parseInt(this.attachment.filesize));
         }
     }
 }
