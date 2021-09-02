@@ -15,6 +15,7 @@
         "awobaz/compoships": "^2.0",
         "barryvdh/laravel-ide-helper": "^2.9",
         "binarytorch/larecipe": "^2.4",
+        "bnbwebexpertise/laravel-attachments": "^1.0",
         "cloudstudio/resource-generator": "^1.5",
         "ek0519/quilljs": "^0.3.1",
         "eminiarts/nova-tabs": "^1.3",

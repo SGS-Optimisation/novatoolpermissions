@@ -3,7 +3,7 @@
         <div class="flex flex-col">
             <div class="flex flex-row">
                 <img :src="job.metadata.client.image" style="max-width: 80px">
-                <h3 class="font-semibold text-lg leading-loose text-gray-800 ">
+                <h3 class="font-semibold text-lg leading-loose text-gray-800 ml-2">
                     {{ job.designation }}
                 </h3>
             </div>

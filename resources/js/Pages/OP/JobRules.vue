@@ -423,7 +423,7 @@ export default {
             axios.get(route('job.rules', this.jobNumber))
                 .then(({data}) => {
                     console.log(data);
-                    if (!data.job.metadata.processing_mysgs && !data.job.metadata.error_mysgs) {
+                    if (data.job && !data.job.metadata.processing_mysgs && !data.job.metadata.error_mysgs) {
                         clearTimeout(this.timeOut);
 
                         this.currentJob = data.job;
