@@ -37,11 +37,13 @@ class RuleRepository
             $cacheTag .= '-'.optional($term)->name;
         }
 
+        $cache_duration = app()->environment('production') ? 60 * 5 : 60*60*24*30;
+
         return Cache::tags($tags)
-            ->remember($cacheTag, 60*60*24*30, function () use ($term) {
+            ->remember($cacheTag, $cache_duration, function () use ($term) {
 
             $rules_query = Rule::forClient($this->client_account)
-                ->with(['terms.taxonomy', 'users', 'teams'])
+                ->with(['terms.taxonomy', 'users', 'teams', 'attachments'])
                 ->withCount('terms');
 
             if($term){

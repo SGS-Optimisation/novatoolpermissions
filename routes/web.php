@@ -5,8 +5,9 @@ use App\Http\Controllers\CurrentTeamController;
 use App\Http\Controllers\PMs\ClientAccountController;
 use App\Http\Controllers\PMs\ClientAccountTaxonomyController;
 use App\Http\Controllers\PMs\PmHomeController;
-use App\Http\Controllers\PMs\RuleController;
-use App\Http\Controllers\PMs\RuleTaxonomyController;
+use App\Http\Controllers\PMs\Rules\RuleAttachmentController;
+use App\Http\Controllers\PMs\Rules\RuleController;
+use App\Http\Controllers\PMs\Rules\RuleTaxonomyController;
 use App\Http\Controllers\PMs\TaxonomyController;
 use App\Http\Controllers\PMs\TeamController;
 use App\Http\Controllers\PMs\TermController;
@@ -144,6 +145,22 @@ Route::name('pm.')
 
                         Route::put('/{id}/taxonomy/update', [RuleTaxonomyController::class, 'update'])
                             ->name('taxonomy.update');
+
+
+                        /*
+                         * Rule Attachments section
+                         */
+                        Route::name('attachments.')->prefix('/{id}/attachments')
+                            ->group(function () {
+
+                                Route::post('/', [RuleAttachmentController::class, 'attach'])
+                                    ->name('store');
+
+                                Route::delete('/{attachment}', [RuleAttachmentController::class, 'delete'])
+                                    ->name('delete');
+                            });
+
+
                     });
 
                     /*

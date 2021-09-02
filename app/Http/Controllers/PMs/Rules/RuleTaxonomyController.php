@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\PMs;
+namespace App\Http\Controllers\PMs\Rules;
 
+use App\Events\Rules\Updated;
 use App\Http\Controllers\Controller;
 use App\Models\ClientAccount;
 use App\Models\Rule;
@@ -11,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use function back;
 
 class RuleTaxonomyController extends Controller
 {
@@ -53,12 +55,8 @@ class RuleTaxonomyController extends Controller
             }
         }
 
-        $result = $rule->terms()->sync($term_id);
-
-        logger(print_r($result, true));
-
-
-        Cache::tags(['rules'])->clear();
+        $rule->terms()->sync($term_id);
+        event(new Updated($rule));
 
         return $request->wantsJson()
             ? new JsonResponse('', 200)
