@@ -423,14 +423,14 @@ export default {
             axios.get(route('job.rules', this.jobNumber))
                 .then(({data}) => {
                     console.log(data);
-                    if (data.job && !data.job.metadata.processing_mysgs && !data.job.metadata.error_mysgs) {
+                    if (data.job && data.job.hasOwnProperty('metadata') && !data.job.metadata.processing_mysgs && !data.job.metadata.error_mysgs) {
                         clearTimeout(this.timeOut);
 
                         this.currentJob = data.job;
                         this.currentRules = data.rules;
                         this.newRulesLoaded();
                         this.initRulesParsing();
-                    } else if (data.job.metadata.error_mysgs) {
+                    } else if (data.job && data.job.hasOwnProperty('metadata') && data.job.metadata.error_mysgs) {
                         this.currentJob = data.job;
                         this.currentJob.metadata.error_mysgs = data.job.metadata.error_mysgs;
                         console.log('mysgs error, halt');

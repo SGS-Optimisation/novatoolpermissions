@@ -76,7 +76,7 @@
         <hr class="mb-4 border-gray-300">
         <template v-if="detailsOpen">
           <div v-html="rule.content"/>
-          <div class="flex flex-wrap mb-3">
+          <div class="flex flex-wrap mb-3 mt-4">
             <template class="w-16" v-for="attachment in rule.attachments">
               <attachment
                   :attachment="attachment"
