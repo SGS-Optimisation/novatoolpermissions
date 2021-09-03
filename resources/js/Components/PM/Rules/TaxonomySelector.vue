@@ -1,6 +1,6 @@
 <template>
     <div>
-        <label id="listbox-label" class="block text-xs font-medium text-gray-700">
+        <label id="listbox-label" class="block text-xs font-medium font-bold text-gray-700">
             {{ taxonomyName }}
         </label>
 
