@@ -42,6 +42,10 @@ class EventServiceProvider extends ServiceProvider
             'App\\Listeners\\Rules\\AddTeamAsContributor',
         ],
 
+        'App\\Events\\Rules\\Deleted' => [
+            'App\\Listeners\\Rules\\RebuildRuleCache',
+        ],
+
         'App\\Events\\Jobs\\NewJobSearched' => [
             'App\\Listeners\\Jobs\\LoadMySgsData',
         ],

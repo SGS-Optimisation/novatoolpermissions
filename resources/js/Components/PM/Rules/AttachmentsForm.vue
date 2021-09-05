@@ -70,7 +70,7 @@ export default {
                 url: route('pm.client-account.rules.attachments.store', [this.clientAccount.slug, this.rule.id]),
                 autoProcessQueue: true,
                 thumbnailWidth: 150,
-                maxFilesize: 10,
+                maxFilesize: 100,
                 maxThumbnailFilesize: 0.5,
                 headers: {
                     "X-CSRF-TOKEN": document.querySelector("meta[name='csrf-token']").getAttribute('content')

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\PMs\Rules;
 
+use App\Events\Rules\Deleted;
 use App\Events\Rules\Updated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateRuleRequest;
@@ -274,7 +275,7 @@ class RuleController extends Controller
         $rule = Rule::find($id);
         $rule->delete();
 
-        event(new Updated($rule));
+        event(new Deleted($rule));
 
         return $request->wantsJson()
             ? new JsonResponse('', 200)
