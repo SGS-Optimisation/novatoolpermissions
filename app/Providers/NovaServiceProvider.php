@@ -48,6 +48,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 ->min(0)->required(),
         ], [], 'rules');
 
+        NovaSettings::addSettingsFields([
+            Text::make('Stage Taxonomy Name', 'stage_taxonomy_name')
+                ->required()->default('Stage'),
+        ], [], 'jobs');
+
         Nova::style('sgs', asset('css/nova-sgs.css'));
     }
 

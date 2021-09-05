@@ -25,6 +25,12 @@
                                     }).name
                                 }}
                             </div>-->
+                            <span class="flex flex-row" v-if="rule.attachments && rule.attachments.length">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                              </svg>
+                              {{rule.attachments.length}}
+                            </span>
                             <div class="ml-2" v-if="rule.flagged">
                                 <i title="This rule is currently flagged"
                                    class="text-red-700">
@@ -66,9 +72,10 @@ import clip from "text-clipper";
 
 export default {
     name: "ViewRuleItem",
-    props: ['group', 'rules', 'filterFlag'],
+    props: ['group', 'rules', 'filterFlag', 'filterStagePa', 'filterStagePp', 'filterStagePf'],
     data() {
-        return {}
+        return {
+        }
     },
     methods: {
         excerpt(rule) {
@@ -77,17 +84,44 @@ export default {
     },
     computed: {
         taxonomyRules() {
-            return _.orderBy([...this.filterFlag ? this.rules.filter(rule => {
-                let time = (this.filterFlag === 'updated') ? moment(rule.updated_at) : moment(rule.created_at);
-                let numDays = (this.filterFlag === 'updated') ?
-                    this.$page.settings.rule_filter_updated_duration
-                    : this.$page.settings.rule_filter_new_duration;
+            let filteredRules = this.rules;
 
-                return moment().subtract(parseInt(numDays), 'days').isSameOrBefore(time)
-                    && (this.filterFlag !== 'updated' || rule.created_at !== rule.updated_at)
-            }) : this.rules], 'updated_at', 'desc')
+            if(this.filterFlag) {
+                filteredRules = filteredRules.filter(rule => {
+                    let time = (this.filterFlag === 'updated') ? moment(rule.updated_at) : moment(rule.created_at);
+                    let numDays = (this.filterFlag === 'updated') ?
+                        this.$page.settings.rule_filter_updated_duration
+                        : this.$page.settings.rule_filter_new_duration;
+
+                    return moment().subtract(parseInt(numDays), 'days').isSameOrBefore(time)
+                        && (this.filterFlag !== 'updated' || rule.created_at !== rule.updated_at)
+                })
+            }
+
+            if(this.filterStage.length) {
+                filteredRules = filteredRules.filter(rule => {
+                    return _.every(rule.job_categorizations_terms, (term) => term.taxonomy.name !== 'Stage')
+                    || _.some(rule.job_categorizations_terms, (term) => this.filterStage.includes(term.name));
+                });
+            }
+
+            return _.orderBy([...filteredRules], 'updated_at', 'desc')
         },
 
+        filterStage() {
+            let stages = [];
+            if(this.filterStagePa) {
+                stages.push('PA');
+            }
+            if(this.filterStagePp) {
+                stages.push('PP');
+            }
+            if(this.filterStagePf) {
+                stages.push('PF');
+            }
+
+            return stages;
+        },
 
     }
     // created(){

@@ -6,7 +6,7 @@ use App\Events\Jobs\NewJobSearched;
 use App\Models\Job;
 use App\Services\MySgs\ConcurrentDataLoader;
 use App\Services\MySgs\DataLoader;
-use App\Services\Rule\RuleFilter;
+use App\Services\Jobs\RuleFilter;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -1,14 +1,15 @@
 <?php
 
 
-namespace App\Services\Rule;
+namespace App\Services\Jobs;
 
 
 use App\Models\ClientAccount;
 use App\Models\Job;
+use App\Models\Rule;
 use App\Models\Taxonomy;
 use App\Models\Term;
-use App\Services\MySgs\Api\EloquentHelpers\JobClientAccountMatcher;
+use App\Operations\Jobs\MatchClientAccountOperation;
 use App\Services\MySgs\Api\EloquentHelpers\JobFieldsMapper;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -26,7 +27,7 @@ class RuleFilter
         $cached_rules = cache($cache_key);
 
         if($cached_rules === null || !count($cached_rules)) {
-            $cached_rules = \Cache::remember($cache_key, 5*60, function() use($job) {
+            $cached_rules = \Cache::remember($cache_key, 5*60*60, function() use($job) {
                 $start = microtime(true);
 
                 $memoizeMapper = memoize(
@@ -41,7 +42,7 @@ class RuleFilter
                 if (!$job->metadata->client_found) {
                     logger('no client account associated job, searching');
 
-                    (new JobClientAccountMatcher($job))->handle();
+                    (new MatchClientAccountOperation($job))->handle();
 
                 }
 
@@ -67,7 +68,10 @@ class RuleFilter
                     /*
                      *  Match rules against job's metadata
                      */
-                    foreach ($client->rules()->with(['terms'])->isPublished()->get() as $rule) {
+                    /** @var Rule $rule */
+                    foreach ($client->rules()
+                                 ->with(['accountStructureTerms', 'jobCategorizationsTerms', 'attachments'])
+                                 ->isPublished()->get() as $rule) {
                         $matched = true;
                         $matchedTaxonomies = [];
 
@@ -171,7 +175,7 @@ class RuleFilter
                      * Fill in any unused taxonomy, for display in job identification section
                      */
                     /** @var Taxonomy $taxonomy */
-                    foreach ($client->child_taxonomies as $taxonomy) {
+                    foreach ($client->account_structure_child_taxonomies as $taxonomy) {
                         if (!in_array($taxonomy->name, $job_taxonomy_terms) && $taxonomy->mappings()->count()) {
 
                             foreach ($taxonomy->mappings as $mapping) {
@@ -200,7 +204,7 @@ class RuleFilter
                     }
 
                     $metadata->job_taxonomy = $job_taxonomy_terms;
-                    $metadata->job_taxonomy_extra = $job_taxonomy_terms_extra;
+                    //$metadata->job_taxonomy_extra = $job_taxonomy_terms_extra;
                     $metadata->matched_taxonomy = $job_taxonomy_terms_matches;
 
                     $job->metadata = $metadata;

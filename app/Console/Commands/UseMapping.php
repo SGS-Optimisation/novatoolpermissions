@@ -46,7 +46,7 @@ class UseMapping extends Command
         list($value, $raw) = (new JobFieldsMapper($job, $mapping))->run();
 
         $this->info('mapped value: ' . print_r($value, true));
-        $this->info('raw value: ' . print_r($raw, true));
+        //$this->info('raw value: ' . print_r($raw, true));
 
         return 0;
     }

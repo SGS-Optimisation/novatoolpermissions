@@ -32,7 +32,11 @@
                     </template>
                 </rule-form>
 
-                <div class="mt-12">
+                <div class="mt-6">
+                    <attachments-form :client-account="clientAccount" :rule="rule"/>
+                </div>
+
+                <div class="mt-6">
                     <metadata-form
                         :rule="rule"
                         :client-account="clientAccount"
@@ -54,6 +58,7 @@ import JetNavLink from "@/Jetstream/NavLink";
 import JetButton from "@/Jetstream/DangerButton";
 import JetDropdownLink from "@/Jetstream/DropdownLink";
 import Button from "@/Jetstream/Button";
+import AttachmentsForm from "../../Components/PM/Rules/AttachmentsForm";
 
 
 export default {
@@ -63,6 +68,7 @@ export default {
     },
 
     components: {
+        AttachmentsForm,
         JetButton,
         JetDropdownLink,
         JetNavLink,

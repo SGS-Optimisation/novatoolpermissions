@@ -11,7 +11,7 @@
                                        @termSelected="filterByTaxonomyTerm"
                                        ref="taxonomySelectors"
                     />
-                    <taxonomy-selector :taxonomy-name="'State'"
+                    <taxonomy-selector taxonomy-name="Rule Status"
                                        :terms="states"
                                        @termSelected="filterByState"
                                        ref="stateSelector"

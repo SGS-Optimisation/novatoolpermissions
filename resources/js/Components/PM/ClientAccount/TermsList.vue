@@ -41,7 +41,7 @@
                 <a @click="truncateMode=true" class="cursor-pointer text-white block bg-green-200 hover:bg-green-400">Show less</a>
             </div>
 
-            <i @click="creatingTerm=true"
+            <i @click="openCreatingTerm"
                v-if="$page.user_permissions.manageTerms"
                class="cursor-pointer pt-3 align-middle text-blue-400 hover:text-blue-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -74,6 +74,8 @@
             <template #content>
                 <div class="mt-4">
                     <jet-input type="text" class="mt-1 block w-3/4"
+                               autofocus
+                               ref="termName"
                                :value="createTermForm.name"
                                v-model="createTermForm.name"/>
 
@@ -276,7 +278,7 @@ export default {
     },
 
     methods: {
-        createTerm() {
+        openCreatingTerm() {
             this.creatingTerm = true;
         },
 

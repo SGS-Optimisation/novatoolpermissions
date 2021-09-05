@@ -241,8 +241,11 @@ export default {
         },
 
         deleteRule() {
-            if(this.rule.id) {
-                this.deleteForm.delete(route('pm.client-account.rules.delete', {clientAccount: this.clientAccount.slug, id: this.rule.id}), {
+            if (this.rule.id) {
+                this.deleteForm.delete(route('pm.client-account.rules.delete', {
+                    clientAccount: this.clientAccount.slug,
+                    id: this.rule.id
+                }), {
                     preserveScroll: true
                 }).then(() => {
                     this.cancelDeleteRule();

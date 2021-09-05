@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\PMs;
+namespace App\Http\Controllers\PMs\Rules;
 
+use App\Events\Rules\Deleted;
 use App\Events\Rules\Updated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateRuleRequest;
@@ -23,6 +24,13 @@ use Illuminate\Support\Facades\Cache;
 use Laravel\Jetstream\Jetstream;
 use Laravel\Nova\Fields\Trix;
 use Laravel\Nova\Trix\PendingAttachment;
+use function auth;
+use function back;
+use function config;
+use function event;
+use function logger;
+use function optional;
+use function redirect;
 
 class RuleController extends Controller
 {
@@ -174,7 +182,7 @@ class RuleController extends Controller
      */
     public function edit(Request $request, $client_account_slug, $id)
     {
-        $rule = Rule::withTrashed()->with(['terms'])->find($id);
+        $rule = Rule::withTrashed()->with(['terms', 'attachments'])->find($id);
 
         $this->authorize('update', $rule);
 
@@ -267,7 +275,7 @@ class RuleController extends Controller
         $rule = Rule::find($id);
         $rule->delete();
 
-        event(new Updated($rule));
+        event(new Deleted($rule));
 
         return $request->wantsJson()
             ? new JsonResponse('', 200)

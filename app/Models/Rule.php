@@ -6,6 +6,7 @@ use App\States\Rules\DraftState;
 use App\States\Rules\PublishedState;
 use App\States\Rules\ReviewingState;
 use App\States\Rules\RuleState;
+use Bnb\Laravel\Attachments\HasAttachment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -69,7 +70,7 @@ use Altek\Accountant\Contracts\Recordable;
 class Rule extends Model implements Recordable
 {
     use HasFactory, SoftDeletes, HasStates, \Altek\Accountant\Recordable, \Altek\Eventually\Eventually,
-        \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+        \Staudenmeir\EloquentHasManyDeep\HasRelationships, HasAttachment;
 
 
     /**
@@ -230,6 +231,16 @@ class Rule extends Model implements Recordable
     {
         return $this->terms()->whereHas('taxonomy.parent', function (Builder $query) {
             return $query->where('name', 'Account Structure');
+        });
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function jobCategorizationsTerms()
+    {
+        return $this->terms()->whereHas('taxonomy.parent', function (Builder $query) {
+            return $query->where('name', 'Job Categorizations');
         });
     }
 

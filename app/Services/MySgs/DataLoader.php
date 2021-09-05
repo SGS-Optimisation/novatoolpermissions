@@ -5,8 +5,9 @@ namespace App\Services\MySgs;
 
 use App\Models\ClientAccount;
 use App\Models\Job;
+use App\Operations\Jobs\GetStageOperation;
 use App\Services\MySgs\Api\EloquentHelpers\MysgsApiCaller;
-use App\Services\MySgs\Api\EloquentHelpers\JobClientAccountMatcher;
+use App\Operations\Jobs\MatchClientAccountOperation;
 use Illuminate\Support\Str;
 
 class DataLoader
@@ -60,7 +61,8 @@ class DataLoader
         /** @noinspection PhpExpressionResultUnusedInspection
          * Self invoked class which
          */
-        (new JobClientAccountMatcher($this->job))->handle();
+        (new MatchClientAccountOperation($this->job))->handle();
+        (new GetStageOperation($this->job))->handle();
     }
 
     protected function fail($reason)
