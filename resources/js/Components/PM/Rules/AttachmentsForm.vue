@@ -72,6 +72,7 @@ export default {
                 thumbnailWidth: 150,
                 maxFilesize: 100,
                 maxThumbnailFilesize: 0.5,
+                timeout: 0,
                 headers: {
                     "X-CSRF-TOKEN": document.querySelector("meta[name='csrf-token']").getAttribute('content')
                 },
