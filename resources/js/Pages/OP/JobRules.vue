@@ -420,7 +420,12 @@ export default {
         },
 
         queryRules() {
-            axios.get(route('job.rules', this.jobNumber))
+            const headers = {
+                "content-type": "application/json",
+                "Accept": "application/json"
+            };
+
+            axios.get(route('job.rules', this.jobNumber), {headers})
                 .then(({data}) => {
                     console.log(data);
                     if (data.job && data.job.hasOwnProperty('metadata') && !data.job.metadata.processing_mysgs && !data.job.metadata.error_mysgs) {
