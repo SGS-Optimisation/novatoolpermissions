@@ -320,14 +320,23 @@ export default {
         };
 
         this.filterObject['isTagError'] = (itemElem) => {
-            if (itemElem.terms.length === 0
-                || (itemElem.terms.length === 1 && itemElem.terms[0].name === 'No term')) {
+            let noTerms = (itemElem.terms.length === 0
+                || (itemElem.terms.length === 1 && itemElem.terms[0].name === 'No term')
+            );
+
+            if(noTerms) {
                 return true;
             }
 
-            return _.uniq(_.map(itemElem.terms, function (term) {
-                return term.taxonomy.parent.name;
-            })).length !== this.rootTaxonomies.length;
+            let hasStructure = _.some(itemElem.terms, function(term) {
+                return term.hasOwnProperty('taxonomy') && term.taxonomy.name === 'Artwork Structure Elements';
+            });
+
+            let atLeastOneTermPerRootTaxonomy = _.uniq(_.map(itemElem.terms, function (term) {
+                return term.hasOwnProperty('taxonomy') && term.taxonomy.parent.name;
+            })).length === this.rootTaxonomies.length;
+
+            return !hasStructure || !atLeastOneTermPerRootTaxonomy;
 
         };
 
