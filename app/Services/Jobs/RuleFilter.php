@@ -23,11 +23,11 @@ class RuleFilter
      */
     public static function handle(Job $job): array
     {
-        $cache_key = 'rules-job-'. $job->job_number;
+        $cache_key = 'rules-job-'.$job->job_number;
         $cached_rules = cache($cache_key);
 
-        if($cached_rules === null || !count($cached_rules)) {
-            $cached_rules = \Cache::remember($cache_key, 5*60*60, function() use($job) {
+        if ($cached_rules === null || !count($cached_rules)) {
+            $cached_rules = \Cache::remember($cache_key, 5 * 60 * 60, function () use ($job) {
                 $start = microtime(true);
 
                 $memoizeMapper = memoize(
@@ -70,7 +70,11 @@ class RuleFilter
                      */
                     /** @var Rule $rule */
                     foreach ($client->rules()
-                                 ->with(['accountStructureTerms', 'jobCategorizationsTerms', 'attachments'])
+                                 ->with([
+                                     'accountStructureTerms.taxonomy.mappings',
+                                     'jobCategorizationsTerms',
+                                     'attachments'
+                                 ])
                                  ->isPublished()->get() as $rule) {
                         $matched = true;
                         $matchedTaxonomies = [];
@@ -95,7 +99,7 @@ class RuleFilter
                             /*
                              * Otherwise, check if the field matches
                              */
-                            if ($term->taxonomy->mappings()->count()) {
+                            if (count($term->taxonomy->mappings) > 0) {
 
                                 if (!Arr::exists($job_taxonomy_terms_matches, $term->taxonomy->name)) {
                                     $job_taxonomy_terms_matches[$term->taxonomy->name] = [];
@@ -144,7 +148,8 @@ class RuleFilter
                                                     $rule->id, $termValue, $mysgsValue_single)
                                             );*/
 
-                                            if (!in_array($term->name, $job_taxonomy_terms_matches[$term->taxonomy->name])) {
+                                            if (!in_array($term->name,
+                                                $job_taxonomy_terms_matches[$term->taxonomy->name])) {
                                                 $job_taxonomy_terms_matches[$term->taxonomy->name][] = $term->name;
                                             }
                                         }
@@ -191,7 +196,8 @@ class RuleFilter
 
                                     foreach ($mysgsValue as $index => $mysgsValue_single) {
                                         //logger('mysgsvalue:'.print_r($mysgsValue_single, true));
-                                        if (!isset($job_taxonomy_terms[$taxonomy->name]) || !in_array($mysgsValue_single, $job_taxonomy_terms[$taxonomy->name])) {
+                                        if (!isset($job_taxonomy_terms[$taxonomy->name]) || !in_array($mysgsValue_single,
+                                                $job_taxonomy_terms[$taxonomy->name])) {
                                             $job_taxonomy_terms[$taxonomy->name][] = $mysgsValue_single;
                                         }
                                         $job_taxonomy_terms_extra[$taxonomy->name][$mapping->slug.'/'.$mapping->field_path] = $mysgsValue_single;
@@ -211,7 +217,7 @@ class RuleFilter
                     $job->save();
                 }
 
-                logger('filtering done in ' . microtime(true) - $start);
+                logger('filtering done in '.microtime(true) - $start);
 
                 return $clientRules;
             });
