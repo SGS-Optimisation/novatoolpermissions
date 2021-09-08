@@ -125,10 +125,15 @@
                              :list="Object.entries(rulesByTaxonomies)"
                              @filter="filterOption=arguments[0]" @sort="sortOption=arguments[0]">
 
-                        <div class="w-1/3 rounded"
+                        <div class="rounded"
+                             :class="{
+                                'w-full': termFocus,
+                                'w-1/3': !termFocus,
+                             }"
                              v-for="(ruleGroup, ruleIndex) in Object.entries(rulesByTaxonomies)" :key="ruleIndex">
                             <view-rule-item :rules="ruleGroup[1]"
                                             :group="ruleGroup[0]"
+                                            :filter-option="filterOptionTracker"
                                             :filter-flag="filterFlag"
                                             :filter-stage-pa="filterStagePA"
                                             :filter-stage-pp="filterStagePP"
@@ -575,6 +580,10 @@ export default {
     computed: {
         showStage() {
             return this.taxonomies.hasOwnProperty('Stage');
+        },
+
+        termFocus() {
+            return this.filterOption && this.filterOption !== 'isNew' && this.filterOption !== 'isUpdated';
         },
     },
 
