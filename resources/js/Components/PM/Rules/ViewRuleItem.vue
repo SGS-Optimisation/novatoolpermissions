@@ -1,17 +1,23 @@
 <template>
-    <div class="mr-4 mb-4 p-2 bg-indigo-50" v-if="taxonomyRules.length > 0">
-        <div class="w-full">
+    <div class="mr-4 mb-4 p-2" v-if="taxonomyRules.length > 0"
+        :class="{'bg-indigo-50' : !termFocus}">
+
+        <div class="w-full" v-if="!termFocus">
             <h1 class="bg-gray-500 text-md font-medium text-gray-100 px-2">
                 {{ group }}
             </h1>
         </div>
-        <div class="w-full">
+
+        <div class="w-full flex flex-wrap">
             <div v-for="(rule, index) in taxonomyRules"
-                 :class="(index == taxonomyRules.length-1) ?
-                 'flex flex-row p-1 my-1'
-                :'flex flex-row border-b border-indigo-100 p-1 my-1'"
+                 :class="{
+                    'flex flex-row p-1 my-1': !termFocus && (index === taxonomyRules.length-1),
+                    'flex flex-row border-b border-indigo-100 p-1 my-1': !termFocus && (index !== taxonomyRules.length-1),
+                    'w-1/3 flex px-3 py-1 my-1': termFocus,
+                 }"
             >
-                <div class="w-full">
+                <div class="w-full"
+                :class="{'bg-indigo-50 p-2': termFocus}">
                     <div class="cursor-pointer" @click="$emit('on-click-view', rule)">
                         <p class="text-sm font-bold text-gray-900">{{ rule.name }}</p>
                         <p class="text-xs text-gray-700 break-words" v-html="excerpt(rule)"/>
@@ -72,7 +78,7 @@ import clip from "text-clipper";
 
 export default {
     name: "ViewRuleItem",
-    props: ['group', 'rules', 'filterFlag', 'filterStagePa', 'filterStagePp', 'filterStagePf'],
+    props: ['group', 'rules', 'filterFlag', 'filterStagePa', 'filterStagePp', 'filterStagePf', 'filterOption'],
     data() {
         return {
         }
@@ -83,6 +89,10 @@ export default {
         },
     },
     computed: {
+        termFocus() {
+            return this.filterOption && this.filterOption !== 'isNew' && this.filterOption !== 'isUpdated';
+        },
+
         taxonomyRules() {
             let filteredRules = this.rules;
 
