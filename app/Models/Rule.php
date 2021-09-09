@@ -91,8 +91,8 @@ class Rule extends Model implements Recordable
         'metadata' => 'array',
         'flagged' => 'boolean',
         'state' => RuleState::class,
-
     ];
+
     protected $recordableEvents = [
         'created',
         'updated',
@@ -154,6 +154,7 @@ class Rule extends Model implements Recordable
         return $this->belongsToMany(User::class)
             ->as('contributor')
             ->withPivot(['metadata'])
+            ->using(RuleUser::class)
             ->withTimestamps();
     }
 

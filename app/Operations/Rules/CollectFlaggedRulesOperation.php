@@ -1,13 +1,13 @@
 <?php
 
 
-namespace App\Features\Rules;
+namespace App\Operations\Rules;
 
 
-use App\Features\BaseFeature;
 use App\Models\Rule;
+use App\Operations\BaseOperation;
 
-class FlaggedCollector extends BaseFeature
+class CollectFlaggedRulesOperation extends BaseOperation
 {
     public $users_rules_dict;
 

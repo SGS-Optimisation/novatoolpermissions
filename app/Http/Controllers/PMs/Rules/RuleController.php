@@ -4,17 +4,22 @@ namespace App\Http\Controllers\PMs\Rules;
 
 use App\Events\Rules\Deleted;
 use App\Events\Rules\Updated;
+use App\Features\Rules\AssignAndNotifyRuleReviewersFeature;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateRuleRequest;
 use App\Models\ClientAccount;
 use App\Models\Rule;
+use App\Models\Team;
 use App\Models\Term;
+use App\Operations\Rules\GetOrderedStatesOperation;
+use App\Operations\Rules\GetRuleReviewersOperation;
 use App\Repositories\RuleRepository;
 use App\Services\ClientAccounts\BuildTaxonomyLists;
 use App\Services\LegacyImport\ExtractImages;
 use App\Services\Taxonomy\Traits\TaxonomyBuilder;
 use App\States\Rules\DraftState;
 use App\States\Rules\PublishedState;
+use App\States\Rules\RuleState;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -40,10 +45,10 @@ class RuleController extends Controller
     /**
      * TODO: Fix attachments not created in db
      *
-     * @param Request $request
-     * @param Rule $rule
+     * @param  Request  $request
+     * @param  Rule  $rule
      */
-    protected function parseContent($request, $rule)
+    protected static function extractImages($request, $rule)
     {
         if ($request->ContentDraftId) {
             $callbacks[] = function () use ($request, $rule) {
@@ -54,35 +59,55 @@ class RuleController extends Controller
                 );
             };
         }
-
-        if ($request->state && $rule->state != $request->state) {
-            logger('transitioning rule ' . $rule->id . ' to ' . $request->state);
-            $rule->state->transitionTo($request->state, $request->user());
-        }
-    }
-
-
-    protected static function buildStates(Rule $rule)
-    {
-        $transitionable_states = $rule->state->transitionableStates();
-        $currentState = $rule->state->getMorphClass();
-        $shown_states = [];
-
-        foreach ($transitionable_states as $state) {
-            $transitionClass = $rule->state->config()->resolveTransitionClass($currentState, $state);
-
-            if (!$transitionClass
-                || (new $transitionClass($rule, auth()->user()))->canTransition()
-            ) {
-                $shown_states[] = $state;
-            }
-        }
-
-        return $shown_states;
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
+     * @param $rule
+     */
+    protected static function processTransitions($request, $rule)
+    {
+        if ($request->state && $rule->state != $request->state) {
+            logger('transitioning rule '.$rule->id.' to '.$request->state);
+
+            $transitionParameters = [$request->user()];
+
+            /** @var RuleState $stateClass */
+            $stateClass = 'App\States\Rules\\'.$request->state.'State';
+            if ((new $stateClass($rule))->requiresAssignee) {
+                $transitionParameters[] = $request->get('assignees', []);
+            }
+
+            $rule->state->transitionTo($request->state, ...$transitionParameters);
+        } elseif ($rule->state->requiresAssignee) {
+            (new AssignAndNotifyRuleReviewersFeature($rule, $request->user(), $request->get('assignees', [])))->handle();
+        }
+    }
+
+    /**
+     * @param  ClientAccount  $clientAccount
+     */
+    public static function getPublishers($clientAccount)
+    {
+        $publishers = [];
+        $teams = $clientAccount->teams;
+
+        /** @var Team $team */
+        foreach ($teams as $team) {
+            foreach ($team->allUsers() as $user) {
+                if ($team->userHasPermission($user, 'publishRules')) {
+                    //$publishers[$user->id] = $user->name;
+                    //$publishers[] = $user->name;
+                    $publishers[] = ['value' => $user->id, 'label' => $user->name];
+                }
+            }
+        }
+
+        return $publishers;
+    }
+
+    /**
+     * @param  Request  $request
      * @param $client_account_slug
      * @return \Inertia\Response
      */
@@ -111,7 +136,7 @@ class RuleController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @param $client_account_slug
      * @return \Inertia\Response
      */
@@ -127,8 +152,10 @@ class RuleController extends Controller
         return Jetstream::inertia()->render($request, 'ClientAccount/CreateRule', array_merge([
             'team' => $request->user()->currentTeam,
             'rule' => $rule,
-            'states' => $rule->getStatesFor('state'),
-            'allowedStates' => static::buildStates($rule),
+            //'states' => $rule->getStatesFor('state'),
+            //'allowedStates' => $allowedStates,
+            'stateModels' => (new GetOrderedStatesOperation($rule))->handle(),
+            'publishers' => static::getPublishers($client_account),
         ],
             $this->buildTaxonomyLists($client_account_slug)
         ));
@@ -137,7 +164,7 @@ class RuleController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return Application|JsonResponse|RedirectResponse|Redirector
      */
     public function store(CreateRuleRequest $request, $client_account_slug)
@@ -148,9 +175,10 @@ class RuleController extends Controller
         $rule_fields['content'] = (new ExtractImages($request->get('content')))->handle()->updated_content;
 
         $rule = $client_account->rules()->create($rule_fields);
-        $this->parseContent($request, $rule);
+        static::extractImages($request, $rule);
+        static::processTransitions($request, $rule);
 
-        logger('rule added: ' . $rule->id);
+        logger('rule added: '.$rule->id);
         event(new Updated($rule));
 
         $request->session()->flash('success', 'Rule successfully created!');
@@ -164,7 +192,7 @@ class RuleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -175,13 +203,14 @@ class RuleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @param $client_account_slug
-     * @param int $id
+     * @param  int  $id
      * @return \Inertia\Response
      */
     public function edit(Request $request, $client_account_slug, $id)
     {
+        /** @var Rule $rule */
         $rule = Rule::withTrashed()->with(['terms', 'attachments'])->find($id);
 
         $this->authorize('update', $rule);
@@ -209,14 +238,19 @@ class RuleController extends Controller
             )
         );
 
-
         return Jetstream::inertia()->render($request, 'ClientAccount/EditRule', array_merge([
             'team' => $request->user()->currentTeam,
             'rule' => $rule,
             'contributors' => $rule->users,
             //'states' => $rule->getStatesFor('state')
-            'states' => $rule->state->transitionableStates(),
-            'allowedStates' => static::buildStates($rule),
+            //'states' => $rule->state->transitionableStates(),
+            //'allowedStates' => static::buildStates($rule),
+            'stateModels' => (new GetOrderedStatesOperation($rule))->handle(),
+            'publishers' => static::getPublishers($rule->clientAccount),
+            'initialAssignees' => collect((new \App\Operations\Rules\GetRuleReviewersOperation($rule))->handle())
+                ->map(function ($user) {
+                    return ['value' => $user->id, 'label' => $user->name];
+                })
         ],
             $this->buildTaxonomyLists($client_account_slug)
         ));
@@ -225,8 +259,8 @@ class RuleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return JsonResponse|RedirectResponse
      */
     public function update(Request $request, $client_account_slug, $id)
@@ -236,7 +270,8 @@ class RuleController extends Controller
 
         $rule = Rule::find($id);
         $rule->update($rule_fields);
-        $this->parseContent($request, $rule);
+        static::extractImages($request, $rule);
+        static::processTransitions($request, $rule);
 
         event(new Updated($rule));
 
@@ -250,7 +285,7 @@ class RuleController extends Controller
         $rule_ids = $request->get('rule_ids');
         $rules = Rule::whereIn('id', $rule_ids)->get();
 
-        foreach($rules as $rule) {
+        foreach ($rules as $rule) {
             $rule->state->transitionTo(PublishedState::class, $request->user());
             event(new Updated($rule));
         }
@@ -264,9 +299,9 @@ class RuleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @param $client_account_slug
-     * @param int $id
+     * @param  int  $id
      * @return JsonResponse|RedirectResponse
      * @throws \Exception
      */
@@ -286,9 +321,9 @@ class RuleController extends Controller
     /**
      * Restore deleted resource
      *
-     * @param Request $request
+     * @param  Request  $request
      * @param $client_account_slug
-     * @param int $id
+     * @param  int  $id
      * @return JsonResponse|RedirectResponse
      * @throws \Exception
      */
