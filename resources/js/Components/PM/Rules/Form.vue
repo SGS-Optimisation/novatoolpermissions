@@ -214,7 +214,7 @@ export default {
                 content: this.rule.content,
                 ContentDraftId: uuidv4(),
                 state: this.rule.state,
-                assignees: [],
+                assignees:  _.map(this.initialAssignees, 'value'),
             }, {
                 bag: 'pushRuleData',
                 resetOnSuccess: false,

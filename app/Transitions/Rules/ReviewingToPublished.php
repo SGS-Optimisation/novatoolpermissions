@@ -7,6 +7,7 @@ namespace App\Transitions\Rules;
 use App\Models\Rule;
 use App\Models\Team;
 use App\Models\User;
+use App\Operations\Rules\UnassignRuleReviewersOperation;
 use App\States\Rules\PublishedState;
 use Spatie\ModelStates\Transition;
 
@@ -32,6 +33,8 @@ class ReviewingToPublished extends Transition
     {
         $this->rule->state = PublishedState::class;
         $this->rule->save();
+
+        (new UnassignRuleReviewersOperation($this->rule))->handle();
 
         return $this->rule;
     }

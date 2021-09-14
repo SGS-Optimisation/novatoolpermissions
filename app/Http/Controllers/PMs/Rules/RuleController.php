@@ -128,6 +128,7 @@ class RuleController extends Controller
             'clientAccount' => $client_account,
             'rules' => $ruleRepo->all($search_term),
             'states' => (new Rule)->getStatesFor('state'),
+            'stateModels' => (new GetOrderedStatesOperation(new Rule))->handle(),
             'search' => optional($search_term)->name,
             'rootTaxonomies' => $client_account->root_taxonomies,
         ]);

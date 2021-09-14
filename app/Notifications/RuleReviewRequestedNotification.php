@@ -45,7 +45,7 @@ class RuleReviewRequestedNotification extends Notification implements ShouldQueu
     public function toMail($notifiable)
     {
         $rule = $this->rule;
-        $subject = 'Rule review requested: '.Str::limit($rule->name, 20);
+        $subject = 'Review requested for rule: '.Str::limit($rule->name, 20);
 
         return (new MailMessage)
             ->greeting('Hello '.$notifiable->given_name)

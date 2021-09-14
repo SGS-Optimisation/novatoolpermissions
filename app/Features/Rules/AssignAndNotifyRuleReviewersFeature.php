@@ -9,6 +9,8 @@ use App\Models\Rule;
 use App\Models\User;
 use App\Notifications\RuleReviewRequestedNotification;
 use App\Operations\Rules\AssignRuleReviewersOperation;
+use App\Operations\Rules\AutoPruneNonContributors;
+use App\Operations\Rules\UnassignRuleReviewersOperation;
 use Illuminate\Support\Facades\Notification;
 
 class AssignAndNotifyRuleReviewersFeature extends BaseFeature
@@ -26,12 +28,24 @@ class AssignAndNotifyRuleReviewersFeature extends BaseFeature
 
     public function handle()
     {
-        $newAssignees = (new AssignRuleReviewersOperation($this->rule, $this->reviewers))->handle();
+        $current_reviewer_ids = $this->rule->users()->get()->filter(function ($user) {
+            return isset($user->contributor->metadata['actions'])
+                && $user->contributor->metadata['actions'] === 'review';
+        })->pluck('id')->all();
 
-        $users = User::whereIn('id', $newAssignees)->get();
+        (new AutoPruneNonContributors($this->rule))->handle();
+        (new UnassignRuleReviewersOperation($this->rule))->handle();
 
-        logger('sending notification for review assignment');
-        Notification::send($users, new RuleReviewRequestedNotification($this->rule, $this->requester));
+        $changes = (new AssignRuleReviewersOperation($this->rule, $this->reviewers))->handle();
+
+        $users_to_notify = User::whereIn('id',
+            array_diff(
+                array_merge($changes['attached'], $changes['updated']),
+                $current_reviewer_ids
+            )
+        )->get();
+
+        Notification::send($users_to_notify, new RuleReviewRequestedNotification($this->rule, $this->requester));
     }
 
 }

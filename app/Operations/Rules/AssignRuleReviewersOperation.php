@@ -5,6 +5,7 @@ namespace App\Operations\Rules;
 
 
 use App\Models\Rule;
+use App\Models\RuleUser;
 use App\Models\User;
 use App\Operations\BaseOperation;
 
@@ -40,10 +41,14 @@ class AssignRuleReviewersOperation extends BaseOperation
                 'metadata' => [
                     'action' => 'review'
                 ]
-            ]
+            ],
+            false
         );
 
-        return $this->result['attached'];
+        logger('rule reviewers: ' . print_r($this->reviewers, true));
+        logger('rule review assignment result: '. print_r($this->result, true));
+
+        return $this->result;
     }
 
 }

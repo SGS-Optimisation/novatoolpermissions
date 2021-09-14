@@ -1,6 +1,6 @@
 <template>
     <div class="mr-4 mb-4 p-2" v-if="taxonomyRules.length > 0"
-        :class="{'bg-indigo-50' : !termFocus}">
+         :class="{'bg-indigo-50' : !termFocus}">
 
         <div class="w-full" v-if="!termFocus">
             <h1 class="bg-gray-500 text-md font-medium text-gray-100 px-2">
@@ -17,32 +17,37 @@
                  }"
             >
                 <div class="w-full"
-                :class="{'bg-indigo-50 p-2': termFocus}">
+                     :class="{'bg-indigo-50 p-2': termFocus}">
                     <div class="cursor-pointer" @click="$emit('on-click-view', rule)">
                         <p class="text-sm font-bold text-gray-900">{{ rule.name }}</p>
-                        <p class="text-xs text-gray-700 break-words" v-html="excerpt(rule)"/>
+                        <p class="text-xs text-gray-700 break-all" v-html="excerpt(rule)"/>
                     </div>
                     <div class="text-xs text-gray-500 flex flex-row justify-between">
                         <div class="flex flex-row">
-<!--                            <div class="text-xs bg-pink-200 rounded-xl px-2">
-                                {{
-                                    _.find(rule.terms, (item) => {
-                                        return item.name === group
-                                    }).name
-                                }}
-                            </div>-->
+                            <!--                            <div class="text-xs bg-pink-200 rounded-xl px-2">
+                                                            {{
+                                                                _.find(rule.terms, (item) => {
+                                                                    return item.name === group
+                                                                }).name
+                                                            }}
+                                                        </div>-->
                             <span class="flex flex-row" v-if="rule.attachments && rule.attachments.length">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-6" fill="none" viewBox="0 0 24 24"
+                                   stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
                               </svg>
-                              {{rule.attachments.length}}
+                              {{ rule.attachments.length }}
                             </span>
                             <div class="ml-2" v-if="rule.flagged">
                                 <i title="This rule is currently flagged"
                                    class="text-red-700">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                         fill="currentColor">
                                         <title>This rule is currently flagged</title>
-                                        <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clip-rule="evenodd" />
+                                        <path fill-rule="evenodd"
+                                              d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z"
+                                              clip-rule="evenodd"/>
                                     </svg>
                                 </i>
                             </div>
@@ -80,8 +85,7 @@ export default {
     name: "ViewRuleItem",
     props: ['group', 'rules', 'filterFlag', 'filterStagePa', 'filterStagePp', 'filterStagePf', 'filterOption'],
     data() {
-        return {
-        }
+        return {}
     },
     methods: {
         excerpt(rule) {
@@ -96,7 +100,7 @@ export default {
         taxonomyRules() {
             let filteredRules = this.rules;
 
-            if(this.filterFlag) {
+            if (this.filterFlag) {
                 filteredRules = filteredRules.filter(rule => {
                     let time = (this.filterFlag === 'updated') ? moment(rule.updated_at) : moment(rule.created_at);
                     let numDays = (this.filterFlag === 'updated') ?
@@ -108,10 +112,10 @@ export default {
                 })
             }
 
-            if(this.filterStage.length) {
+            if (this.filterStage.length) {
                 filteredRules = filteredRules.filter(rule => {
                     return _.every(rule.job_categorizations_terms, (term) => term.taxonomy.name !== 'Stage')
-                    || _.some(rule.job_categorizations_terms, (term) => this.filterStage.includes(term.name));
+                        || _.some(rule.job_categorizations_terms, (term) => this.filterStage.includes(term.name));
                 });
             }
 
@@ -120,13 +124,13 @@ export default {
 
         filterStage() {
             let stages = [];
-            if(this.filterStagePa) {
+            if (this.filterStagePa) {
                 stages.push('PA');
             }
-            if(this.filterStagePp) {
+            if (this.filterStagePp) {
                 stages.push('PP');
             }
-            if(this.filterStagePf) {
+            if (this.filterStagePf) {
                 stages.push('PF');
             }
 
