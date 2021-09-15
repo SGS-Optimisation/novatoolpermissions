@@ -19,7 +19,26 @@ class GetDefaultRuleReviewersOperation extends BaseOperation
 
     public function handle()
     {
-        // TODO: Implement handle() method.
+        $publishers = [];
+        $past_reviewers = [];
+        $contributors = $this->rule->users;
+
+        foreach ($this->rule->teams as $team) {
+            foreach ($team->allUsers() as $user) {
+                if($team->userHasPermission($user, 'publishRules')) {
+
+                    if($contributors->firstWhere('id', $user->id)) {
+                        $user->suggestion_level = 10;
+                    } else {
+                        $user->suggestion_level = 1;
+                    }
+
+                    $publishers[] = $user;
+                }
+            }
+        }
+
+        return $publishers;
     }
 
 }

@@ -37,7 +37,7 @@
                     <input type="hidden" v-model="form.ContentDraftId">
 
                     <section class="col-span-6">
-                        <div class="flex justify-between">
+                        <div class="flex flex-col justify-between">
                             <div class="flex flex-row">
                                 <div v-for="(state, index) in stateObjects" class="flex flew-row px-4">
                                     <template>
@@ -56,7 +56,7 @@
                                     </template>
                                 </div>
                             </div>
-                            <div class="flex flex-col" v-if="requiresAssignees">
+                            <div class="flex flex-col mt-3" v-if="requiresAssignees">
                                 <h4 class="h4">Reviewers</h4>
                                 <multiselect @input="assigneeSelected"
                                              v-model="assignees"
@@ -66,7 +66,24 @@
                                              :options="publishers"
                                              label="label"
                                              track-by="value"
-                                             />
+                                />
+
+                                <div class="flex flex-col mt-2" v-if="suggestedReviewers.length">
+                                    <h5 class="h6">Suggested</h5>
+                                    <div class="flex flex-row flex-wrap">
+                                        <template v-for="user in suggestedReviewers">
+                                            <span class="text-xs rounded-xl m-1 px-1 flex cursor-pointer"
+                                                  :class="{
+                                                        'bg-yellow-100': user.suggestion_level === 1,
+                                                        'bg-blue-200': user.suggestion_level > 1,
+                                                  }"
+                                                  :title="user.suggestion_level > 1 ? 'Contributed to this rule' :'Is a publisher for the concerned jobteam'"
+                                                  @click="assignSuggestedPublisher(user)">
+                                                {{ user.label }}
+                                            </span>
+                                        </template>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -192,6 +209,7 @@ export default {
         'allowedStates',
         'stateObjects',
         'publishers',
+        'defaultPublishers',
         'initialAssignees',
     ],
 
@@ -201,6 +219,7 @@ export default {
             confirmingRuleRestore: false,
 
             requiresAssignees: _.find(this.stateObjects, (s) => s.name == this.rule.state).requiresAssignee,
+
             assignees: this.initialAssignees,
 
             editorSettings: {
@@ -214,7 +233,7 @@ export default {
                 content: this.rule.content,
                 ContentDraftId: uuidv4(),
                 state: this.rule.state,
-                assignees:  _.map(this.initialAssignees, 'value'),
+                assignees: _.map(this.assignees, 'value'),
             }, {
                 bag: 'pushRuleData',
                 resetOnSuccess: false,
@@ -236,6 +255,12 @@ export default {
         }
     },
 
+    computed: {
+        suggestedReviewers() {
+            return _.orderBy(_.differenceBy(this.defaultPublishers, this.assignees, 'value'), 'suggestion_level', 'desc');
+        },
+    },
+
     methods: {
         stateChanged(state) {
             this.form.state = state.name;
@@ -245,6 +270,11 @@ export default {
         assigneeSelected(assignees) {
             console.log(assignees);
             this.form.assignees = _.map(assignees, 'value');
+        },
+
+        assignSuggestedPublisher(assignee) {
+            this.form.assignees.push(assignee.value);
+            this.assignees.push(assignee);
         },
 
         cancelRestoreRule() {

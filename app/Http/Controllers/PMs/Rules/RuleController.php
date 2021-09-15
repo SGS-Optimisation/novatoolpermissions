@@ -11,6 +11,7 @@ use App\Models\ClientAccount;
 use App\Models\Rule;
 use App\Models\Team;
 use App\Models\Term;
+use App\Operations\Rules\GetDefaultRuleReviewersOperation;
 use App\Operations\Rules\GetOrderedStatesOperation;
 use App\Operations\Rules\GetRuleReviewersOperation;
 use App\Repositories\RuleRepository;
@@ -104,6 +105,22 @@ class RuleController extends Controller
         }
 
         return $publishers;
+    }
+
+    public static function getDefaultPublishers($rule)
+    {
+        $users = (new GetDefaultRuleReviewersOperation($rule))->handle();
+        $default_publishers = [];
+
+        foreach($users as $user){
+            $default_publishers[] = [
+                'value' => $user->id,
+                'label' => $user->name,
+                'suggestion_level' => $user->suggestion_level
+            ];
+        }
+
+        return $default_publishers;
     }
 
     /**
@@ -248,6 +265,7 @@ class RuleController extends Controller
             //'allowedStates' => static::buildStates($rule),
             'stateModels' => (new GetOrderedStatesOperation($rule))->handle(),
             'publishers' => static::getPublishers($rule->clientAccount),
+            'defaultPublishers' => static::getDefaultPublishers($rule),
             'initialAssignees' => collect((new \App\Operations\Rules\GetRuleReviewersOperation($rule))->handle())
                 ->map(function ($user) {
                     return ['value' => $user->id, 'label' => $user->name];

@@ -10,6 +10,7 @@
                            :taxonomy-hierarchy="taxonomyHierarchy"
                            :top-taxonomies="topTaxonomies"
                            :publishers="publishers"
+                           :default-publishers="defaultPublishers"
                            :initial-assignees="initialAssignees"
                 >
                     <template #title>
@@ -92,6 +93,7 @@ export default {
         'allowedStates',
         'stateModels',
         'publishers',
+        'defaultPublishers',
         'initialAssignees',
     ],
 
