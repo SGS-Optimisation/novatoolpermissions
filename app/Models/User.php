@@ -134,6 +134,7 @@ class User extends Authenticatable implements Identifiable
         return $this->belongsToMany(Rule::class)
             ->as('contributor')
             ->withPivot(['metadata'])
+            ->using(RuleUser::class)
             ->withTimestamps();
     }
 

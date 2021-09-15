@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Features\Rules\FlaggedCollector;
+use App\Operations\Rules\CollectFlaggedRulesOperation;
 use App\Models\User;
 use App\Notifications\FlaggedRulesReminderNotification;
 use Illuminate\Console\Command;
@@ -40,7 +40,7 @@ class FlaggedRulesReminder extends Command
      */
     public function handle()
     {
-        $flagged_collector = (new FlaggedCollector)->handle();
+        $flagged_collector = (new CollectFlaggedRulesOperation)->handle();
 
         foreach($flagged_collector->users_rules_dict as $user_id => $user_rules_list) {
             /** @var User $user */

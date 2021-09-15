@@ -112,6 +112,7 @@
                         </div>
                         <div class="flex-grow">
                             <view-rule :rule="rule" :client-account="clientAccount"
+                                       :state-models="stateModels"
                                        :selected="rule.selected"
                                        ref="viewRule"
                                        :show-contributors="showContributors" @updated="getRules"/>
@@ -184,6 +185,7 @@ export default {
         'rules',
         'search',
         'states',
+        'stateModels',
         'rootTaxonomies',
         'users',
     ],
