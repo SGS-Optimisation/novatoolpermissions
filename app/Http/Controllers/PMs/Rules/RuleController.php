@@ -245,7 +245,7 @@ class RuleController extends Controller
             ],
             ['', '', '<br>', /*'', '', '','</span><br>'*/],
             strip_tags(
-                $rule->content,
+                preg_replace('/\>\s+\</m', '><', $rule->content),
                 [
                     'p', 'img', 'a', 'span', 'br',
                     'i', 'strong', 'b', 'u', 's', 'em',
