@@ -237,12 +237,13 @@ class RuleController extends Controller
             [
                 '\n',
                 '\r\n',
+                '<br/>',
                 //'<div>&nbsp;</div>',
                 //'<p></p>',
                 //'<p><br></p>',
                 //'</span>',
             ],
-            ['', '', /*'', '', '','</span><br>'*/],
+            ['', '', '<br>', /*'', '', '','</span><br>'*/],
             strip_tags(
                 $rule->content,
                 [
