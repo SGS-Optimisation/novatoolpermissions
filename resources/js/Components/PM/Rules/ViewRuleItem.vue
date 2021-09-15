@@ -119,7 +119,7 @@ export default {
                 });
             }
 
-            return _.orderBy([...filteredRules], 'updated_at', 'desc')
+            return _.orderBy([...filteredRules], [rule => rule.name.toLowerCase()], ['asc'])
         },
 
         filterStage() {
