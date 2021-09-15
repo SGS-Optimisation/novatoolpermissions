@@ -6,9 +6,11 @@
                 <rule-form :rule="rule"
                            :states="states"
                            :allowed-states="allowedStates"
+                           :state-objects="stateModels"
                            :client-account="clientAccount"
                            :taxonomy-hierarchy="taxonomyHierarchy"
                            :top-taxonomies="topTaxonomies"
+                           :publishers="publishers"
                 >
                     <template #title>
                         <div class="flex w-48 bg-white rounded-b-lg shadow">
@@ -56,6 +58,8 @@ export default {
         'rule',
         'states',
         'allowedStates',
+        'stateModels',
+        'publishers',
     ],
 
 }

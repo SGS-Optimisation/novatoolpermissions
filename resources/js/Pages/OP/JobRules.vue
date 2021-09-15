@@ -269,7 +269,7 @@ export default {
             currentRules: this.rules,
             searchJobKey: this.jobNumber,
             searching: false,
-            searchedRules: [..._.orderBy(this.rules, 'created_at', 'desc')],
+            searchedRules: [..._.orderBy(this.rules, 'name', 'asc')],
             isOpen: false,
             currentRule: null,
             rulesUpdated: false,
@@ -345,7 +345,7 @@ export default {
         },
 
         newRulesLoaded() {
-            this.searchedRules = [..._.orderBy(this.currentRules, 'created_at', 'desc')];
+            this.searchedRules = [..._.orderBy(this.currentRules, 'name', 'asc')];
             this.searching = false;
 
             if(this.currentJob.metadata.hasOwnProperty('stages') && this.currentJob.metadata.stages.length) {

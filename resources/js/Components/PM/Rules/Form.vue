@@ -1,6 +1,6 @@
 <template>
     <div class="mx-auto sm:px-6 lg:px-8"
-    :class="{'bg-red-500': rule.deleted_at}">
+         :class="{'bg-red-500': rule.deleted_at}">
 
         <template>
             <h1 class="text-lg">
@@ -9,7 +9,7 @@
         </template>
 
         <div class="pt-4">
-            <jet-form-section @submitted="pushRuleData" >
+            <jet-form-section @submitted="pushRuleData">
                 <template #title>
                     Rule definition
                 </template>
@@ -36,31 +36,54 @@
 
                     <input type="hidden" v-model="form.ContentDraftId">
 
-                    <section>
-
-                        <div class="flex flex-row">
-                            <div class="flex flex-row px-4">
-                                <input id="current-state" v-model="form.state" type="radio" class="hidden" :value="rule.state">
-                                <label for="current-state" @click="form.state=rule.state" class="ml-1 initial flex items-center cursor-pointer">
-                                    <span class="w-8 h-8 inline-block mr-2 rounded-full border border-grey flex-no-shrink"></span>
-                                    {{rule.state}}
-                                </label>
-
+                    <section class="col-span-6">
+                        <div class="flex flex-col justify-between">
+                            <div class="flex flex-row">
+                                <div v-for="(state, index) in stateObjects" class="flex flew-row px-4">
+                                    <template>
+                                        <input
+                                            v-model="form.state"
+                                            :name="'state-'+index"
+                                            type="radio"
+                                            class="hidden"
+                                            :value="state.name">
+                                        <label class="ml-1 flex items-center cursor-pointer" :for="'state-'+index"
+                                               @click="stateChanged(state)">
+                                            <span
+                                                class="w-8 h-8 inline-block mr-2 rounded-full border border-grey flex-no-shrink"></span>
+                                            {{ state.name }}
+                                        </label>
+                                    </template>
+                                </div>
                             </div>
-                            <div v-for="(state, index) in allowedStates" class="flex flew-row px-4">
-                                <template v-if="state !== rule.state">
-                                    <input
-                                        v-model="form.state"
-                                        :name="'state-'+index"
-                                        type="radio"
-                                        class="hidden"
-                                        :value="state">
-                                    <label class="ml-1 flex items-center cursor-pointer" :for="'state-'+index"
-                                           @click="form.state=state">
-                                        <span class="w-8 h-8 inline-block mr-2 rounded-full border border-grey flex-no-shrink"></span>
-                                        {{ state }}
-                                    </label>
-                                </template>
+                            <div class="flex flex-col mt-3" v-if="requiresAssignees">
+                                <h4 class="h4">Reviewers</h4>
+                                <multiselect @input="assigneeSelected"
+                                             v-model="assignees"
+                                             ref="select"
+                                             :multiple=true
+                                             :appendToBody=true
+                                             :options="publishers"
+                                             label="label"
+                                             track-by="value"
+                                />
+
+                                <div class="flex flex-col mt-2" v-if="suggestedReviewers.length">
+                                    <h5 class="h6">Suggested</h5>
+                                    <div class="flex flex-row flex-wrap">
+                                        <template v-for="user in suggestedReviewers">
+                                            <span class="text-xs rounded-xl m-1 px-1 flex cursor-pointer"
+                                                  :class="{
+                                                        'bg-yellow-100': user.suggestion_level === 1,
+                                                        'bg-blue-200': user.suggestion_level > 1,
+                                                  }"
+                                                  :title="user.suggestion_level > 1 ? 'Contributed to this rule' :'Is a publisher for the concerned jobteam'"
+                                                  @click="assignSuggestedPublisher(user)">
+                                                {{ user.label }}
+                                            </span>
+                                        </template>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -73,11 +96,13 @@
                     <jet-action-message :on="form.recentlySuccessful" class="mr-3">Saved.</jet-action-message>
 
                     <span v-if="rule.id && !rule.deleted_at"
-                       title="Delete Rule"
-                       @click="confirmingRuleDeletion=true"
-                       class="mr-3 text-red-600 cursor-pointer hover:bg-red-600 hover:text-white rounded p-2">
+                          title="Delete Rule"
+                          @click="confirmingRuleDeletion=true"
+                          class="mr-3 text-red-600 cursor-pointer hover:bg-red-600 hover:text-white rounded p-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd"
+                                  d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                  clip-rule="evenodd"/>
                         </svg>
                     </span>
 
@@ -182,12 +207,20 @@ export default {
         'rule',
         'states',
         'allowedStates',
+        'stateObjects',
+        'publishers',
+        'defaultPublishers',
+        'initialAssignees',
     ],
 
     data() {
         return {
             confirmingRuleDeletion: false,
             confirmingRuleRestore: false,
+
+            requiresAssignees: _.find(this.stateObjects, (s) => s.name == this.rule.state).requiresAssignee,
+
+            assignees: this.initialAssignees,
 
             editorSettings: {
                 modules: {
@@ -200,6 +233,7 @@ export default {
                 content: this.rule.content,
                 ContentDraftId: uuidv4(),
                 state: this.rule.state,
+                assignees: _.map(this.assignees, 'value'),
             }, {
                 bag: 'pushRuleData',
                 resetOnSuccess: false,
@@ -221,14 +255,38 @@ export default {
         }
     },
 
+    computed: {
+        suggestedReviewers() {
+            return _.orderBy(_.differenceBy(this.defaultPublishers, this.assignees, 'value'), 'suggestion_level', 'desc');
+        },
+    },
+
     methods: {
+        stateChanged(state) {
+            this.form.state = state.name;
+            this.requiresAssignees = state.requiresAssignee;
+        },
+
+        assigneeSelected(assignees) {
+            console.log(assignees);
+            this.form.assignees = _.map(assignees, 'value');
+        },
+
+        assignSuggestedPublisher(assignee) {
+            this.form.assignees.push(assignee.value);
+            this.assignees.push(assignee);
+        },
+
         cancelRestoreRule() {
             this.confirmingRuleRestore = false;
         },
 
         restoreRule() {
-            if(this.rule.id) {
-                this.restoreForm.put(route('pm.client-account.rules.restore', {clientAccount: this.clientAccount.slug, id: this.rule.id}), {
+            if (this.rule.id) {
+                this.restoreForm.put(route('pm.client-account.rules.restore', {
+                    clientAccount: this.clientAccount.slug,
+                    id: this.rule.id
+                }), {
                     preserveScroll: true
                 }).then(() => {
                     this.cancelRestoreRule();
@@ -256,18 +314,20 @@ export default {
         pushRuleData: function () {
 
             if (this.rule.id) {
-                this.form.put(route('pm.client-account.rules.update', {clientAccount: this.clientAccount.slug, id: this.rule.id}), {
+                this.form.put(route('pm.client-account.rules.update', {
+                    clientAccount: this.clientAccount.slug,
+                    id: this.rule.id
+                }), {
                     preserveScroll: true
                 })
-            }
-            else {
+            } else {
                 this.form.post(route('pm.client-account.rules.store', {clientAccount: this.clientAccount.slug}), {
                     preserveScroll: true
                 });
             }
         },
 
-        handleImageAdded: function(file, Editor, cursorLocation, resetUploader) {
+        handleImageAdded: function (file, Editor, cursorLocation, resetUploader) {
 
             console.log('handling image upload');
 
@@ -280,14 +340,14 @@ export default {
                 method: "POST",
                 data: formData,
             })
-            .then(result => {
-                console.log(result)
-                let url = result.data.url; // Get url from response
-                Editor.insertEmbed(cursorLocation, "image", url);
-            })
-            .catch(err => {
-                console.log(err);
-            });
+                .then(result => {
+                    console.log(result)
+                    let url = result.data.url; // Get url from response
+                    Editor.insertEmbed(cursorLocation, "image", url);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
         }
     },
 
@@ -312,7 +372,7 @@ input[type="radio"] + label span {
 }
 
 input[type="radio"] + label span:hover,
-input[type="radio"] + label:hover span{
+input[type="radio"] + label:hover span {
     transform: scale(1.2);
 }
 
@@ -321,10 +381,11 @@ input[type="radio"]:checked + label span {
     box-shadow: 0px 0px 0px 2px white inset;
 }
 
-input[type="radio"]:checked + label{
+input[type="radio"]:checked + label {
     color: #3490DC;
 }
-input[type="radio"] + label.initial{
+
+input[type="radio"] + label.initial {
     color: #0B5EA0;
 }
 </style>
