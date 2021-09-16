@@ -128,6 +128,15 @@ class User extends Authenticatable implements Identifiable
         'published',
     ];
 
+    /**
+     * @return bool
+     */
+    public function canImpersonate($impersonated = null)
+    {
+        // For example
+        return $this->hasRoleWithPermission('impersonateUsers');
+    }
+
 
     public function rules()
     {

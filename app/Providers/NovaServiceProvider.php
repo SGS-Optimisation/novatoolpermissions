@@ -6,6 +6,7 @@ use Anaseqal\NovaImport\NovaImport;
 use App\Models\ClientAccount;
 use App\Nova\Dashboards\ClientDashboard;
 use App\Nova\Metrics\FlaggedRules;
+use App\Nova\Metrics\JobsTrend;
 use App\Nova\Metrics\NewUsers;
 use App\Nova\Metrics\PublishedRules;
 use App\Nova\Metrics\RulesPerAccount;
@@ -99,6 +100,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         }
 
         return array_merge([
+            (new JobsTrend()),
             (new PublishedRules())->width('1/6'),
             (new FlaggedRules)->width('1/6'),
             new RulesPerAccount,
