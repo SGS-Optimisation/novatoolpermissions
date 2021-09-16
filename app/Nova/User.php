@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use KABBOUCHI\NovaImpersonate\Impersonate;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
@@ -89,6 +90,7 @@ class User extends Resource
 
             BelongsToMany::make('Roles', 'roles', Role::class),
 
+            Impersonate::make($this),
 
         ];
     }

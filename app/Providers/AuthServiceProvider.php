@@ -51,6 +51,7 @@ class AuthServiceProvider extends ServiceProvider
             'viewFieldMappings', 'manageFieldMappings',
             'manageSettings',
             'manageTeams',
+            'impersonateUsers',
 
         ])->each(function ($permission) {
             \Gate::define($permission, function ($user) use ($permission) {
