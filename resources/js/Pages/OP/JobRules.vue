@@ -77,7 +77,7 @@
                                 {{stage}}
                             </button>
                             <button @click="resetStage"
-                                class="rounded-r-lg flex-grow hover:bg-blue-400 hover:text-white text-blue-500 border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline">
+                                    class="rounded-r-lg flex-grow hover:bg-blue-400 hover:text-white text-blue-500 border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline">
                                 Reset
                             </button>
                         </div>
@@ -131,14 +131,15 @@
                                 'w-1/3': !termFocus,
                              }"
                              v-for="(ruleGroup, ruleIndex) in Object.entries(rulesByTaxonomies)" :key="ruleIndex">
-                            <view-rule-item :rules="ruleGroup[1]"
-                                            :group="ruleGroup[0]"
-                                            :filter-option="filterOptionTracker"
-                                            :filter-flag="filterFlag"
-                                            :filter-stage-pa="filterStagePA"
-                                            :filter-stage-pp="filterStagePP"
-                                            :filter-stage-pf="filterStagePF"
-                                            @on-click-view="openRuleModal"/>
+                            <view-rule-group :rules="ruleGroup[1]"
+                                             :job="currentJob.job_number"
+                                             :group="ruleGroup[0]"
+                                             :filter-option="filterOptionTracker"
+                                             :filter-flag="filterFlag"
+                                             :filter-stage-pa="filterStagePA"
+                                             :filter-stage-pp="filterStagePP"
+                                             :filter-stage-pf="filterStagePF"
+                                             @on-click-view="openRuleModal"/>
                         </div>
 
                     </isotope>
@@ -245,7 +246,7 @@ import JetLabel from '@/Jetstream/Label'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import Loader from "@/Components/Loader";
 import ViewRule from '@/Components/PM/Rules/ViewRule'
-import ViewRuleItem from "@/Components/PM/Rules/ViewRuleItem";
+import ViewRuleGroup from "@/Components/OP/ViewRuleGroup";
 import JobSearch from "@/Components/OP/JobSearchForm";
 import isotope from 'vueisotope'
 import moment from "moment";
@@ -348,7 +349,7 @@ export default {
             this.searchedRules = [..._.orderBy(this.currentRules, 'name', 'asc')];
             this.searching = false;
 
-            if(this.currentJob.metadata.hasOwnProperty('stages') && this.currentJob.metadata.stages.length) {
+            if (this.currentJob.metadata.hasOwnProperty('stages') && this.currentJob.metadata.stages.length) {
                 for (let index in this.currentJob.metadata.stages) {
                     this.$data[`filterStage${this.currentJob.metadata.stages[index]}`] = true;
                 }
@@ -380,7 +381,7 @@ export default {
                     /*
                     Group rules by Artwork Structure Elements terms
                      */
-                    if(term.taxonomy.name === 'Artwork Structure Elements'){
+                    if (term.taxonomy.name === 'Artwork Structure Elements') {
                         if (this.rulesByTaxonomies[term.name] === undefined) {
                             this.rulesByTaxonomies[term.name] = [];
                         }
@@ -510,8 +511,8 @@ export default {
 
             this.$data[`filterStage${stage}`] = !this.$data[`filterStage${stage}`];
 
-            if(!this.isotopeFixRanOnce) {
-                this.isotopeFix = setTimeout( () => this.$refs.cpt.unfilter(), 300);
+            if (!this.isotopeFixRanOnce) {
+                this.isotopeFix = setTimeout(() => this.$refs.cpt.unfilter(), 300);
                 this.isotopeFixRanOnce = true;
             }
 
@@ -548,7 +549,7 @@ export default {
             this.filterStagePA = false;
             this.filterStagePP = false;
             this.filterStagePF = false;
-            for(let index in this.currentJob.metadata.stages) {
+            for (let index in this.currentJob.metadata.stages) {
                 this.$data[`filterStage${this.currentJob.metadata.stages[index]}`] = true;
             }
 
@@ -589,7 +590,7 @@ export default {
 
     components: {
         JobIdentification,
-        ViewRuleItem,
+        ViewRuleGroup,
         Button,
         Input,
         AppLayout,

@@ -294,8 +294,9 @@ export default {
         },
 
         logout() {
-            axios.post(route('logout').url()).then(response => {
-                window.location = '/';
+            localStorage.clear();
+            axios.post(route('logout').url()).then((response) => {
+                window.location = '/login';
             })
         },
     }
