@@ -22,7 +22,7 @@
                                            v-model="form.name"
                                            @input="updateName"
                                            class="mt-1 block w-full"/>
-                                <jet-input-error :message="form.error('name')" class="mt-2"/>
+                                <jet-input-error :message="form.errors.name" class="mt-2"/>
                             </div>
 
                             <div class="col-span-6 sm:col-span-8">
@@ -31,7 +31,7 @@
                                            class="mt-1 block w-full"
                                            v-model="form.slug"
                                 />
-                                <jet-input-error :message="form.error('slug')" class="mt-2"/>
+                                <jet-input-error :message="form.errors.slug" class="mt-2"/>
                             </div>
 
                             <div class="col-span-6 sm:col-span-8">
@@ -39,7 +39,7 @@
                                 <textarea class="form-input rounded-md shadow-sm mt-1 block w-full" id="alias"
                                           placeholder="One item per line"
                                           v-model="form.alias"></textarea>
-                                <jet-input-error :message="form.error('alias')" class="mt-2"/>
+                                <jet-input-error :message="form.errors.alias" class="mt-2"/>
                             </div>
 
                             <div class="col-span-6 sm:col-span-8">

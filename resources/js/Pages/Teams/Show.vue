@@ -1,5 +1,8 @@
 <template>
     <app-layout>
+        <Head>
+            <title>{{team.name}} Settings - Dagobah</title>
+        </Head>
         <template #header>
             <div class="flex flex-row">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -37,6 +40,7 @@
 </template>
 
 <script>
+import {Head} from "@inertiajs/inertia-vue3";
 import TeamMemberManager from './TeamMemberManager'
 import AppLayout from '@/Layouts/AppLayout'
 import DeleteTeamForm from './DeleteTeamForm'
@@ -44,9 +48,6 @@ import JetSectionBorder from '@/Jetstream/SectionBorder'
 import UpdateTeamNameForm from './UpdateTeamNameForm'
 
 export default {
-    title() {
-        return `${this.team.name} Settings - Dagobah`;
-    },
     props: [
         'team',
         'availableRoles',
@@ -54,6 +55,7 @@ export default {
     ],
 
     components: {
+        Head,
         AppLayout,
         DeleteTeamForm,
         JetSectionBorder,

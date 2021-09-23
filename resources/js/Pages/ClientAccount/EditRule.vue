@@ -1,5 +1,8 @@
 <template>
     <client-layout :client-account="clientAccount">
+        <Head>
+            <title>Update rule in {{clientAccount.name}} - Dagobah</title>
+        </Head>
         <template #body>
             <div class="mx-auto sm:px-6 lg:px-8">
                 <rule-form :rule="rule"
@@ -55,6 +58,7 @@
 
 <script>
 
+import {Head} from "@inertiajs/inertia-vue3";
 import ClientLayout from '@/Layouts/ClientAccount'
 import RuleForm from '@/Components/PM/Rules/Form'
 import MetadataForm from '@/Components/PM/Rules/Meta'
@@ -64,14 +68,11 @@ import JetDropdownLink from "@/Jetstream/DropdownLink";
 import Button from "@/Jetstream/Button";
 import AttachmentsForm from "../../Components/PM/Rules/AttachmentsForm";
 
-
 export default {
     name: "EditRule",
-    title() {
-        return `Update rule in ${this.clientAccount.name} - Dagobah`;
-    },
 
     components: {
+        Head,
         AttachmentsForm,
         JetButton,
         JetDropdownLink,
@@ -81,7 +82,6 @@ export default {
         MetadataForm,
         Button
     },
-
 
     props: [
         'team',

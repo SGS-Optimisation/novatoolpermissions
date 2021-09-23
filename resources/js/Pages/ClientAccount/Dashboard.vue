@@ -1,6 +1,8 @@
 <template>
     <client-layout :client-account="clientAccount">
-
+        <Head>
+            <title>{{clientAccount.name}} - Dagobah</title>
+        </Head>
         <template #body>
             <div class="pb-12 pt-4 flex flex-row">
                 <div class="w-1/2 mr-3">
@@ -39,9 +41,9 @@
                                 <div class="flex items-center">
                                     <div class="text-sm text-gray-600">
                                         <p>Owner: {{ team.owner.name }}</p>
-                                        <p>{{ teamMembers.length }} {{ pluralize('Member', teamMembers.length) }}</p>
+                                        <p>{{ teamMembers.length }} Members</p>
                                         <p v-for="(members, role) in userRoles">
-                                            {{ members.length }} {{ _.capitalize(pluralize(role, members.length)) }}
+                                            {{ members.length }} {{ capitalize(role) }}
                                         </p>
                                     </div>
                                 </div>
@@ -59,8 +61,8 @@
                                 </div>
                                 <div class="flex items-center">
                                     <div class="text-sm text-gray-600">
-                                        <p>{{ taxonomiesCount }} {{ pluralize('Category', taxonomiesCount) }}</p>
-                                        <p>{{ termsCount }} {{ pluralize('Term', termsCount) }}</p>
+                                        <p>{{ taxonomiesCount }} Categories</p>
+                                        <p>{{ termsCount }} Terms</p>
                                     </div>
                                 </div>
                             </div>
@@ -83,13 +85,13 @@
 
 <script>
 
+import {Head} from "@inertiajs/inertia-vue3";
+import capitalize from 'lodash/capitalize';
+import pluralize from 'pluralize/pluralize';
 import ClientLayout from '@/Layouts/ClientAccount'
 import RuleStats from "../../Components/Stats/RuleStats";
 
 export default {
-    title() {
-        return `${this.clientAccount.name} - Dagobah`;
-    },
     props: {
         'clientAccount': Object,
         'team': Object,
@@ -115,8 +117,13 @@ export default {
     },
 
     components: {
+        Head,
         RuleStats,
         ClientLayout,
+    },
+    methods: {
+        capitalize,
+        pluralize
     },
 
     computed: {

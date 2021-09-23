@@ -22,7 +22,7 @@
                         <jet-label for="name" value="Name"/>
                         <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name"
                                    autocomplete="name"/>
-                        <jet-input-error :message="form.error('name')" class="mt-2"/>
+                        <jet-input-error :message="form.errors.name" class="mt-2"/>
                     </div>
 
                     <div class="col-span-6 sm:col-span-8">
@@ -168,7 +168,7 @@
 </template>
 
 <script>
-import {Quill, VueEditor} from "vue2-editor";
+import {Quill, VueEditor} from "vue3-editor";
 import ImageResize from 'quill-image-resize';
 
 import JetButton from '@/Jetstream/Button'
@@ -364,6 +364,7 @@ function uuidv4() {
 }
 </script>
 
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
 <style scoped>
 
 input[type="radio"] + label span {

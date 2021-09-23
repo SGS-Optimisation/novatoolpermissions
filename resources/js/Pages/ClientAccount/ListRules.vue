@@ -1,5 +1,8 @@
 <template>
     <client-layout :client-account="clientAccount">
+        <Head><title>
+            Rules for {{clientAccount.name}} - Dagobah
+        </title></Head>
         <template #body>
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-gray-50 pt-5">
                 <div class="grid grid-cols-5 gap-1">
@@ -41,13 +44,13 @@
                     <div id="filter" class="flex justify-end">
                         <div class="flex text-xs m-2" role="group">
                             <button @click="setFilterDate('isNew')"
-                                    :title="$page.settings.rule_filter_new_duration + ' days'"
+                                    :title="$page.props.settings.rule_filter_new_duration + ' days'"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
                                 New <span title="Total number of rules considered new"
                                           class="px-1 rounded-xl bg-pink-300">{{ numNewRules }}</span>
                             </button>
                             <button @click="setFilterDate('isUpdated')"
-                                    :title="$page.settings.rule_filter_updated_duration + ' days'"
+                                    :title="$page.props.settings.rule_filter_updated_duration + ' days'"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isUpdated' }, { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
                                 Updated <span title="Total number of rules considered updated"
                                               class="px-1 rounded-xl bg-pink-300">{{ numUpdatedRules }}</span>
@@ -79,15 +82,13 @@
                 </div>
 
                 <div class="flex flex-row w-full items-end">
-                    <pagination v-model="page"
-                                :options="paginationOptions"
-                                :per-page="perPage"
-                                :records="numFilteredRules"/>
+                    <v-pagination v-model="page"
+                                :pages="numPages"/>
 
                     <div v-if="selectedRules.length > 0" class="ml-auto">
                         Possible actions:
                         <template
-                            v-if="$page.user_permissions.publishRules && _.every(selectedRules, ['state', 'Reviewing'])">
+                            v-if="$page.props.user_permissions.publishRules && _every(selectedRules, ['state', 'Reviewing'])">
                             <button @click="confirmingPublish = true"
                                     class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
                             rounded-md font-semibold text-xs text-white uppercase tracking-widest
@@ -103,7 +104,7 @@
                     </div>
                 </div>
 
-                <div v-for="(rule, ruleKey) in _.drop(filteredRules, ((page-1)*perPage)).slice(0, perPage)"
+                <div v-for="(rule, ruleKey) in displayedRules"
                      :key="ruleKey">
                     <div class="flex flex-row items-center">
                         <div class="flex-shrink mr-1">
@@ -121,10 +122,8 @@
                 </div>
 
                 <div class="px-2 pb-16 pt-4">
-                    <pagination v-model="page"
-                                :options="paginationOptions"
-                                :per-page="perPage"
-                                :records="numFilteredRules"/>
+                    <v-pagination v-model="page"
+                                :pages="numPages"/>
                 </div>
 
             </div>
@@ -156,6 +155,8 @@
 </template>
 
 <script>
+import {defineComponent} from "vue";
+import {Head} from "@inertiajs/inertia-vue3";
 import ClientLayout from '@/Layouts/ClientAccount'
 import ViewRule from '@/Components/PM/Rules/ListView'
 import moment from 'moment'
@@ -171,13 +172,12 @@ import JetInputError from '@/Jetstream/InputError'
 import JetLabel from '@/Jetstream/Label'
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
-import TailwindPagination from "../../Components/TailwindPagination";
+import VPagination from "@hennge/vue3-pagination";
+import {every as _every, drop as _drop} from 'lodash';
+import _ from 'lodash';
+import "@hennge/vue3-pagination/dist/vue3-pagination.css";
 
-export default {
-    title() {
-        return `Rules for ${this.clientAccount.name} - Dagobah`;
-    },
-
+export default defineComponent({
     props: [
         'clientAccount',
         'team',
@@ -189,25 +189,29 @@ export default {
         'rootTaxonomies',
         'users',
     ],
+    components: {
+        Head,
+        FilterCondition,
+        ClientLayout,
+        ViewRule,
+        TaxonomyFilter,
+        TaxonomySelector,
+        JetActionMessage,
+        JetButton,
+        JetConfirmationModal,
+        JetDangerButton,
+        JetFormSection,
+        JetInput,
+        JetInputError,
+        JetLabel,
+        JetSecondaryButton,
+        VPagination,
+    },
 
     data() {
         return {
-            paginationOptions: {
-                texts: {
-                    count: 'Showing {from} to {to} of {count} rules|{count} rules|One rule',
-                    first: 'First',
-                    last: 'Last',
-                    nextPage: '>',
-                    nextChunk: '>>',
-                    prevPage: '<',
-                    prevChunk: '<<'
-                },
-                theme: 'bootstrap4',
-                template: TailwindPagination,
-            },
             page: 1,
             perPage: 25,
-
 
             allRules: [..._.orderBy(this.rules, 'created_at', 'desc')],
             filteredRules: [],
@@ -285,7 +289,7 @@ export default {
                         let matchingTaxonomy = itemElem.terms.map(term => term.taxonomy.name).includes(taxonomy[0])
                         if (!matchingTaxonomy) return false
                         let matchingTerms = itemElem.terms.map(term => term.name).includes(taxonomy[1])
-                        if (!matchingTerms) return faxlse
+                        if (!matchingTerms) return false
                     }
                 }
                 return true;
@@ -306,11 +310,11 @@ export default {
         };
 
         this.filterObject['isNew'] = (itemElem) => {
-            return moment().subtract(parseInt(this.$page.settings.rule_filter_new_duration), 'days').isSameOrBefore(moment(itemElem.created_at));
+            return moment().subtract(parseInt(this.$page.props.settings.rule_filter_new_duration), 'days').isSameOrBefore(moment(itemElem.created_at));
         };
 
         this.filterObject['isUpdated'] = (itemElem) => {
-            return moment().subtract(this.$page.settings.rule_filter_updated_duration, 'days').isSameOrBefore(moment(itemElem.updated_at));
+            return moment().subtract(this.$page.props.settings.rule_filter_updated_duration, 'days').isSameOrBefore(moment(itemElem.updated_at));
         };
 
         this.filterObject['isFlagged'] = (itemElem) => {
@@ -350,6 +354,8 @@ export default {
     },
 
     methods: {
+        _every,
+        _drop,
         selectRule(e, rule) {
             console.log(e, rule);
             if (!rule.hasOwnProperty('selected')) {
@@ -446,7 +452,14 @@ export default {
             this.filterTeam = '';
             this.filterContributor = '';
 
-            this.$refs.taxonomySelectors.forEach(selector => selector.clearSelected());
+            if(Array.isArray(this.$refs.taxonomySelectors)) {
+                this.$refs.taxonomySelectors.forEach((selector) => {
+                    selector.clearSelected();
+                })
+            }else{
+                this.$refs.taxonomySelectors.clearSelected();
+            }
+
             this.$refs.stateSelector.clearSelected();
             this.$refs.contributorSelector.clearSelected();
             this.$refs.teamSelector.clearSelected();
@@ -456,6 +469,14 @@ export default {
     },
 
     computed: {
+        displayedRules() {
+            return _.drop(this.filteredRules, ((this.page-1)*this.perPage)).slice(0, this.perPage);
+        },
+
+        numPages() {
+            return Math.ceil(this.numFilteredRules/this.perPage);
+        },
+
         numFilteredRules: function () {
             return this.filteredRules.length;
         },
@@ -477,22 +498,5 @@ export default {
             return (_.filter(this.allRules, this.filterObject.isTagError)).length;
         },
     },
-
-    components: {
-        FilterCondition,
-        ClientLayout,
-        ViewRule,
-        TaxonomyFilter,
-        TaxonomySelector,
-        JetActionMessage,
-        JetButton,
-        JetConfirmationModal,
-        JetDangerButton,
-        JetFormSection,
-        JetInput,
-        JetInputError,
-        JetLabel,
-        JetSecondaryButton,
-    },
-}
+})
 </script>

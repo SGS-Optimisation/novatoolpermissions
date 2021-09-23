@@ -1,5 +1,8 @@
 <template>
     <app-layout>
+        <Head><title>
+            {{currentJob.job_number}} - Dagobah
+        </title></Head>
         <template #header>
             <div class="flex justify-between align-middle">
 
@@ -85,7 +88,7 @@
                         <!-- Artwork structure and date Filters -->
                         <div class="flex flex-grow text-xs mx-2" role="group">
                             <button @click="filterArtworkStructureButtonClicked('isNew')"
-                                    :title="$page.settings.rule_filter_new_duration + ' days'"
+                                    :title="$page.props.settings.rule_filter_new_duration + ' days'"
                                     class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg"
                                     :class="[
                                     { 'bg-blue-500 text-white' : filterOption === 'isNew' },
@@ -94,7 +97,7 @@
                                 New
                             </button>
                             <button @click="filterArtworkStructureButtonClicked('isUpdated')"
-                                    :title="$page.settings.rule_filter_updated_duration + ' days'"
+                                    :title="$page.props.settings.rule_filter_updated_duration + ' days'"
                                     class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
                                     :class="[
                                     { 'bg-blue-500 text-white' : filterOption === 'isUpdated' },
@@ -186,7 +189,7 @@
                     Flag rule?
                 </jet-button>
 
-                <a v-if="currentRule && $page.user_permissions.updateRules" target="_blank"
+                <a v-if="currentRule && $page.props.user_permissions.updateRules" target="_blank"
                    class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150"
                    :href="route('pm.client-account.rules.edit', {clientAccount: currentJob.metadata.client.slug, id: currentRule.id})">
                     Edit
@@ -234,6 +237,7 @@
 </template>
 
 <script>
+import {Head} from "@inertiajs/inertia-vue3";
 import AppLayout from '@/Layouts/AppLayout'
 import Input from "@/Jetstream/Input";
 import Button from "@/Jetstream/Button";
@@ -259,10 +263,6 @@ export default {
         'jobNumber',
         'rules'
     ],
-
-    title() {
-        return `${this.currentJob.job_number} - Dagobah`;
-    },
 
     data() {
         return {
@@ -402,14 +402,14 @@ export default {
         initSearchFunctions() {
             this.filterObject['isNew'] = (itemElem) => {
                 return itemElem[1].filter(rule => moment()
-                    .subtract(parseInt(this.$page.settings.rule_filter_new_duration), 'days')
+                    .subtract(parseInt(this.$page.props.settings.rule_filter_new_duration), 'days')
                     .isSameOrBefore(moment(rule.created_at))
                 ).length > 0;
             };
 
             this.filterObject['isUpdated'] = (itemElem) => {
                 return itemElem[1].filter(rule => moment()
-                    .subtract(parseInt(this.$page.settings.rule_filter_updated_duration), 'days')
+                    .subtract(parseInt(this.$page.props.settings.rule_filter_updated_duration), 'days')
                     .isSameOrBefore(moment(rule.updated_at))
                 ).length > 0;
             };
@@ -589,6 +589,7 @@ export default {
     },
 
     components: {
+        Head,
         JobIdentification,
         ViewRuleGroup,
         Button,

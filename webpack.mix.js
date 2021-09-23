@@ -14,7 +14,7 @@ const mix = require('laravel-mix');
 const domain = 'dagobah.test'; // <== edit this one
 const homedir = require('os').homedir();
 
-mix.js('resources/js/app.js', 'public/js')
+mix.js('resources/js/app.js', 'public/js').vue()
     .sass('resources/sass/app.scss', 'public/css')
     .options({
         postCss: [

@@ -15,7 +15,7 @@
             <div class="flex items-center justify-between">
                 <div class="description">
                     <h2 @click="detailsOpen = !detailsOpen; $emit('toggle')" class="cursor-pointer">
-                        <span class="text-xs" title="Rule ID">{{ rule.dagId }}</span>
+                        <span class="text-xs pr-1" title="Rule ID">{{ rule.dagId }}</span>
                         <span class="text-xl font-bold">{{ rule.name }}</span>
                     </h2>
 
@@ -117,7 +117,7 @@
                 </template>
 
                 <div class="text-right" :class="{'hidden' : !detailsOpen}">
-                    <!--<button v-if="rule.state === 'Reviewing' && $page.user_permissions.publishRules"
+                    <!--<button v-if="rule.state === 'Reviewing' && $page.props.user_permissions.publishRules"
                         @click="publishRule()"
                             class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
                             rounded-md font-semibold text-xs text-white uppercase tracking-widest

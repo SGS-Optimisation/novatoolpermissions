@@ -2,7 +2,7 @@
     <div>
         <div class="px-5 pb-12">
             <span class="cursor-pointer p-1 text-xs rounded-md bg-blue-300 hover:bg-blue-400"
-                  v-if="$page.user_permissions.manageTaxonomies"
+                  v-if="$page.props.user_permissions.manageTaxonomies"
                   @click="creatingTaxonomy=true"
             >
                 <i class="text-white w-5 inline-block">
@@ -29,7 +29,7 @@
                 </div>
 
                 <span class="cursor-pointer p-1 text-xs rounded-md bg-blue-300 hover:bg-blue-400"
-                      v-if="$page.user_permissions.manageTaxonomies"
+                      v-if="$page.props.user_permissions.manageTaxonomies"
                       @click="creatingTaxonomy=true"
                 >
                 <i class="text-white w-5 inline-block">

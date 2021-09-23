@@ -42,7 +42,7 @@
             </div>
 
             <i @click="openCreatingTerm"
-               v-if="$page.user_permissions.manageTerms"
+               v-if="$page.props.user_permissions.manageTerms"
                class="cursor-pointer pt-3 align-middle text-blue-400 hover:text-blue-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd"
@@ -106,7 +106,7 @@
                 <div class="mt-4">
                     <jet-label for="term-name" value="Name"/>
                     <jet-input id="term-name" type="text" class="mt-1 block w-3/4 disabled:opacity-50"
-                               :disabled="!$page.user_permissions.manageTerms"
+                               :disabled="!$page.props.user_permissions.manageTerms"
                                :value="editTermForm.name"
                                v-model="editTermForm.name"/>
 

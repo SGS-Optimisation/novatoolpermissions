@@ -1,6 +1,8 @@
 <template>
     <client-layout :client-account="clientAccount">
-
+        <Head>
+            <title>Categories for {{clientAccount.name}} - Dagobah</title>
+        </Head>
         <template #body>
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -29,6 +31,7 @@
 
 
 <script>
+import {Head} from "@inertiajs/inertia-vue3";
 import ClientLayout from '@/Layouts/ClientAccount'
 import JetButton from '@/Jetstream/Button'
 import JetFormSection from '@/Jetstream/FormSectionNoGrid'
@@ -42,9 +45,6 @@ import Tab from "@/Components/Tab";
 import ChildTaxonomiesSection from "@/Components/PM/ClientAccount/ChildTaxonomiesSection";
 
 export default {
-    title() {
-        return `Categories for ${this.clientAccount.name} - Dagobah`;
-    },
 
     props: [
         'clientAccount',
@@ -54,6 +54,7 @@ export default {
     ],
 
     components: {
+        Head,
         ClientLayout,
         JetActionMessage,
         JetButton,

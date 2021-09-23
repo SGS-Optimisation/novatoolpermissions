@@ -47,8 +47,8 @@ export default {
                 filteredRules = filteredRules.filter(rule => {
                     let time = (this.filterFlag === 'updated') ? moment(rule.updated_at) : moment(rule.created_at);
                     let numDays = (this.filterFlag === 'updated') ?
-                        this.$page.settings.rule_filter_updated_duration
-                        : this.$page.settings.rule_filter_new_duration;
+                        this.$page.props.settings.rule_filter_updated_duration
+                        : this.$page.props.settings.rule_filter_new_duration;
 
                     return moment().subtract(parseInt(numDays), 'days').isSameOrBefore(time)
                         && (this.filterFlag !== 'updated' || rule.created_at !== rule.updated_at)

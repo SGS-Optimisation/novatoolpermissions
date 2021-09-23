@@ -33,7 +33,7 @@
                             v-model="form.name"
                             :disabled="! permissions.canUpdateTeam" />
 
-                <jet-input-error :message="form.error('name')" class="mt-2" />
+                <jet-input-error :message="form.errors.name" class="mt-2" />
             </div>
 
             <div class="col-span-6 sm:col-span-4">
@@ -45,7 +45,7 @@
                     <option value="LATAM">LATAM</option>
                     <option value="NA">NA</option>
                 </select>
-                <jet-input-error :message="form.error('region')" class="mt-2" />
+                <jet-input-error :message="form.errors.region" class="mt-2" />
             </div>
         </template>
 

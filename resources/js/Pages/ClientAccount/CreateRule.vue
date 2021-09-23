@@ -1,5 +1,8 @@
 <template>
     <client-layout :client-account="clientAccount">
+        <Head>
+            <title>New rule in {{clientAccount.name}} - Dagobah</title>
+        </Head>
         <template #body>
             <div class="mx-auto sm:px-6 lg:px-8">
 
@@ -34,17 +37,16 @@
 </template>
 
 <script>
+import {Head} from "@inertiajs/inertia-vue3";
 import ClientLayout from '@/Layouts/ClientAccount'
 import RuleForm from '@/Components/PM/Rules/Form'
 import JetNavLink from "@/Jetstream/NavLink";
 
 export default {
     name: "CreateRule",
-    title() {
-        return `New rule in ${this.clientAccount.name} - Dagobah`;
-    },
 
     components: {
+        Head,
         ClientLayout,
         JetNavLink,
         RuleForm

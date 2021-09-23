@@ -21,9 +21,10 @@
 </template>
 
 <script>
+import { defineComponent } from 'vue'
 import JetButton from "@/Jetstream/DangerButton";
 
-export default {
+export default defineComponent({
     name: "SearchBar",
     props: {
         classes: {
@@ -62,7 +63,7 @@ export default {
             this.$set(this, 'jobNumber', newVal.replace(re, ''));
         }
     }
-}
+})
 </script>
 
 <style scoped>
