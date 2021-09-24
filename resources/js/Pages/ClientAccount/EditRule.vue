@@ -59,6 +59,7 @@
 <script>
 
 import {Head} from "@inertiajs/inertia-vue3";
+import {defineComponent} from "vue";
 import ClientLayout from '@/Layouts/ClientAccount'
 import RuleForm from '@/Components/PM/Rules/Form'
 import MetadataForm from '@/Components/PM/Rules/Meta'
@@ -68,7 +69,7 @@ import JetDropdownLink from "@/Jetstream/DropdownLink";
 import Button from "@/Jetstream/Button";
 import AttachmentsForm from "../../Components/PM/Rules/AttachmentsForm";
 
-export default {
+export default defineComponent({
     name: "EditRule",
 
     components: {
@@ -98,5 +99,5 @@ export default {
     ],
 
 
-}
+})
 </script>

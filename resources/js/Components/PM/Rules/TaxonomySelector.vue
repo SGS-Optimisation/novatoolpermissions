@@ -17,10 +17,11 @@
 
 <script>
 
+import {defineComponent} from "vue";
 //import Multiselect from 'vue-multiselect';
 import Multiselect from '@vueform/multiselect';
 
-export default {
+export default defineComponent({
     name: "TaxonomySelector",
     props: [
         'taxonomyName',
@@ -46,7 +47,7 @@ export default {
             this.$emit('termSelected', this.taxonomyName, value);
         }
     },
-}
+})
 </script>
 
 <!--<style src="vue-multiselect/dist/vue-multiselect.css"></style>-->

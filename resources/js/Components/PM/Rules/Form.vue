@@ -305,8 +305,6 @@ export default {
                     id: this.rule.id
                 }), {
                     preserveScroll: true
-                }).then(() => {
-                    this.cancelDeleteRule();
                 });
             }
         },

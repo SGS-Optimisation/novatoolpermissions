@@ -196,6 +196,7 @@
 
 <script>
 
+import {defineComponent} from "vue";
 import RuleTags from "@/Components/PM/Rules/RuleTags";
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetButton from '@/Jetstream/Button'
@@ -205,13 +206,12 @@ import JetInput from '@/Jetstream/Input'
 import JetLabel from '@/Jetstream/Label'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import clip from "text-clipper";
-
-const moment = require('moment');
-
 import NavLink from "@/Jetstream/NavLink";
 import Attachment from "@/Components/PM/Rules/Attachment";
 
-export default {
+const moment = require('moment');
+
+export default defineComponent({
     name: "Rule",
     props: {
         rule: {
@@ -359,7 +359,7 @@ export default {
         }
     }
 
-}
+})
 </script>
 <style scoped>
 .text-xxs {

@@ -5,12 +5,12 @@
         <div class="flex flex-row items-center">
             <div class="flex-grow">
                 <multiselect v-model="selection"
-                          ref="select"
-                          :multiple="multiple"
-                          :close-on-select="!multiple"
-                          :appendToBody=true
-                          :options="terms"
-                          @input="setSelected"/>
+                             ref="select"
+                             :mode="multiple"
+                             :closeOnSelect="multiple !== 'single'"
+                             :options="terms"
+                             :searchable=true
+                             @select="setSelected"/>
             </div>
             <div class="flex flex-col flex-shrink ml-3">
                 <button type="button" @click="selectAll"
@@ -26,7 +26,7 @@
                 </button>
                 <button type="button" @click="getTaxonomyTermsFromRule"
                         class="px-1 text-xs border rounded-full border-gray-50 bg-gray-100 hover:bg-gray-200"
-                        >
+                >
                     Reset
                 </button>
             </div>
@@ -36,11 +36,14 @@
 
 <script>
 import JetButton from "@/Jetstream/Button";
+import Multiselect from '@vueform/multiselect';
+/*import Multiselect from 'vue-multiselect';*/
 
 export default {
     name: "Term",
     components: {
         JetButton,
+        Multiselect,
     },
     props: [
         'rule',
@@ -99,4 +102,5 @@ export default {
 }
 </script>
 
-<style src="vue-multiselect/dist/vue-multiselect.css"></style>
+<!--<style src="vue-multiselect/dist/vue-multiselect.css"></style>-->
+<style src="@vueform/multiselect/themes/default.css"></style>
