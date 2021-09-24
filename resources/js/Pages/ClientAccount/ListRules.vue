@@ -12,7 +12,8 @@
                                        :key="taxonomyName"
                                        :terms="terms"
                                        @termSelected="filterByTaxonomyTerm"
-                                       ref="taxonomySelectors"
+                                       :ref="setTaxonomySelectorRef"
+
                     />
                     <taxonomy-selector taxonomy-name="Rule Status"
                                        :terms="states"
@@ -82,8 +83,8 @@
                 </div>
 
                 <div class="flex flex-row w-full items-end">
-                    <v-pagination v-model="page"
-                                :pages="numPages"/>
+                    {{numFilteredRules}} Rules&nbsp;&nbsp;
+                    <v-pagination v-model="page" :pages="numPages"/>
 
                     <div v-if="selectedRules.length > 0" class="ml-auto">
                         Possible actions:
@@ -122,8 +123,7 @@
                 </div>
 
                 <div class="px-2 pb-16 pt-4">
-                    <v-pagination v-model="page"
-                                :pages="numPages"/>
+                    <v-pagination v-model="page" :pages="numPages"/>
                 </div>
 
             </div>
@@ -237,6 +237,9 @@ export default defineComponent({
                 bag: 'publishData',
                 resetOnSuccess: false,
             }),
+
+            taxonomySelectorRefs: []
+
         }
     },
 
@@ -250,6 +253,9 @@ export default defineComponent({
         };
 
         document.addEventListener('keydown', this._keyListener.bind(this));
+    },
+    beforeUpdate() {
+        this.taxonomySelectorRefs = []
     },
     beforeDestroy() {
         document.removeEventListener('keydown', this._keyListener);
@@ -356,6 +362,13 @@ export default defineComponent({
     methods: {
         _every,
         _drop,
+
+        setTaxonomySelectorRef(el) {
+            if (el) {
+                this.taxonomySelectorRefs.push(el)
+            }
+        },
+
         selectRule(e, rule) {
             console.log(e, rule);
             if (!rule.hasOwnProperty('selected')) {
@@ -452,13 +465,9 @@ export default defineComponent({
             this.filterTeam = '';
             this.filterContributor = '';
 
-            if(Array.isArray(this.$refs.taxonomySelectors)) {
-                this.$refs.taxonomySelectors.forEach((selector) => {
-                    selector.clearSelected();
-                })
-            }else{
-                this.$refs.taxonomySelectors.clearSelected();
-            }
+            this.taxonomySelectorRefs.forEach((selector) => {
+                selector.clearSelected();
+            })
 
             this.$refs.stateSelector.clearSelected();
             this.$refs.contributorSelector.clearSelected();

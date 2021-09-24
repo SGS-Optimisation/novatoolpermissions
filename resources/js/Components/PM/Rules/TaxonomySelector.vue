@@ -6,7 +6,9 @@
 
         <multiselect v-model="selection"
                      :options="terms"
+                     :searchable=true
                      @select="setSelected"
+                     @clear="setSelected"
         >
 
         </multiselect>
@@ -15,7 +17,8 @@
 
 <script>
 
-import Multiselect from 'vue-multiselect';
+//import Multiselect from 'vue-multiselect';
+import Multiselect from '@vueform/multiselect';
 
 export default {
     name: "TaxonomySelector",
@@ -39,7 +42,6 @@ export default {
         },
 
         setSelected: function (value) {
-            this.selection = value;
             console.log("value selected for " + this.taxonomyName, value);
             this.$emit('termSelected', this.taxonomyName, value);
         }
@@ -47,4 +49,5 @@ export default {
 }
 </script>
 
-<style src="vue-multiselect/dist/vue-multiselect.css"></style>
+<!--<style src="vue-multiselect/dist/vue-multiselect.css"></style>-->
+<style src="@vueform/multiselect/themes/default.css"></style>
