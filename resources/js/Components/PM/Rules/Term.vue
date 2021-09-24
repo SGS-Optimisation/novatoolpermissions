@@ -15,12 +15,12 @@
             <div class="flex flex-col flex-shrink ml-3">
                 <button type="button" @click="selectAll"
                         class="px-1 text-xs border rounded-full border-gray-50 bg-gray-100 hover:bg-gray-200"
-                        v-if="multiple">
+                        v-if="multiple !== 'single'">
                     Select&nbsp;All
                 </button>
                 <button type="button" @click="removeAll"
                         class="px-1 text-xs border rounded-full border-gray-50 bg-gray-100 hover:bg-gray-200"
-                        v-if="multiple"
+                        v-if="multiple !== 'single'"
                         :disabled="terms.length===0">
                     Remove&nbsp;All
                 </button>

@@ -23,11 +23,11 @@
 
 
                             <ul class="list-group" v-if="audits.length !== 0">
-                                <li class="list-group-item mb-4 pb-5" v-for="(item, index) in _.orderBy(audits, 'created_at', 'desc')"
+                                <li class="list-group-item mb-4 pb-5" v-for="(item, index) in orderedAudits"
                                     :key="index">
 
 
-                                    On {{ item.created_at | date }} by
+                                    On {{ dateFormat(item.created_at)}} by
                                     {{ item.user_name }}
 
 
@@ -83,17 +83,32 @@
 </template>
 
 <script>
+import {defineComponent} from "vue";
 import ClientLayout from '@/Layouts/ClientAccount'
 import JetNavLink from "@/Jetstream/NavLink";
-export default {
+import _ from 'lodash';
+import date from '@/filters/Date';
+
+export default defineComponent({
     name: "AuditActivity",
     props: ['audits', 'clientAccount', 'team', 'ruleId'],
 
+    methods: {
+        dateFormat(value) {
+            return date(value);
+        }
+    },
+
+    computed: {
+        orderedAudits() {
+            return _.orderBy(this.audits, 'created_at', 'desc');
+        },
+    },
 
     components: {
         ClientLayout,
         JetNavLink,
     },
 
-}
+})
 </script>
