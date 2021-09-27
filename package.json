@@ -41,6 +41,7 @@
         "vue-loader": "^16.1.2",
         "vue-multiselect": "^3.0.0-alpha.2",
         "vue-template-compiler": "^2.6.14",
+        "vue-upload-component": "^3.0.50",
         "vue2-dropzone": "^3.6.0",
         "vue3-editor": "^0.1.0-alpha.3",
         "vueisotope": "^3.1.2"
