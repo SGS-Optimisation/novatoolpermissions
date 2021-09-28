@@ -3,7 +3,7 @@
         <jet-action-section>
             <template #title>
 
-                <div :data-id="taxonomyData.id" @click="editTaxonomy(taxonomyData.id, name)"
+                <div :data-id="taxonomyData.id" @click="editTaxonomy(taxonomyData.id, taxonomyName)"
                      class="mt-2 cursor-pointer border-b-2 border-dashed border-transparent hover:border-gray-300
                              transition duration-150 ease-in-out"
                      :class="{'text-red-600': !hasMappings}"
@@ -38,7 +38,7 @@
                 <!-- Edit Taxonomy Modal -->
                 <jet-dialog-modal :show="editingTaxonomy" @close="cancelEditTaxonomy">
                     <template #title>
-                        Edit Vocabulary "{{ editingTaxonomyName }}"
+                        Edit Vocabulary "{{ taxonomyName }}"
                     </template>
 
                     <template #content>
@@ -111,12 +111,6 @@ import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 
 export default {
     name: "TaxonomyDefinition",
-    props: [
-        'taxonomyName',
-        'taxonomyData',
-        'parentTaxonomy',
-        'clientAccount'
-    ],
     components: {
         TermsList,
         JetActionSection,
@@ -128,6 +122,12 @@ export default {
         JetInputError,
         JetSecondaryButton,
     },
+    props: [
+        'taxonomyName',
+        'taxonomyData',
+        'parentTaxonomy',
+        'clientAccount'
+    ],
     data() {
         return {
 
@@ -142,7 +142,7 @@ export default {
 
             editForm: this.$inertia.form({
                 id: null,
-                name: '',
+                name: this.taxonomyName,
                 clientAccountId: this.clientAccount.id,
             }, {
                 bag: 'updateTaxonomy'
@@ -199,9 +199,8 @@ export default {
             console.log('updating taxonomy ' + this.editForm.id);
 
             this.editForm.put(route('pm.taxonomies.update', this.editForm.id), {
-                preserveScroll: true
-            }).then(() => {
-                this.cancelEditTaxonomy();
+                preserveScroll: true,
+                onSuccess: () => this.cancelEditTaxonomy(),
             });
         },
 
@@ -222,9 +221,8 @@ export default {
             console.log('delete taxonomy ' + this.deletingTaxonomyId);
 
             this.deleteForm.put(route('pm.taxonomies.destroy', this.deletingTaxonomyId), {
-                preserveScroll: true
-            }).then(() => {
-                this.resetDeleteTaxonomy();
+                preserveScroll: true,
+                onSuccess: () => this.resetDeleteTaxonomy(),
             });
         },
     }

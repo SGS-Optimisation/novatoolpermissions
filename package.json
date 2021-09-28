@@ -10,11 +10,11 @@
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
     "devDependencies": {
+        "@hennge/vue3-pagination": "^1.0.17",
         "@inertiajs/inertia": "^0.10.0",
         "@inertiajs/inertia-vue3": "^0.5.1",
         "@inertiajs/progress": "^0.2.6",
         "@johmun/vue-tags-input": "^2.1.0",
-        "@hennge/vue3-pagination": "^1.0.17",
         "@tailwindcss/forms": "^0.2.1",
         "@tailwindcss/typography": "^0.3.0",
         "@vue/compiler-sfc": "^3.0.5",
@@ -45,8 +45,11 @@
         "vue-multiselect": "^3.0.0-alpha.2",
         "vue-template-compiler": "^2.6.14",
         "vue-upload-component": "^3.0.50",
-        "vue3-editor": "^0.1.0-alpha.3",
         "vue3-chart-v2": "^0.8.3",
+        "vue3-editor": "^0.1.0-alpha.3",
         "vueisotope": "^3.1.2"
+    },
+    "dependencies": {
+        "@sipec/vue3-tags-input": "^3.0.4"
     }
 }

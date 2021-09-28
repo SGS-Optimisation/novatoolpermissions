@@ -177,7 +177,6 @@ import JetInputError from '@/Jetstream/InputError'
 import JetLabel from '@/Jetstream/Label'
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
-import _ from 'lodash';
 
 Quill.register("modules/imageResize", ImageResize);
 
@@ -276,9 +275,8 @@ export default defineComponent({
                     clientAccount: this.clientAccount.slug,
                     id: this.rule.id
                 }), {
-                    preserveScroll: true
-                }).then(() => {
-                    this.cancelRestoreRule();
+                    preserveScroll: true,
+                    onSuccess: () => this.cancelRestoreRule(),
                 });
             }
         },

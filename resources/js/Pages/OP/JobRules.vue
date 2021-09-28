@@ -570,10 +570,8 @@ export default {
             console.log('flagging rule', this.currentFlaggingRule);
 
             this.flagRuleForm.post(route('rule.flag', this.currentFlaggingRule.id), {
-                preserveScroll: true
-            }).then(() => {
-
-                this.closeFlagModal();
+                preserveScroll: true,
+                onSuccess: () => this.closeFlagModal()
             });
         },
     },

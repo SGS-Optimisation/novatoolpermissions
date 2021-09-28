@@ -58,7 +58,9 @@
                             </button>
                             <button @click="setFilterDate('isFlagged')"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isFlagged' }, { 'bg-white text-blue-500' : filterOption !== 'isFlagged' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
-                                Flagged <span title="Total number of flagged rules" class="px-1 rounded-xl bg-pink-300">{{ numFlaggedRules }}</span>
+                                Flagged <span title="Total number of flagged rules" class="px-1 rounded-xl bg-pink-300">{{
+                                    numFlaggedRules
+                                }}</span>
                             </button>
                             <button @click="setFilterDate('isTagError')"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isTagError' }, { 'bg-white text-blue-500' : filterOption !== 'isTagError' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
@@ -83,7 +85,7 @@
                 </div>
 
                 <div class="flex flex-row w-full items-end">
-                    {{numFilteredRules}} Rules&nbsp;&nbsp;
+                    {{ numFilteredRules }} Rules&nbsp;&nbsp;
                     <v-pagination v-model="page" :pages="numPages"/>
 
                     <div v-if="selectedRules.length > 0" class="ml-auto">
@@ -174,7 +176,6 @@ import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import VPagination from "@hennge/vue3-pagination";
 import {every as _every, drop as _drop} from 'lodash';
-import _ from 'lodash';
 import "@hennge/vue3-pagination/dist/vue3-pagination.css";
 
 export default defineComponent({
@@ -336,11 +337,11 @@ export default defineComponent({
                 || (itemElem.terms.length === 1 && itemElem.terms[0].name === 'No term')
             );
 
-            if(noTerms) {
+            if (noTerms) {
                 return true;
             }
 
-            let hasStructure = _.some(itemElem.terms, function(term) {
+            let hasStructure = _.some(itemElem.terms, function (term) {
                 return term.hasOwnProperty('taxonomy') && term.taxonomy.name === 'Artwork Structure Elements';
             });
 
@@ -381,16 +382,20 @@ export default defineComponent({
         publishRules() {
             this.publishForm.rule_ids = _.map(this.selectedRules, 'id');
 
-            this.publishForm.post(route('pm.client-account.rules.publish', {clientAccount: this.clientAccount.slug}))
-                .then(() => {
-                    this.confirmingPublish = false;
+            this.publishForm.post(
+                route('pm.client-account.rules.publish', {clientAccount: this.clientAccount.slug}),
+                {
+                    onSuccess: () => {
+                        this.confirmingPublish = false;
 
-                    _.forEach(this.selectedRules, function(rule) {
-                        rule.state = "Published";
-                    });
+                        _.forEach(this.selectedRules, function (rule) {
+                            rule.state = "Published";
+                        });
 
-                    this.$refs.viewRule.$forceUpdate();
+                        this.$refs.viewRule.$forceUpdate();
+                    }
                 })
+
         },
 
         cancelPublish() {
@@ -479,11 +484,11 @@ export default defineComponent({
 
     computed: {
         displayedRules() {
-            return _.drop(this.filteredRules, ((this.page-1)*this.perPage)).slice(0, this.perPage);
+            return _.drop(this.filteredRules, ((this.page - 1) * this.perPage)).slice(0, this.perPage);
         },
 
         numPages() {
-            return Math.ceil(this.numFilteredRules/this.perPage);
+            return Math.ceil(this.numFilteredRules / this.perPage);
         },
 
         numFilteredRules: function () {

@@ -145,7 +145,7 @@
                 <template #content>
                     <div v-if="rule.metadata && rule.metadata.flag_reason">
                         <div class="flex flew-row"
-                             v-for="record in _.orderBy(rule.metadata.flag_reason, 'date', 'desc')">
+                             v-for="record in _orderBy(rule.metadata.flag_reason, 'date', 'desc')">
                             <div>[{{ record.date }}] {{ record.user }}: {{ record.reason }}</div>
                         </div>
                     </div>
@@ -208,6 +208,7 @@ import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import clip from "text-clipper";
 import NavLink from "@/Jetstream/NavLink";
 import Attachment from "@/Components/PM/Rules/Attachment";
+import {orderBy as _orderBy} from "lodash";
 
 const moment = require('moment');
 
@@ -269,6 +270,8 @@ export default defineComponent({
     },
 
     methods: {
+        _orderBy,
+
         date: function () {
             return moment(this.rule.updated_at).format('MMM DD YYYY, HH:mm:ss');
         },
@@ -289,12 +292,13 @@ export default defineComponent({
             console.log('unflagging rule', this.rule);
 
             this.flagRuleForm.post(route('rule.unflag', this.rule.id), {
-                preserveScroll: true
-            }).then(() => {
-                this.rule.flagged = false;
-                this.rule.metadata['flag_reason'] = [];
-                this.closeFlagReasonModal();
-                this.$emit('updated')
+                preserveScroll: true,
+                onSuccess: () => {
+                    this.rule.flagged = false;
+                    this.rule.metadata['flag_reason'] = [];
+                    this.closeFlagReasonModal();
+                    this.$emit('updated')
+                }
             });
         },
 
@@ -312,27 +316,28 @@ export default defineComponent({
             let reason = this.flagRuleForm.reason;
 
             this.flagRuleForm.post(route('rule.flag', this.rule.id), {
-                preserveScroll: true
-            }).then(() => {
-                this.rule.flagged = true;
+                preserveScroll: true,
+                onSuccess: () => {
+                    this.rule.flagged = true;
 
-                let reasonEntry = {
-                    user: this.$page.user.name,
-                    date: moment().format('MMM DD YYYY, HH:mm:ss'),
-                    reason: reason,
-                };
+                    let reasonEntry = {
+                        user: this.$page.props.user.name,
+                        date: moment().format('MMM DD YYYY, HH:mm:ss'),
+                        reason: reason,
+                    };
 
-                if (this.rule.metadata === undefined || this.rule.metadata === null) {
-                    this.rule.metadata = {flag_reason: []};
+                    if (this.rule.metadata === undefined || this.rule.metadata === null) {
+                        this.rule.metadata = {flag_reason: []};
+                    }
+
+                    if (this.rule.metadata['flag_reason'] === undefined) {
+                        this.rule.metadata['flag_reason'] = [];
+                    }
+                    this.rule.metadata['flag_reason'].push(reasonEntry);
+
+                    this.closeFlagModal();
+                    this.$emit('updated');
                 }
-
-                if (this.rule.metadata['flag_reason'] === undefined) {
-                    this.rule.metadata['flag_reason'] = [];
-                }
-                this.rule.metadata['flag_reason'].push(reasonEntry);
-
-                this.closeFlagModal();
-                this.$emit('updated');
             });
         },
 

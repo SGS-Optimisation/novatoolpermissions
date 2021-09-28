@@ -160,9 +160,8 @@ export default {
             console.log('create taxonomy ' + this.createForm.name);
 
             this.createForm.post(route('pm.taxonomies.store'), {
-                preserveScroll: true
-            }).then(() => {
-                this.cancelCreateTaxonomy();
+                preserveScroll: true,
+                onSuccess: () => this.cancelCreateTaxonomy(),
             });
         },
 
@@ -190,9 +189,8 @@ export default {
             console.log('updating taxonomy ' + this.editForm.id);
 
             this.editForm.put(route('pm.taxonomies.update', this.editForm.id), {
-                preserveScroll: true
-            }).then(() => {
-                this.cancelEditTaxonomy();
+                preserveScroll: true,
+                onSuccess: () => this.cancelEditTaxonomy(),
             });
         },
 
@@ -213,9 +211,8 @@ export default {
             console.log('delete taxonomy ' + this.deletingTaxonomyId);
 
             this.deleteForm.put(route('pm.taxonomies.destroy', this.deletingTaxonomyId), {
-                preserveScroll: true
-            }).then(() => {
-                this.resetDeleteTaxonomy();
+                preserveScroll: true,
+                onSuccess: () => this.resetDeleteTaxonomy(),
             });
         },
     }

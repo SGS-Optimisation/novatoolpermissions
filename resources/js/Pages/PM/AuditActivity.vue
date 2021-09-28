@@ -86,7 +86,6 @@
 import {defineComponent} from "vue";
 import ClientLayout from '@/Layouts/ClientAccount'
 import JetNavLink from "@/Jetstream/NavLink";
-import _ from 'lodash';
 import date from '@/filters/Date';
 
 export default defineComponent({

@@ -179,7 +179,7 @@ import JetInput from '@/Jetstream/Input'
 import JetInputError from '@/Jetstream/InputError'
 import JetLabel from '@/Jetstream/Label'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
-import VueTagsInput from '@johmun/vue-tags-input';
+import VueTagsInput from '@sipec/vue3-tags-input';
 
 export default {
     name: "TermsList",
@@ -291,9 +291,8 @@ export default {
             console.log('create term ' + this.createTermForm.name + ' for taxonomy id ' + this.createTermForm.taxonomyId);
 
             this.createTermForm.post(route('pm.terms.store'), {
-                preserveScroll: true
-            }).then(() => {
-                this.cancelCreateTerm();
+                preserveScroll: true,
+                onSuccess: () => this.cancelCreateTerm(),
             });
         },
 
@@ -323,9 +322,8 @@ export default {
             this.editTermForm.aliases = this.tags.map((item) => item.text);
 
             this.editTermForm.put(route('pm.terms.update', this.editTermForm.termId), {
-                preserveScroll: true
-            }).then(() => {
-                this.cancelEditTerm();
+                preserveScroll: true,
+                onSuccess: () => this.cancelEditTerm(),
             });
         },
 
@@ -347,9 +345,8 @@ export default {
             console.log('delete term ' + this.deletingTermId);
 
             this.deleteTermForm.put(route('pm.terms.destroy', this.deletingTermId), {
-                preserveScroll: true
-            }).then(() => {
-                this.cancelDeleteTerm();
+                preserveScroll: true,
+                onSuccess: () => this.cancelDeleteTerm(),
             });
         }
     },
