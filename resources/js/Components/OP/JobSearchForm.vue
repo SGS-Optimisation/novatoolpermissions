@@ -60,7 +60,7 @@ export default defineComponent({
     watch: {
         jobNumber(newVal) {
             let re = /[^0-9\-]/gi;
-            this.$set(this, 'jobNumber', newVal.replace(re, ''));
+            this.jobNumber = newVal.replace(re, '');
         }
     }
 })

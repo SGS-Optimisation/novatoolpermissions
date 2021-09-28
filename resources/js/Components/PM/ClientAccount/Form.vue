@@ -76,6 +76,7 @@ import JetLabel from '@/Jetstream/Label'
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import CustomerSelector from "@/Components/PM/ClientAccount/CustomerSelector";
+import _ from "lodash";
 
 const slugify = text => _.kebabCase(text.replace(/&/g, '-and-'));
 
