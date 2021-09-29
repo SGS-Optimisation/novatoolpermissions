@@ -47,7 +47,7 @@
         <div v-else>
             <job-identification :job="currentJob"/>
 
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 bg-white relative">
                 <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-green-300" v-if="rulesUpdated">
                     <span class="text-xl inline-block mr-5 align-middle">
                         <i class="fas fa-bell"/>
@@ -62,9 +62,10 @@
                     </button>
                 </div>
 
-                <div class="flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mb-2">
+                <div class="flex flex-col sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px pb-2 mb-2 min-h-screen ">
 
-                    <div class="flex flex-col w-full">
+                    <!-- All Filters -->
+                    <div class="sticky top-24 z-50 flex flex-col w-full">
                         <!-- Stage filter -->
                         <div class="flex flex-grow text-xs mx-2 mb-2" role="group" v-if="showStage">
                             <button
@@ -122,18 +123,14 @@
                         <!-- End Filters -->
                     </div>
 
-                    <isotope ref="cpt" id="root_isotope" class="w-full m-2"
-                             v-if="Object.keys(filterObject).length"
-                             :options='getOptions()'
-                             :list="Object.entries(rulesByTaxonomies)"
-                             @filter="filterOption=arguments[0]" @sort="sortOption=arguments[0]">
+                    <div class="box-border mx-autobefore:box-inherit after:box-inherit"
+                    :class="{
+                        'md:masonry': !termFocus
+                    }">
 
-                        <div class="rounded"
-                             :class="{
-                                'w-full': termFocus,
-                                'w-1/3': !termFocus,
-                             }"
-                             v-for="(ruleGroup, ruleIndex) in Object.entries(rulesByTaxonomies)" :key="ruleIndex">
+                        <div v-for="(ruleGroup, ruleIndex) in displayedRules" :key="ruleIndex"
+                        class="break-inside">
+
                             <view-rule-group :rules="ruleGroup[1]"
                                              :job="currentJob.job_number"
                                              :group="ruleGroup[0]"
@@ -145,7 +142,8 @@
                                              @on-click-view="openRuleModal"/>
                         </div>
 
-                    </isotope>
+<!--                    </isotope>-->
+                    </div>
 
                 </div>
             </div>
@@ -364,7 +362,9 @@ export default {
                     /*
                     Collect filterable terms
                     */
-                    if (!this.artworkStructureTerms.includes(term.name) && term.taxonomy.name === 'Artwork Structure Elements') {
+                    if (!this.artworkStructureTerms.includes(term.name)
+                        && term.taxonomy.name === 'Artwork Structure Elements'
+                    ) {
                         this.artworkStructureTerms.push(term.name);
                     }
 
@@ -389,6 +389,7 @@ export default {
                         this.rulesByTaxonomies[term.name].push(rule);
                     }
                 });
+
                 this.artworkStructureTerms.forEach(taxonomy => {
                     this.filterObject[taxonomy] = itemElem => {
                         return itemElem[0] === taxonomy;
@@ -422,7 +423,7 @@ export default {
         waitMode() {
             this.timeOut = setTimeout(() => {
                 this.queryRules();
-            }, 5000);
+            }, 1500);
         },
 
         queryRules() {
@@ -434,7 +435,9 @@ export default {
             axios.get(route('job.rules', this.jobNumber), {headers})
                 .then(({data}) => {
                     console.log(data);
-                    if (data.job && data.job.hasOwnProperty('metadata') && !data.job.metadata.processing_mysgs && !data.job.metadata.error_mysgs) {
+                    if (data.job && data.job.hasOwnProperty('metadata')
+                        && !data.job.metadata.processing_mysgs && !data.job.metadata.error_mysgs
+                    ) {
                         clearTimeout(this.timeOut);
 
                         this.currentJob = data.job;
@@ -450,19 +453,6 @@ export default {
                         this.waitMode();
                     }
                 })
-        },
-
-        getOptions() {
-            return {
-                layoutMode: 'masonry',
-                // masonry: {
-                //     gutter: 2,
-                // },
-                getSortData: {
-                    id: "id",
-                },
-                getFilterData: this.filterObject
-            }
         },
 
         runningSearch() {
@@ -492,59 +482,34 @@ export default {
                 return;
             }
 
+            this.filterOption = filterName;
             this.filterOptionTracker = filterName;
             switch (filterName) {
                 case 'isNew':
-                    this.filterByNew()
+                    this.filterFlag = "new";
                     break;
                 case 'isUpdated':
-                    this.filterByUpdated();
+                    this.filterFlag = "updated";
                     break;
                 default:
-                    this.filterByTaxonomy(filterName);
+                    this.filterFlag = null;
                     break;
             }
         },
 
         filterStageButtonClicked(stage) {
             console.log('filter stage button clicked', stage);
-
             this.$data[`filterStage${stage}`] = !this.$data[`filterStage${stage}`];
-
-            if (!this.isotopeFixRanOnce) {
-                this.isotopeFix = setTimeout(() => this.$refs.cpt.unfilter(), 300);
-                this.isotopeFixRanOnce = true;
-            }
-
             this.$forceUpdate();
         },
 
-        filterByNew() {
-            this.$refs.cpt.filter('isNew');
-            this.filterFlag = "new";
-        },
-        filterByUpdated() {
-            this.$refs.cpt.filter('isUpdated');
-            this.filterFlag = "updated";
-        },
-        filterByTaxonomy(taxonomy) {
-            console.log('filtering by taxonomy', taxonomy);
-            this.$refs.cpt.filter(taxonomy);
-            this.filterFlag = null;
-        },
-        filterByStage(stage) {
-            console.log('filtering by stage', stage);
-            this.$refs.cpt.filter(stage);
-        },
         unfilter() {
             this.filterOptionTracker = '';
             this.filterFlag = null;
-            this.$refs.cpt.filter('all');
-            this.$refs.cpt.unfilter();
+            this.filterOption = null;
         },
 
         resetStage() {
-
             console.log('resetting to initial stage', this.filterStage);
             this.filterStagePA = false;
             this.filterStagePP = false;
@@ -583,6 +548,10 @@ export default {
 
         termFocus() {
             return this.filterOption && this.filterOption !== 'isNew' && this.filterOption !== 'isUpdated';
+        },
+
+        displayedRules() {
+            return _.filter(Object.entries(this.rulesByTaxonomies), this.filterObject[this.filterOption ? this.filterOption : 'all'])
         },
     },
 

@@ -1,15 +1,16 @@
 <template>
-    <div :class="{
-                    'flex flex-row p-1 my-1': !termFocus && (index === taxonomyRules.length-1),
-                    'flex flex-row border-b border-indigo-100 p-1 my-1': !termFocus && (index !== taxonomyRules.length-1),
-                    'w-1/3 flex px-3 py-1 my-1': termFocus,
+    <div class="flex p-1 my-1 transition transform-gpu duration-200 w-full" :class="{
+                    ' flex-row': !termFocus && (index === taxonomyRules.length-1),
+                    ' flex-row border-b border-indigo-100': !termFocus && (index !== taxonomyRules.length-1),
+                    'w-1/3 px-3': termFocus,
                  }">
         <div class="w-full"
              :class="{'bg-indigo-50 p-2': termFocus}">
             <div class="cursor-pointer">
                 <p class="text-sm font-bold text-gray-900">
-                    <input type="checkbox" v-model="completed" @change="saveTask"/>
-                    <span  @click="$emit('on-click-view', rule)">{{ rule.name }}</span>
+                    <Checkbox v-model="completed" :binary="true" @change="saveTask"/>
+<!--                    <input type="checkbox" v-model="completed" @change="saveTask"/>-->
+                    <span class="ml-1" @click="$emit('on-click-view', rule)">{{ rule.name }}</span>
                 </p>
                 <p  @click="$emit('on-click-view', rule)" class="text-xs text-gray-700 break-all" v-html="excerpt(rule)"/>
             </div>
@@ -54,9 +55,13 @@
 <script>
 import moment from "moment";
 import clip from "text-clipper";
+import Checkbox from 'primevue/checkbox/sfc';
 
 export default {
     name: "ViewRule",
+    components: {
+        Checkbox,
+    },
     props: [
         'rule',
         'job',
@@ -66,7 +71,7 @@ export default {
     ],
     data() {
         return {
-            completed: this.rule.completed,
+            completed: null,
         }
     },
     created() {
@@ -74,24 +79,33 @@ export default {
         //this.rule.completed = false;
     },
     mounted() {
-        if (localStorage.getItem('job-'+this.job)) {
-            try {
-                var tasks = JSON.parse(localStorage.getItem('job-'+this.job));
-                if (tasks.hasOwnProperty(this.rule.dagId)) {
-                    this.rule.completed = tasks[this.rule.dagId];
-                    this.completed = tasks[this.rule.dagId];
-                }
-            } catch(e) {
-                localStorage.removeItem(this.job);
-            }
-        }
+        this.checkCompletion();
+    },
+    updated() {
+        this.checkCompletion();
     },
     methods: {
+        moment,
         excerpt(rule) {
             return clip(rule.content.replace(/<[^>]+>/g, ''), 180, {html: true, maxLines: 3});
         },
 
+        checkCompletion() {
+            if (localStorage.getItem('job-'+this.job)) {
+                try {
+                    var tasks = JSON.parse(localStorage.getItem('job-'+this.job));
+                    if (tasks.hasOwnProperty(this.rule.dagId)) {
+                        this.rule.completed = tasks[this.rule.dagId];
+                        this.completed = tasks[this.rule.dagId];
+                    }
+                } catch(e) {
+                    localStorage.removeItem(this.job);
+                }
+            }
+        },
+
         saveTask() {
+            //this.completed = !Boolean(this.completed);
             var tasks = JSON.parse(localStorage.getItem('job-'+this.job));
             if(!tasks) {
                 tasks = {};

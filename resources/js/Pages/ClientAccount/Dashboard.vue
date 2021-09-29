@@ -134,7 +134,6 @@ export default {
                     return user.membership != null;
                 }),
                 function (user) {
-                    console.log(user.membership);
                     return user.membership.role;
                 })
         },
