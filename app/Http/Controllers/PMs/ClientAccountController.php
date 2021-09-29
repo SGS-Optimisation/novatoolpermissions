@@ -155,11 +155,12 @@ class ClientAccountController extends Controller
 
         if ($request->hasFile('image')) {
             $image_path = Storage::putFile('logos', $request->file('image'));
+            $image_path = Storage::url($image_path);
         }
 
         $client_account->update(array_merge(
             $request->only(['name', 'slug', 'alias']),
-            ['image' => Storage::url($image_path)]
+            ['image' => $image_path]
         ));
 
         return $request->wantsJson()
