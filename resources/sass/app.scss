@@ -2,14 +2,26 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 @import './ribbons';
+@import '~primevue/resources/themes/saga-blue/theme';
+@import '~primevue/resources/primevue';
+@import '~primeicons/primeicons';
+
+@layer utilities {
+    @variants responsive {
+        .masonry {
+            column-gap: 1.5em;
+            column-count: 2;
+        }
+        .break-inside {
+            break-inside: avoid;
+        }
+    }
+}
 
 .vs__selected, .multiselect__tag {
     font-size:12px;
 }
 
-.multiselect__content-wrapper {
-    background-color: #cfd8e3;
-}
 
 button:focus {
     outline: none;

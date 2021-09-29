@@ -76,15 +76,11 @@ import JetLabel from '@/Jetstream/Label'
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import CustomerSelector from "@/Components/PM/ClientAccount/CustomerSelector";
-import _ from "lodash";
-
-const slugify = text => _.kebabCase(text.replace(/&/g, '-and-'));
 
 export default {
     name: "ClientAccountForm",
 
     components: {
-        CustomerSelector,
         JetActionMessage,
         JetButton,
         JetFormSection,
@@ -92,6 +88,7 @@ export default {
         JetInputError,
         JetLabel,
         JetSecondaryButton,
+        CustomerSelector,
     },
 
     props: [
@@ -117,16 +114,15 @@ export default {
         setClient(name, aliases) {
             this.form.name = name;
             this.form.alias = aliases ? aliases.join("\r\n") : '';
-            this.updateName(name);
+            this.updateName();
         },
 
-        updateName: function (name) {
-            this.form.slug = slugify(name);
+        updateName() {
+            this.form.slug = _.kebabCase(this.form.name.replace(/&/g, '-and-'));
         },
 
         addFile(files) {
             if (!files.length) return;
-
             this.form.image = files[0];
         },
 
