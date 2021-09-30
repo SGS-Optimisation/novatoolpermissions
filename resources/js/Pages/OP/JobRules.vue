@@ -48,24 +48,10 @@
             <job-identification :job="currentJob"/>
 
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 bg-white relative">
-                <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-green-300" v-if="rulesUpdated">
-                    <span class="text-xl inline-block mr-5 align-middle">
-                        <i class="fas fa-bell"/>
-                    </span>
-                    <span class="inline-block align-middle mr-8">
-                        <b class="capitalize">Hello!</b> Rules list updated. Do you want to check?
-                    </span>
-                    <button
-                        class="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none"
-                        @click="reloadPage">
-                        Reload
-                    </button>
-                </div>
-
                 <div class="flex flex-col sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px pb-2 mb-2 min-h-screen ">
 
                     <!-- All Filters -->
-                    <div class="sticky top-24 z-50 flex flex-col w-full">
+                    <div class="sticky z-50 flex flex-col w-full" style="top:107px;">
                         <!-- Stage filter -->
                         <div class="flex flex-grow text-xs mx-2 mb-2" role="group" v-if="showStage">
                             <button
@@ -87,7 +73,7 @@
                         </div>
 
                         <!-- Artwork structure and date Filters -->
-                        <div class="flex flex-grow text-xs mx-2" role="group">
+                        <div class="flex flex-grow text-xs mx-2 shadow-lg" role="group">
                             <button @click="filterArtworkStructureButtonClicked('isNew')"
                                     :title="$page.props.settings.rule_filter_new_duration + ' days'"
                                     class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg"
@@ -123,7 +109,7 @@
                         <!-- End Filters -->
                     </div>
 
-                    <div class="box-border mx-autobefore:box-inherit after:box-inherit"
+                    <div class="box-border mx-autobefore:box-inherit after:box-inherit mt-2"
                     :class="{
                         'md:masonry': !termFocus
                     }">
@@ -460,9 +446,6 @@ export default {
             this.searching = true;
             this.artworkStructureTerms = [];
             this.rulesByTaxonomies = {};
-        },
-        reloadPage() {
-            window.location = window.location + this.searchJobKey;
         },
         openRuleModal(rule) {
             this.currentRule = rule;

@@ -22,7 +22,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import JetButton from "@/Jetstream/DangerButton";
+import JetButton from "@/Jetstream/Button";
 
 export default defineComponent({
     name: "SearchBar",
