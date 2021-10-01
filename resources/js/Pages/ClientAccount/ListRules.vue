@@ -84,11 +84,19 @@
                     <p>Showing rules for {{ search }}</p>
                 </div>
 
-                <div class="flex flex-row w-full items-end">
-                    {{ numFilteredRules }} Rules&nbsp;&nbsp;
+                <div class="flex flex-row w-full content-start">
+                    <div class="flex flex-col">
+                        {{ numFilteredRules }} Rules.
+                        <div>
+                            Select:
+                            <a class="text-blue-500 cursor-pointer pr-1" @click="selectAll">All</a>
+                            <a class="text-blue-500  cursor-pointer pr-1" @click="deselectAll">None</a>
+                        </div>
+                    </div>
                     <v-pagination v-model="page" :pages="numPages"/>
 
                     <div v-if="selectedRules.length > 0" class="ml-auto">
+                        {{selectedRules.length}} rules selected.
                         Possible actions:
                         <template
                             v-if="$page.props.user_permissions.publishRules && _every(selectedRules, ['state', 'Reviewing'])">
@@ -111,8 +119,13 @@
                      :key="ruleKey">
                     <div class="flex flex-row items-center">
                         <div class="flex-shrink mr-1">
-                            <input type="checkbox" :value="rule" v-model="selectedRules"
-                                   @change="selectRule($event, rule)">
+                            <Checkbox name="selectedRules"
+                                      :value="rule"
+                                      v-model="selectedRules"
+                                      @change="selectRule($event, rule)"
+                          />
+<!--                            <input type="checkbox" :value="rule" v-model="selectedRules"
+                                   @change="selectRule($event, rule)">-->
                         </div>
                         <div class="flex-grow">
                             <view-rule :rule="rule" :client-account="clientAccount"
@@ -175,6 +188,7 @@ import JetLabel from '@/Jetstream/Label'
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import VPagination from "@hennge/vue3-pagination";
+import Checkbox from 'primevue/checkbox/sfc';
 import {every as _every, drop as _drop} from 'lodash';
 import "@hennge/vue3-pagination/dist/vue3-pagination.css";
 
@@ -193,6 +207,7 @@ export default defineComponent({
     components: {
         Head,
         FilterCondition,
+        Checkbox,
         ClientLayout,
         ViewRule,
         TaxonomyFilter,
@@ -363,6 +378,19 @@ export default defineComponent({
     methods: {
         _every,
         _drop,
+
+        selectAll() {
+            this.selectedRules = [];
+            this.displayedRules.forEach((rule) => {
+                rule.selected = true;
+                this.selectedRules.push(rule);
+            });
+        },
+
+        deselectAll() {
+            this.selectedRules = [];
+            this.allRules.forEach((rule) => rule.selected = false);
+        },
 
         setTaxonomySelectorRef(el) {
             if (el) {
