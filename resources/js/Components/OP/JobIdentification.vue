@@ -9,7 +9,7 @@
                 <div class="flex flex-row flex-wrap my-5 ">
                     <template v-for="(values, item) in job.metadata.job_taxonomy">
                         <div v-if="values.length" class="flex flex-col mb-2"
-                        :class="{'order-last': job.metadata.matched_taxonomy[item].length === 0}">
+                        :class="{'order-last': !job.metadata.matched_taxonomy[item] || job.metadata.matched_taxonomy[item].length === 0}">
                             <div class="flex flex-wrap flex-shrink-0 text-xs items-center pr-3 text-xs mr-3">
                                 <div class="flex-grow h-full bg-gray-300 text-gray-600 px-2 rounded-l-lg">
                                     <div class="grid h-full">
@@ -17,12 +17,9 @@
                                     </div>
                                 </div>
                                 <div class="">
-
                                     <div
-                                        v-if="job.metadata.matched_taxonomy[item].length === 0"
-                                        class="bg-gray-100 text-green-800 px-2 flex flex-row justify-between"
-                                        :class="job.metadata.matched_taxonomy[item] && job.metadata.matched_taxonomy[item].length ?
-                                     'b rounded-tr-lg':'rounded-r-lg'"
+                                        v-if="!job.metadata.matched_taxonomy[item] || job.metadata.matched_taxonomy[item].length === 0"
+                                        class="bg-gray-100 text-green-800 px-2 flex flex-row justify-between rounded-r-lg"
                                         title="No match for MySGS value">
                                         <div class="flex flex-row">
                                             <template v-if="typeof values == 'object'">
@@ -67,7 +64,7 @@
 
                                     <div v-for="(terms, index) in job.metadata.matched_taxonomy[item]"
                                          class="bg-blue-100 text-green-800 px-2"
-                                         :class="{'rounded-r-lg': (index === (job.metadata.matched_taxonomy[item].length - 1))}"
+                                         :class="{'rounded-r-lg': job.metadata.matched_taxonomy[item] && (index === (job.metadata.matched_taxonomy[item].length - 1))}"
                                          title="Matched MySGS and Dagobah terms">
                                         {{ terms }}
                                     </div>

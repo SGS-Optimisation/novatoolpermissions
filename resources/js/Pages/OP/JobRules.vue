@@ -115,7 +115,7 @@
                     }">
 
                         <div v-for="(ruleGroup, ruleIndex) in displayedRules" :key="ruleIndex"
-                        class="break-inside">
+                            class="break-inside">
 
                             <view-rule-group :rules="ruleGroup[1]"
                                              :job="currentJob.job_number"
@@ -128,7 +128,6 @@
                                              @on-click-view="openRuleModal"/>
                         </div>
 
-<!--                    </isotope>-->
                     </div>
 
                 </div>
@@ -236,7 +235,6 @@ import Loader from "@/Components/Loader";
 import ViewRule from '@/Components/PM/Rules/ViewRule'
 import ViewRuleGroup from "@/Components/OP/ViewRuleGroup";
 import JobSearch from "@/Components/OP/JobSearchForm";
-import isotope from 'vueisotope'
 import moment from "moment";
 import JobIdentification from "@/Components/OP/JobIdentification";
 
@@ -259,7 +257,6 @@ export default {
             currentRule: null,
             rulesUpdated: false,
 
-            // isotope integration
             sortOption: null,
             filterOption: null,
             filterStagePA: false,
@@ -287,8 +284,6 @@ export default {
             }, {
                 bag: 'sendFlagRule'
             }),
-
-            isotopeFixRanOnce: false,
         }
     },
 
@@ -555,7 +550,6 @@ export default {
         Loader,
         ViewRule,
         JobSearch,
-        isotope
     },
 }
 </script>

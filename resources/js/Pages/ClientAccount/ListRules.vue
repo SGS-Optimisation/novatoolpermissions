@@ -1,8 +1,31 @@
 <template>
     <client-layout :client-account="clientAccount">
+
+        <template #additionalActions>
+            <div v-if="selectedRules.length > 0" class="ml-auto">
+                {{ selectedRules.length }} rules selected.
+                Possible actions:
+                <template
+                    v-if="$page.props.user_permissions.publishRules && _every(selectedRules, ['state', 'Reviewing'])">
+                    <button @click="confirmingPublish = true"
+                            class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
+                            rounded-md font-semibold text-xs text-white uppercase tracking-widest
+                            hover:bg-gray-700 active:bg-gray-900
+                            focus:outline-none focus:border-gray-900 focus:shadow-outline-gray
+                            transition ease-in-out duration-150">
+                        Publish
+                    </button>
+                </template>
+                <template v-else>
+                    None
+                </template>
+            </div>
+        </template>
+
         <Head><title>
             Rules for {{clientAccount.name}} - Dagobah
         </title></Head>
+
         <template #body>
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-gray-50 pt-5">
                 <div class="grid grid-cols-5 gap-1">
@@ -95,23 +118,37 @@
                     </div>
                     <v-pagination v-model="page" :pages="numPages"/>
 
-                    <div v-if="selectedRules.length > 0" class="ml-auto">
-                        {{selectedRules.length}} rules selected.
-                        Possible actions:
-                        <template
-                            v-if="$page.props.user_permissions.publishRules && _every(selectedRules, ['state', 'Reviewing'])">
-                            <button @click="confirmingPublish = true"
-                                    class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
-                            rounded-md font-semibold text-xs text-white uppercase tracking-widest
-                            hover:bg-gray-700 active:bg-gray-900
-                            focus:outline-none focus:border-gray-900 focus:shadow-outline-gray
-                            transition ease-in-out duration-150">
-                                Publish
-                            </button>
-                        </template>
-                        <template v-else>
-                            None
-                        </template>
+                    <!-- sorting -->
+                    <div class="ml-auto flex flex-col">
+                        <span class="text-xs">Sorting</span>
+                        <div class="flex flex-row">
+                            <Dropdown v-model="selectedSortOption"
+                                      panelClass="text-xs"
+                                      @change="updateSort"
+                                      :options="sortFields"
+                                      optionLabel="label"
+                                      placeholder="Sort by…"/>
+
+                            <div class="flex flex-col">
+                                <a class="cursor-pointer" @click="sortAsc"
+                                   :class="{'text-blue-500': this.sortOption.direction==='asc'}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M5 15l7-7 7 7"/>
+                                    </svg>
+                                </a>
+                                <a class="cursor-pointer" @click="sortDesc"
+                                   :class="{'text-blue-500': this.sortOption.direction==='desc'}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -123,9 +160,9 @@
                                       :value="rule"
                                       v-model="selectedRules"
                                       @change="selectRule($event, rule)"
-                          />
-<!--                            <input type="checkbox" :value="rule" v-model="selectedRules"
-                                   @change="selectRule($event, rule)">-->
+                            />
+                            <!--                            <input type="checkbox" :value="rule" v-model="selectedRules"
+                                                               @change="selectRule($event, rule)">-->
                         </div>
                         <div class="flex-grow">
                             <view-rule :rule="rule" :client-account="clientAccount"
@@ -189,6 +226,7 @@ import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import VPagination from "@hennge/vue3-pagination";
 import Checkbox from 'primevue/checkbox/sfc';
+import Dropdown from 'primevue/dropdown/sfc';
 import {every as _every, drop as _drop} from 'lodash';
 import "@hennge/vue3-pagination/dist/vue3-pagination.css";
 
@@ -208,6 +246,7 @@ export default defineComponent({
         Head,
         FilterCondition,
         Checkbox,
+        Dropdown,
         ClientLayout,
         ViewRule,
         TaxonomyFilter,
@@ -229,9 +268,8 @@ export default defineComponent({
             page: 1,
             perPage: 25,
 
-            allRules: [..._.orderBy(this.rules, 'created_at', 'desc')],
+            //allRules: [..._.orderBy(this.rules, 'created_at', 'desc')],
             filteredRules: [],
-            sortOption: null,
             filterOption: 'all',
             filterText: "",
             filterState: "",
@@ -254,7 +292,16 @@ export default defineComponent({
                 resetOnSuccess: false,
             }),
 
-            taxonomySelectorRefs: []
+            taxonomySelectorRefs: [],
+
+            sortOption: null,
+            selectedSortOption: null,
+            sortFields: [
+                {label: 'Created', field: 'created_at'},
+                {label: 'Updated', field: 'updated_at'},
+                {label: 'Name', field: 'name'},
+                //{label: 'ID', field: 'dagId'}
+            ],
 
         }
     },
@@ -278,106 +325,152 @@ export default defineComponent({
     },
 
     created() {
-
-        this.allRules.forEach(rule => {
-            rule.terms.forEach(term => {
-                if (!term.taxonomy) {
-                    console.log('term has no taxonomy!', {term, rule});
-                    return;
-                }
-
-                if (this.taxonomies[term.taxonomy.name] === undefined) {
-                    this.taxonomies[term.taxonomy.name] = '';
-                }
-
-                if (this.termsByTaxonomies[term.taxonomy.name] === undefined) {
-                    this.termsByTaxonomies[term.taxonomy.name] = [];
-                }
-
-                if (!this.termsByTaxonomies[term.taxonomy.name].includes(term.name)) {
-                    this.termsByTaxonomies[term.taxonomy.name].push(term.name);
-                }
-            })
-        });
-
-        this.filterObject['filterByTaxonomyTerm'] = (itemElem) => {
-            //return this.filterCondition ? itemElem.terms.every(term => this.taxonomies[term.taxonomy.name] === term.name) : itemElem.terms.some(term => this.taxonomies[term.taxonomy.name] === term.name);
-            if (this.filterCondition) {
-                let taxonomies = Object.entries(this.taxonomies);
-                if (taxonomies.length === 0)
-                    return false;
-                for (const taxonomy of taxonomies) {
-                    if (taxonomy[1] !== '') {
-                        let matchingTaxonomy = itemElem.terms.map(term => term.taxonomy.name).includes(taxonomy[0])
-                        if (!matchingTaxonomy) return false
-                        let matchingTerms = itemElem.terms.map(term => term.name).includes(taxonomy[1])
-                        if (!matchingTerms) return false
-                    }
-                }
-                return true;
-            }
-            return itemElem.terms.some(term => this.taxonomies[term.taxonomy.name] === term.name);
-        };
-
-        this.filterObject['filterContributor'] = (itemElem) => {
-            return !this.filterContributor || itemElem.users.some(user => user.name === this.filterContributor);
-        };
-
-        this.filterObject['filterTeam'] = (itemElem) => {
-            return !this.filterTeam || itemElem.teams.some(team => team.name === this.filterTeam);
-        };
-
-        this.filterObject['filterState'] = (itemElem) => {
-            return !this.filterState || itemElem.state === this.filterState;
-        };
-
-        this.filterObject['isNew'] = (itemElem) => {
-            return moment().subtract(parseInt(this.$page.props.settings.rule_filter_new_duration), 'days').isSameOrBefore(moment(itemElem.created_at));
-        };
-
-        this.filterObject['isUpdated'] = (itemElem) => {
-            return moment().subtract(this.$page.props.settings.rule_filter_updated_duration, 'days').isSameOrBefore(moment(itemElem.updated_at));
-        };
-
-        this.filterObject['isFlagged'] = (itemElem) => {
-            return itemElem.flagged === true;
-        };
-
-        this.filterObject['isOmnipresent'] = (itemElem) => {
-            return itemElem.flagged === true;
-        };
-
-        this.filterObject['isTagError'] = (itemElem) => {
-            let noTerms = (itemElem.terms.length === 0
-                || (itemElem.terms.length === 1 && itemElem.terms[0].name === 'No term')
-            );
-
-            if (noTerms) {
-                return true;
-            }
-
-            let hasStructure = _.some(itemElem.terms, function (term) {
-                return term.hasOwnProperty('taxonomy') && term.taxonomy.name === 'Artwork Structure Elements';
-            });
-
-            let atLeastOneTermPerRootTaxonomy = _.uniq(_.map(itemElem.terms, function (term) {
-                return term.hasOwnProperty('taxonomy') && term.taxonomy.parent.name;
-            })).length === this.rootTaxonomies.length;
-
-            return !hasStructure || !atLeastOneTermPerRootTaxonomy;
-
-        };
-
-        this.filterObject['all'] = (itemElem) => {
-            return true;
-        };
-
+        this.getSortOption();
+        this.initializeFilters();
         this.getRules();
+    },
+
+    updated() {
+        this.getSortOption();
     },
 
     methods: {
         _every,
         _drop,
+
+        getSortOption() {
+            if (localStorage.getItem('pmSortOption')) {
+                try {
+                    this.sortOption = JSON.parse(localStorage.getItem('pmSortOption'));
+                    this.selectedSortOption = _.find(this.sortFields, (entry) => entry.field === this.sortOption.field);
+                    return;
+                } catch (e) {
+                    localStorage.removeItem('pmSortOption');
+                }
+            }
+
+            this.sortOption = {field: 'created_at', direction: 'desc'};
+            this.selectedSortOption = _.find(this.sortFields, (entry) => entry.field === this.sortOption.field);
+        },
+
+        saveSortOption() {
+            localStorage.setItem('pmSortOption', JSON.stringify(this.sortOption));
+        },
+
+        sortAsc() {
+            this.sortOption.direction = 'asc';
+            this.saveSortOption();
+            this.debounceGetRules();
+        },
+        sortDesc() {
+            this.sortOption.direction = 'desc';
+            this.saveSortOption();
+            this.debounceGetRules();
+        },
+
+        initializeFilters() {
+            this.rules.forEach(rule => {
+                rule.terms.forEach(term => {
+                    if (!term.taxonomy) {
+                        console.log('term has no taxonomy!', {term, rule});
+                        return;
+                    }
+
+                    if (this.taxonomies[term.taxonomy.name] === undefined) {
+                        this.taxonomies[term.taxonomy.name] = '';
+                    }
+
+                    if (this.termsByTaxonomies[term.taxonomy.name] === undefined) {
+                        this.termsByTaxonomies[term.taxonomy.name] = [];
+                    }
+
+                    if (!this.termsByTaxonomies[term.taxonomy.name].includes(term.name)) {
+                        this.termsByTaxonomies[term.taxonomy.name].push(term.name);
+                    }
+                })
+            });
+
+            this.filterObject['filterByTaxonomyTerm'] = (itemElem) => {
+                //return this.filterCondition ? itemElem.terms.every(term => this.taxonomies[term.taxonomy.name] === term.name) : itemElem.terms.some(term => this.taxonomies[term.taxonomy.name] === term.name);
+                if (this.filterCondition) {
+                    let taxonomies = Object.entries(this.taxonomies);
+                    if (taxonomies.length === 0)
+                        return false;
+                    for (const taxonomy of taxonomies) {
+                        if (taxonomy[1] !== '') {
+                            let matchingTaxonomy = itemElem.terms.map(term => term.taxonomy.name).includes(taxonomy[0])
+                            if (!matchingTaxonomy) return false
+                            let matchingTerms = itemElem.terms.map(term => term.name).includes(taxonomy[1])
+                            if (!matchingTerms) return false
+                        }
+                    }
+                    return true;
+                }
+                return itemElem.terms.some(term => this.taxonomies[term.taxonomy.name] === term.name);
+            };
+
+            this.filterObject['filterContributor'] = (itemElem) => {
+                return !this.filterContributor || itemElem.users.some(user => user.name === this.filterContributor);
+            };
+
+            this.filterObject['filterTeam'] = (itemElem) => {
+                return !this.filterTeam || itemElem.teams.some(team => team.name === this.filterTeam);
+            };
+
+            this.filterObject['filterState'] = (itemElem) => {
+                return !this.filterState || itemElem.state === this.filterState;
+            };
+
+            this.filterObject['isNew'] = (itemElem) => {
+                return moment().subtract(parseInt(this.$page.props.settings.rule_filter_new_duration), 'days').isSameOrBefore(moment(itemElem.created_at));
+            };
+
+            this.filterObject['isUpdated'] = (itemElem) => {
+                return moment().subtract(this.$page.props.settings.rule_filter_updated_duration, 'days').isSameOrBefore(moment(itemElem.updated_at));
+            };
+
+            this.filterObject['isFlagged'] = (itemElem) => {
+                return itemElem.flagged === true;
+            };
+
+            this.filterObject['isOmnipresent'] = (itemElem) => {
+                return itemElem.flagged === true;
+            };
+
+            this.filterObject['textSearch'] = (rule) => {
+                if (!this.filterText || this.filterText === '') {
+                    return true;
+                }
+                return rule.name.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
+                    || rule.content.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
+                    || rule.dagId.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1;
+            };
+
+            this.filterObject['isTagError'] = (itemElem) => {
+                let noTerms = (itemElem.terms.length === 0
+                    || (itemElem.terms.length === 1 && itemElem.terms[0].name === 'No term')
+                );
+
+                if (noTerms) {
+                    return true;
+                }
+
+                let hasStructure = _.some(itemElem.terms, function (term) {
+                    return term.hasOwnProperty('taxonomy') && term.taxonomy.name === 'Artwork Structure Elements';
+                });
+
+                let atLeastOneTermPerRootTaxonomy = _.uniq(_.map(itemElem.terms, function (term) {
+                    return term.hasOwnProperty('taxonomy') && term.taxonomy.parent.name;
+                })).length === this.rootTaxonomies.length;
+
+                return !hasStructure || !atLeastOneTermPerRootTaxonomy;
+
+            };
+
+            this.filterObject['all'] = (itemElem) => {
+                return true;
+            };
+        },
 
         selectAll() {
             this.selectedRules = [];
@@ -389,7 +482,7 @@ export default defineComponent({
 
         deselectAll() {
             this.selectedRules = [];
-            this.allRules.forEach((rule) => rule.selected = false);
+            this.rules.forEach((rule) => rule.selected = false);
         },
 
         setTaxonomySelectorRef(el) {
@@ -399,7 +492,6 @@ export default defineComponent({
         },
 
         selectRule(e, rule) {
-            console.log(e, rule);
             if (!rule.hasOwnProperty('selected')) {
                 rule.selected = true;
             } else {
@@ -423,7 +515,6 @@ export default defineComponent({
                         this.$refs.viewRule.$forceUpdate();
                     }
                 })
-
         },
 
         cancelPublish() {
@@ -434,16 +525,16 @@ export default defineComponent({
             this.showContributors = !this.showContributors;
         },
 
+        updateSort(event) {
+            this.sortOption.field = this.selectedSortOption.field;
+            this.saveSortOption();
+            this.debounceGetRules();
+        },
+
         getRules() {
             this.filteredRules =
-                _.filter(this.allRules, (rule) => {
-                    if (!this.filterText || this.filterText === '') {
-                        return true;
-                    }
-                    return rule.name.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
-                        || rule.content.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
-                        || rule.dagId.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1;
-                })
+                _.orderBy(this.rules, [rule => rule[this.sortOption.field].toLowerCase()], [this.sortOption.direction])
+                    .filter(this.filterObject['textSearch'])
                     .filter(this.filterObject['filterByTaxonomyTerm'])
                     .filter(this.filterObject[this.filterOption])
                     .filter(this.filterObject['filterState'])
@@ -483,7 +574,6 @@ export default defineComponent({
         },
 
         onChangeFilterCondition(condition) {
-            console.log('filtering condition');
             this.filterCondition = condition;
             this.getRules();
         },
@@ -524,21 +614,27 @@ export default defineComponent({
         },
 
         numAllRules: function () {
-            return this.allRules.length;
+            return this.rules.length;
         },
 
         numNewRules: function () {
-            return (_.filter(this.allRules, this.filterObject.isNew)).length;
+            return (_.filter(this.rules, this.filterObject.isNew)).length;
         },
         numUpdatedRules: function () {
-            return (_.filter(this.allRules, this.filterObject.isUpdated)).length;
+            return (_.filter(this.rules, this.filterObject.isUpdated)).length;
         },
         numFlaggedRules: function () {
-            return (_.filter(this.allRules, this.filterObject.isFlagged)).length;
+            return (_.filter(this.rules, this.filterObject.isFlagged)).length;
         },
         numTagError: function () {
-            return (_.filter(this.allRules, this.filterObject.isTagError)).length;
+            return (_.filter(this.rules, this.filterObject.isTagError)).length;
         },
     },
 })
 </script>
+
+<style scoped>
+::v-deep(.p-dropdown-label) {
+    @apply text-xs;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-    <nav class="flex items-center ml-6 z-0">
+    <nav class="justify-end flex ml-6 z-0 pb-2">
         <jet-dropdown align="right" width="48">
             <template #trigger>
                 <button class="flex items-center text-sm font-medium text-white hover:text-white hover:border-gray-300 focus:outline-none focus:border-gray-300 transition duration-150 ease-in-out px-2 py-1 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150">

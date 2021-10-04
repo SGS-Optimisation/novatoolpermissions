@@ -1,5 +1,5 @@
 <template>
-    <div class="flex p-1 my-1 transition transform-gpu duration-200 w-full" :class="{
+    <div class="flex p-2 my-1 transition transform-gpu duration-200 w-full" :class="{
                     ' flex-row': !termFocus && (index === taxonomyRules.length-1),
                     ' flex-row border-b border-indigo-100': !termFocus && (index !== taxonomyRules.length-1),
                     'w-1/3 px-3': termFocus,

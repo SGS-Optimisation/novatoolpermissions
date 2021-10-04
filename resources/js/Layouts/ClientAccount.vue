@@ -7,8 +7,9 @@
                     <client-menu :client-account="clientAccount"></client-menu>
                 </div>
 
-                <div class="flex ml-6">
+                <div class="flex flex-col ml-6 justify-end">
                     <action-menu :client-account="clientAccount"></action-menu>
+                    <slot name="additionalActions"></slot>
                 </div>
             </div>
         </template>

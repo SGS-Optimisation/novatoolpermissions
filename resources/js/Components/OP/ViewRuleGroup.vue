@@ -1,5 +1,5 @@
 <template>
-    <div class="mr-4 mb-4 p-2" v-if="taxonomyRules.length > 0"
+    <div class="mr-4 mb-4" v-if="taxonomyRules.length > 0"
          :class="{'bg-indigo-50' : !termFocus}">
 
         <div class="w-full" v-if="!termFocus">
