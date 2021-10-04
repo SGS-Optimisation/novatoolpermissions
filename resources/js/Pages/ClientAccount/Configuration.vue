@@ -1,24 +1,23 @@
 <template>
     <client-layout :client-account="clientAccount">
-
+        <Head>
+            <title>Categories for {{clientAccount.name}} - Dagobah</title>
+        </Head>
         <template #body>
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg" v-if="clientAccount != null">
-                        <tabs>
-                            <tab
-                                v-for="(topTaxonomy, index) in topTaxonomies"
-                                :key="topTaxonomy.name"
-                                :name="topTaxonomy.name"
-                                :selected="index == 0"
-                            >
+                        <TabView v-model:activeIndex="activeTab">
+                            <TabPanel v-for="(topTaxonomy, index) in topTaxonomies" :key="topTaxonomy.name" :header="topTaxonomy.name">
+
                                 <child-taxonomies-section
                                     :parent-taxonomy="topTaxonomy"
                                     :taxonomy-hierarchy="taxonomyHierarchy"
                                     :client-account="clientAccount">
                                 </child-taxonomies-section>
-                            </tab>
-                        </tabs>
+
+                            </TabPanel>
+                        </TabView>
 
                     </div>
                 </div>
@@ -29,6 +28,7 @@
 
 
 <script>
+import {Head} from "@inertiajs/inertia-vue3";
 import ClientLayout from '@/Layouts/ClientAccount'
 import JetButton from '@/Jetstream/Button'
 import JetFormSection from '@/Jetstream/FormSectionNoGrid'
@@ -37,14 +37,11 @@ import JetInputError from '@/Jetstream/InputError'
 import JetLabel from '@/Jetstream/Label'
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
-import Tabs from "@/Components/Tabs";
-import Tab from "@/Components/Tab";
 import ChildTaxonomiesSection from "@/Components/PM/ClientAccount/ChildTaxonomiesSection";
+import TabView from 'primevue/tabview/sfc';
+import TabPanel from 'primevue/tabpanel/sfc';
 
 export default {
-    title() {
-        return `Categories for ${this.clientAccount.name} - Dagobah`;
-    },
 
     props: [
         'clientAccount',
@@ -54,6 +51,7 @@ export default {
     ],
 
     components: {
+        Head,
         ClientLayout,
         JetActionMessage,
         JetButton,
@@ -61,9 +59,15 @@ export default {
         JetInput,
         JetInputError,
         JetLabel,
-        Tabs,
-        Tab,
-        ChildTaxonomiesSection
+        ChildTaxonomiesSection,
+        TabView,
+        TabPanel
+    },
+
+    data() {
+        return {
+            activeTab: 0,
+        }
     },
 }
 </script>

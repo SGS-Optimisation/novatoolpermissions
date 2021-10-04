@@ -1,5 +1,31 @@
 <template>
     <client-layout :client-account="clientAccount">
+
+        <template #additionalActions>
+            <div v-if="selectedRules.length > 0" class="ml-auto">
+                {{ selectedRules.length }} rules selected.
+                Possible actions:
+                <template
+                    v-if="$page.props.user_permissions.publishRules && _every(selectedRules, ['state', 'Reviewing'])">
+                    <button @click="confirmingPublish = true"
+                            class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
+                            rounded-md font-semibold text-xs text-white uppercase tracking-widest
+                            hover:bg-gray-700 active:bg-gray-900
+                            focus:outline-none focus:border-gray-900 focus:shadow-outline-gray
+                            transition ease-in-out duration-150">
+                        Publish
+                    </button>
+                </template>
+                <template v-else>
+                    None
+                </template>
+            </div>
+        </template>
+
+        <Head><title>
+            Rules for {{clientAccount.name}} - Dagobah
+        </title></Head>
+
         <template #body>
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-gray-50 pt-5">
                 <div class="grid grid-cols-5 gap-1">
@@ -9,7 +35,8 @@
                                        :key="taxonomyName"
                                        :terms="terms"
                                        @termSelected="filterByTaxonomyTerm"
-                                       ref="taxonomySelectors"
+                                       :ref="setTaxonomySelectorRef"
+
                     />
                     <taxonomy-selector taxonomy-name="Rule Status"
                                        :terms="states"
@@ -41,20 +68,22 @@
                     <div id="filter" class="flex justify-end">
                         <div class="flex text-xs m-2" role="group">
                             <button @click="setFilterDate('isNew')"
-                                    :title="$page.settings.rule_filter_new_duration + ' days'"
+                                    :title="$page.props.settings.rule_filter_new_duration + ' days'"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
                                 New <span title="Total number of rules considered new"
                                           class="px-1 rounded-xl bg-pink-300">{{ numNewRules }}</span>
                             </button>
                             <button @click="setFilterDate('isUpdated')"
-                                    :title="$page.settings.rule_filter_updated_duration + ' days'"
+                                    :title="$page.props.settings.rule_filter_updated_duration + ' days'"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isUpdated' }, { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
                                 Updated <span title="Total number of rules considered updated"
                                               class="px-1 rounded-xl bg-pink-300">{{ numUpdatedRules }}</span>
                             </button>
                             <button @click="setFilterDate('isFlagged')"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isFlagged' }, { 'bg-white text-blue-500' : filterOption !== 'isFlagged' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
-                                Flagged <span title="Total number of flagged rules" class="px-1 rounded-xl bg-pink-300">{{ numFlaggedRules }}</span>
+                                Flagged <span title="Total number of flagged rules" class="px-1 rounded-xl bg-pink-300">{{
+                                    numFlaggedRules
+                                }}</span>
                             </button>
                             <button @click="setFilterDate('isTagError')"
                                     :class="[{ 'bg-blue-500 text-white' : filterOption === 'isTagError' }, { 'bg-white text-blue-500' : filterOption !== 'isTagError' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
@@ -78,37 +107,62 @@
                     <p>Showing rules for {{ search }}</p>
                 </div>
 
-                <div class="flex flex-row w-full items-end">
-                    <pagination v-model="page"
-                                :options="paginationOptions"
-                                :per-page="perPage"
-                                :records="numFilteredRules"/>
+                <div class="flex flex-row w-full content-start">
+                    <div class="flex flex-col">
+                        {{ numFilteredRules }} Rules.
+                        <div>
+                            Select:
+                            <a class="text-blue-500 cursor-pointer pr-1" @click="selectAll">All</a>
+                            <a class="text-blue-500  cursor-pointer pr-1" @click="deselectAll">None</a>
+                        </div>
+                    </div>
+                    <v-pagination v-model="page" :pages="numPages"/>
 
-                    <div v-if="selectedRules.length > 0" class="ml-auto">
-                        Possible actions:
-                        <template
-                            v-if="$page.user_permissions.publishRules && _.every(selectedRules, ['state', 'Reviewing'])">
-                            <button @click="confirmingPublish = true"
-                                    class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
-                            rounded-md font-semibold text-xs text-white uppercase tracking-widest
-                            hover:bg-gray-700 active:bg-gray-900
-                            focus:outline-none focus:border-gray-900 focus:shadow-outline-gray
-                            transition ease-in-out duration-150">
-                                Publish
-                            </button>
-                        </template>
-                        <template v-else>
-                            None
-                        </template>
+                    <!-- sorting -->
+                    <div class="ml-auto flex flex-col">
+                        <span class="text-xs">Sorting</span>
+                        <div class="flex flex-row">
+                            <Dropdown v-model="selectedSortOption"
+                                      panelClass="text-xs"
+                                      @change="updateSort"
+                                      :options="sortFields"
+                                      optionLabel="label"
+                                      placeholder="Sort by…"/>
+
+                            <div class="flex flex-col">
+                                <a class="cursor-pointer" @click="sortAsc"
+                                   :class="{'text-blue-500': this.sortOption.direction==='asc'}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M5 15l7-7 7 7"/>
+                                    </svg>
+                                </a>
+                                <a class="cursor-pointer" @click="sortDesc"
+                                   :class="{'text-blue-500': this.sortOption.direction==='desc'}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
-                <div v-for="(rule, ruleKey) in _.drop(filteredRules, ((page-1)*perPage)).slice(0, perPage)"
+                <div v-for="(rule, ruleKey) in displayedRules"
                      :key="ruleKey">
                     <div class="flex flex-row items-center">
                         <div class="flex-shrink mr-1">
-                            <input type="checkbox" :value="rule" v-model="selectedRules"
-                                   @change="selectRule($event, rule)">
+                            <Checkbox name="selectedRules"
+                                      :value="rule"
+                                      v-model="selectedRules"
+                                      @change="selectRule($event, rule)"
+                            />
+                            <!--                            <input type="checkbox" :value="rule" v-model="selectedRules"
+                                                               @change="selectRule($event, rule)">-->
                         </div>
                         <div class="flex-grow">
                             <view-rule :rule="rule" :client-account="clientAccount"
@@ -121,10 +175,7 @@
                 </div>
 
                 <div class="px-2 pb-16 pt-4">
-                    <pagination v-model="page"
-                                :options="paginationOptions"
-                                :per-page="perPage"
-                                :records="numFilteredRules"/>
+                    <v-pagination v-model="page" :pages="numPages"/>
                 </div>
 
             </div>
@@ -156,6 +207,8 @@
 </template>
 
 <script>
+import {defineComponent} from "vue";
+import {Head} from "@inertiajs/inertia-vue3";
 import ClientLayout from '@/Layouts/ClientAccount'
 import ViewRule from '@/Components/PM/Rules/ListView'
 import moment from 'moment'
@@ -171,13 +224,13 @@ import JetInputError from '@/Jetstream/InputError'
 import JetLabel from '@/Jetstream/Label'
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
-import TailwindPagination from "../../Components/TailwindPagination";
+import VPagination from "@hennge/vue3-pagination";
+import Checkbox from 'primevue/checkbox/sfc';
+import Dropdown from 'primevue/dropdown/sfc';
+import {every as _every, drop as _drop} from 'lodash';
+import "@hennge/vue3-pagination/dist/vue3-pagination.css";
 
-export default {
-    title() {
-        return `Rules for ${this.clientAccount.name} - Dagobah`;
-    },
-
+export default defineComponent({
     props: [
         'clientAccount',
         'team',
@@ -189,29 +242,34 @@ export default {
         'rootTaxonomies',
         'users',
     ],
+    components: {
+        Head,
+        FilterCondition,
+        Checkbox,
+        Dropdown,
+        ClientLayout,
+        ViewRule,
+        TaxonomyFilter,
+        TaxonomySelector,
+        JetActionMessage,
+        JetButton,
+        JetConfirmationModal,
+        JetDangerButton,
+        JetFormSection,
+        JetInput,
+        JetInputError,
+        JetLabel,
+        JetSecondaryButton,
+        VPagination,
+    },
 
     data() {
         return {
-            paginationOptions: {
-                texts: {
-                    count: 'Showing {from} to {to} of {count} rules|{count} rules|One rule',
-                    first: 'First',
-                    last: 'Last',
-                    nextPage: '>',
-                    nextChunk: '>>',
-                    prevPage: '<',
-                    prevChunk: '<<'
-                },
-                theme: 'bootstrap4',
-                template: TailwindPagination,
-            },
             page: 1,
             perPage: 25,
 
-
-            allRules: [..._.orderBy(this.rules, 'created_at', 'desc')],
+            //allRules: [..._.orderBy(this.rules, 'created_at', 'desc')],
             filteredRules: [],
-            sortOption: null,
             filterOption: 'all',
             filterText: "",
             filterState: "",
@@ -233,6 +291,18 @@ export default {
                 bag: 'publishData',
                 resetOnSuccess: false,
             }),
+
+            taxonomySelectorRefs: [],
+
+            sortOption: null,
+            selectedSortOption: null,
+            sortFields: [
+                {label: 'Created', field: 'created_at'},
+                {label: 'Updated', field: 'updated_at'},
+                {label: 'Name', field: 'name'},
+                //{label: 'ID', field: 'dagId'}
+            ],
+
         }
     },
 
@@ -247,111 +317,181 @@ export default {
 
         document.addEventListener('keydown', this._keyListener.bind(this));
     },
+    beforeUpdate() {
+        this.taxonomySelectorRefs = []
+    },
     beforeDestroy() {
         document.removeEventListener('keydown', this._keyListener);
     },
 
     created() {
-
-        this.allRules.forEach(rule => {
-            rule.terms.forEach(term => {
-                if (!term.taxonomy) {
-                    console.log('term has no taxonomy!', {term, rule});
-                    return;
-                }
-
-                if (this.taxonomies[term.taxonomy.name] === undefined) {
-                    this.taxonomies[term.taxonomy.name] = '';
-                }
-
-                if (this.termsByTaxonomies[term.taxonomy.name] === undefined) {
-                    this.termsByTaxonomies[term.taxonomy.name] = [];
-                }
-
-                if (!this.termsByTaxonomies[term.taxonomy.name].includes(term.name)) {
-                    this.termsByTaxonomies[term.taxonomy.name].push(term.name);
-                }
-            })
-        });
-
-        this.filterObject['filterByTaxonomyTerm'] = (itemElem) => {
-            //return this.filterCondition ? itemElem.terms.every(term => this.taxonomies[term.taxonomy.name] === term.name) : itemElem.terms.some(term => this.taxonomies[term.taxonomy.name] === term.name);
-            if (this.filterCondition) {
-                let taxonomies = Object.entries(this.taxonomies);
-                if (taxonomies.length === 0)
-                    return false;
-                for (const taxonomy of taxonomies) {
-                    if (taxonomy[1] !== '') {
-                        let matchingTaxonomy = itemElem.terms.map(term => term.taxonomy.name).includes(taxonomy[0])
-                        if (!matchingTaxonomy) return false
-                        let matchingTerms = itemElem.terms.map(term => term.name).includes(taxonomy[1])
-                        if (!matchingTerms) return faxlse
-                    }
-                }
-                return true;
-            }
-            return itemElem.terms.some(term => this.taxonomies[term.taxonomy.name] === term.name);
-        };
-
-        this.filterObject['filterContributor'] = (itemElem) => {
-            return !this.filterContributor || itemElem.users.some(user => user.name === this.filterContributor);
-        };
-
-        this.filterObject['filterTeam'] = (itemElem) => {
-            return !this.filterTeam || itemElem.teams.some(team => team.name === this.filterTeam);
-        };
-
-        this.filterObject['filterState'] = (itemElem) => {
-            return !this.filterState || itemElem.state === this.filterState;
-        };
-
-        this.filterObject['isNew'] = (itemElem) => {
-            return moment().subtract(parseInt(this.$page.settings.rule_filter_new_duration), 'days').isSameOrBefore(moment(itemElem.created_at));
-        };
-
-        this.filterObject['isUpdated'] = (itemElem) => {
-            return moment().subtract(this.$page.settings.rule_filter_updated_duration, 'days').isSameOrBefore(moment(itemElem.updated_at));
-        };
-
-        this.filterObject['isFlagged'] = (itemElem) => {
-            return itemElem.flagged === true;
-        };
-
-        this.filterObject['isOmnipresent'] = (itemElem) => {
-            return itemElem.flagged === true;
-        };
-
-        this.filterObject['isTagError'] = (itemElem) => {
-            let noTerms = (itemElem.terms.length === 0
-                || (itemElem.terms.length === 1 && itemElem.terms[0].name === 'No term')
-            );
-
-            if(noTerms) {
-                return true;
-            }
-
-            let hasStructure = _.some(itemElem.terms, function(term) {
-                return term.hasOwnProperty('taxonomy') && term.taxonomy.name === 'Artwork Structure Elements';
-            });
-
-            let atLeastOneTermPerRootTaxonomy = _.uniq(_.map(itemElem.terms, function (term) {
-                return term.hasOwnProperty('taxonomy') && term.taxonomy.parent.name;
-            })).length === this.rootTaxonomies.length;
-
-            return !hasStructure || !atLeastOneTermPerRootTaxonomy;
-
-        };
-
-        this.filterObject['all'] = (itemElem) => {
-            return true;
-        };
-
+        this.getSortOption();
+        this.initializeFilters();
         this.getRules();
     },
 
+    updated() {
+        this.getSortOption();
+    },
+
     methods: {
+        _every,
+        _drop,
+
+        getSortOption() {
+            if (localStorage.getItem('pmSortOption')) {
+                try {
+                    this.sortOption = JSON.parse(localStorage.getItem('pmSortOption'));
+                    this.selectedSortOption = _.find(this.sortFields, (entry) => entry.field === this.sortOption.field);
+                    return;
+                } catch (e) {
+                    localStorage.removeItem('pmSortOption');
+                }
+            }
+
+            this.sortOption = {field: 'created_at', direction: 'desc'};
+            this.selectedSortOption = _.find(this.sortFields, (entry) => entry.field === this.sortOption.field);
+        },
+
+        saveSortOption() {
+            localStorage.setItem('pmSortOption', JSON.stringify(this.sortOption));
+        },
+
+        sortAsc() {
+            this.sortOption.direction = 'asc';
+            this.saveSortOption();
+            this.debounceGetRules();
+        },
+        sortDesc() {
+            this.sortOption.direction = 'desc';
+            this.saveSortOption();
+            this.debounceGetRules();
+        },
+
+        initializeFilters() {
+            this.rules.forEach(rule => {
+                rule.terms.forEach(term => {
+                    if (!term.taxonomy) {
+                        console.log('term has no taxonomy!', {term, rule});
+                        return;
+                    }
+
+                    if (this.taxonomies[term.taxonomy.name] === undefined) {
+                        this.taxonomies[term.taxonomy.name] = '';
+                    }
+
+                    if (this.termsByTaxonomies[term.taxonomy.name] === undefined) {
+                        this.termsByTaxonomies[term.taxonomy.name] = [];
+                    }
+
+                    if (!this.termsByTaxonomies[term.taxonomy.name].includes(term.name)) {
+                        this.termsByTaxonomies[term.taxonomy.name].push(term.name);
+                    }
+                })
+            });
+
+            this.filterObject['filterByTaxonomyTerm'] = (itemElem) => {
+                //return this.filterCondition ? itemElem.terms.every(term => this.taxonomies[term.taxonomy.name] === term.name) : itemElem.terms.some(term => this.taxonomies[term.taxonomy.name] === term.name);
+                if (this.filterCondition) {
+                    let taxonomies = Object.entries(this.taxonomies);
+                    if (taxonomies.length === 0)
+                        return false;
+                    for (const taxonomy of taxonomies) {
+                        if (taxonomy[1] !== '') {
+                            let matchingTaxonomy = itemElem.terms.map(term => term.taxonomy.name).includes(taxonomy[0])
+                            if (!matchingTaxonomy) return false
+                            let matchingTerms = itemElem.terms.map(term => term.name).includes(taxonomy[1])
+                            if (!matchingTerms) return false
+                        }
+                    }
+                    return true;
+                }
+                return itemElem.terms.some(term => this.taxonomies[term.taxonomy.name] === term.name);
+            };
+
+            this.filterObject['filterContributor'] = (itemElem) => {
+                return !this.filterContributor || itemElem.users.some(user => user.name === this.filterContributor);
+            };
+
+            this.filterObject['filterTeam'] = (itemElem) => {
+                return !this.filterTeam || itemElem.teams.some(team => team.name === this.filterTeam);
+            };
+
+            this.filterObject['filterState'] = (itemElem) => {
+                return !this.filterState || itemElem.state === this.filterState;
+            };
+
+            this.filterObject['isNew'] = (itemElem) => {
+                return moment().subtract(parseInt(this.$page.props.settings.rule_filter_new_duration), 'days').isSameOrBefore(moment(itemElem.created_at));
+            };
+
+            this.filterObject['isUpdated'] = (itemElem) => {
+                return moment().subtract(this.$page.props.settings.rule_filter_updated_duration, 'days').isSameOrBefore(moment(itemElem.updated_at));
+            };
+
+            this.filterObject['isFlagged'] = (itemElem) => {
+                return itemElem.flagged === true;
+            };
+
+            this.filterObject['isOmnipresent'] = (itemElem) => {
+                return itemElem.flagged === true;
+            };
+
+            this.filterObject['textSearch'] = (rule) => {
+                if (!this.filterText || this.filterText === '') {
+                    return true;
+                }
+                return rule.name.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
+                    || rule.content.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
+                    || rule.dagId.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1;
+            };
+
+            this.filterObject['isTagError'] = (itemElem) => {
+                let noTerms = (itemElem.terms.length === 0
+                    || (itemElem.terms.length === 1 && itemElem.terms[0].name === 'No term')
+                );
+
+                if (noTerms) {
+                    return true;
+                }
+
+                let hasStructure = _.some(itemElem.terms, function (term) {
+                    return term.hasOwnProperty('taxonomy') && term.taxonomy.name === 'Artwork Structure Elements';
+                });
+
+                let atLeastOneTermPerRootTaxonomy = _.uniq(_.map(itemElem.terms, function (term) {
+                    return term.hasOwnProperty('taxonomy') && term.taxonomy.parent.name;
+                })).length === this.rootTaxonomies.length;
+
+                return !hasStructure || !atLeastOneTermPerRootTaxonomy;
+
+            };
+
+            this.filterObject['all'] = (itemElem) => {
+                return true;
+            };
+        },
+
+        selectAll() {
+            this.selectedRules = [];
+            this.displayedRules.forEach((rule) => {
+                rule.selected = true;
+                this.selectedRules.push(rule);
+            });
+        },
+
+        deselectAll() {
+            this.selectedRules = [];
+            this.rules.forEach((rule) => rule.selected = false);
+        },
+
+        setTaxonomySelectorRef(el) {
+            if (el) {
+                this.taxonomySelectorRefs.push(el)
+            }
+        },
+
         selectRule(e, rule) {
-            console.log(e, rule);
             if (!rule.hasOwnProperty('selected')) {
                 rule.selected = true;
             } else {
@@ -362,15 +502,18 @@ export default {
         publishRules() {
             this.publishForm.rule_ids = _.map(this.selectedRules, 'id');
 
-            this.publishForm.post(route('pm.client-account.rules.publish', {clientAccount: this.clientAccount.slug}))
-                .then(() => {
-                    this.confirmingPublish = false;
+            this.publishForm.post(
+                route('pm.client-account.rules.publish', {clientAccount: this.clientAccount.slug}),
+                {
+                    onSuccess: () => {
+                        this.confirmingPublish = false;
 
-                    _.forEach(this.selectedRules, function(rule) {
-                        rule.state = "Published";
-                    });
+                        _.forEach(this.selectedRules, function (rule) {
+                            rule.state = "Published";
+                        });
 
-                    this.$refs.viewRule.$forceUpdate();
+                        this.$refs.viewRule.$forceUpdate();
+                    }
                 })
         },
 
@@ -382,16 +525,16 @@ export default {
             this.showContributors = !this.showContributors;
         },
 
+        updateSort(event) {
+            this.sortOption.field = this.selectedSortOption.field;
+            this.saveSortOption();
+            this.debounceGetRules();
+        },
+
         getRules() {
             this.filteredRules =
-                _.filter(this.allRules, (rule) => {
-                    if (!this.filterText || this.filterText === '') {
-                        return true;
-                    }
-                    return rule.name.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
-                        || rule.content.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1
-                        || rule.dagId.toLowerCase().indexOf(this.filterText.toLowerCase()) !== -1;
-                })
+                _.orderBy(this.rules, [rule => rule[this.sortOption.field].toLowerCase()], [this.sortOption.direction])
+                    .filter(this.filterObject['textSearch'])
                     .filter(this.filterObject['filterByTaxonomyTerm'])
                     .filter(this.filterObject[this.filterOption])
                     .filter(this.filterObject['filterState'])
@@ -431,7 +574,6 @@ export default {
         },
 
         onChangeFilterCondition(condition) {
-            console.log('filtering condition');
             this.filterCondition = condition;
             this.getRules();
         },
@@ -446,7 +588,10 @@ export default {
             this.filterTeam = '';
             this.filterContributor = '';
 
-            this.$refs.taxonomySelectors.forEach(selector => selector.clearSelected());
+            this.taxonomySelectorRefs.forEach((selector) => {
+                selector.clearSelected();
+            })
+
             this.$refs.stateSelector.clearSelected();
             this.$refs.contributorSelector.clearSelected();
             this.$refs.teamSelector.clearSelected();
@@ -456,43 +601,40 @@ export default {
     },
 
     computed: {
+        displayedRules() {
+            return _.drop(this.filteredRules, ((this.page - 1) * this.perPage)).slice(0, this.perPage);
+        },
+
+        numPages() {
+            return Math.ceil(this.numFilteredRules / this.perPage);
+        },
+
         numFilteredRules: function () {
             return this.filteredRules.length;
         },
 
         numAllRules: function () {
-            return this.allRules.length;
+            return this.rules.length;
         },
 
         numNewRules: function () {
-            return (_.filter(this.allRules, this.filterObject.isNew)).length;
+            return (_.filter(this.rules, this.filterObject.isNew)).length;
         },
         numUpdatedRules: function () {
-            return (_.filter(this.allRules, this.filterObject.isUpdated)).length;
+            return (_.filter(this.rules, this.filterObject.isUpdated)).length;
         },
         numFlaggedRules: function () {
-            return (_.filter(this.allRules, this.filterObject.isFlagged)).length;
+            return (_.filter(this.rules, this.filterObject.isFlagged)).length;
         },
         numTagError: function () {
-            return (_.filter(this.allRules, this.filterObject.isTagError)).length;
+            return (_.filter(this.rules, this.filterObject.isTagError)).length;
         },
     },
-
-    components: {
-        FilterCondition,
-        ClientLayout,
-        ViewRule,
-        TaxonomyFilter,
-        TaxonomySelector,
-        JetActionMessage,
-        JetButton,
-        JetConfirmationModal,
-        JetDangerButton,
-        JetFormSection,
-        JetInput,
-        JetInputError,
-        JetLabel,
-        JetSecondaryButton,
-    },
-}
+})
 </script>
+
+<style scoped>
+::v-deep(.p-dropdown-label) {
+    @apply text-xs;
+}
+</style>

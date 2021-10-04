@@ -1,5 +1,8 @@
 <template>
     <client-layout :client-account="clientAccount">
+        <Head>
+            <title>Settings for {{clientAccount.name}} - Dagobah</title>
+        </Head>
         <template #body>
             <client-account-form :client="client"/>
         </template>
@@ -10,16 +13,15 @@
 
 <script>
 
+import {Head} from "@inertiajs/inertia-vue3";
 import ClientAccountForm from "@/Components/PM/ClientAccount/Form";
 import ClientLayout from '@/Layouts/ClientAccount'
 
 export default {
     name: "UpdateClientAccount",
-    title() {
-        return `Settings for ${this.clientAccount.name} - Dagobah`;
-    },
 
     components: {
+        Head,
         ClientLayout,
         ClientAccountForm
     },

@@ -1,5 +1,8 @@
 <template>
     <app-layout>
+        <Head><title>
+            Client Accounts - Dagobah
+        </title></Head>
         <template #header>
             <div class="flex justify-between">
                 <div class="flex flex-row content-center">
@@ -41,6 +44,7 @@
 </template>
 
 <script>
+import {Head} from "@inertiajs/inertia-vue3";
 import AppLayout from '@/Layouts/AppLayout'
 import Welcome from '@/Jetstream/Welcome'
 import JetNavLink from "@/Jetstream/NavLink";
@@ -49,7 +53,6 @@ import ClientAccountLink from "@/Components/PM/ClientAccount/ClientAccountLink";
 
 export default {
     name: "Landing",
-    title: 'Client Accounts - Dagobah',
     props: [
         'team',
         'myTeams',
@@ -57,6 +60,7 @@ export default {
     ],
 
     components: {
+        Head,
         ClientAccountLink,
         ActionMenu,
         AppLayout,

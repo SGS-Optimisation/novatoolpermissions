@@ -34,7 +34,7 @@
                                     v-model="form.password"
                                     @keyup.enter.native="deleteUser" />
 
-                        <jet-input-error :message="form.error('password')" class="mt-2" />
+                        <jet-input-error :message="form.errors.password" class="mt-2" />
                     </div>
                 </template>
 
@@ -96,10 +96,11 @@
 
             deleteUser() {
                 this.form.post(route('current-user.destroy'), {
-                    preserveScroll: true
-                }).then(response => {
-                    if (! this.form.hasErrors()) {
-                        this.confirmingUserDeletion = false;
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        if (! this.form.hasErrors()) {
+                            this.confirmingUserDeletion = false;
+                        }
                     }
                 })
             },

@@ -2,11 +2,11 @@
     <div class="mx-auto sm:px-6 lg:px-8"
          :class="{'bg-red-500': rule.deleted_at}">
 
-        <template>
-            <h1 class="text-lg">
-                <slot name="title"></slot>
-            </h1>
-        </template>
+
+        <h1 class="text-lg">
+            <slot name="title"></slot>
+        </h1>
+
 
         <div class="pt-4">
             <jet-form-section @submitted="pushRuleData">
@@ -22,7 +22,7 @@
                         <jet-label for="name" value="Name"/>
                         <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name"
                                    autocomplete="name"/>
-                        <jet-input-error :message="form.error('name')" class="mt-2"/>
+                        <jet-input-error :message="form.errors.name" class="mt-2"/>
                     </div>
 
                     <div class="col-span-6 sm:col-span-8">
@@ -40,48 +40,44 @@
                         <div class="flex flex-col justify-between">
                             <div class="flex flex-row">
                                 <div v-for="(state, index) in stateObjects" class="flex flew-row px-4">
-                                    <template>
-                                        <input
-                                            v-model="form.state"
-                                            :name="'state-'+index"
-                                            type="radio"
-                                            class="hidden"
-                                            :value="state.name">
-                                        <label class="ml-1 flex items-center cursor-pointer" :for="'state-'+index"
-                                               @click="stateChanged(state)">
+                                    <input
+                                        v-model="form.state"
+                                        :name="'state-'+index"
+                                        type="radio"
+                                        class="hidden"
+                                        :value="state.name">
+                                    <label class="ml-1 flex items-center cursor-pointer" :for="'state-'+index"
+                                           @click="stateChanged(state)">
                                             <span
                                                 class="w-8 h-8 inline-block mr-2 rounded-full border border-grey flex-no-shrink"></span>
-                                            {{ state.name }}
-                                        </label>
-                                    </template>
+                                        {{ state.name }}
+                                    </label>
                                 </div>
                             </div>
                             <div class="flex flex-col mt-3" v-if="requiresAssignees">
                                 <h4 class="h4">Reviewers</h4>
-                                <multiselect @input="assigneeSelected"
-                                             v-model="assignees"
-                                             ref="select"
-                                             :multiple=true
-                                             :appendToBody=true
+                                <multiselect :searchable=true
+                                             v-model="form.assignees"
+                                             ref="assigneeSelector"
+                                             mode="tags"
                                              :options="publishers"
                                              label="label"
-                                             track-by="value"
+                                             valueProp="value"
                                 />
 
                                 <div class="flex flex-col mt-2" v-if="suggestedReviewers.length">
                                     <h5 class="h6">Suggested</h5>
                                     <div class="flex flex-row flex-wrap">
-                                        <template v-for="user in suggestedReviewers">
-                                            <span class="text-xs rounded-xl m-1 px-1 flex cursor-pointer"
-                                                  :class="{
-                                                        'bg-yellow-100': user.suggestion_level === 1,
-                                                        'bg-blue-200': user.suggestion_level > 1,
-                                                  }"
-                                                  :title="user.suggestion_level > 1 ? 'Contributed to this rule' :'Is a publisher for the concerned jobteam'"
-                                                  @click="assignSuggestedPublisher(user)">
-                                                {{ user.label }}
-                                            </span>
-                                        </template>
+                                        <span v-for="user in suggestedReviewers"
+                                              class="text-xs rounded-xl m-1 px-1 flex cursor-pointer"
+                                              :class="{
+                                                    'bg-yellow-100': user.suggestion_level === 1,
+                                                    'bg-blue-200': user.suggestion_level > 1,
+                                              }"
+                                              :title="user.suggestion_level > 1 ? 'Contributed to this rule' :'Is a publisher for the concerned jobteam'"
+                                              @click.once="assignSuggestedPublisher(user)">
+                                            {{ user.label }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -168,9 +164,10 @@
 </template>
 
 <script>
-import {Quill, VueEditor} from "vue2-editor";
+import {defineComponent} from "vue";
+import {Quill, VueEditor} from "vue3-editor";
 import ImageResize from 'quill-image-resize';
-
+import Multiselect from '@vueform/multiselect';
 import JetButton from '@/Jetstream/Button'
 import JetConfirmationModal from "@/Jetstream/ConfirmationModal";
 import JetDangerButton from '@/Jetstream/DangerButton'
@@ -183,12 +180,11 @@ import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 
 Quill.register("modules/imageResize", ImageResize);
 
-export default {
+export default defineComponent({
     name: "RuleForm",
-
     components: {
         VueEditor,
-
+        Multiselect,
         JetActionMessage,
         JetButton,
         JetConfirmationModal,
@@ -199,7 +195,6 @@ export default {
         JetLabel,
         JetSecondaryButton,
     },
-
     props: [
         'clientAccount',
         'taxonomyHierarchy',
@@ -220,8 +215,6 @@ export default {
 
             requiresAssignees: _.find(this.stateObjects, (s) => s.name == this.rule.state).requiresAssignee,
 
-            assignees: this.initialAssignees,
-
             editorSettings: {
                 modules: {
                     imageResize: {}
@@ -233,7 +226,7 @@ export default {
                 content: this.rule.content,
                 ContentDraftId: uuidv4(),
                 state: this.rule.state,
-                assignees: _.map(this.assignees, 'value'),
+                assignees: _.map(this.initialAssignees, 'value'),
             }, {
                 bag: 'pushRuleData',
                 resetOnSuccess: false,
@@ -257,7 +250,7 @@ export default {
 
     computed: {
         suggestedReviewers() {
-            return _.orderBy(_.differenceBy(this.defaultPublishers, this.assignees, 'value'), 'suggestion_level', 'desc');
+            return _.orderBy(_.filter(this.defaultPublishers, (p) => !this.form.assignees.includes(p.value)), 'suggestion_level', 'desc');
         },
     },
 
@@ -267,14 +260,9 @@ export default {
             this.requiresAssignees = state.requiresAssignee;
         },
 
-        assigneeSelected(assignees) {
-            console.log(assignees);
-            this.form.assignees = _.map(assignees, 'value');
-        },
-
         assignSuggestedPublisher(assignee) {
-            this.form.assignees.push(assignee.value);
-            this.assignees.push(assignee);
+            console.log('suggested assignee added', assignee.value);
+            this.$refs.assigneeSelector.select(assignee.value);
         },
 
         cancelRestoreRule() {
@@ -287,9 +275,8 @@ export default {
                     clientAccount: this.clientAccount.slug,
                     id: this.rule.id
                 }), {
-                    preserveScroll: true
-                }).then(() => {
-                    this.cancelRestoreRule();
+                    preserveScroll: true,
+                    onSuccess: () => this.cancelRestoreRule(),
                 });
             }
         },
@@ -305,8 +292,6 @@ export default {
                     id: this.rule.id
                 }), {
                     preserveScroll: true
-                }).then(() => {
-                    this.cancelDeleteRule();
                 });
             }
         },
@@ -352,7 +337,7 @@ export default {
     },
 
 
-}
+})
 
 function uuidv4() {
     return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
@@ -364,6 +349,7 @@ function uuidv4() {
 }
 </script>
 
+<style src="@vueform/multiselect/themes/default.css"></style>
 <style scoped>
 
 input[type="radio"] + label span {

@@ -15,7 +15,7 @@
             <div class="flex items-center justify-between">
                 <div class="description">
                     <h2 @click="detailsOpen = !detailsOpen; $emit('toggle')" class="cursor-pointer">
-                        <span class="text-xs" title="Rule ID">{{ rule.dagId }}</span>
+                        <span class="text-xs pr-1" title="Rule ID">{{ rule.dagId }}</span>
                         <span class="text-xl font-bold">{{ rule.name }}</span>
                     </h2>
 
@@ -117,7 +117,7 @@
                 </template>
 
                 <div class="text-right" :class="{'hidden' : !detailsOpen}">
-                    <!--<button v-if="rule.state === 'Reviewing' && $page.user_permissions.publishRules"
+                    <!--<button v-if="rule.state === 'Reviewing' && $page.props.user_permissions.publishRules"
                         @click="publishRule()"
                             class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
                             rounded-md font-semibold text-xs text-white uppercase tracking-widest
@@ -145,7 +145,7 @@
                 <template #content>
                     <div v-if="rule.metadata && rule.metadata.flag_reason">
                         <div class="flex flew-row"
-                             v-for="record in _.orderBy(rule.metadata.flag_reason, 'date', 'desc')">
+                             v-for="record in _orderBy(rule.metadata.flag_reason, 'date', 'desc')">
                             <div>[{{ record.date }}] {{ record.user }}: {{ record.reason }}</div>
                         </div>
                     </div>
@@ -196,6 +196,7 @@
 
 <script>
 
+import {defineComponent} from "vue";
 import RuleTags from "@/Components/PM/Rules/RuleTags";
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetButton from '@/Jetstream/Button'
@@ -205,13 +206,13 @@ import JetInput from '@/Jetstream/Input'
 import JetLabel from '@/Jetstream/Label'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import clip from "text-clipper";
+import NavLink from "@/Jetstream/NavLink";
+import Attachment from "@/Components/PM/Rules/Attachment";
+import {orderBy as _orderBy} from "lodash";
 
 const moment = require('moment');
 
-import NavLink from "@/Jetstream/NavLink";
-import Attachment from "@/Components/PM/Rules/Attachment";
-
-export default {
+export default defineComponent({
     name: "Rule",
     props: {
         rule: {
@@ -269,6 +270,8 @@ export default {
     },
 
     methods: {
+        _orderBy,
+
         date: function () {
             return moment(this.rule.updated_at).format('MMM DD YYYY, HH:mm:ss');
         },
@@ -289,12 +292,13 @@ export default {
             console.log('unflagging rule', this.rule);
 
             this.flagRuleForm.post(route('rule.unflag', this.rule.id), {
-                preserveScroll: true
-            }).then(() => {
-                this.rule.flagged = false;
-                this.rule.metadata['flag_reason'] = [];
-                this.closeFlagReasonModal();
-                this.$emit('updated')
+                preserveScroll: true,
+                onSuccess: () => {
+                    this.rule.flagged = false;
+                    this.rule.metadata['flag_reason'] = [];
+                    this.closeFlagReasonModal();
+                    this.$emit('updated')
+                }
             });
         },
 
@@ -312,27 +316,28 @@ export default {
             let reason = this.flagRuleForm.reason;
 
             this.flagRuleForm.post(route('rule.flag', this.rule.id), {
-                preserveScroll: true
-            }).then(() => {
-                this.rule.flagged = true;
+                preserveScroll: true,
+                onSuccess: () => {
+                    this.rule.flagged = true;
 
-                let reasonEntry = {
-                    user: this.$page.user.name,
-                    date: moment().format('MMM DD YYYY, HH:mm:ss'),
-                    reason: reason,
-                };
+                    let reasonEntry = {
+                        user: this.$page.props.user.name,
+                        date: moment().format('MMM DD YYYY, HH:mm:ss'),
+                        reason: reason,
+                    };
 
-                if (this.rule.metadata === undefined || this.rule.metadata === null) {
-                    this.rule.metadata = {flag_reason: []};
+                    if (this.rule.metadata === undefined || this.rule.metadata === null) {
+                        this.rule.metadata = {flag_reason: []};
+                    }
+
+                    if (this.rule.metadata['flag_reason'] === undefined) {
+                        this.rule.metadata['flag_reason'] = [];
+                    }
+                    this.rule.metadata['flag_reason'].push(reasonEntry);
+
+                    this.closeFlagModal();
+                    this.$emit('updated');
                 }
-
-                if (this.rule.metadata['flag_reason'] === undefined) {
-                    this.rule.metadata['flag_reason'] = [];
-                }
-                this.rule.metadata['flag_reason'].push(reasonEntry);
-
-                this.closeFlagModal();
-                this.$emit('updated');
             });
         },
 
@@ -359,7 +364,7 @@ export default {
         }
     }
 
-}
+})
 </script>
 <style scoped>
 .text-xxs {

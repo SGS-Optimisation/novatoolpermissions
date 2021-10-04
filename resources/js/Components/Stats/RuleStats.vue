@@ -1,6 +1,6 @@
 <template>
     <div class="bg-white justify-around flex">
-        <div class="flex flex-col w-4/5 py-12">
+        <div class="flex flex-col w-11/12 py-12">
             <jet-form-section @submitted="updateStats">
                 <template #title>
                     Rule Stats
@@ -11,8 +11,8 @@
 
                 <template #form>
                     <div class="col-span-1 sm:col-span-1">
-                        <jet-label for="view_by" value="View By" />
-                        <select id="view_by" v-model="form.view_by">
+                        <jet-label class="text-xs" for="view_by" value="View By" />
+                        <select class="text-xs" id="view_by" v-model="form.view_by">
                             <option>Day</option>
                             <option>Week</option>
                             <option>Month</option>
@@ -20,8 +20,8 @@
                     </div>
 
                     <div class="col-span-1 sm:col-span-1">
-                        <jet-label for="range" value="Time Range" />
-                        <jet-input id="range" type="number" increment="1" min="0" class="mt-1 block w-full" v-model="form.range"/>
+                        <jet-label class="text-xs"  for="range" value="Time Range" />
+                        <jet-input v-model="form.range" id="range" type="number" increment="1" min="0" class="mt-1 block w-full text-xs"/>
                     </div>
 
                     <div class="col-span-1 sm:col-span-1">
@@ -33,16 +33,16 @@
                     </div>
 
                     <div class="col-span-1 sm:col-span-1">
-                        <jet-label for="column" value="Rule Status" />
-                        <select id="column" v-model="form.column">
+                        <jet-label class="text-xs"  for="column" value="Rule Status" />
+                        <select class="text-xs" id="column" v-model="form.column">
                             <option value="created_at">Created</option>
                             <option value="updated_at">Updated</option>
                         </select>
                     </div>
 
                     <div class="col-span-1 sm:col-span-1" v-if="isGlobalMode">
-                        <jet-label for="level" value="Level" />
-                        <select id="level" v-model="form.level">
+                        <jet-label class="text-xs" for="level" value="Level" />
+                        <select class="text-xs" id="level" v-model="form.level">
                             <option value="client">Account</option>
                             <option value="team">Job Team</option>
                             <option value="region">Region</option>
@@ -50,8 +50,8 @@
                     </div>
 
                     <div v-if="form.level === 'team' && isGlobalMode" class="col-span-1 sm:col-span-1">
-                        <jet-label for="region" value="Region" />
-                        <select id="region" v-model="form.region">
+                        <jet-label class="text-xs" for="region" value="Region" />
+                        <select class="text-xs" id="region" v-model="form.region">
                             <option value="">ALL</option>
                             <option>APAC</option>
                             <option>EMEA</option>
@@ -59,8 +59,6 @@
                             <option>NA</option>
                         </select>
                     </div>
-
-
 
                     <!--<div class="col-span-1 sm:col-span-1">
                         <jet-label for="function" value="Function" />
@@ -77,8 +75,11 @@
                     </jet-button>
                 </template>
             </jet-form-section>
+
             <div class="small" v-if="datacollection">
-                <rules-line-chart :height="chartHeight" :chart-data="datacollection"></rules-line-chart>
+                <rules-line-chart
+                    :chart-options="chartOptions"
+                    :chart-data="datacollection"/>
             </div>
         </div>
     </div>
@@ -141,6 +142,11 @@ export default {
     data() {
         return {
             datacollection: null,
+
+            chartOptions: {
+                height: this.chartHeight,
+                maintainAspectRatio: false,
+            },
 
             form: this.$inertia.form({
                 view_by: this.view_by,

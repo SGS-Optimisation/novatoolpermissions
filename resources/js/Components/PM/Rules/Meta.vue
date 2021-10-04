@@ -93,10 +93,10 @@ export default {
     methods: {
         getMultipleMode(taxonomyData) {
             if(! taxonomyData.taxonomy.config || !taxonomyData.taxonomy.config.hasOwnProperty('multiple')) {
-                return true;
+                return 'tags';
             }
 
-            return taxonomyData.taxonomy.config.multiple;
+            return taxonomyData.taxonomy.config.multiple ? 'tags' : 'single';
         },
 
         termSelected(data) {

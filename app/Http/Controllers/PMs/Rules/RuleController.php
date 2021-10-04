@@ -201,10 +201,8 @@ class RuleController extends Controller
 
         $request->session()->flash('success', 'Rule successfully created!');
 
-        return $request->wantsJson()
-            ? new JsonResponse(['id' => $rule->id], 200)
-            : redirect(route('pm.client-account.rules.edit', [$client_account_slug, $rule->id]))
-                ->with('success', 'Rule successfully created!');
+        return redirect(route('pm.client-account.rules.edit', [$client_account_slug, $rule->id]))
+            ->with('success', 'Rule successfully created!');
     }
 
     /**
@@ -295,9 +293,7 @@ class RuleController extends Controller
 
         event(new Updated($rule));
 
-        return $request->wantsJson()
-            ? new JsonResponse('', 200)
-            : back()->with('status', 'rule-updated');
+        return back(303);
     }
 
     public function massPublish(Request $request, $client_account_slug)
@@ -310,9 +306,7 @@ class RuleController extends Controller
             event(new Updated($rule));
         }
 
-        return $request->wantsJson()
-            ? new JsonResponse('', 200)
-            : back()->with('status', 'rule-updated');
+        return back(303)->with('status', 'rule-updated');
 
     }
 
@@ -332,9 +326,7 @@ class RuleController extends Controller
 
         event(new Deleted($rule));
 
-        return $request->wantsJson()
-            ? new JsonResponse('', 200)
-            : back()->with('status', 'rule-deleted');
+        return redirect(route('pm.client-account.rules.index', [$client_account_slug]), 303);
 
     }
 

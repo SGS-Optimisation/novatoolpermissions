@@ -22,7 +22,7 @@
                                            v-model="form.name"
                                            @input="updateName"
                                            class="mt-1 block w-full"/>
-                                <jet-input-error :message="form.error('name')" class="mt-2"/>
+                                <jet-input-error :message="form.errors.name" class="mt-2"/>
                             </div>
 
                             <div class="col-span-6 sm:col-span-8">
@@ -31,7 +31,7 @@
                                            class="mt-1 block w-full"
                                            v-model="form.slug"
                                 />
-                                <jet-input-error :message="form.error('slug')" class="mt-2"/>
+                                <jet-input-error :message="form.errors.slug" class="mt-2"/>
                             </div>
 
                             <div class="col-span-6 sm:col-span-8">
@@ -39,7 +39,7 @@
                                 <textarea class="form-input rounded-md shadow-sm mt-1 block w-full" id="alias"
                                           placeholder="One item per line"
                                           v-model="form.alias"></textarea>
-                                <jet-input-error :message="form.error('alias')" class="mt-2"/>
+                                <jet-input-error :message="form.errors.alias" class="mt-2"/>
                             </div>
 
                             <div class="col-span-6 sm:col-span-8">
@@ -77,13 +77,10 @@ import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import CustomerSelector from "@/Components/PM/ClientAccount/CustomerSelector";
 
-const slugify = text => _.kebabCase(text.replace(/&/g, '-and-'));
-
 export default {
     name: "ClientAccountForm",
 
     components: {
-        CustomerSelector,
         JetActionMessage,
         JetButton,
         JetFormSection,
@@ -91,6 +88,7 @@ export default {
         JetInputError,
         JetLabel,
         JetSecondaryButton,
+        CustomerSelector,
     },
 
     props: [
@@ -116,16 +114,15 @@ export default {
         setClient(name, aliases) {
             this.form.name = name;
             this.form.alias = aliases ? aliases.join("\r\n") : '';
-            this.updateName(name);
+            this.updateName();
         },
 
-        updateName: function (name) {
-            this.form.slug = slugify(name);
+        updateName() {
+            this.form.slug = _.kebabCase(this.form.name.replace(/&/g, '-and-'));
         },
 
         addFile(files) {
             if (!files.length) return;
-
             this.form.image = files[0];
         },
 

@@ -1,5 +1,8 @@
 <template>
     <app-layout>
+        <Head><title>
+            Rules Activity per Client Account- Dagobah Stats
+        </title></Head>
         <template #header>
             <div class="flex justify-between">
                 <div class="flex flex-row content-center">
@@ -22,13 +25,14 @@
 </template>
 
 <script>
+import {Head} from "@inertiajs/inertia-vue3";
 import AppLayout from '@/Layouts/AppLayout'
 import RuleStats from "../../Components/Stats/RuleStats";
 
 export default {
     name: "RulesActivityPerClientAccountStats",
-    title: 'Rules Activity per Client Account- Dagobah Stats',
     components: {
+        Head,
         RuleStats,
         AppLayout,
     },

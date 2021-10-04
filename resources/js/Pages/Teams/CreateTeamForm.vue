@@ -13,11 +13,11 @@
                 <jet-label value="Team Owner" />
 
                 <div class="flex items-center mt-2">
-                    <img class="w-12 h-12 rounded-full object-cover" :src="$page.user.profile_photo_url" :alt="$page.user.name">
+                    <img class="w-12 h-12 rounded-full object-cover" :src="$page.props.user.profile_photo_url" :alt="$page.props.user.name">
 
                     <div class="ml-4 leading-tight">
-                        <div>{{ $page.user.name }}</div>
-                        <div class="text-gray-700 text-sm">{{ $page.user.email }}</div>
+                        <div>{{ $page.props.user.name }}</div>
+                        <div class="text-gray-700 text-sm">{{ $page.props.user.email }}</div>
                     </div>
                 </div>
             </div>
@@ -25,7 +25,7 @@
             <div class="col-span-6 sm:col-span-4">
                 <jet-label for="name" value="Team Name" />
                 <jet-input required id="name" type="text" class="mt-1 block w-full" v-model="form.name" autofocus />
-                <jet-input-error :message="form.error('name')" class="mt-2" />
+                <jet-input-error :message="form.errors.name" class="mt-2" />
             </div>
 
             <div class="col-span-6 sm:col-span-4">
@@ -37,7 +37,7 @@
                     <option value="LATAM">LATAM</option>
                     <option value="NA">NA</option>
                 </select>
-                <jet-input-error :message="form.error('region')" class="mt-2" />
+                <jet-input-error :message="form.errors.region" class="mt-2" />
             </div>
         </template>
 

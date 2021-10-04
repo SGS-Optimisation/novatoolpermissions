@@ -2,7 +2,7 @@
     <div>
         <div class="px-5 pb-12">
             <span class="cursor-pointer p-1 text-xs rounded-md bg-blue-300 hover:bg-blue-400"
-                  v-if="$page.user_permissions.manageTaxonomies"
+                  v-if="$page.props.user_permissions.manageTaxonomies"
                   @click="creatingTaxonomy=true"
             >
                 <i class="text-white w-5 inline-block">
@@ -29,7 +29,7 @@
                 </div>
 
                 <span class="cursor-pointer p-1 text-xs rounded-md bg-blue-300 hover:bg-blue-400"
-                      v-if="$page.user_permissions.manageTaxonomies"
+                      v-if="$page.props.user_permissions.manageTaxonomies"
                       @click="creatingTaxonomy=true"
                 >
                 <i class="text-white w-5 inline-block">
@@ -160,9 +160,8 @@ export default {
             console.log('create taxonomy ' + this.createForm.name);
 
             this.createForm.post(route('pm.taxonomies.store'), {
-                preserveScroll: true
-            }).then(() => {
-                this.cancelCreateTaxonomy();
+                preserveScroll: true,
+                onSuccess: () => this.cancelCreateTaxonomy(),
             });
         },
 
@@ -190,9 +189,8 @@ export default {
             console.log('updating taxonomy ' + this.editForm.id);
 
             this.editForm.put(route('pm.taxonomies.update', this.editForm.id), {
-                preserveScroll: true
-            }).then(() => {
-                this.cancelEditTaxonomy();
+                preserveScroll: true,
+                onSuccess: () => this.cancelEditTaxonomy(),
             });
         },
 
@@ -213,9 +211,8 @@ export default {
             console.log('delete taxonomy ' + this.deletingTaxonomyId);
 
             this.deleteForm.put(route('pm.taxonomies.destroy', this.deletingTaxonomyId), {
-                preserveScroll: true
-            }).then(() => {
-                this.resetDeleteTaxonomy();
+                preserveScroll: true,
+                onSuccess: () => this.resetDeleteTaxonomy(),
             });
         },
     }

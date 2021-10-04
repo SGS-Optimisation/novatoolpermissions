@@ -22,11 +22,11 @@
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^6.3",
-        "inertiajs/inertia-laravel": "^0.2.4",
+        "inertiajs/inertia-laravel": "^0.4.3",
         "jenssegers/mongodb": "^3.8",
         "kabbouchi/nova-impersonate": "^1.7",
         "laravel/framework": "^8.12",
-        "laravel/jetstream": "^1.6",
+        "laravel/jetstream": "^2.0",
         "laravel/nova": "~3.0",
         "laravel/sanctum": "^2.6",
         "laravel/tinker": "^2.5",
@@ -46,7 +46,7 @@
         "spatie/laravel-model-states": "^2.1",
         "staudenmeir/eloquent-has-many-deep": "^1.7",
         "thomasjohnkane/snooze": "^1.0",
-        "tightenco/ziggy": "^0.9.4",
+        "tightenco/ziggy": "^1.0",
         "wehaa/custom-links": "^0.1.1"
     },
     "require-dev": {

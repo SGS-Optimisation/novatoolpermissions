@@ -25,6 +25,7 @@ class RuleTaxonomyController extends Controller
      */
     public function update(Request $request, $client_account_slug, $rule_id)
     {
+        logger('updating taxo for rule ' . $rule_id);
         $rule = Rule::find($rule_id);
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
 
@@ -58,8 +59,6 @@ class RuleTaxonomyController extends Controller
         $rule->terms()->sync($term_id);
         event(new Updated($rule));
 
-        return $request->wantsJson()
-            ? new JsonResponse('', 200)
-            : back()->with('status', 'rule-taxonomy-updated');
+        return back(303);
     }
 }
