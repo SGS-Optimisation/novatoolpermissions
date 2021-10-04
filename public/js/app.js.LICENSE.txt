@@ -1,46 +1,11 @@
+/* NProgress, (c) 2013, 2014 Rico Sta. Cruz - http://ricostacruz.com/nprogress
+ * @license MIT */
+
 /*!
  * Chart.js v2.9.4
  * https://www.chartjs.org
  * (c) 2020 Chart.js Contributors
  * Released under the MIT License
- */
-
-/*!
- * Isotope v3.0.6
- *
- * Licensed GPLv3 for open source use
- * or Isotope Commercial License for commercial use
- *
- * https://isotope.metafizzy.co
- * Copyright 2010-2018 Metafizzy
- */
-
-/*!
- * Masonry layout mode
- * sub-classes Masonry
- * https://masonry.desandro.com
- */
-
-/*!
- * Masonry v4.2.2
- * Cascading grid layout library
- * https://masonry.desandro.com
- * MIT License
- * by David DeSandro
- */
-
-/*!
- * Outlayer v2.1.1
- * the brains and guts of a layout library
- * MIT license
- */
-
-/*!
- * Pusher JavaScript Library v7.0.3
- * https://pusher.com/
- *
- * Copyright 2020, Pusher
- * Released under the MIT licence.
  */
 
 /*!
@@ -72,32 +37,12 @@
  */
 
 /*!
- * Vue.js v2.6.14
- * (c) 2014-2021 Evan You
- * Released under the MIT License.
- */
-
-/*!
- * getSize v2.0.3
- * measure size of elements
- * MIT license
- */
-
-/*!
- * vue2-editor v2.10.2 
- * (c) 2019 David Royer
- * Released under the MIT License.
- */
-
-/*! 
-  * portal-vue © Thorsten Lünborg, 2019 
-  * 
-  * Version: 2.1.7
-  * 
-  * LICENCE: MIT 
-  * 
-  * https://github.com/linusborg/portal-vue
-  * 
+ Name: vue-upload-component 
+Component URI: https://github.com/lian-yue/vue-upload-component#readme 
+Version: 3.0.49 
+Author: LianYue 
+License: Apache-2.0 
+Description: Vue.js file upload component, Multi-file upload, Upload directory, Drag upload, Drag the directory, Upload multiple files at the same time, html4 (IE 9), `PUT` method, Customize the filter 
  */
 
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
