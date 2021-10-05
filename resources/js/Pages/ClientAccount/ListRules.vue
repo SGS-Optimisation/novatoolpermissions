@@ -510,6 +510,7 @@ export default defineComponent({
 
                         _.forEach(this.selectedRules, function (rule) {
                             rule.state = "Published";
+                            _.find(this.rules, {dagId: rule.dagId}).state = "Published";
                         });
 
                         this.$refs.viewRule.$forceUpdate();

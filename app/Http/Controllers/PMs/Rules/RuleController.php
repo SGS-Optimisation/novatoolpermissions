@@ -303,8 +303,9 @@ class RuleController extends Controller
 
         foreach ($rules as $rule) {
             $rule->state->transitionTo(PublishedState::class, $request->user());
-            event(new Updated($rule));
         }
+
+        event(new Updated($rules->first()));
 
         return back(303)->with('status', 'rule-updated');
 

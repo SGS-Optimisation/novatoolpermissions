@@ -203,15 +203,15 @@ export default defineComponent({
 
 <style src="vue-upload-component/dist/vue-upload-component.part.css"></style>
 <style scoped>
-.uploader >>> label {
+.uploader :deep(label) {
     @apply cursor-pointer;
 }
 
-.uploader >>> .file-uploads-html5 {
+.uploader :deep(.file-uploads-html5) {
     @apply w-1/2 flex-grow;
 }
 
-.uploader >>> .add-file-btn {
+.uploader :deep(.add-file-btn) {
     @apply px-2 py-1 bg-blue-500 hover:bg-blue-700 text-white shadow-lg rounded-lg;
 }
 </style>
