@@ -64,7 +64,7 @@
                                     { 'bg-white text-blue-500' : !$data[`filterStage${stage}`] },
                                     {'bg-green-100' : !$data[`filterStage${stage}`] && currentJob.metadata.hasOwnProperty('stages') && currentJob.metadata.stages.includes(stage) },
                                 ]">
-                                {{stage}}
+                                {{ stage }}
                             </button>
                             <button @click="resetStage"
                                     class="rounded-r-lg flex-grow hover:bg-blue-400 hover:text-white text-blue-500 border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline">
@@ -110,12 +110,12 @@
                     </div>
 
                     <div class="box-border mx-autobefore:box-inherit after:box-inherit mt-2"
-                    :class="{
+                         :class="{
                         'md:masonry': !termFocus
                     }">
 
                         <div v-for="(ruleGroup, ruleIndex) in displayedRules" :key="ruleIndex"
-                            class="break-inside">
+                             class="break-inside">
 
                             <view-rule-group :rules="ruleGroup[1]"
                                              :job="currentJob.job_number"
@@ -284,6 +284,8 @@ export default {
             }, {
                 bag: 'sendFlagRule'
             }),
+
+            linkTrackingEnabled: false,
         }
     },
 
@@ -300,6 +302,22 @@ export default {
         jobNumber: function (newJobNumber, oldJobNumber) {
             console.log('detected job number change');
             this.initJobLoaded();
+        }
+    },
+
+    created(){
+        console.log('tracking enabled: ' + (this.$page.props.features.matomo_tracking_enabled ? 'yes' : 'no'));
+
+        if(this.$page.props.features.matomo_tracking_enabled) {
+            var _paq = window._paq = window._paq || [];
+            (() => {
+                var u=this.$page.props.features.matomo_host;
+                window._paq.push(['setTrackerUrl', u+'/matomo.php']);
+                window._paq.push(['setSiteId', this.$page.props.features.matomo_site_id]);
+                window._paq.push(['setUserId', this.$page.props.user.email]);
+                var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+                g.type='text/javascript'; g.async=true; g.src=u+'/matomo.js'; s.parentNode.insertBefore(g,s);
+            })();
         }
     },
 
@@ -324,7 +342,33 @@ export default {
             }
         },
 
+        track() {
+            if (!this.$page.props.features.matomo_tracking_enabled)
+                return;
+
+            console.log('tracking');
+
+            window._paq.push(['setCustomUrl', window.location.origin + '/' + this.jobNumber]);
+            window._paq.push(['setDocumentTitle', this.jobNumber]);
+
+            window._paq.push(['trackPageView', this.jobNumber, {
+                'client': this.currentJob.metadata.client.name,
+            }]);
+            window._paq.push(['trackEvent',
+                'OP Viewed Job',
+                this.currentJob.metadata.client.name,
+                this.jobNumber
+            ]);
+
+            if (!this.linkTrackingEnabled) {
+                window._paq.push(['enableLinkTracking']);
+                this.linkTrackingEnabled = true;
+            }
+        },
+
         newRulesLoaded() {
+            this.track();
+
             this.searchedRules = [..._.orderBy(this.currentRules, 'name', 'asc')];
             this.searching = false;
 
