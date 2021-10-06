@@ -16,6 +16,17 @@
                         Publish
                     </button>
                 </template>
+                <template
+                    v-else-if="$page.props.user_permissions.publishRules && _every(selectedRules, ['state', 'Published'])">
+                    <button @click="confirmingUnpublish = true"
+                            class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
+                            rounded-md font-semibold text-xs text-white uppercase tracking-widest
+                            hover:bg-gray-700 active:bg-gray-900
+                            focus:outline-none focus:border-gray-900 focus:shadow-outline-gray
+                            transition ease-in-out duration-150">
+                        Unpublish
+                    </button>
+                </template>
                 <template v-else>
                     None
                 </template>
@@ -202,6 +213,29 @@
                     </jet-danger-button>
                 </template>
             </jet-confirmation-modal>
+
+            <!-- Unpublish confirmation modal -->
+            <jet-confirmation-modal :show="confirmingUnpublish" @close="cancelUnpublish">
+                <template #title>
+                    Unpublish Rules
+                </template>
+
+                <template #content>
+                    Are you sure you want to unpublish these rules?
+                </template>
+
+                <template #footer>
+                    <jet-secondary-button @click.native="cancelPublish">
+                        Nevermind
+                    </jet-secondary-button>
+
+                    <jet-danger-button class="ml-2" @click.native="unpublishRules"
+                                       :class="{ 'opacity-25': unpublishForm.processing }"
+                                       :disabled="unpublishForm.processing">
+                        Unpublish
+                    </jet-danger-button>
+                </template>
+            </jet-confirmation-modal>
         </template>
     </client-layout>
 </template>
@@ -284,11 +318,19 @@ export default defineComponent({
 
             selectedRules: [],
             confirmingPublish: false,
+            confirmingUnpublish: false,
 
             publishForm: this.$inertia.form({
                 rule_ids: [],
             }, {
                 bag: 'publishData',
+                resetOnSuccess: false,
+            }),
+
+            unpublishForm: this.$inertia.form({
+                rule_ids: [],
+            }, {
+                bag: 'unpublishData',
                 resetOnSuccess: false,
             }),
 
@@ -508,7 +550,7 @@ export default defineComponent({
                     onSuccess: () => {
                         this.confirmingPublish = false;
 
-                        _.forEach(this.selectedRules, function (rule) {
+                        _.forEach(this.selectedRules, (rule) => {
                             rule.state = "Published";
                             _.find(this.rules, {dagId: rule.dagId}).state = "Published";
                         });
@@ -518,8 +560,31 @@ export default defineComponent({
                 })
         },
 
+        unpublishRules() {
+            this.unpublishForm.rule_ids = _.map(this.selectedRules, 'id');
+
+            this.unpublishForm.post(
+                route('pm.client-account.rules.unpublish', {clientAccount: this.clientAccount.slug}),
+                {
+                    onSuccess: () => {
+                        this.confirmingUnpublish = false;
+
+                        _.forEach(this.selectedRules, (rule) => {
+                            rule.state = "Draft";
+                            _.find(this.rules, {dagId: rule.dagId}).state = "Draft";
+                        });
+
+                        this.$refs.viewRule.$forceUpdate();
+                    }
+                })
+        },
+
         cancelPublish() {
             this.confirmingPublish = false;
+        },
+
+        cancelUnpublish() {
+            this.confirmingUnpublish = false;
         },
 
         toggleContributorVisibility() {

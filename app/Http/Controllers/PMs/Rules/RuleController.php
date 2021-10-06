@@ -311,6 +311,21 @@ class RuleController extends Controller
 
     }
 
+    public function massUnpublish(Request $request, $client_account_slug)
+    {
+        $rule_ids = $request->get('rule_ids');
+        $rules = Rule::whereIn('id', $rule_ids)->get();
+
+        foreach ($rules as $rule) {
+            $rule->state->transitionTo(DraftState::class, $request->user());
+        }
+
+        event(new Updated($rules->first()));
+
+        return back(303)->with('status', 'rule-updated');
+
+    }
+
     /**
      * Remove the specified resource from storage.
      *

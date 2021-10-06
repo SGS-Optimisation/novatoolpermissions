@@ -128,6 +128,9 @@ Route::name('pm.')
                         Route::post('/publish', [RuleController::class, 'massPublish'])
                             ->name('publish');
 
+                        Route::post('/unpublish', [RuleController::class, 'massUnpublish'])
+                            ->name('unpublish');
+
                         Route::get('/{id}/edit', [RuleController::class, 'edit'])
                             ->name('edit');
 
