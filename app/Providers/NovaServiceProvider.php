@@ -47,6 +47,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 ->min(0)->required(),
             Number::make('Number of days to consider rules as "Updated"', 'rule_filter_updated_duration')
                 ->min(0)->required(),
+            Boolean::make('Show content of flagged rules', 'show_flagged_rules_content')
+                ->required()->default(true),
         ], [], 'rules');
 
         NovaSettings::addSettingsFields([

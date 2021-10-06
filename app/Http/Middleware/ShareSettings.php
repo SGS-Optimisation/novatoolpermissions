@@ -22,6 +22,7 @@ class ShareSettings
                 'settings' => [
                     'rule_filter_new_duration' => nova_get_setting('rule_filter_new_duration'),
                     'rule_filter_updated_duration' => nova_get_setting('rule_filter_updated_duration'),
+                    'show_flagged_rules_content' => nova_get_setting('show_flagged_rules_content'),
                 ],
                 'features' => [
                     'matomo_tracking_enabled' => nova_get_setting('matomo_tracking_enabled'),
