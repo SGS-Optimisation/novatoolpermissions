@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use App\States\HasStates;
@@ -193,9 +194,8 @@ class Rule extends Model implements Recordable
         return $this->hasManyDeepFromRelations($this->users(), (new User)->teams())
             ->join('rules', 'rules.id', '=', 'rule_user.rule_id')
             ->whereRaw('rules.client_account_id=teams.client_account_id')
-            ->distinct()
-            //->whereRaw('teams.client_account_id=rules.client_account_id')
-        ;
+            ->distinct()//->whereRaw('teams.client_account_id=rules.client_account_id')
+            ;
     }
 
     /**
@@ -211,9 +211,8 @@ class Rule extends Model implements Recordable
         return $this->hasManyDeepFromRelations($this->users(), (new User)->ownedTeams())
             ->join('rules', 'rules.id', '=', 'rule_user.rule_id')
             ->whereRaw('rules.client_account_id=teams.client_account_id')
-            ->distinct()
-            //->whereRaw('teams.client_account_id=rules.client_account_id')
-        ;
+            ->distinct()//->whereRaw('teams.client_account_id=rules.client_account_id')
+            ;
     }
 
     /**
@@ -291,12 +290,37 @@ class Rule extends Model implements Recordable
 
     public function getDagIdAttribute()
     {
-        return str_pad($this->id, 6, '0', STR_PAD_LEFT) . 'D';
+        return str_pad($this->id, 6, '0', STR_PAD_LEFT).'D';
     }
 
 
     public function getUrlAttribute()
     {
         return route('pm.client-account.rules.edit', [$this->clientAccount->slug, $this->id]);
+    }
+
+    public function isPublishable()
+    {
+        $account_terms_count = $this->accountStructureTerms()->count();
+        $categorization_terms = $this->jobCategorizationsTerms()->with('taxonomy')->get();
+
+        /* if no terms in either meta category, unpublishable */
+        if (count($categorization_terms) == 0 || $account_terms_count == 0) {
+            return false;
+        }
+
+        /* if no Artwork Structure Elements, unpublishable */
+        $found_artwork_structure = false;
+        /** @var Term $term */
+        foreach ($categorization_terms as $term) {
+            if ($term->taxonomy->name === 'Artwork Structure Elements') {
+                $found_artwork_structure = true;
+            }
+        }
+        if (!$found_artwork_structure) {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -6,6 +6,7 @@ namespace App\Transitions\Rules;
 
 use App\Models\Rule;
 use App\Models\Team;
+use App\Models\Term;
 use App\Models\User;
 use App\Operations\Rules\UnassignRuleReviewersOperation;
 use App\States\Rules\PublishedState;
@@ -43,7 +44,9 @@ class ReviewingToPublished extends Transition
     {
         $team = $this->rule->clientAccount ? $this->rule->clientAccount->team : new Team();
 
-        return $this->user->hasRoleWithPermission('publishRules')
+
+        return $this->rule->isPublishable()
+            && $this->user->hasRoleWithPermission('publishRules')
             || $this->user->hasTeamPermission($team, 'publishRules');
     }
 
