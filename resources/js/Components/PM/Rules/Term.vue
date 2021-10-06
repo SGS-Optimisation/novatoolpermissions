@@ -10,6 +10,7 @@
                              :closeOnSelect="multiple !== 'single'"
                              :options="terms"
                              :searchable=true
+                             @clear="clearSelected"
                              @select="setSelected"/>
             </div>
             <div class="flex flex-col flex-shrink ml-3">
@@ -37,7 +38,6 @@
 <script>
 import JetButton from "@/Jetstream/Button";
 import Multiselect from '@vueform/multiselect';
-/*import Multiselect from 'vue-multiselect';*/
 
 export default {
     name: "Term",
@@ -97,7 +97,18 @@ export default {
                 taxonomy: this.taxonomyName,
                 terms: this.selection
             });
-        }
+        },
+
+        clearSelected: function (value) {
+            console.log("value cleared for " + this.taxonomyName, value);
+
+            this.$emit('selected', {
+                taxonomy: this.taxonomyName,
+                terms: []
+            });
+        },
+
+
     },
 }
 </script>
