@@ -13,7 +13,7 @@
         </div>
 
         <div class="flex items-center bg-red-200 h-32 justify-center" v-if="rule.flagged">
-            Rule currently flag. Please see your PM.
+            Rule currently flagged. Please see your PM.
         </div>
         <div class="mt-6 rule-content"
              v-if="showContent"
