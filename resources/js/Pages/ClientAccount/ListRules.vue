@@ -49,11 +49,6 @@
                                        :ref="setTaxonomySelectorRef"
 
                     />
-                    <taxonomy-selector taxonomy-name="Rule Status"
-                                       :terms="states"
-                                       @termSelected="filterByState"
-                                       ref="stateSelector"
-                    />
                     <taxonomy-selector taxonomy-name="Contributor"
                                        :terms="users"
                                        @termSelected="filterByContributor"
@@ -118,7 +113,7 @@
                     <p>Showing rules for {{ search }}</p>
                 </div>
 
-                <div class="flex flex-row w-full content-start">
+                <div class="flex flex-row w-full justify-between">
                     <div class="flex flex-col">
                         {{ numFilteredRules }} Rules.
                         <div>
@@ -129,34 +124,46 @@
                     </div>
                     <v-pagination v-model="page" :pages="numPages"/>
 
-                    <!-- sorting -->
-                    <div class="ml-auto flex flex-col">
-                        <span class="text-xs">Sorting</span>
-                        <div class="flex flex-row">
-                            <Dropdown v-model="selectedSortOption"
-                                      panelClass="text-xs"
-                                      @change="updateSort"
-                                      :options="sortFields"
-                                      optionLabel="label"
-                                      placeholder="Sort by…"/>
 
-                            <div class="flex flex-col">
-                                <a class="cursor-pointer" @click="sortAsc"
-                                   :class="{'text-blue-500': this.sortOption.direction==='asc'}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                         stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M5 15l7-7 7 7"/>
-                                    </svg>
-                                </a>
-                                <a class="cursor-pointer" @click="sortDesc"
-                                   :class="{'text-blue-500': this.sortOption.direction==='desc'}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                         stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M19 9l-7 7-7-7"/>
-                                    </svg>
-                                </a>
+                    <!-- sorting -->
+                    <div class="flex flex-row">
+                        <div class="w-40 mr-4">
+                            <taxonomy-selector taxonomy-name="Rule Status"
+                                               :terms="states"
+                                               @termSelected="filterByState"
+                                               ref="stateSelector"
+                            />
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-xs">Sorting</span>
+                            <div class="flex flex-row">
+                                <Dropdown v-model="selectedSortOption"
+                                          panelClass="text-xs"
+                                          @change="updateSort"
+                                          :options="sortFields"
+                                          optionLabel="label"
+                                          placeholder="Sort by…"/>
+
+                                <div class="flex flex-col">
+                                    <a class="cursor-pointer" @click="sortAsc"
+                                       :class="{'text-blue-500': this.sortOption.direction==='asc'}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-6" fill="none"
+                                             viewBox="0 0 24 24"
+                                             stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M5 15l7-7 7 7"/>
+                                        </svg>
+                                    </a>
+                                    <a class="cursor-pointer" @click="sortDesc"
+                                       :class="{'text-blue-500': this.sortOption.direction==='desc'}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-6" fill="none"
+                                             viewBox="0 0 24 24"
+                                             stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                    </a>
+                                </div>
                             </div>
                         </div>
 
@@ -185,7 +192,7 @@
                     </div>
                 </div>
 
-                <div class="px-2 pb-16 pt-4">
+                <div class="flex justify-center pb-16 pt-4">
                     <v-pagination v-model="page" :pages="numPages"/>
                 </div>
 
@@ -701,6 +708,10 @@ export default defineComponent({
 
 <style scoped>
 ::v-deep(.p-dropdown-label) {
-    @apply text-xs;
+    @apply text-sm;
+}
+
+:deep(.p-inputtext) {
+    padding: 0.5rem 0.75rem;
 }
 </style>
