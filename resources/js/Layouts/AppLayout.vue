@@ -7,13 +7,16 @@
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-12">
-                        <div class="flex">
+                        <div class="flex items-stretch">
                             <!-- Logo -->
                             <div class="flex-shrink-0 flex items-center">
                                 <Link :href="route('home')">
                                     <jet-application-mark class="block w-auto"/>
                                 </Link>
                             </div>
+                            <span class="text-xxs self-end">
+                                <a :href="changelogLink" target="_blank">{{appVersion}}</a>
+                            </span>
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
@@ -303,6 +306,21 @@ export default defineComponent({
                 window.location = '/login';
             })
         },
+    },
+
+    computed: {
+        appVersion() {
+            return 'v' + document.querySelector('meta[name="app_version"]').content;
+        },
+        changelogLink() {
+            return route('larecipe.show', ['2.0', 'changelog'] ) + '#'+this.appVersion;
+        },
     }
 })
 </script>
+
+<style scoped>
+.text-xxs {
+    font-size: 0.5rem;
+}
+</style>
