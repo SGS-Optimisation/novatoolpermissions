@@ -1,6 +1,6 @@
 <template>
     <modal :show="show" :max-width="maxWidth" :closeable="closeable" @close="close">
-        <div class="px-6 py-4 mb-auto">
+        <div class="px-6 py-4">
             <div class="text-lg">
                 <slot name="title">
                 </slot>
@@ -20,9 +20,12 @@
 </template>
 
 <script>
-    import Modal from './Modal'
+    import { defineComponent } from 'vue'
+    import Modal from './Modal.vue'
 
-    export default {
+    export default defineComponent({
+        emits: ['close'],
+
         components: {
             Modal,
         },
@@ -44,5 +47,5 @@
                 this.$emit('close')
             },
         }
-    }
+    })
 </script>

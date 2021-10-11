@@ -4,24 +4,33 @@
             {{ taxonomyName }}
         </label>
 
-        <v-select v-model="selection"
-                  :options="terms"
-                  @input="setSelected"
+        <multiselect v-model="selection"
+                     :options="terms"
+                     :searchable=true
+                     @select="setSelected"
+                     @clear="setSelected"
         >
 
-        </v-select>
+        </multiselect>
     </div>
 </template>
 
 <script>
 
-export default {
+import {defineComponent} from "vue";
+//import Multiselect from 'vue-multiselect';
+import Multiselect from '@vueform/multiselect';
+
+export default defineComponent({
     name: "TaxonomySelector",
     props: [
         'taxonomyName',
         'terms',
         'filters',
     ],
+    components: {
+        Multiselect,
+    },
     data() {
         return {
             selection: null,
@@ -29,6 +38,7 @@ export default {
     },
     methods: {
         clearSelected: function () {
+            console.log("clearing selection on " + this.taxonomyName);
             this.selection = null;
         },
 
@@ -37,9 +47,8 @@ export default {
             this.$emit('termSelected', this.taxonomyName, value);
         }
     },
-}
+})
 </script>
 
-<style scoped>
-
-</style>
+<!--<style src="vue-multiselect/dist/vue-multiselect.css"></style>-->
+<style src="@vueform/multiselect/themes/default.css"></style>

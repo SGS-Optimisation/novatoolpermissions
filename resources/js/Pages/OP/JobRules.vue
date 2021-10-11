@@ -1,5 +1,8 @@
 <template>
     <app-layout>
+        <Head><title>
+            {{currentJob.job_number}} - Dagobah
+        </title></Head>
         <template #header>
             <div class="flex justify-between align-middle">
 
@@ -44,24 +47,11 @@
         <div v-else>
             <job-identification :job="currentJob"/>
 
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 bg-white">
-                <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-green-300" v-if="rulesUpdated">
-                    <span class="text-xl inline-block mr-5 align-middle">
-                        <i class="fas fa-bell"/>
-                    </span>
-                    <span class="inline-block align-middle mr-8">
-                        <b class="capitalize">Hello!</b> Rules list updated. Do you want to check?
-                    </span>
-                    <button
-                        class="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none"
-                        @click="reloadPage">
-                        Reload
-                    </button>
-                </div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 bg-white relative">
+                <div class="flex flex-col sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px pb-2 mb-2 min-h-screen ">
 
-                <div class="flex flex-wrap overflow-hidden sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px mb-2">
-
-                    <div class="flex flex-col w-full">
+                    <!-- All Filters -->
+                    <div class="sticky z-50 flex flex-col w-full" style="top:107px;">
                         <!-- Stage filter -->
                         <div class="flex flex-grow text-xs mx-2 mb-2" role="group" v-if="showStage">
                             <button
@@ -74,18 +64,18 @@
                                     { 'bg-white text-blue-500' : !$data[`filterStage${stage}`] },
                                     {'bg-green-100' : !$data[`filterStage${stage}`] && currentJob.metadata.hasOwnProperty('stages') && currentJob.metadata.stages.includes(stage) },
                                 ]">
-                                {{stage}}
+                                {{ stage }}
                             </button>
                             <button @click="resetStage"
-                                class="rounded-r-lg flex-grow hover:bg-blue-400 hover:text-white text-blue-500 border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline">
+                                    class="rounded-r-lg flex-grow hover:bg-blue-400 hover:text-white text-blue-500 border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline">
                                 Reset
                             </button>
                         </div>
 
                         <!-- Artwork structure and date Filters -->
-                        <div class="flex flex-grow text-xs mx-2" role="group">
+                        <div class="flex flex-grow text-xs mx-2 shadow-lg" role="group">
                             <button @click="filterArtworkStructureButtonClicked('isNew')"
-                                    :title="$page.settings.rule_filter_new_duration + ' days'"
+                                    :title="$page.props.settings.rule_filter_new_duration + ' days'"
                                     class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg"
                                     :class="[
                                     { 'bg-blue-500 text-white' : filterOption === 'isNew' },
@@ -94,7 +84,7 @@
                                 New
                             </button>
                             <button @click="filterArtworkStructureButtonClicked('isUpdated')"
-                                    :title="$page.settings.rule_filter_updated_duration + ' days'"
+                                    :title="$page.props.settings.rule_filter_updated_duration + ' days'"
                                     class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
                                     :class="[
                                     { 'bg-blue-500 text-white' : filterOption === 'isUpdated' },
@@ -119,29 +109,26 @@
                         <!-- End Filters -->
                     </div>
 
-                    <isotope ref="cpt" id="root_isotope" class="w-full m-2"
-                             v-if="Object.keys(filterObject).length"
-                             :options='getOptions()'
-                             :list="Object.entries(rulesByTaxonomies)"
-                             @filter="filterOption=arguments[0]" @sort="sortOption=arguments[0]">
+                    <div class="box-border mx-autobefore:box-inherit after:box-inherit mt-2"
+                         :class="{
+                        'md:masonry': !termFocus
+                    }">
 
-                        <div class="rounded"
-                             :class="{
-                                'w-full': termFocus,
-                                'w-1/3': !termFocus,
-                             }"
-                             v-for="(ruleGroup, ruleIndex) in Object.entries(rulesByTaxonomies)" :key="ruleIndex">
-                            <view-rule-item :rules="ruleGroup[1]"
-                                            :group="ruleGroup[0]"
-                                            :filter-option="filterOptionTracker"
-                                            :filter-flag="filterFlag"
-                                            :filter-stage-pa="filterStagePA"
-                                            :filter-stage-pp="filterStagePP"
-                                            :filter-stage-pf="filterStagePF"
-                                            @on-click-view="openRuleModal"/>
+                        <div v-for="(ruleGroup, ruleIndex) in displayedRules" :key="ruleIndex"
+                             class="break-inside">
+
+                            <view-rule-group :rules="ruleGroup[1]"
+                                             :job="currentJob.job_number"
+                                             :group="ruleGroup[0]"
+                                             :filter-option="filterOptionTracker"
+                                             :filter-flag="filterFlag"
+                                             :filter-stage-pa="filterStagePA"
+                                             :filter-stage-pp="filterStagePP"
+                                             :filter-stage-pf="filterStagePF"
+                                             @on-click-view="openRuleModal"/>
                         </div>
 
-                    </isotope>
+                    </div>
 
                 </div>
             </div>
@@ -185,7 +172,7 @@
                     Flag rule?
                 </jet-button>
 
-                <a v-if="currentRule && $page.user_permissions.updateRules" target="_blank"
+                <a v-if="currentRule && $page.props.user_permissions.updateRules" target="_blank"
                    class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150"
                    :href="route('pm.client-account.rules.edit', {clientAccount: currentJob.metadata.client.slug, id: currentRule.id})">
                     Edit
@@ -233,6 +220,7 @@
 </template>
 
 <script>
+import {Head} from "@inertiajs/inertia-vue3";
 import AppLayout from '@/Layouts/AppLayout'
 import Input from "@/Jetstream/Input";
 import Button from "@/Jetstream/Button";
@@ -245,9 +233,8 @@ import JetLabel from '@/Jetstream/Label'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import Loader from "@/Components/Loader";
 import ViewRule from '@/Components/PM/Rules/ViewRule'
-import ViewRuleItem from "@/Components/PM/Rules/ViewRuleItem";
+import ViewRuleGroup from "@/Components/OP/ViewRuleGroup";
 import JobSearch from "@/Components/OP/JobSearchForm";
-import isotope from 'vueisotope'
 import moment from "moment";
 import JobIdentification from "@/Components/OP/JobIdentification";
 
@@ -258,10 +245,6 @@ export default {
         'jobNumber',
         'rules'
     ],
-
-    title() {
-        return `${this.currentJob.job_number} - Dagobah`;
-    },
 
     data() {
         return {
@@ -274,7 +257,6 @@ export default {
             currentRule: null,
             rulesUpdated: false,
 
-            // isotope integration
             sortOption: null,
             filterOption: null,
             filterStagePA: false,
@@ -303,7 +285,7 @@ export default {
                 bag: 'sendFlagRule'
             }),
 
-            isotopeFixRanOnce: false,
+            linkTrackingEnabled: false,
         }
     },
 
@@ -320,6 +302,22 @@ export default {
         jobNumber: function (newJobNumber, oldJobNumber) {
             console.log('detected job number change');
             this.initJobLoaded();
+        }
+    },
+
+    created(){
+        console.log('tracking enabled: ' + (this.$page.props.features.matomo_tracking_enabled ? 'yes' : 'no'));
+
+        if(this.$page.props.features.matomo_tracking_enabled) {
+            var _paq = window._paq = window._paq || [];
+            (() => {
+                var u=this.$page.props.features.matomo_host;
+                window._paq.push(['setTrackerUrl', u+'/matomo.php']);
+                window._paq.push(['setSiteId', this.$page.props.features.matomo_site_id]);
+                window._paq.push(['setUserId', this.$page.props.user.email]);
+                var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+                g.type='text/javascript'; g.async=true; g.src=u+'/matomo.js'; s.parentNode.insertBefore(g,s);
+            })();
         }
     },
 
@@ -344,11 +342,37 @@ export default {
             }
         },
 
+        track() {
+            if (!this.$page.props.features.matomo_tracking_enabled)
+                return;
+
+            console.log('tracking');
+
+            window._paq.push(['setCustomUrl', window.location.origin + '/' + this.jobNumber]);
+            window._paq.push(['setDocumentTitle', this.jobNumber]);
+
+            window._paq.push(['trackPageView', this.jobNumber, {
+                'client': this.currentJob.metadata.client.name,
+            }]);
+            window._paq.push(['trackEvent',
+                'OP Viewed Job',
+                this.currentJob.metadata.client.name,
+                this.jobNumber
+            ]);
+
+            if (!this.linkTrackingEnabled) {
+                window._paq.push(['enableLinkTracking']);
+                this.linkTrackingEnabled = true;
+            }
+        },
+
         newRulesLoaded() {
+            this.track();
+
             this.searchedRules = [..._.orderBy(this.currentRules, 'name', 'asc')];
             this.searching = false;
 
-            if(this.currentJob.metadata.hasOwnProperty('stages') && this.currentJob.metadata.stages.length) {
+            if (this.currentJob.metadata.hasOwnProperty('stages') && this.currentJob.metadata.stages.length) {
                 for (let index in this.currentJob.metadata.stages) {
                     this.$data[`filterStage${this.currentJob.metadata.stages[index]}`] = true;
                 }
@@ -363,7 +387,9 @@ export default {
                     /*
                     Collect filterable terms
                     */
-                    if (!this.artworkStructureTerms.includes(term.name) && term.taxonomy.name === 'Artwork Structure Elements') {
+                    if (!this.artworkStructureTerms.includes(term.name)
+                        && term.taxonomy.name === 'Artwork Structure Elements'
+                    ) {
                         this.artworkStructureTerms.push(term.name);
                     }
 
@@ -380,7 +406,7 @@ export default {
                     /*
                     Group rules by Artwork Structure Elements terms
                      */
-                    if(term.taxonomy.name === 'Artwork Structure Elements'){
+                    if (term.taxonomy.name === 'Artwork Structure Elements') {
                         if (this.rulesByTaxonomies[term.name] === undefined) {
                             this.rulesByTaxonomies[term.name] = [];
                         }
@@ -388,6 +414,7 @@ export default {
                         this.rulesByTaxonomies[term.name].push(rule);
                     }
                 });
+
                 this.artworkStructureTerms.forEach(taxonomy => {
                     this.filterObject[taxonomy] = itemElem => {
                         return itemElem[0] === taxonomy;
@@ -401,14 +428,14 @@ export default {
         initSearchFunctions() {
             this.filterObject['isNew'] = (itemElem) => {
                 return itemElem[1].filter(rule => moment()
-                    .subtract(parseInt(this.$page.settings.rule_filter_new_duration), 'days')
+                    .subtract(parseInt(this.$page.props.settings.rule_filter_new_duration), 'days')
                     .isSameOrBefore(moment(rule.created_at))
                 ).length > 0;
             };
 
             this.filterObject['isUpdated'] = (itemElem) => {
                 return itemElem[1].filter(rule => moment()
-                    .subtract(parseInt(this.$page.settings.rule_filter_updated_duration), 'days')
+                    .subtract(parseInt(this.$page.props.settings.rule_filter_updated_duration), 'days')
                     .isSameOrBefore(moment(rule.updated_at))
                 ).length > 0;
             };
@@ -421,7 +448,7 @@ export default {
         waitMode() {
             this.timeOut = setTimeout(() => {
                 this.queryRules();
-            }, 5000);
+            }, 1500);
         },
 
         queryRules() {
@@ -433,7 +460,9 @@ export default {
             axios.get(route('job.rules', this.jobNumber), {headers})
                 .then(({data}) => {
                     console.log(data);
-                    if (data.job && data.job.hasOwnProperty('metadata') && !data.job.metadata.processing_mysgs && !data.job.metadata.error_mysgs) {
+                    if (data.job && data.job.hasOwnProperty('metadata')
+                        && !data.job.metadata.processing_mysgs && !data.job.metadata.error_mysgs
+                    ) {
                         clearTimeout(this.timeOut);
 
                         this.currentJob = data.job;
@@ -451,27 +480,11 @@ export default {
                 })
         },
 
-        getOptions() {
-            return {
-                layoutMode: 'masonry',
-                // masonry: {
-                //     gutter: 2,
-                // },
-                getSortData: {
-                    id: "id",
-                },
-                getFilterData: this.filterObject
-            }
-        },
-
         runningSearch() {
             this.currentJob = {metadata: {}};
             this.searching = true;
             this.artworkStructureTerms = [];
             this.rulesByTaxonomies = {};
-        },
-        reloadPage() {
-            window.location = window.location + this.searchJobKey;
         },
         openRuleModal(rule) {
             this.currentRule = rule;
@@ -491,64 +504,39 @@ export default {
                 return;
             }
 
+            this.filterOption = filterName;
             this.filterOptionTracker = filterName;
             switch (filterName) {
                 case 'isNew':
-                    this.filterByNew()
+                    this.filterFlag = "new";
                     break;
                 case 'isUpdated':
-                    this.filterByUpdated();
+                    this.filterFlag = "updated";
                     break;
                 default:
-                    this.filterByTaxonomy(filterName);
+                    this.filterFlag = null;
                     break;
             }
         },
 
         filterStageButtonClicked(stage) {
             console.log('filter stage button clicked', stage);
-
             this.$data[`filterStage${stage}`] = !this.$data[`filterStage${stage}`];
-
-            if(!this.isotopeFixRanOnce) {
-                this.isotopeFix = setTimeout( () => this.$refs.cpt.unfilter(), 300);
-                this.isotopeFixRanOnce = true;
-            }
-
             this.$forceUpdate();
         },
 
-        filterByNew() {
-            this.$refs.cpt.filter('isNew');
-            this.filterFlag = "new";
-        },
-        filterByUpdated() {
-            this.$refs.cpt.filter('isUpdated');
-            this.filterFlag = "updated";
-        },
-        filterByTaxonomy(taxonomy) {
-            console.log('filtering by taxonomy', taxonomy);
-            this.$refs.cpt.filter(taxonomy);
-            this.filterFlag = null;
-        },
-        filterByStage(stage) {
-            console.log('filtering by stage', stage);
-            this.$refs.cpt.filter(stage);
-        },
         unfilter() {
             this.filterOptionTracker = '';
             this.filterFlag = null;
-            this.$refs.cpt.filter('all');
-            this.$refs.cpt.unfilter();
+            this.filterOption = null;
         },
 
         resetStage() {
-
             console.log('resetting to initial stage', this.filterStage);
             this.filterStagePA = false;
             this.filterStagePP = false;
             this.filterStagePF = false;
-            for(let index in this.currentJob.metadata.stages) {
+            for (let index in this.currentJob.metadata.stages) {
                 this.$data[`filterStage${this.currentJob.metadata.stages[index]}`] = true;
             }
 
@@ -569,10 +557,8 @@ export default {
             console.log('flagging rule', this.currentFlaggingRule);
 
             this.flagRuleForm.post(route('rule.flag', this.currentFlaggingRule.id), {
-                preserveScroll: true
-            }).then(() => {
-
-                this.closeFlagModal();
+                preserveScroll: true,
+                onSuccess: () => this.closeFlagModal()
             });
         },
     },
@@ -585,11 +571,16 @@ export default {
         termFocus() {
             return this.filterOption && this.filterOption !== 'isNew' && this.filterOption !== 'isUpdated';
         },
+
+        displayedRules() {
+            return _.filter(Object.entries(this.rulesByTaxonomies), this.filterObject[this.filterOption ? this.filterOption : 'all'])
+        },
     },
 
     components: {
+        Head,
         JobIdentification,
-        ViewRuleItem,
+        ViewRuleGroup,
         Button,
         Input,
         AppLayout,
@@ -603,7 +594,6 @@ export default {
         Loader,
         ViewRule,
         JobSearch,
-        isotope
     },
 }
 </script>

@@ -19,10 +19,13 @@ class ShareUserPermissions
     public function handle(Request $request, Closure $next)
     {
         if (!\Auth::guest()) {
+
+            $current_team = $request->user()->currentTeam;
+
             Inertia::share([
-                'user_permissions' => \Cache::remember('user-permissions-'.$request->user()->id,
+                'user_permissions' => \Cache::remember('user-teams-permissions-'.$request->user()->id . '-' . $current_team->id,
                     300,
-                    function () use ($request) {
+                    function () use ($request, $current_team) {
                         $accumulator = collect();
                         $request->user()->roles->each(function (Role $role) use ($accumulator) {
 
@@ -30,6 +33,7 @@ class ShareUserPermissions
                                 $accumulator->add($permission);
                             }
                         });
+                        $accumulator = $accumulator->merge($request->user()->teamPermissions($current_team));
                         //logger($accumulator->join(','));
 
                         $permissions = $accumulator->unique()->toArray();

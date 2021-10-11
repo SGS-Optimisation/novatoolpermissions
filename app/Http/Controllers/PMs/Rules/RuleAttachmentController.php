@@ -29,7 +29,7 @@ class RuleAttachmentController extends Controller
     /**
      * @param  Request  $request
      * @param $client_account_slug
-     * @param  int $id
+     * @param  int  $id
      */
     public function attach(Request $request, $client_account_slug, $id)
     {
@@ -37,15 +37,17 @@ class RuleAttachmentController extends Controller
             return response(\Lang::get('attachments::messages.errors.upload_denied'), 403);
         }
 
-        logger('attachment for rule ' . $id);
+        logger('attachment for rule '.$id);
 
         /** @var Attachment $file */
         $file = $this->model
             ->fill(
-                Arr::only(
-                    $request->input(),
-                    config('attachments.attributes')
-                )
+                array_merge(
+                    ['disk' => 'azure_docs'],
+                    Arr::only(
+                        $request->input(),
+                        config('attachments.attributes')
+                    ))
             )
             ->fromPost($request->file($request->input('file_key', 'file')));
 
@@ -59,7 +61,7 @@ class RuleAttachmentController extends Controller
                 return $file;
             }
         } catch (\Exception $e) {
-            logger('Failed to upload attachment : ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            logger('Failed to upload attachment : '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
         }
 
         return response(\Lang::get('attachments::messages.errors.upload_failed'), 500);

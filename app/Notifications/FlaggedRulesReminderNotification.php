@@ -12,7 +12,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
-class FlaggedRulesReminderNotification extends Notification
+class FlaggedRulesReminderNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

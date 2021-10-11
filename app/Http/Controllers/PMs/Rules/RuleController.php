@@ -20,6 +20,7 @@ use App\Services\LegacyImport\ExtractImages;
 use App\Services\Taxonomy\Traits\TaxonomyBuilder;
 use App\States\Rules\DraftState;
 use App\States\Rules\PublishedState;
+use App\States\Rules\ReviewingState;
 use App\States\Rules\RuleState;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\JsonResponse;
@@ -201,10 +202,8 @@ class RuleController extends Controller
 
         $request->session()->flash('success', 'Rule successfully created!');
 
-        return $request->wantsJson()
-            ? new JsonResponse(['id' => $rule->id], 200)
-            : redirect(route('pm.client-account.rules.edit', [$client_account_slug, $rule->id]))
-                ->with('success', 'Rule successfully created!');
+        return redirect(route('pm.client-account.rules.edit', [$client_account_slug, $rule->id]))
+            ->with('success', 'Rule successfully created!');
     }
 
     /**
@@ -253,6 +252,7 @@ class RuleController extends Controller
                     'blockquote', 'pre',
                     'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
                     'table', 'thead', 'tbody', 'th', 'tr', 'td',
+                    'iframe', 'div'
                 ]
             )
         );
@@ -295,9 +295,7 @@ class RuleController extends Controller
 
         event(new Updated($rule));
 
-        return $request->wantsJson()
-            ? new JsonResponse('', 200)
-            : back()->with('status', 'rule-updated');
+        return back(303);
     }
 
     public function massPublish(Request $request, $client_account_slug)
@@ -307,12 +305,28 @@ class RuleController extends Controller
 
         foreach ($rules as $rule) {
             $rule->state->transitionTo(PublishedState::class, $request->user());
-            event(new Updated($rule));
         }
 
-        return $request->wantsJson()
-            ? new JsonResponse('', 200)
-            : back()->with('status', 'rule-updated');
+        event(new Updated($rules->first()));
+
+        return back(303)->with('status', 'rule-updated');
+
+    }
+
+    public function massUnpublish(Request $request, $client_account_slug)
+    {
+        $rule_ids = $request->get('rule_ids');
+        $rules = Rule::whereIn('id', $rule_ids)->get();
+
+        $targetClass = $request->get('status', 'Draft') . 'State';
+
+        foreach ($rules as $rule) {
+            $rule->state->transitionTo('App\States\Rules\\' . $targetClass, $request->user());
+        }
+
+        event(new Updated($rules->first()));
+
+        return back(303)->with('status', 'rule-updated');
 
     }
 
@@ -332,9 +346,7 @@ class RuleController extends Controller
 
         event(new Deleted($rule));
 
-        return $request->wantsJson()
-            ? new JsonResponse('', 200)
-            : back()->with('status', 'rule-deleted');
+        return redirect(route('pm.client-account.rules.index', [$client_account_slug]), 303);
 
     }
 

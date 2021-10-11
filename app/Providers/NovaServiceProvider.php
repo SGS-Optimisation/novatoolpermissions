@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Anaseqal\NovaImport\NovaImport;
 use App\Models\ClientAccount;
 use App\Nova\Dashboards\ClientDashboard;
 use App\Nova\Metrics\FlaggedRules;
@@ -19,6 +18,7 @@ use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
+use Laravel\Nova\Panel;
 use OptimistDigital\NovaSettings\NovaSettings;
 use Silvanite\NovaToolPermissions\NovaToolPermissions;
 use Wehaa\CustomLinks\CustomLinks;
@@ -47,12 +47,24 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 ->min(0)->required(),
             Number::make('Number of days to consider rules as "Updated"', 'rule_filter_updated_duration')
                 ->min(0)->required(),
+            Boolean::make('Show content of flagged rules', 'show_flagged_rules_content')
+                ->required()->default(true),
         ], [], 'rules');
 
         NovaSettings::addSettingsFields([
             Text::make('Stage Taxonomy Name', 'stage_taxonomy_name')
                 ->required()->default('Stage'),
-        ], [], 'jobs');
+        ], [], 'taxonomy');
+
+        NovaSettings::addSettingsFields([
+            Panel::make('Matomo Tracking', [
+                Boolean::make('Enable', 'matomo_tracking_enabled')
+                    ->required()->default(false),
+                Text::make('Matomo Host', 'matomo_host')
+                    ->default('https://ma.sgsco.com'),
+                Text::make('Matomo Site ID', 'matomo_site_id'),
+            ])
+        ], [], 'features');
 
         Nova::style('sgs', asset('css/nova-sgs.css'));
     }

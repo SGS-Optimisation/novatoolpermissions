@@ -14,7 +14,10 @@ const mix = require('laravel-mix');
 const domain = 'dagobah.test'; // <== edit this one
 const homedir = require('os').homedir();
 
-mix.js('resources/js/app.js', 'public/js')
+mix.js('resources/js/app.js', 'public/js').vue({
+        extractVueStyles: true,
+        globalVueStyles: false
+    })
     .sass('resources/sass/app.scss', 'public/css')
     .options({
         postCss: [
@@ -22,16 +25,11 @@ mix.js('resources/js/app.js', 'public/js')
             require('tailwindcss'),
         ]
     })
-    /*.postCss('resources/css/app.css', 'public/css', [
-        require('postcss-import'),
-        require('tailwindcss'),
-    ])*/
     .webpackConfig(require('./webpack.config'))
 
     .browserSync({
         proxy: 'https://' + domain,
         host: domain,
-        open: 'external',
         https: {
             key: homedir + '/.config/valet/Certificates/' + domain + '.key',
             cert: homedir + '/.config/valet/Certificates/' + domain + '.crt',

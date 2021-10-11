@@ -1,12 +1,18 @@
 <template>
-    <inertia-link :href="href" :class="classes">
+    <Link :href="href" :class="classes">
         <slot></slot>
-    </inertia-link>
+    </Link>
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+import { Link } from '@inertiajs/inertia-vue3';
+
+export default defineComponent({
     props: ['href', 'active'],
+    components: {
+        Link
+    },
 
     computed: {
         classes() {
@@ -15,5 +21,5 @@ export default {
                 : 'text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none'
         }
     }
-}
+})
 </script>

@@ -42,7 +42,7 @@
             </div>
 
             <i @click="openCreatingTerm"
-               v-if="$page.user_permissions.manageTerms"
+               v-if="$page.props.user_permissions.manageTerms"
                class="cursor-pointer pt-3 align-middle text-blue-400 hover:text-blue-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd"
@@ -106,7 +106,7 @@
                 <div class="mt-4">
                     <jet-label for="term-name" value="Name"/>
                     <jet-input id="term-name" type="text" class="mt-1 block w-3/4 disabled:opacity-50"
-                               :disabled="!$page.user_permissions.manageTerms"
+                               :disabled="!$page.props.user_permissions.manageTerms"
                                :value="editTermForm.name"
                                v-model="editTermForm.name"/>
 
@@ -179,7 +179,7 @@ import JetInput from '@/Jetstream/Input'
 import JetInputError from '@/Jetstream/InputError'
 import JetLabel from '@/Jetstream/Label'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
-import VueTagsInput from '@johmun/vue-tags-input';
+import VueTagsInput from '@sipec/vue3-tags-input';
 
 export default {
     name: "TermsList",
@@ -291,9 +291,8 @@ export default {
             console.log('create term ' + this.createTermForm.name + ' for taxonomy id ' + this.createTermForm.taxonomyId);
 
             this.createTermForm.post(route('pm.terms.store'), {
-                preserveScroll: true
-            }).then(() => {
-                this.cancelCreateTerm();
+                preserveScroll: true,
+                onSuccess: () => this.cancelCreateTerm(),
             });
         },
 
@@ -323,9 +322,8 @@ export default {
             this.editTermForm.aliases = this.tags.map((item) => item.text);
 
             this.editTermForm.put(route('pm.terms.update', this.editTermForm.termId), {
-                preserveScroll: true
-            }).then(() => {
-                this.cancelEditTerm();
+                preserveScroll: true,
+                onSuccess: () => this.cancelEditTerm(),
             });
         },
 
@@ -347,9 +345,8 @@ export default {
             console.log('delete term ' + this.deletingTermId);
 
             this.deleteTermForm.put(route('pm.terms.destroy', this.deletingTermId), {
-                preserveScroll: true
-            }).then(() => {
-                this.cancelDeleteTerm();
+                preserveScroll: true,
+                onSuccess: () => this.cancelDeleteTerm(),
             });
         }
     },

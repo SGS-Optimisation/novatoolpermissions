@@ -29,7 +29,7 @@
                 </span>
             </div>
             <div v-if="shouldTruncate && !truncateMode" class="h-full text-xs flex-grow bg-blue-200 text-green-800 px-2 py-1 rounded-br-md">
-                <span @click="truncateMode = true" class="cursor-pointer border-dashed border-b border-gray-500"> < hide </span>
+                <span @click="truncateMode = true" class="cursor-pointer border-dashed border-b border-gray-500"> &lt; hide </span>
             </div>
 
         </div>

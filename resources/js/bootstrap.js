@@ -10,7 +10,6 @@ window.axios = require('axios');
 
 window.axios.defaults.headers.common = {
     'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
 };
 
 /**
@@ -19,6 +18,7 @@ window.axios.defaults.headers.common = {
  * allows your team to easily build robust real-time web applications.
  */
 
+/*
 import Echo from 'laravel-echo';
 
 window.Pusher = require('pusher-js');
@@ -30,3 +30,4 @@ window.Echo = new Echo({
     forceTLS: false,
     disableStats: true,
 });
+*/

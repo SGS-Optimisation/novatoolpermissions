@@ -39,7 +39,7 @@ class TaxonomyController extends Controller
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
 
-        return back();
+        return back(303);
     }
 
     /**
@@ -59,7 +59,7 @@ class TaxonomyController extends Controller
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
 
-        return back();
+        return back(303);
     }
 
     /**
@@ -81,6 +81,6 @@ class TaxonomyController extends Controller
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
 
-        return back();
+        return back(303);
     }
 }

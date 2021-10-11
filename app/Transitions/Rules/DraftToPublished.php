@@ -39,7 +39,8 @@ class DraftToPublished extends Transition
     public function canTransition(): bool
     {
         $team = $this->rule->clientAccount ? $this->rule->clientAccount->team : new Team();
-        return $this->user->hasRoleWithPermission('publishRules')
+        return $this->rule->isPublishable()
+            && $this->user->hasRoleWithPermission('publishRules')
             || $this->user->hasTeamPermission($team, 'publishRules');
     }
 
