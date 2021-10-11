@@ -321,7 +321,7 @@ class RuleController extends Controller
         $targetClass = $request->get('status', 'Draft') . 'State';
 
         foreach ($rules as $rule) {
-            $rule->state->transitionTo($targetClass, $request->user());
+            $rule->state->transitionTo('App\States\Rules\\' . $targetClass, $request->user());
         }
 
         event(new Updated($rules->first()));
