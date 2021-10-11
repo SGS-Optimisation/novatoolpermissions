@@ -92,22 +92,45 @@ class Team extends JetstreamTeam
 
     public function rules()
     {
+        return $this->belongsToMany(Rule::class)
+            ->withPivot(['metadata'])
+            ->withTimestamps();
+    }
+
+    /*public function rules()
+    {
         return $this->belongsToMany(User::class)
             ->as('contributorTeam')
             ->withPivot(['metadata'])
             ->withTimestamps();
-    }
+    }*/
 
     public function rulesViaUsers()
     {
         return $this->hasManyDeepFromRelations($this->users(), (new User)->rules())
             ->join('teams', function (\Illuminate\Database\Query\JoinClause $join) {
                 $join->on('teams.user_id', '=', 'users.id')
-                    ->orOn('teams.id', '=', 'team_user.team_id')
-                ;
+                    ->orOn('teams.id', '=', 'team_user.team_id');
             })
             ->whereRaw('rules.client_account_id=teams.client_account_id')
             ->distinct()//->whereRaw('teams.client_account_id=rules.client_account_id')
             ;
+    }
+
+    /**
+     * @param string $permission
+     * @return \Illuminate\Support\Collection
+     */
+    public function allUsersWhoCan($permission)
+    {
+        $subset = collect();
+
+        foreach($this->allUsers() as $user) {
+            if($this->userHasPermission($user, $permission)) {
+                $subset->add($user);
+            }
+        }
+
+        return $subset;
     }
 }
