@@ -20,6 +20,7 @@ use App\Services\LegacyImport\ExtractImages;
 use App\Services\Taxonomy\Traits\TaxonomyBuilder;
 use App\States\Rules\DraftState;
 use App\States\Rules\PublishedState;
+use App\States\Rules\ReviewingState;
 use App\States\Rules\RuleState;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\JsonResponse;
@@ -317,8 +318,10 @@ class RuleController extends Controller
         $rule_ids = $request->get('rule_ids');
         $rules = Rule::whereIn('id', $rule_ids)->get();
 
+        $targetClass = $request->get('status', 'Draft') . 'State';
+
         foreach ($rules as $rule) {
-            $rule->state->transitionTo(DraftState::class, $request->user());
+            $rule->state->transitionTo($targetClass, $request->user());
         }
 
         event(new Updated($rules->first()));

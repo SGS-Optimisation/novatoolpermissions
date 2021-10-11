@@ -229,6 +229,10 @@
 
                 <template #content>
                     Are you sure you want to unpublish these rules?
+                    <br>Target status:
+                    <Dropdown v-model="unpublishForm.status"
+                              panelClass="text-xs"
+                              :options="['Draft', 'Reviewing']"/>
                 </template>
 
                 <template #footer>
@@ -335,6 +339,7 @@ export default defineComponent({
             }),
 
             unpublishForm: this.$inertia.form({
+                status: 'Draft',
                 rule_ids: [],
             }, {
                 bag: 'unpublishData',
@@ -577,8 +582,8 @@ export default defineComponent({
                         this.confirmingUnpublish = false;
 
                         _.forEach(this.selectedRules, (rule) => {
-                            rule.state = "Draft";
-                            _.find(this.rules, {dagId: rule.dagId}).state = "Draft";
+                            rule.state = this.unpublishForm.status;
+                            _.find(this.rules, {dagId: rule.dagId}).state = this.unpublishForm.status;
                         });
 
                         this.$refs.viewRule.$forceUpdate();
