@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login/azure/callback', [\App\Http\Controllers\Auth\AzureAuthController::class, 'handleOauthResponse'])
     ->middleware(['web']);
 
-Route::middleware(['auth:sanctum', 'verified', 'user.permissions'])->group(function () {
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
     Route::get('/dashboard', function () {
@@ -68,7 +68,6 @@ Route::name('pm.')
     ->middleware([
         'auth:sanctum',
         'verified',
-        'user.permissions'
         //'cache.headers:public;max_age=3600;etag',
     ])->group(function () {
 
@@ -216,7 +215,6 @@ Route::name('stats.')
     ->middleware([
         'auth:sanctum',
         'verified',
-        'user.permissions'
         //'cache.headers:public;max_age=3600;etag',
     ])->group(function () {
 

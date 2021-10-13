@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Http\Middleware\AutoSwitchTeam;
 use App\Http\Middleware\ShareSettings;
 use App\Http\Middleware\ShareUserPermissions;
+use App\Http\Middleware\ValidateSignature;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -40,6 +41,9 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+
+        'webapp' => [
             ShareUserPermissions::class,
             ShareSettings::class,
         ],
@@ -65,10 +69,11 @@ class Kernel extends HttpKernel
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
-        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        'signed' => ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'team.autoswitch' => AutoSwitchTeam::class,
         'user.permissions' => ShareUserPermissions::class,
+        'app.settings' => ShareSettings::class,
     ];
 }
