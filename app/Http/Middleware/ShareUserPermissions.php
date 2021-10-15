@@ -33,7 +33,13 @@ class ShareUserPermissions
                                 $accumulator->add($permission);
                             }
                         });
-                        $accumulator = $accumulator->merge($request->user()->teamPermissions($current_team));
+                        $teamPermissions = $request->user()->teamPermissions($current_team);
+
+                        if(count($teamPermissions) === 1 && $teamPermissions[0] == '*') {
+                            $teamPermissions = \Laravel\Jetstream\Jetstream::$permissions;
+                        }
+
+                        $accumulator = $accumulator->merge($teamPermissions);
                         //logger($accumulator->join(','));
 
                         $permissions = $accumulator->unique()->toArray();
