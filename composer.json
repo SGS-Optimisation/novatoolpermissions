@@ -13,7 +13,6 @@
         "altek/accountant": "^3.0",
         "altek/eventually": "^2.0",
         "awobaz/compoships": "^2.0",
-        "barryvdh/laravel-ide-helper": "^2.9",
         "binarytorch/larecipe": "^2.4",
         "bnbwebexpertise/laravel-attachments": "^1.0",
         "cloudstudio/resource-generator": "^1.5",
@@ -51,6 +50,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",
+        "barryvdh/laravel-ide-helper": "^2.9",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laracademy/generators": "^3.0",
