@@ -7,7 +7,7 @@
                 <multiselect v-model="selection"
                              ref="select"
                              :mode="multiple"
-                             :closeOnSelect="multiple !== 'single'"
+                             :closeOnSelect="closeOnSelect"
                              :options="terms"
                              :searchable=true
                              @clear="clearSelected"
@@ -54,6 +54,7 @@ export default {
 
     data() {
         return {
+            closeOnSelect: (this.multiple === 'single'),
             selection: [],
         }
     },
