@@ -8,6 +8,7 @@
                      :options="terms"
                      :searchable=true
                      @select="setSelected"
+                     @deselect="setSelected"
                      @clear="setSelected"
         >
 
