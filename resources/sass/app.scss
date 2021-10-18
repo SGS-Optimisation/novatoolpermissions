@@ -12,8 +12,15 @@
             column-gap: 1em;
             column-count: 3;
         }
+
+        @-moz-document url-prefix(){
+            .break-inside {
+                display: inline-grid;
+                page-break-inside: avoid;
+            }
+        }
         .break-inside {
-            break-inside: avoid;
+            break-inside: avoid-column;
         }
     }
 }
