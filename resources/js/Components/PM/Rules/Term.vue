@@ -11,7 +11,8 @@
                              :options="terms"
                              :searchable=true
                              @clear="clearSelected"
-                             @select="setSelected"/>
+                             @select="setSelected"
+                             @deselect="setSelected"/>
             </div>
             <div class="flex flex-col flex-shrink ml-3">
                 <button type="button" @click="selectAll"
