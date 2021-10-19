@@ -1,10 +1,10 @@
 <template>
-    <div class="flex flex-col items-center justify-center">
+    <div class="h-96 flex flex-col items-center justify-center">
         <div class="mt-1/5 loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
-        <h2 class="text-center text-gray-800 text-xl font-semibold">Loading...</h2>
+<!--        <h2 class="text-center text-gray-800 text-xl font-semibold">Loading...</h2>-->
         <p class="w-1/3 text-center text-gray-800">
             <slot>
-                Patience you must have.<br>Worth it will be.
+                <span v-html="currentMessage"></span>
             </slot>
         </p>
     </div>
@@ -12,7 +12,30 @@
 
 <script>
 export default {
-    name: "Loader"
+    name: "Loader",
+    data(){
+        return{
+            messages: this.$page.props.loader_messages,
+            currentMessage: 'Patience you must have.<br>Worth it will be',
+        }
+    },
+    mounted() {
+        this.switchMessage();
+    },
+    destroyed() {
+        clearTimeout(this.timeOut);
+    },
+    methods: {
+        switchMessage() {
+            this.timeOut = setTimeout(() => {
+                this.currentMessage = this.randomMsg();
+                this.switchMessage();
+            }, 2000);
+        },
+        randomMsg() {
+            return this.messages[Math.floor(Math.random()*this.messages.length)];
+        },
+    },
 }
 </script>
 
