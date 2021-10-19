@@ -4,6 +4,8 @@
 namespace App\Services\MySgs\Api\Resolvers;
 
 
+use Illuminate\Support\Arr;
+
 class ProductionStageResolver
 {
     public static $stages = [
@@ -32,16 +34,17 @@ class ProductionStageResolver
         });
 
         if(count($latest_stage)) {
-            $latest_stage = \Arr::first($latest_stage);
-        }
-
-        if ($latest_stage) {
-            foreach ($latest_stage->jobTasks as $task) {
-                static::checkTaskStage($task, $detected_stages);
+            foreach($latest_stage as $stage) {
+                foreach ($stage->jobTasks as $task) {
+                    static::checkTaskStage($task, $detected_stages);
+                }
             }
         }
 
-        // no processing
+        $detected_stages = array_values(array_unique($detected_stages));
+
+        logger('detected stages:' . print_r($detected_stages, true));
+
         return $detected_stages;
     }
 
