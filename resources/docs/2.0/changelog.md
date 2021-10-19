@@ -2,9 +2,19 @@
 
 ---
 
+- [v2.2.1](#v2.2.1)
 - [v2.2.0](#v2.2.0)
 - [v2.1.0](#v2.1.0)
 - [v2.0.0](#v2.0.0)
+<a name="v2.2.1"></a>
+## v2.2.1 (2021-10-19)
+- Fixes Stage filter not appearing after job's first load
+- Handle multiple latest stages from MySGS
+- Replace reset stage button by clear stage
+- Fix issue handling team invite links from email
+- Fix unselecting multiselect category not saved in PM section
+- Fix OP job rules display in Firefox
+- Fix team owners not having mass publish rule opion
 
 
 <a name="v2.2.0"></a>

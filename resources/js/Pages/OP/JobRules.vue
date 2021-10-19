@@ -53,7 +53,7 @@
                     <!-- All Filters -->
                     <div class="sticky z-50 flex flex-col w-full" style="top:107px;">
                         <!-- Stage filter -->
-                        <div class="flex flex-grow text-xs mx-2 mb-2" role="group" v-if="showStage">
+                        <div class="flex flex-grow text-xs mx-2 mb-2" role="group" v-if="showStage()">
                             <button
                                 v-for="(stage, index) in stages"
                                 @click="filterStageButtonClicked(stage)"
@@ -68,7 +68,7 @@
                             </button>
                             <button @click="resetStage"
                                     class="rounded-r-lg flex-grow hover:bg-blue-400 hover:text-white text-blue-500 border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline">
-                                Reset
+                                Clear
                             </button>
                         </div>
 
@@ -377,6 +377,7 @@ export default {
                 for (let index in this.currentJob.metadata.stages) {
                     this.$data[`filterStage${this.currentJob.metadata.stages[index]}`] = true;
                 }
+                this.$forceUpdate();
             }
         },
 
@@ -533,13 +534,14 @@ export default {
         },
 
         resetStage() {
-            console.log('resetting to initial stage', this.filterStage);
+            //console.log('resetting to initial stage', this.filterStage);
             this.filterStagePA = false;
             this.filterStagePP = false;
             this.filterStagePF = false;
-            for (let index in this.currentJob.metadata.stages) {
+
+            /*for (let index in this.currentJob.metadata.stages) {
                 this.$data[`filterStage${this.currentJob.metadata.stages[index]}`] = true;
-            }
+            }*/
 
             this.$forceUpdate();
         },
@@ -562,13 +564,13 @@ export default {
                 onSuccess: () => this.closeFlagModal()
             });
         },
-    },
 
-    computed: {
         showStage() {
             return this.taxonomies.hasOwnProperty('Stage');
         },
+    },
 
+    computed: {
         termFocus() {
             return this.filterOption && this.filterOption !== 'isNew' && this.filterOption !== 'isUpdated';
         },

@@ -29,6 +29,7 @@ class ShareSettings
                     'matomo_host' => nova_get_setting('matomo_host'),
                     'matomo_site_id' => nova_get_setting('matomo_site_id'),
                 ],
+                'loader_messages' => config('loader'),
             ]);
         }
         return $next($request);
