@@ -6,6 +6,7 @@
 - [v2.2.0](#v2.2.0)
 - [v2.1.0](#v2.1.0)
 - [v2.0.0](#v2.0.0)
+
 <a name="v2.2.1"></a>
 ## v2.2.1 (2021-10-19)
 - Fixes Stage filter not appearing after job's first load
