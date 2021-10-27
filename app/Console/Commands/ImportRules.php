@@ -13,7 +13,7 @@ class ImportRules extends Command
      *
      * @var string
      */
-    protected $signature = 'import:rules {name?}';
+    protected $signature = 'import:legacy:rules {name?}';
 
     /**
      * The console command description.

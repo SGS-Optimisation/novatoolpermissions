@@ -30,4 +30,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'infinity' => [
+        'token' => env('INFINITY_TOKEN'),
+        'workspace' => env('INFINITY_WORKSPACE'),
+        'board' => env('INFINITY_BOARD'),
+    ]
+
 ];
