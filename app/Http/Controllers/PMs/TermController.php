@@ -7,6 +7,7 @@ use App\Http\Requests\CreateTermRequest;
 use App\Models\ClientAccount;
 use App\Models\Taxonomy;
 use App\Models\Term;
+use App\Services\Term\CreateTermService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Jetstream\Jetstream;
@@ -22,18 +23,26 @@ class TermController extends Controller
      */
     public function store(CreateTermRequest $request)
     {
-
         $taxonomy = Taxonomy::find($request->taxonomyId);
         $client_account = ClientAccount::find($request->clientAccountId);
 
-        /** @var Term $term */
-        $term = $taxonomy->terms()->withTrashed()->firstOrCreate(['name' => $request->name]);
-
-        if($term->deleted_at) {
-            $term->restore();
+        if ($request->get('multiple')) {
+            logger('creating multiple terms');
+            $term_names = preg_split('/\r\n|[\r\n]/', $request->get('names'));
+        } else {
+            logger('creating single term');
+            $term_names = [$request->name];
         }
 
-        $client_account->terms()->syncWithoutDetaching($term);
+        $terms = collect();
+        foreach ($term_names as $term_name) {
+            /** @var Term $term */
+            list($term, $restore) = (new CreateTermService($client_account, $taxonomy, $term_name, true))->handle(false, false);
+
+            $terms->add($term);
+        }
+
+        $client_account->terms()->syncWithoutDetaching($terms->pluck('id'));
 
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
@@ -79,7 +88,7 @@ class TermController extends Controller
 
         $term = Term::find($id);
 
-        if($term->client_accounts()->count() == 0 && $term->rules()->count() == 0) {
+        if ($term->client_accounts()->count() == 0 && $term->rules()->count() == 0) {
             $term->delete();
         }
 

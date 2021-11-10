@@ -35,19 +35,33 @@
                 </span>
             </div>
             <div v-if="shouldTruncate && truncateMode" class="w-full text-center">
-                <a @click="truncateMode=false" class="cursor-pointer text-white block bg-green-200 hover:bg-green-400">Show all</a>
+                <a @click="truncateMode=false" class="cursor-pointer text-white block bg-green-200 hover:bg-green-400">Show
+                    all</a>
             </div>
             <div v-if="shouldTruncate && !truncateMode" class="w-full text-center">
-                <a @click="truncateMode=true" class="cursor-pointer text-white block bg-green-200 hover:bg-green-400">Show less</a>
+                <a @click="truncateMode=true" class="cursor-pointer text-white block bg-green-200 hover:bg-green-400">Show
+                    less</a>
             </div>
 
             <i @click="openCreatingTerm"
+               title="Add single term"
                v-if="$page.props.user_permissions.manageTerms"
                class="cursor-pointer pt-3 align-middle text-blue-400 hover:text-blue-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd"
                           d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
                           clip-rule="evenodd"/>
+                </svg>
+            </i>
+
+            <i @click="openCreatingMultipleTerm"
+               title="Add multiple terms"
+               v-if="$page.props.user_permissions.manageTerms"
+               class="cursor-pointer pt-3 align-middle text-blue-400 hover:text-blue-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
                 </svg>
             </i>
         </div>
@@ -68,16 +82,27 @@
         <!--  Create Term Modal -->
         <jet-dialog-modal :show="creatingTerm" @close="cancelCreateTerm">
             <template #title>
-                New Term in {{ taxonomyName }}
+                New {{(creatingMultiple? 'Terms' : 'Term')}} in {{ taxonomyName }}
             </template>
 
             <template #content>
                 <div class="mt-4">
-                    <jet-input type="text" class="mt-1 block w-3/4"
+
+                    <jet-input v-if="!creatingMultiple"
+                               type="text" class="mt-1 block w-3/4"
                                autofocus
                                ref="termName"
                                :value="createTermForm.name"
                                v-model="createTermForm.name"/>
+
+                    <template v-if="creatingMultiple">
+                        Separate each term by a new line
+                    <textarea class="w-full"
+                              rows="20"
+                               v-model="createTermForm.names"
+
+                    />
+                    </template>
 
                 </div>
             </template>
@@ -208,6 +233,7 @@ export default {
     data() {
         return {
             creatingTerm: false,
+            creatingMultiple: false,
 
             confirmingTermDeletion: false,
             deletingTermId: null,
@@ -224,6 +250,8 @@ export default {
                 clientAccountId: this.clientAccount.id,
                 taxonomyId: this.taxonomyId,
                 name: "",
+                names: "",
+                multiple: false,
 
             }, {
                 bag: 'createTerm'
@@ -257,22 +285,23 @@ export default {
         },
 
         displayedTerms() {
-            if(this.shouldTruncate && this.truncateMode) {
+            if (this.shouldTruncate && this.truncateMode) {
                 return _.slice(this.sortedTerms, 0, 24);
-            }
-            else {
+            } else {
                 return this.sortedTerms;
             }
         },
 
         sortedTerms() {
-            return _.sortBy(this.terms, function(term) {return term.name});
+            return _.sortBy(this.terms, function (term) {
+                return term.name
+            });
         }
 
     },
 
     mounted() {
-        if(this.shouldTruncate) {
+        if (this.shouldTruncate) {
             this.truncateMode = true;
         }
     },
@@ -280,6 +309,14 @@ export default {
     methods: {
         openCreatingTerm() {
             this.creatingTerm = true;
+            this.creatingMultiple = false;
+            this.createTermForm.multiple = false;
+        },
+
+        openCreatingMultipleTerm() {
+            this.creatingTerm = true;
+            this.creatingMultiple = true;
+            this.createTermForm.multiple = true;
         },
 
         cancelCreateTerm() {
@@ -303,7 +340,9 @@ export default {
             this.editTermForm.termId = id;
             this.editTermForm.name = term.name;
             this.editTermForm.aliases = [];
-            this.tags = term.aliases.map(item => { return {text: item} });
+            this.tags = term.aliases.map(item => {
+                return {text: item}
+            });
             this.editingTermName = name; //keep original term for display in modal title
         },
 

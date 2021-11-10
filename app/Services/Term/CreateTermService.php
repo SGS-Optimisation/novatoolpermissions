@@ -39,7 +39,7 @@ class CreateTermService
         }
     }
 
-    public function handle()
+    public function handle($sync = true, $clear_cache = true)
     {
         /** @var Term $term */
         $term = $this->taxonomy->terms()->withTrashed()->firstOrCreate(['name' => $this->term_name]);
@@ -50,7 +50,9 @@ class CreateTermService
             $restored = true;
         }
 
-        $this->client->terms()->syncWithoutDetaching($term);
+        if ($sync) {
+            $this->client->terms()->syncWithoutDetaching($term);
+        }
 
         $this->term = $term;
 
@@ -58,8 +60,10 @@ class CreateTermService
             $this->makeAliases();
         }
 
-        Cache::tags(['taxonomy'])->forget($this->client->slug.'-taxonomy-usage-data');
-        Cache::tags(['taxonomy'])->forget($this->client->slug.'-rules-data');
+        if ($clear_cache) {
+            Cache::tags(['taxonomy'])->forget($this->client->slug.'-taxonomy-usage-data');
+            Cache::tags(['taxonomy'])->forget($this->client->slug.'-rules-data');
+        }
 
         return [$term, $restored];
     }

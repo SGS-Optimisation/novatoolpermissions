@@ -11,6 +11,12 @@
                      >
                     {{ taxonomyName }}
                 </div>
+
+                <template v-if="!hasMappings">
+                    <a class="text-xs" :href='`/admin/resources/field-mappings/new?viaResource=taxonomies&viaResourceId=${taxonomyData.id}&viaRelationship=mappings`'>
+                        Create mapping
+                    </a>
+                </template>
                 <!--                        <div v-if="taxonomyData.taxonomy.mapping && taxonomyData.taxonomy.mapping.id">
                                             <span class="text-xs">
                                                 {{ taxonomyData.taxonomy.mapping.api_name }}/{{taxonomyData.taxonomy.mapping.api_action }}//{{ taxonomyData.taxonomy.mapping.field_path }}

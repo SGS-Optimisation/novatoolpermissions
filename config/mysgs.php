@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'default_cache_duration' => env('MYSGS_API_DEFAULT_CACHE_DURATION', 300),
+
     'task_status' => [
         [
             "taskStatusId" => 0,

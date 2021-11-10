@@ -1,11 +1,17 @@
 # Changelog
 
 ---
-
+- [v2.2.2](#v2.2.2)
 - [v2.2.1](#v2.2.1)
 - [v2.2.0](#v2.2.0)
 - [v2.1.0](#v2.1.0)
 - [v2.0.0](#v2.0.0)
+
+<a name="v2.2.2"></a>
+## v2.2.2 (2021-11-10)
+- Added mass create terms from PM section, with cleanup and auto-aliasing feature
+- Added MySGS endpoints for tech spec
+- Added rule import from Infinity kanban boards
 
 <a name="v2.2.1"></a>
 ## v2.2.1 (2021-10-19)

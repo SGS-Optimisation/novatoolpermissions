@@ -53,7 +53,8 @@ return [
         ],
 
         'azure' => [
-            'driver'    => 'azure',
+            'driver'    => env('AZURE_STORAGE_DRIVER', 'azure'),
+            //'root'      => storage_path('app/rule_images'),
             'name'      => env('AZURE_STORAGE_NAME'),
             'key'       => env('AZURE_STORAGE_KEY'),
             'container' => env('AZURE_STORAGE_CONTAINER'),

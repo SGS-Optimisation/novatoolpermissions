@@ -13,7 +13,7 @@ class ImportProject extends Command
      *
      * @var string
      */
-    protected $signature = 'import:project {name?} {--rules}';
+    protected $signature = 'import:legacy:project {name?} {--rules}';
 
     /**
      * The console command description.
