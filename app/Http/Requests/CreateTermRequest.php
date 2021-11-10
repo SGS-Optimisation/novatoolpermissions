@@ -26,7 +26,8 @@ class CreateTermRequest extends FormRequest
         return [
             'clientAccountId' => 'required',
             'taxonomyId' => 'required',
-            'name' => 'required',
+            'name' => 'required_without:names',
+            'names' => 'required_without:name',
         ];
     }
 }

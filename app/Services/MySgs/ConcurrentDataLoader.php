@@ -54,29 +54,35 @@ class ConcurrentDataLoader extends DataLoader
             $pool->as('jobItems')->withHeaders($headers)->withToken($token)
                 ->get(ProductionApi::jobItemsRoute($jobVersionId)),
 
+            $pool->as('techSpec')->withHeaders($headers)->withToken($token)
+                ->get(ProductionApi::techSpecRoute($jobVersionId)),
+
             $pool->as('importedContent')->withHeaders($headers)->withToken($token)
                 ->get(IntegrationsApi::importedContentRoute($jobVersionId)),
         ]);
 
-        $basicDetails = Cache::remember(JobApi::basicDetailsRoute($jobVersionId).print_r([], true), 3600,
+        $basicDetails = Cache::remember(JobApi::basicDetailsRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['basicDetails'], false);
             });
 
-        $extraDetails = Cache::remember(JobApi::extraDetailsRoute($jobVersionId).print_r([], true),
-            3600,
+        $extraDetails = Cache::remember(JobApi::extraDetailsRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['extraDetails'], false);
             });
-        $jobContacts = Cache::remember(JobApi::jobContactsRoute($jobVersionId).print_r([], true), 3600,
+        $jobContacts = Cache::remember(JobApi::jobContactsRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['jobContacts'], false);
             });
-        $jobItems = Cache::remember(ProductionApi::jobItemsRoute($jobVersionId).print_r([], true), 3600,
+        $jobItems = Cache::remember(ProductionApi::jobItemsRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['jobItems'], false);
             });
-        $importedContent = Cache::remember(IntegrationsApi::importedContentRoute($jobVersionId).print_r([], true), 3600,
+        $techSpec = Cache::remember(ProductionApi::techSpecRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+            function () use ($responses) {
+                return BaseApi::parseResponse($responses['techSpec'], false);
+            });
+        $importedContent = Cache::remember(IntegrationsApi::importedContentRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['importedContent'], false);
             });
@@ -87,6 +93,7 @@ class ConcurrentDataLoader extends DataLoader
         $job_metadata->extraDetails = $extraDetails;
         $job_metadata->jobContacts = $jobContacts;
         $job_metadata->jobItems = $jobItems;
+        $job_metadata->techSpec = $techSpec;
         $job_metadata->importedContent = $importedContent;
 
         $this->job->metadata = $job_metadata;

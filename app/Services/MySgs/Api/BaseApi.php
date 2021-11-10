@@ -61,7 +61,7 @@ class BaseApi
     {
         return Cache::remember(
             $url.print_r($params, true),
-            3600,
+            config('mysgs.default_cache_duration'),
             function () use ($url, $params, $array_mode) {
                 $response = static::buildRequest()->get($url, $params);
 

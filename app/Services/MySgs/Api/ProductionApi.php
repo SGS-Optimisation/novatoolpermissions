@@ -19,4 +19,15 @@ class ProductionApi extends BaseApi
         return static::buildBaseUrl() . 'JobItem/list/jobversion/' . $jobVersionId;
     }
 
+    public static function techSpec($jobVersionId, $params = [])
+    {
+        logger('tech spec prod api');
+        return static::get('TechSpec/barcode/', $jobVersionId, $params);
+    }
+
+    public static function techSpecRoute($jobVersionId)
+    {
+        return static::buildBaseUrl() . 'TechSpec/barcode/' . $jobVersionId;
+    }
+
 }
