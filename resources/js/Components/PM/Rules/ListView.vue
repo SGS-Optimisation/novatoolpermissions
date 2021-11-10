@@ -352,7 +352,8 @@ export default defineComponent({
         },
 
         isReviewing() {
-            return _.find(this.stateModels, {name: this.rule.state}).requiresAssignee;
+            let state = _.find(this.stateModels, {name: this.rule.state});
+            return state && state.requiresAssignee;
         },
 
         reviewers() {
