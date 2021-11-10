@@ -18,7 +18,7 @@ abstract class RuleState extends State
     public static function config(): StateConfig
     {
         return parent::config()
-            ->default(PublishedState::class)
+            ->default(DraftState::class)
             ->allowTransition(PublishedState::class, DraftState::class)
             ->allowTransition(PublishedState::class, ReviewingState::class, RequestReview::class)
 
