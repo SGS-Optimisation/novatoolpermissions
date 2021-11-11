@@ -110,7 +110,7 @@ class JobFieldsMapper
     protected function parseFieldPathSection($field_path_sections, $data)
     {
         $section = array_shift($field_path_sections);
-        if ($section === null) {
+        if ($section === null || $section === '@') {
             $this->accumulator[] = $data;
         }
 
@@ -120,7 +120,8 @@ class JobFieldsMapper
             } elseif(is_object($data) && isset($data->$section)) {
                 static::parseFieldPathSection($field_path_sections, $data->$section);
             }
-        } elseif (Str::startsWith($section, '*')) {
+        }
+        elseif (Str::startsWith($section, '*')) {
 
             $section_recursive = ltrim($section, '*');
 
