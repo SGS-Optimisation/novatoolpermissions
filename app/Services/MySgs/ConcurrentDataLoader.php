@@ -54,8 +54,11 @@ class ConcurrentDataLoader extends DataLoader
             $pool->as('jobItems')->withHeaders($headers)->withToken($token)
                 ->get(ProductionApi::jobItemsRoute($jobVersionId)),
 
-            $pool->as('techSpec')->withHeaders($headers)->withToken($token)
-                ->get(ProductionApi::techSpecRoute($jobVersionId)),
+            $pool->as('techSpecBarcode')->withHeaders($headers)->withToken($token)
+                ->get(ProductionApi::techSpecBarcodeRoute($jobVersionId)),
+
+            $pool->as('techSpecPrintProcess')->withHeaders($headers)->withToken($token)
+                ->get(ProductionApi::techSpecPrintProcessRoute($jobVersionId)),
 
             $pool->as('importedContent')->withHeaders($headers)->withToken($token)
                 ->get(IntegrationsApi::importedContentRoute($jobVersionId)),
@@ -78,9 +81,13 @@ class ConcurrentDataLoader extends DataLoader
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['jobItems'], false);
             });
-        $techSpec = Cache::remember(ProductionApi::techSpecRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+        $techSpecBarcode = Cache::remember(ProductionApi::techSpecBarcodeRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
             function () use ($responses) {
-                return BaseApi::parseResponse($responses['techSpec'], false);
+                return BaseApi::parseResponse($responses['techSpecBarcode'], false);
+            });
+        $techSpecPrintProcess = Cache::remember(ProductionApi::techSpecPrintProcessRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+            function () use ($responses) {
+                return BaseApi::parseResponse($responses['techSpecPrintProcess'], false);
             });
         $importedContent = Cache::remember(IntegrationsApi::importedContentRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
             function () use ($responses) {
@@ -93,7 +100,8 @@ class ConcurrentDataLoader extends DataLoader
         $job_metadata->extraDetails = $extraDetails;
         $job_metadata->jobContacts = $jobContacts;
         $job_metadata->jobItems = $jobItems;
-        $job_metadata->techSpec = $techSpec;
+        $job_metadata->techSpecBarcode = $techSpecBarcode;
+        $job_metadata->techSpecPrintProcess = $techSpecPrintProcess;
         $job_metadata->importedContent = $importedContent;
 
         $this->job->metadata = $job_metadata;

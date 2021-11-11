@@ -1,12 +1,18 @@
 # Changelog
 
 ---
+- [v2.2.3](#v2.2.3)
 - [v2.2.2](#v2.2.2)
 - [v2.2.1](#v2.2.1)
 - [v2.2.0](#v2.2.0)
 - [v2.1.0](#v2.1.0)
 - [v2.0.0](#v2.0.0)
 
+<a name="v2.2.3"></a>
+## v2.2.2 (2021-11-11)
+- Add print process endpoint and mapper
+- Fix for auto clearing jobs when customer not found
+  
 <a name="v2.2.2"></a>
 ## v2.2.2 (2021-11-10)
 - Added mass create terms from PM section, with cleanup and auto-aliasing feature

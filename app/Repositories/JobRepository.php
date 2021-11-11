@@ -50,7 +50,7 @@ class JobRepository
             $job = static::createFromJobNumber($job_number);
             event(new NewJobSearched($job));
 
-        } elseif ($job->metadata->error_mysgs
+        } elseif (($job->metadata->error_mysgs || !$job->metadata->client_found)
             && $job->created_at->lessThan(Carbon::now()->subMinute())
         ) {
             logger($job_number.' was in error, will prune and recreate');
