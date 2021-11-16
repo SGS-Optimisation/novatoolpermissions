@@ -60,6 +60,9 @@ class ConcurrentDataLoader extends DataLoader
             $pool->as('techSpecPrintProcess')->withHeaders($headers)->withToken($token)
                 ->get(ProductionApi::techSpecPrintProcessRoute($jobVersionId)),
 
+            $pool->as('techSpecSimple')->withHeaders($headers)->withToken($token)
+                ->get(ProductionApi::techSpecSimpleRoute($jobVersionId)),
+
             $pool->as('importedContent')->withHeaders($headers)->withToken($token)
                 ->get(IntegrationsApi::importedContentRoute($jobVersionId)),
         ]);
@@ -89,6 +92,10 @@ class ConcurrentDataLoader extends DataLoader
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['techSpecPrintProcess'], false);
             });
+        $techSpecSimple = Cache::remember(ProductionApi::techSpecSimpleRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+            function () use ($responses) {
+                return BaseApi::parseResponse($responses['techSpecSimple'], false);
+            });
         $importedContent = Cache::remember(IntegrationsApi::importedContentRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['importedContent'], false);
@@ -102,6 +109,7 @@ class ConcurrentDataLoader extends DataLoader
         $job_metadata->jobItems = $jobItems;
         $job_metadata->techSpecBarcode = $techSpecBarcode;
         $job_metadata->techSpecPrintProcess = $techSpecPrintProcess;
+        $job_metadata->techSpecSimple = $techSpecSimple;
         $job_metadata->importedContent = $importedContent;
 
         $this->job->metadata = $job_metadata;
