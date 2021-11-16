@@ -43,7 +43,7 @@ class ProductionApi extends BaseApi
 
     public static function techSpecBarcode($jobVersionId, $params = [])
     {
-        logger('tech spec prod api');
+        logger('tech spec barcode prod api');
         return static::get('TechSpec/barcode/', $jobVersionId, $params);
     }
 
@@ -54,7 +54,7 @@ class ProductionApi extends BaseApi
 
     public static function techSpecPrintProcess($jobVersionId, $params = [])
     {
-        logger('tech spec prod api');
+        logger('tech spec print process prod api');
         return static::get('TechSpec/PrintProcess/', $jobVersionId, $params);
     }
 
@@ -63,4 +63,14 @@ class ProductionApi extends BaseApi
         return static::buildBaseUrl() . 'TechSpec/PrintProcess/' . $jobVersionId;
     }
 
+    public static function techSpecSimple($jobVersionId, $params = [])
+    {
+        logger('tech spec simple prod api');
+        return static::get('TechSpec/Simple/', $jobVersionId, $params);
+    }
+
+    public static function techSpecSimpleRoute($jobVersionId)
+    {
+        return static::buildBaseUrl() . 'TechSpec/Simple/' . $jobVersionId;
+    }
 }
