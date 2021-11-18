@@ -1,7 +1,7 @@
 <template>
     <jet-banner />
 
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen flex flex-col bg-gray-100 justify-between">
         <div class="md:sticky md:top-0 z-40">
             <nav class="bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
@@ -14,9 +14,6 @@
                                     <jet-application-mark class="block w-auto"/>
                                 </Link>
                             </div>
-                            <span class="text-xxs self-end">
-                                <a :href="changelogLink" target="_blank">{{appVersion}}</a>
-                            </span>
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
@@ -254,12 +251,16 @@
         </div>
 
         <!-- Page Content -->
-        <main>
+        <main class="mb-auto">
             <div v-if="$page.props.jetstream.flash.message" class="alert">
                 {{ $page.props.jetstream.flash.message }}
             </div>
             <slot></slot>
         </main>
+
+        <footer class="">
+            <about/>
+        </footer>
 
     </div>
 </template>
@@ -273,6 +274,7 @@ import JetDropdownLink from '@/Jetstream/DropdownLink.vue'
 import JetNavLink from '@/Jetstream/NavLink.vue'
 import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink.vue'
 import { Link } from '@inertiajs/inertia-vue3';
+import About from '@/Components/About';
 
 export default defineComponent({
     components: {
@@ -283,6 +285,7 @@ export default defineComponent({
         JetNavLink,
         JetResponsiveNavLink,
         Link,
+        About,
     },
 
     data() {
