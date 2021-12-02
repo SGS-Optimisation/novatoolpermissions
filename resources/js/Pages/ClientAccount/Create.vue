@@ -10,7 +10,7 @@
 
         </template>
 
-        <client-account-form :client="client"/>
+        <client-account-form :client="client" :account-structure="accountStructure"/>
 
     </app-layout>
 
@@ -32,6 +32,7 @@ export default {
 
     props: [
         'client',
+        'accountStructure',
     ],
 
 }

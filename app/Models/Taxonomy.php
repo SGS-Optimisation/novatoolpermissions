@@ -92,6 +92,13 @@ class Taxonomy extends Model implements Recordable
         return $query->whereNotNull('parent_id');
     }
 
+    public function scopeAccountStructure(Builder $query)
+    {
+        return $query->children()->whereHas('parent', function($subquery) {
+            return $subquery->where('name', 'Account Structure');
+        });
+    }
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

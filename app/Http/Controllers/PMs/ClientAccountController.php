@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateClientAccountRequest;
 use App\Http\Requests\UpdateClientAccountRequest;
 use App\Models\ClientAccount;
+use App\Models\Taxonomy;
 use App\Services\ClientAccounts\MakeTeam;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -47,10 +48,13 @@ class ClientAccountController extends Controller
         ])
             ->whereSlug($client_account_slug)->first();//?? $request->user()->currentTeam->clientAccount;
 
+        $teams = $client_account->teams;
 
-        $teamMembers = collect($client_account->team->allUsers())->map(function ($user) {
-            return collect($user->toArray())->only(['id', 'name', 'email', 'membership'])->all();
-        });
+        foreach($teams as $team) {
+            $team->teamMembers = collect($team->allUsers())->map(function ($user) {
+                return collect($user->toArray())->only(['id', 'name', 'email', 'membership'])->all();
+            });
+        }
 
         $stats = (new RuleCreationPerTeam(
             view_by: $request->get('view_by', 'week'),
@@ -63,9 +67,7 @@ class ClientAccountController extends Controller
         ))->handle();
 
         return Jetstream::inertia()->render($request, 'ClientAccount/Dashboard', [
-            'team' => $client_account->team,
             'teams' => $client_account->teams,
-            'teamMembers' => $teamMembers,
             'clientAccount' => $client_account,
             'rulesCount' => (int) $client_account->rules_count,
             'omnipresentRulesCount' => (int) $client_account->omnipresent_rules_count,
@@ -88,13 +90,14 @@ class ClientAccountController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function create(Request $request)
     {
         return Jetstream::inertia()->render($request, 'ClientAccount/Create', [
             'team' => $request->user()->currentTeam,
             'client' => (new ClientAccount(['name' => ''])),
+            'accountStructure' => Taxonomy::accountStructure()->with('mappings')->get(),
         ]);
     }
 
@@ -107,7 +110,6 @@ class ClientAccountController extends Controller
     public function store(CreateClientAccountRequest $request)
     {
         \Log::debug('creating client account');
-        \Log::debug(print_r($request->all(), true));
 
         $image_path = null;
 

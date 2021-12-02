@@ -1,7 +1,7 @@
 <template>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="overflow-hidden  sm:rounded-lg">
+            <div class="sm:rounded-lg">
                 <div class="pt-4">
                     <jet-form-section @submitted="pushClientData">
                         <template #title>
@@ -49,6 +49,10 @@
                                 />
                             </div>
 
+                            <account-structure-selection v-if="accountStructure"
+                                                         v-model="form.taxonomy"
+                                                         :account-structure="accountStructure"/>
+
                         </template>
 
                         <template #actions>
@@ -76,6 +80,7 @@ import JetLabel from '@/Jetstream/Label'
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import CustomerSelector from "@/Components/PM/ClientAccount/CustomerSelector";
+import AccountStructureSelection from "@/Components/PM/ClientAccount/AccountStructureSelection";
 
 export default {
     name: "ClientAccountForm",
@@ -89,10 +94,12 @@ export default {
         JetLabel,
         JetSecondaryButton,
         CustomerSelector,
+        AccountStructureSelection,
     },
 
     props: [
         'client',
+        'accountStructure',
     ],
 
     data() {
@@ -103,6 +110,7 @@ export default {
                 slug: this.client.slug,
                 alias: this.client.alias,
                 image: this.client.image,
+                taxonomy: [],
             }, {
                 //bag: 'pushClientData',
                 resetOnSuccess: false,
@@ -132,8 +140,7 @@ export default {
                 this.form.post(route('pm.client-account.update', {clientAccount: this.client.slug}), {
                     preserveScroll: true
                 })
-            }
-            else {
+            } else {
                 this.form.post(route('pm.client-account.store'), {
                     preserveScroll: true
                 })

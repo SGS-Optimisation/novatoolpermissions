@@ -172,6 +172,9 @@ Route::name('pm.')
                          */
                         Route::name('teams.')->prefix('/teams')
                             ->group(function () {
+                                Route::get('/show/{teamId}', [TeamController::class, 'show'])
+                                    ->name('show');
+
                                 Route::get('/create', [TeamController::class, 'create'])
                                     ->name('create');
 

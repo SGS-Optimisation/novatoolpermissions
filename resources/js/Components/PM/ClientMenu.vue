@@ -22,15 +22,18 @@
                     Settings
                 </sub-nav-link>
                 <template v-if="clientAccount.teams.length === 1">
-                    <sub-nav-link :href="route('teams.show', clientAccount.team.id)">
+                    <sub-nav-link :href="route('pm.client-account.teams.show', {clientAccount: clientAccount.slug, teamId: team.id })"
+                        :active="route().current('pm.client-account.teams.show')"
+                    >
                         Team
                     </sub-nav-link>
                 </template>
                 <template v-else>
-                    <jet-dropdown align="right" width="48" class="text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none">
+                    <jet-dropdown align="right" width="48" class="text-gray-600 block hover:text-blue-500 focus:outline-none">
                         <template #trigger>
-                            <button class="flex items-center text-gray-600 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
-                                <div>Teams</div>
+                            <button :class="{'border-b-2 border-blue-500': route().current('pm.client-account.teams.show')}"
+                                class="py-4 px-6 flex items-center text-gray-600 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
+                                <div class="h-full">Teams</div>
 
                                 <div class="ml-1">
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +47,7 @@
                         </template>
                         <template #content>
                             <jet-dropdown-link v-for="team in clientAccount.teams" :key=team.id
-                                               :href="route('teams.show', team.id)">
+                                               :href="route('pm.client-account.teams.show', {clientAccount: clientAccount.slug, teamId: team.id })">
                                 {{team.name}}
                             </jet-dropdown-link>
                         </template>
