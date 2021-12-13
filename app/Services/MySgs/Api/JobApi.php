@@ -65,4 +65,15 @@ class JobApi extends BaseApi
     {
         return static::buildBaseUrl() . 'JobStage/LatestStage/' . $jobVersionId;
     }
+
+    public static function jobTeam($jobVersionId, $params = [])
+    {
+        logger('jobteam job api');
+        return static::get('JobTeam/', $jobVersionId, $params);
+    }
+
+    public static function jobTeamRoute($jobVersionId)
+    {
+        return static::buildBaseUrl() . 'JobTeam/' . $jobVersionId;
+    }
 }

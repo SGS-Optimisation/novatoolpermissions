@@ -32,7 +32,6 @@ class MatchClientAccountOperation extends BaseOperation
         logger('JobClientAccountMatcher invoked');
         $job_metadata = $this->job->metadata;
 
-        // TODO : not match client accounts when customer is empty from API
         try {
             $customer_name = $this->job->metadata->basicDetails->retailer->customerName;
             logger('searching for client name '.$customer_name);
