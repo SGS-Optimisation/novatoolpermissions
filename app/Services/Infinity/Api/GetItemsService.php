@@ -46,6 +46,7 @@ class GetItemsService extends BaseApi
             $data = Arr::where($body->data, function ($value, $key) {
                 return $value->folder_id == $this->folder;
             });
+            //$data = $body->data;
 
             logger('retrieved '.count($data).' matching items');
 
@@ -62,16 +63,23 @@ class GetItemsService extends BaseApi
         foreach ($this->items as $item) {
             $sections = collect($item->values);
 
-            $content = $listname = $attachments = null;
+            $name = $content = $listname = $attachments = null;
 
-            $contentSection = $sections->firstWhere('attribute.name', 'Name');
+            $nameSection = $sections->firstWhere('attribute.name', 'Name');
+            if ($nameSection) {
+                $name = $nameSection->data;
+            }
+
+            $contentSection = $sections->firstWhere('attribute.name', 'Description');
             if ($contentSection) {
                 $content = $contentSection->data;
             }
 
             $listSection = $sections->firstWhere('attribute.name', 'List');
             if ($listSection) {
-                $listname = $this->listnames->firstWhere('id', $listSection->data[0])->name;
+                try {
+                    $listname = $this->listnames->firstWhere('id', $listSection->data[0])->name;
+                }catch(\Exception $e){}
             }
 
             $attachmentSections = $sections->where('attribute.name', 'Attachments');
@@ -89,6 +97,7 @@ class GetItemsService extends BaseApi
                 'id' => $item->id,
                 'content' => $content,
                 'list' => $listname,
+                'name' => $name,
                 'attachments' => $attachments,
             ];
 

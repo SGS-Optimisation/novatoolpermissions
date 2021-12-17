@@ -12,6 +12,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ImportInfinityTask implements ShouldQueue
 {
@@ -55,7 +56,7 @@ class ImportInfinityTask implements ShouldQueue
         if (DB::table('rules')->where('metadata->infinity_import->id', $task['id'])->count() == 0) {
             $this->client->rules()->create([
                 'content' => $content,
-                'name' => $task['list'],
+                'name' => $task['name'] ?? $task['list'] ?? Str::limit($content, 20),
                 'metadata' => [
                     'infinity_import' => [
                         'id' => $task['id'],
