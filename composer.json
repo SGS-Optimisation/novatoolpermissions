@@ -12,6 +12,7 @@
         "ext-json": "*",
         "altek/accountant": "^3.0",
         "altek/eventually": "^2.0",
+        "arielmejiadev/inertiajs-error-page": "^1.0",
         "awobaz/compoships": "^2.0",
         "binarytorch/larecipe": "^2.4",
         "bnbwebexpertise/laravel-attachments": "^1.0",
