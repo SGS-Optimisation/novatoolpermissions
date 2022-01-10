@@ -58,10 +58,12 @@ class Handler extends ExceptionHandler
                 'message' => $exception->getMessage(),
                 'home' => config('app.url'),
             ])->toResponse($request)->setStatusCode($response->status());
-        } else if ($response->status() === 419) {
-            return back()->with([
-                'message' => 'The page expired, please try again.',
-            ]);
+        } else {
+            if ($response->status() === 419) {
+                return back()->with([
+                    'message' => 'The page expired, please try again.',
+                ]);
+            }
         }
 
         return $response;
@@ -69,9 +71,7 @@ class Handler extends ExceptionHandler
 
     public function thereAreErrorsInProduction($response)
     {
-        return
-            //\Illuminate\Support\Facades\App::environment('production') &&
-
-            in_array($response->status(), [500, 503, 404, 403, 401, 429]);
+        return \Illuminate\Support\Facades\App::environment('production')
+            && in_array($response->status(), [500, 503, 404, 403, 401, 429]);
     }
 }
