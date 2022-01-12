@@ -2,10 +2,6 @@
 
 namespace App\Nova;
 
-use App\Nova\Filters\DateFrom;
-use App\Nova\Filters\DateRangeFilter;
-use App\Nova\Filters\DateTo;
-use dddeeemmmooonnn\NovaMulticolumnFilter\NovaMulticolumnFilter;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\ID;
@@ -78,29 +74,7 @@ class Job extends Resource
      */
     public function filters(Request $request)
     {
-        return [
-
-            (new DateFrom),
-            (new DateTo),
-
-            new NovaMulticolumnFilter([
-                // Customizing all
-                'designation' => [
-                    'type' => 'text',
-                    'label' => 'Designation',
-                    'defaultOperator' => 'Contains',
-                    'operators' => [
-                        'LIKE' => 'Contains',
-                        //...
-                    ],
-                    'placeholder' => 'Designation'
-                ],
-            ],
-                $manual_update = false, // Apply filter with the button
-                $default_column_type = 'text', // Default input type
-                $name = 'Filter Content' // Filter name
-            ),
-        ];
+        return [];
     }
 
     /**
