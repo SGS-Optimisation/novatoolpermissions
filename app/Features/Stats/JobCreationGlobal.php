@@ -64,7 +64,7 @@ class JobCreationGlobal extends Trend
     {
         $cache_key = 'stats-jobs-global-' . $this->view_by . $this->column . $this->range . $this->cumulative . $this->function;
 
-        return Cache::remember($cache_key, 1800, function() {
+        return Cache::remember($cache_key, 60*60*24, function() {
             $query = Job::clientFound();
 
             $request = new Request();

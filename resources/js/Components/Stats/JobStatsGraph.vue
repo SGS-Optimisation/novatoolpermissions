@@ -32,13 +32,13 @@
                                      right-text="Yes"/>
                     </div>
 
-                    <div class="col-span-1 sm:col-span-1">
-                        <jet-label class="text-xs"  for="column" value="Rule Status" />
+                    <!--<div class="col-span-1 sm:col-span-1">
+                        <jet-label class="text-xs"  for="column" value="Job Status" />
                         <select class="text-xs" id="column" v-model="form.column">
                             <option value="created_at">Created</option>
                             <option value="updated_at">Updated</option>
                         </select>
-                    </div>
+                    </div>-->
 
                     <div class="col-span-1 sm:col-span-1">
                         <jet-label class="text-xs" for="level" value="Level" />
@@ -85,7 +85,7 @@ import JetLabel from '@/Jetstream/Label'
 import SwitchFlag from "../SwitchFlag";
 
 export default {
-    name: "RuleStats",
+    name: "JobStats",
     components: {
         SwitchFlag,
         JetNavLink,
