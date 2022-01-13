@@ -15,19 +15,16 @@ use Spatie\ModelStates\Transition;
 class ReviewingToPublished extends Transition
 {
 
-    private Rule $rule;
-
-    private User $user;
-
     /**
      * DraftToPublished constructor.
      * @param  Rule  $rule
      * @param  User  $user
      */
-    public function __construct(Rule $rule, User $user)
+    public function __construct(public Rule $rule, public ?User $user =null)
     {
-        $this->rule = $rule;
-        $this->user = $user;
+        if (!$this->user) {
+            $this->user = request()->user();
+        }
     }
 
     public function handle(): Rule
