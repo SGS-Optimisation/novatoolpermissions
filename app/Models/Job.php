@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -51,4 +52,14 @@ class Job extends Model
     protected $casts = [
         'metadata' => 'object',
     ];
+
+    public function scopeForClient(Builder $query, ClientAccount $clientAccount)
+    {
+        return $query->where('metadata->client->id', $clientAccount->id);
+    }
+
+    public function scopeClientFound(Builder $query)
+    {
+        return $query->where('metadata->client_found', true);
+    }
 }

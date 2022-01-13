@@ -89,7 +89,7 @@ import {Head} from "@inertiajs/inertia-vue3";
 import capitalize from 'lodash/capitalize';
 import pluralize from 'pluralize/pluralize';
 import ClientLayout from '@/Layouts/ClientAccount'
-import RuleStats from "../../Components/Stats/RuleStats";
+import RuleStats from "../../Components/Stats/RuleStatsGraph";
 
 export default {
     props: {
