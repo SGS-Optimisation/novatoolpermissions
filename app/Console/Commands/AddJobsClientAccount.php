@@ -50,7 +50,7 @@ class AddJobsClientAccount extends Command
 
             $bar->start();
 
-            Job::where('metadata->client_found', true)()
+            Job::where('metadata->client_found', true)
                 ->whereNull('client_account_id')
                 ->chunk($chunk_size, function ($chunk) use ($bar) {
                     foreach ($chunk as $job) {
