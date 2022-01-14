@@ -38,7 +38,9 @@ class AddJobsClientAccount extends Command
      */
     public function handle()
     {
-        $num_jobs = Job::clientFound()->whereNull('client_account_id')->count();
+        $num_jobs = Job::where('metadata->client_found', true)
+            ->whereNull('client_account_id')
+            ->count();
 
         if ($num_jobs) {
             $this->info("Number of jobs to process: ".$num_jobs);
@@ -48,7 +50,7 @@ class AddJobsClientAccount extends Command
 
             $bar->start();
 
-            Job::clientFound()
+            Job::where('metadata->client_found', true)()
                 ->whereNull('client_account_id')
                 ->chunk($chunk_size, function ($chunk) use ($bar) {
                     foreach ($chunk as $job) {
