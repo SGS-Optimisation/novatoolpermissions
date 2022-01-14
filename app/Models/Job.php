@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,6 +26,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Job whereJobNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Job whereMetadata($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Job whereUpdatedAt($value)
+ * @method static Builder|Rule clientFound()
+ * @method static Builder|Rule forClient()
  * @mixin \Eloquent
  * @method static \Database\Factories\JobFactory factory(...$parameters)
  */
@@ -40,7 +43,8 @@ class Job extends Model
     protected $fillable = [
         'job_number',
         'designation',
-        'metadata'
+        'metadata',
+        'client_account_id',
     ];
 
     /**
@@ -51,4 +55,14 @@ class Job extends Model
     protected $casts = [
         'metadata' => 'object',
     ];
+
+    public function scopeForClient(Builder $query, ClientAccount $clientAccount)
+    {
+        return $query->where('client_account_id', $clientAccount->id);
+    }
+
+    public function scopeClientFound(Builder $query)
+    {
+        return $query->whereNotNull('client_account_id');
+    }
 }

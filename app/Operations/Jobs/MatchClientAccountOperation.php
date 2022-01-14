@@ -56,6 +56,7 @@ class MatchClientAccountOperation extends BaseOperation
 
             if ($client) {
                 logger('found client '.$client->name);
+                $this->job->client_account_id = $client->id;
                 $job_metadata->client = $client->only(['id', 'name', 'slug', 'image']);
                 $job_metadata->client_found = true;
             } else {

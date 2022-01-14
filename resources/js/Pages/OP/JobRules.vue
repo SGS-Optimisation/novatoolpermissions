@@ -361,6 +361,21 @@ export default {
                 this.jobNumber
             ]);
 
+            if(this.currentJob.metadata.hasOwnProperty('jobTeam')) {
+                let jobTeams = this.currentJob.metadata.jobTeam;
+                let activeJobTeam = null;
+                for(let i in jobTeams) {
+                    if(jobTeams[i].inUse) {
+                        activeJobTeam = jobTeams[i].teamName;
+                        console.log('found active job team ' + activeJobTeam);
+                    }
+                }
+
+                if(activeJobTeam){
+                    _paq.push(['setCustomDimension', 1, activeJobTeam]);
+                }
+            }
+
             if (!this.linkTrackingEnabled) {
                 window._paq.push(['enableLinkTracking']);
                 this.linkTrackingEnabled = true;

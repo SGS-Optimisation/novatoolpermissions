@@ -218,8 +218,11 @@ Route::name('stats.')
         //'cache.headers:public;max_age=3600;etag',
     ])->group(function () {
 
-        Route::get('/', [\App\Http\Controllers\Stats\StatsController::class, 'index'])
-            ->name('index');
+        Route::get('/rules', [\App\Http\Controllers\Stats\StatsController::class, 'rules'])
+            ->name('rules');
+
+        Route::get('/jobs', [\App\Http\Controllers\Stats\StatsController::class, 'jobs'])
+            ->name('jobs');
     });
 
 Route::get('nova/login', function () {

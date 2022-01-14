@@ -21,11 +21,14 @@ class RequestReview extends Transition
     /**
      * RequestReview constructor.
      * @param  Rule  $rule
-     * @param  User  $user
+     * @param  User|null  $user
      * @param  array|null  $reviewers
      */
-    public function __construct(public Rule $rule, public User $user, public ?array $reviewers = [])
+    public function __construct(public Rule $rule, public ?User $user = null, public ?array $reviewers = [])
     {
+        if (!$this->user) {
+            $this->user = request()->user();
+        }
     }
 
     public function handle(): Rule
