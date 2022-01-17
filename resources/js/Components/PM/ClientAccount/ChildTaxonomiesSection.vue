@@ -144,16 +144,6 @@ export default {
         }
     },
 
-    computed: {
-        mappings() {
-
-        },
-
-        hasMappings() {
-
-        },
-    },
-
     methods: {
         storeTaxonomy() {
 

@@ -9,6 +9,7 @@ use App\Http\Requests\CreateClientAccountRequest;
 use App\Http\Requests\UpdateClientAccountRequest;
 use App\Models\ClientAccount;
 use App\Models\Taxonomy;
+use App\Operations\ClientAccounts\AssociateDefaultTermsToAttachedTaxonomy;
 use App\Services\ClientAccounts\MakeTeam;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -51,7 +52,7 @@ class ClientAccountController extends Controller
 
         $teams = $client_account->teams;
 
-        foreach($teams as $team) {
+        foreach ($teams as $team) {
             $team->teamMembers = collect($team->allUsers())->map(function ($user) {
                 return collect($user->toArray())->only(['id', 'name', 'email', 'membership'])->all();
             });
@@ -72,7 +73,7 @@ class ClientAccountController extends Controller
             range: $request->get('jobs_range', 15),
             function: $request->get('jobs_function', 'count'),
             cumulative: $request->get('jobs_cumulative', 0),
-            column:  $request->get('jobs_column', 'created_at'),
+            column: $request->get('jobs_column', 'created_at'),
             client_account_ids: $client_account->id
         ))->handle();
 
@@ -133,16 +134,22 @@ class ClientAccountController extends Controller
     {
         \Log::debug('creating client account');
 
-        $image_path = null;
+        $client_data = $request->only(['name', 'slug', 'alias']);
 
         if ($request->hasFile('image')) {
             $image_path = Storage::putFile('logos', $request->file('image'));
+            $client_data['image'] = Storage::url($image_path);
         }
 
-        $client_account = ClientAccount::create(array_merge(
-            $request->only(['name', 'slug', 'alias']),
-            ['image' => Storage::url($image_path)]
-        ));
+        $client_account = ClientAccount::create($client_data);
+
+        if ($request->has('taxonomy')) {
+            logger('taxonomies to associate: ' . print_r($request->get('taxonomy'), true));
+
+            $client_account->taxonomies()->attach($request->get('taxonomy'));
+
+            (new AssociateDefaultTermsToAttachedTaxonomy($client_account))->handle();
+        }
 
         return redirect(route('pm.client-account.dashboard', [$client_account->slug]));
     }

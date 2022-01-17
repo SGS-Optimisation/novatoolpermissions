@@ -27,6 +27,7 @@ class CreateClientAccountRequest extends FormRequest
             'name' => 'required|unique:client_accounts',
             'slug' => 'required|unique:client_accounts|max:30',
             'image' => 'image',
+            'taxonomy' => 'array',
         ];
     }
 }
