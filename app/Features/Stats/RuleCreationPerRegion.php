@@ -33,7 +33,8 @@ class RuleCreationPerRegion extends Trend
         public ?string $function = 'count',
         public ?bool $cumulative = true,
         public ?string $region = null,
-        public ?string $column = 'created_at'
+        public ?string $column = 'created_at',
+        public null|int|array $client_account_ids = null
     ) {
         parent::__construct();
     }
