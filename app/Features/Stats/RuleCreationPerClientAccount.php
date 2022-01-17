@@ -31,21 +31,30 @@ class RuleCreationPerClientAccount extends Trend
         public ?string $function = 'count',
         public ?bool $cumulative = true,
         public ?string $region = null,
-        public ?string $column = 'created_at'
+        public ?string $column = 'created_at',
+        public null|int|array $client_account_ids = null
     ) {
         parent::__construct();
+
+        if(is_int($client_account_ids)) {
+            $this->client_account_ids = [$client_account_ids];
+        }
     }
 
 
     public function handle()
     {
-        foreach (ClientAccount::withCount('rules')->get() as $client_account) {
+        $client_accounts = ClientAccount::withCount('rules')->when($this->client_account_ids, function ($query) {
+            $query->whereIn('id', $this->client_account_ids);
+        })->get();
+
+        foreach ($client_accounts as $client_account) {
 
             $trend = $this->processClientAccount($client_account)->trend;
 
-            if($this->cumulative) {
+            if ($this->cumulative) {
                 $cumul = 0;
-                foreach($trend as $item => $value) {
+                foreach ($trend as $item => $value) {
                     $cumul += $value;
                     $trend[$item] = $cumul;
                 }

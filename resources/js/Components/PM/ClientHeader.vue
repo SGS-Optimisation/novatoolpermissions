@@ -1,6 +1,6 @@
 <template>
     <div class="mr-4 my-auto">
-        <div v-if="clientAccount != null && clientAccount.image !== ''">
+        <div v-if="clientAccount != null && !(clientAccount.image === '' || clientAccount.image === null)">
             <img :src="clientAccount.image" style="max-width: 80px">
         </div>
         <div v-else>

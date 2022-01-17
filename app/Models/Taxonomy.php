@@ -87,9 +87,21 @@ class Taxonomy extends Model implements Recordable
 
     protected $appends = ['requiresMapping'];
 
+    public function scopeTopLevel(Builder $query)
+    {
+        return $query->whereNull('parent_id');
+    }
+
     public function scopeChildren(Builder $query)
     {
         return $query->whereNotNull('parent_id');
+    }
+
+    public function scopeAccountStructure(Builder $query)
+    {
+        return $query->children()->whereHas('parent', function($subquery) {
+            return $subquery->where('name', 'Account Structure');
+        });
     }
 
 

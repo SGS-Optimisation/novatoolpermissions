@@ -35,15 +35,22 @@
                                 class="shadow-lg rounded-xl w-full lg:max-w-full bg-white p-4 flex flex-col justify-between leading-normal">
                                 <div class="mb-2">
                                     <div class="text-gray-500 font-bold text-xl mb-2">
-                                        Team
+                                        Teams
                                     </div>
                                 </div>
-                                <div class="flex items-center">
+                                <div class="flex items-center pb-5" v-for="team in teams">
                                     <div class="text-sm text-gray-600">
+                                        <p class="font-bold">
+                                            <Link
+                                                :href="route('pm.client-account.teams.show', {clientAccount: clientAccount.slug, teamId: team.id })">
+                                                {{ team.name }}
+                                            </Link>
+                                        </p>
                                         <p>Owner: {{ team.owner.name }}</p>
-                                        <p>{{ teamMembers.length }} Members</p>
-                                        <p v-for="(members, role) in userRoles">
-                                            {{ members.length }} {{ capitalize(role) }}
+                                        <p>{{ team.teamMembers.length }} Members
+                                            <span v-for="(members, role) in userRoles(team.teamMembers)">
+                                            | {{ members.length }} {{ capitalize(role) }}
+                                        </span>
                                         </p>
                                     </div>
                                 </div>
@@ -72,10 +79,17 @@
                 </div>
 
                 <div class="flex-grow">
-                    <rule-stats :stats="stats" :view_by="view_by" :range="range" :column="column"
-                                :cumulative="cumulative"
-                                :chart-height="150"
-                                :level="level" :region="region" :mode="mode"/>
+                    <job-stats-graph :stats="job_stats.stats" :view_by="job_stats.view_by"
+                                     :level="job_stats.level" :range="job_stats.range"
+                                     :cumulative="job_stats.cumulative" mode="account-specific"/>
+
+                    <rule-stats-graph :stats="rule_stats.stats" :view_by="rule_stats.view_by"
+                                      :range="rule_stats.range" :column="rule_stats.column"
+                                      :cumulative="rule_stats.cumulative"
+                                      :level="rule_stats.level" :region="rule_stats.region"
+                                      :chart-height="150" mode="account-specific"/>
+
+
                 </div>
 
             </div>
@@ -85,20 +99,17 @@
 
 <script>
 
-import {Head} from "@inertiajs/inertia-vue3";
+import {Head, Link} from "@inertiajs/inertia-vue3";
 import capitalize from 'lodash/capitalize';
 import pluralize from 'pluralize/pluralize';
 import ClientLayout from '@/Layouts/ClientAccount'
-import RuleStats from "../../Components/Stats/RuleStatsGraph";
+import RuleStatsGraph from "../../Components/Stats/RuleStatsGraph";
+import JobStatsGraph from "../../Components/Stats/JobStatsGraph";
 
 export default {
     props: {
         'clientAccount': Object,
-        'team': Object,
-        'teamMembers': {
-            type: Array,
-            default: []
-        },
+        'teams': Object,
         'rulesCount': Number,
         'flaggedRulesCount': Number,
         'publishedRulesCount': Number,
@@ -106,37 +117,33 @@ export default {
         'taxonomiesCount': Number,
         'termsCount': Number,
 
-        'stats': Object,
-        'view_by': String,
-        'range': Number,
-        'column': String,
-        'level': String,
-        'region': String,
-        'cumulative': Number,
-        'mode': String,
+        'rule_stats': Object,
+        'job_stats': Object,
     },
 
     components: {
         Head,
-        RuleStats,
+        Link,
+        RuleStatsGraph,
+        JobStatsGraph,
         ClientLayout,
     },
     methods: {
         capitalize,
-        pluralize
-    },
+        pluralize,
 
-    computed: {
-        userRoles() {
+        userRoles(users) {
 
             return _.groupBy(
-                _.filter(this.teamMembers, function (user) {
+                _.filter(users, function (user) {
                     return user.membership != null;
                 }),
                 function (user) {
                     return user.membership.role;
                 })
         },
-    }
+    },
+
+    computed: {}
 }
 </script>

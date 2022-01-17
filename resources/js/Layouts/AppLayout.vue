@@ -21,11 +21,13 @@
                                     Home
                                 </jet-nav-link>
                                 <jet-nav-link v-if="$page.props.user_permissions.accessPM"
-                                              :href="route('pm.landing')" :active="route().current('pm.landing')">
+                                              :href="route('pm.landing')"
+                                              :active="route().current().startsWith('pm.')"
+                                >
                                     Project Manager
                                 </jet-nav-link>
                                 <jet-nav-link v-if="$page.props.user_permissions.accessStats"
-                                              :href="route('stats.rules')" :active="route().current('stats.rules')">
+                                              :href="route('stats.jobs')" :active="route().current('stats.jobs')">
                                     Stats
                                 </jet-nav-link>
                                 <a v-if="$page.props.user_permissions.accessBackend"

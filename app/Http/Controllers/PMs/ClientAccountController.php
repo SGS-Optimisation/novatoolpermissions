@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\PMs;
 
+use App\Features\Stats\JobCreationPerClientAccount;
 use App\Features\Stats\RuleCreationPerTeam;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateClientAccountRequest;
 use App\Http\Requests\UpdateClientAccountRequest;
 use App\Models\ClientAccount;
+use App\Models\Taxonomy;
+use App\Operations\ClientAccounts\AssociateDefaultTermsToAttachedTaxonomy;
 use App\Services\ClientAccounts\MakeTeam;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -47,25 +50,35 @@ class ClientAccountController extends Controller
         ])
             ->whereSlug($client_account_slug)->first();//?? $request->user()->currentTeam->clientAccount;
 
+        $teams = $client_account->teams;
 
-        $teamMembers = collect($client_account->team->allUsers())->map(function ($user) {
-            return collect($user->toArray())->only(['id', 'name', 'email', 'membership'])->all();
-        });
+        foreach ($teams as $team) {
+            $team->teamMembers = collect($team->allUsers())->map(function ($user) {
+                return collect($user->toArray())->only(['id', 'name', 'email', 'membership'])->all();
+            });
+        }
 
-        $stats = (new RuleCreationPerTeam(
-            view_by: $request->get('view_by', 'week'),
-            range: $request->get('range', 5),
-            function: $request->get('function', 'count'),
-            cumulative: $request->get('cumulative', 1),
-            region: $request->get('region', ''),
-            column: $request->get('column', 'created_at'),
-            client_account_id: $client_account->id
+        $rule_stats = (new RuleCreationPerTeam(
+            view_by: $request->get('rules_view_by', 'week'),
+            range: $request->get('rules_range', 5),
+            function: $request->get('rules_function', 'count'),
+            cumulative: $request->get('rules_cumulative', 1),
+            region: $request->get('rules_region', ''),
+            column: $request->get('rules_column', 'created_at'),
+            client_account_ids: $client_account->id
+        ))->handle();
+
+        $job_stats = (new JobCreationPerClientAccount(
+            view_by: $request->get('jobs_view_by', 'week'),
+            range: $request->get('jobs_range', 15),
+            function: $request->get('jobs_function', 'count'),
+            cumulative: $request->get('jobs_cumulative', 0),
+            column: $request->get('jobs_column', 'created_at'),
+            client_account_ids: $client_account->id
         ))->handle();
 
         return Jetstream::inertia()->render($request, 'ClientAccount/Dashboard', [
-            'team' => $client_account->team,
             'teams' => $client_account->teams,
-            'teamMembers' => $teamMembers,
             'clientAccount' => $client_account,
             'rulesCount' => (int) $client_account->rules_count,
             'omnipresentRulesCount' => (int) $client_account->omnipresent_rules_count,
@@ -74,27 +87,40 @@ class ClientAccountController extends Controller
             'taxonomiesCount' => (int) $client_account->taxonomies_count - $client_account->root_taxonomies_count,
             'termsCount' => (int) $client_account->terms_count,
 
-            'stats' => $stats,
-            'view_by' => Str::title($request->get('view_by', 'week')),
-            'range' => (int) $request->get('range', 5),
-            'column' => $request->get('column', 'created_at'),
-            'level' => 'team',
-            'region' => $request->get('region', ''),
-            'cumulative' => (int) $request->get('cumulative', 1),
-            'mode' => 'account-specific',
+            'rule_stats' => [
+                'stats' => $rule_stats,
+                'view_by' => Str::title($request->get('rules_view_by', 'week')),
+                'range' => (int) $request->get('rules_range', 5),
+                'column' => $request->get('rules_column', 'created_at'),
+                'level' => 'team',
+                'region' => $request->get('rules_region', ''),
+                'cumulative' => (int) $request->get('rules_cumulative', 1),
+                'mode' => 'account-specific',
+            ],
+
+            'job_stats' => [
+                'stats' => $job_stats,
+                'view_by' => Str::title($request->get('jobs_view_by', 'week')),
+                'range' => (int) $request->get('jobs_range', 15),
+                'column' => $request->get('jobs_column', 'created_at'),
+                'level' => 'client',
+                'cumulative' => (int) $request->get('jobs_cumulative', 0),
+                'mode' => 'account-specific',
+            ]
         ]);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function create(Request $request)
     {
         return Jetstream::inertia()->render($request, 'ClientAccount/Create', [
             'team' => $request->user()->currentTeam,
             'client' => (new ClientAccount(['name' => ''])),
+            'accountStructure' => Taxonomy::accountStructure()->with('mappings')->get(),
         ]);
     }
 
@@ -107,18 +133,23 @@ class ClientAccountController extends Controller
     public function store(CreateClientAccountRequest $request)
     {
         \Log::debug('creating client account');
-        \Log::debug(print_r($request->all(), true));
 
-        $image_path = null;
+        $client_data = $request->only(['name', 'slug', 'alias']);
 
         if ($request->hasFile('image')) {
             $image_path = Storage::putFile('logos', $request->file('image'));
+            $client_data['image'] = Storage::url($image_path);
         }
 
-        $client_account = ClientAccount::create(array_merge(
-            $request->only(['name', 'slug', 'alias']),
-            ['image' => Storage::url($image_path)]
-        ));
+        $client_account = ClientAccount::create($client_data);
+
+        if ($request->has('taxonomy')) {
+            logger('taxonomies to associate: ' . print_r($request->get('taxonomy'), true));
+
+            $client_account->taxonomies()->attach($request->get('taxonomy'));
+
+            (new AssociateDefaultTermsToAttachedTaxonomy($client_account))->handle();
+        }
 
         return redirect(route('pm.client-account.dashboard', [$client_account->slug]));
     }

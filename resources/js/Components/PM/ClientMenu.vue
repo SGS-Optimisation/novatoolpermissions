@@ -22,15 +22,18 @@
                     Settings
                 </sub-nav-link>
                 <template v-if="clientAccount.teams.length === 1">
-                    <sub-nav-link :href="route('teams.show', clientAccount.team.id)">
+                    <sub-nav-link :href="route('pm.client-account.teams.show', {clientAccount: clientAccount.slug, teamId: clientAccount.teams[0].id })"
+                        :active="route().current('pm.client-account.teams.show')"
+                    >
                         Team
                     </sub-nav-link>
                 </template>
                 <template v-else>
-                    <jet-dropdown align="right" width="48" class="text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none">
+                    <jet-dropdown align="right" width="48" class="text-gray-600 block hover:text-blue-500 focus:outline-none">
                         <template #trigger>
-                            <button class="flex items-center text-gray-600 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
-                                <div>Teams</div>
+                            <button :class="{'border-b-2 border-blue-500': route().current('pm.client-account.teams.show')}"
+                                class="py-4 px-6 flex items-center text-gray-600 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
+                                <div class="h-full">Teams</div>
 
                                 <div class="ml-1">
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
@@ -44,12 +47,38 @@
                         </template>
                         <template #content>
                             <jet-dropdown-link v-for="team in clientAccount.teams" :key=team.id
-                                               :href="route('teams.show', team.id)">
+                                               :href="route('pm.client-account.teams.show', {clientAccount: clientAccount.slug, teamId: team.id })">
                                 {{team.name}}
                             </jet-dropdown-link>
                         </template>
                     </jet-dropdown>
                 </template>
+
+                <jet-dropdown align="right" width="48" class="text-gray-600 block hover:text-blue-500 focus:outline-none">
+                    <template #trigger>
+                        <button :class="{'border-b-2 border-blue-500': route().current('pm.client-account.stats.jobs') || route().current('pm.client-account.stats.rules')}"
+                                class="py-4 px-6 flex items-center text-gray-600 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
+                            <div class="h-full">Stats</div>
+
+                            <div class="ml-1">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                     viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                          clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        </button>
+                    </template>
+                    <template #content>
+                        <jet-dropdown-link :href="route('pm.client-account.stats.jobs', {clientAccount: clientAccount.slug})">
+                            Jobs
+                        </jet-dropdown-link>
+                        <jet-dropdown-link :href="route('pm.client-account.stats.rules', {clientAccount: clientAccount.slug})">
+                            Rules
+                        </jet-dropdown-link>
+                    </template>
+                </jet-dropdown>
             </nav>
 
         </div>
