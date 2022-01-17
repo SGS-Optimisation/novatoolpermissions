@@ -32,7 +32,8 @@ class JobCreationGlobal extends Trend
         public ?int $range = 5,
         public ?string $function = 'count',
         public ?bool $cumulative = true,
-        public ?string $column = 'created_at'
+        public ?string $column = 'created_at',
+        public null|int|array $client_account_ids = null
     ) {
         parent::__construct();
     }
