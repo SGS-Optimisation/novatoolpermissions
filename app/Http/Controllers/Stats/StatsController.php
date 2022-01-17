@@ -88,7 +88,7 @@ class StatsController extends Controller
             function: $function,
             cumulative: $cumulative,
             column: $column,
-            client_account_ids: ($client_account->id ?? null)
+            client_account_ids: (isset($client_account) ? $client_account->id : null)
         ))->handle();
 
         $page_tpl = isset($client_account) ? 'ClientAccount/JobStats' : 'Stats/JobStats';
