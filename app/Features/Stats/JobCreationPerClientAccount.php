@@ -32,15 +32,24 @@ class JobCreationPerClientAccount extends Trend
         public ?int $range = 5,
         public ?string $function = 'count',
         public ?bool $cumulative = true,
-        public ?string $column = 'created_at'
+        public ?string $column = 'created_at',
+        public null|int|array $client_account_ids = null
     ) {
         parent::__construct();
-    }
+
+        if(is_int($client_account_ids)) {
+            $this->client_account_ids = [$client_account_ids];
+        }
+}
 
 
     public function handle()
     {
-        foreach (ClientAccount::all() as $client_account) {
+        $client_accounts = ClientAccount::when($this->client_account_ids, function ($query) {
+            $query->whereIn('id', $this->client_account_ids);
+        })->get();
+
+        foreach ($client_accounts as $client_account) {
 
             $trend = $this->processClientAccount($client_account)->trend;
 

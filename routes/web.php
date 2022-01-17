@@ -181,6 +181,18 @@ Route::name('pm.')
                                 Route::post('/store', [TeamController::class, 'store'])
                                     ->name('store');
                             });
+
+                        /*
+                         * Stats section
+                         */
+                        Route::name('stats.')->prefix('/stats')
+                            ->group(function () {
+                                Route::get('/jobs', [\App\Http\Controllers\Stats\StatsController::class, 'jobs'])
+                                    ->name('jobs');
+
+                                Route::get('/rules', [\App\Http\Controllers\Stats\StatsController::class, 'rules'])
+                                    ->name('rules');
+                            });
                     });
 
 

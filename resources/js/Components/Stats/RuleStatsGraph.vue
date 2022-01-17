@@ -177,12 +177,12 @@ export default {
         updateStats()
         {
             this.$inertia.get('', {
-                view_by: this.form.view_by,
-                range: this.form.range,
-                column: this.form.column,
-                level: this.form.level,
-                region: this.form.region,
-                cumulative: this.form.cumulative,
+                rules_view_by: this.form.view_by,
+                rules_range: this.form.range,
+                rules_column: this.form.column,
+                rules_level: this.form.level,
+                rules_region: this.form.region,
+                rules_cumulative: this.form.cumulative,
             });
         },
 

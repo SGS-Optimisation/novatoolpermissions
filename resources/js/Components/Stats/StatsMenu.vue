@@ -12,16 +12,17 @@
 
         <nav class="flex flex-col sm:flex-row">
             <sub-nav-link
+                :href="route('stats.jobs')"
+                :active="route().current('stats.jobs')">
+                Job Activity
+            </sub-nav-link>
+
+            <sub-nav-link
                 :href="route('stats.rules')"
                 :active="route().current('stats.rules')">
                 Rules Activity
             </sub-nav-link>
 
-            <sub-nav-link
-                :href="route('stats.jobs')"
-                :active="route().current('stats.jobs')">
-                Job Activity
-            </sub-nav-link>
         </nav>
     </div>
 </template>

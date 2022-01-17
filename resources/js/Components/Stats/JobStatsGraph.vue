@@ -40,7 +40,7 @@
                         </select>
                     </div>-->
 
-                    <div class="col-span-1 sm:col-span-1">
+                    <div class="col-span-1 sm:col-span-1" v-if="isGlobalMode">
                         <jet-label class="text-xs" for="level" value="Level" />
                         <select class="text-xs" id="level" v-model="form.level">
                             <option value="client">Account</option>
@@ -165,12 +165,12 @@ export default {
         updateStats()
         {
             this.$inertia.get('', {
-                view_by: this.form.view_by,
-                range: this.form.range,
-                column: this.form.column,
-                level: this.form.level,
-                region: this.form.region,
-                cumulative: this.form.cumulative,
+                jobs_view_by: this.form.view_by,
+                jobs_range: this.form.range,
+                jobs_column: this.form.column,
+                jobs_level: this.form.level,
+                jobs_region: this.form.region,
+                jobs_cumulative: this.form.cumulative,
             });
         },
 

@@ -79,10 +79,17 @@
                 </div>
 
                 <div class="flex-grow">
-                    <rule-stats :stats="stats" :view_by="view_by" :range="range" :column="column"
-                                :cumulative="cumulative"
-                                :chart-height="150"
-                                :level="level" :region="region" :mode="mode"/>
+                    <job-stats-graph :stats="job_stats.stats" :view_by="job_stats.view_by"
+                                     :level="job_stats.level" :range="job_stats.range"
+                                     :cumulative="job_stats.cumulative" mode="account-specific"/>
+
+                    <rule-stats-graph :stats="rule_stats.stats" :view_by="rule_stats.view_by"
+                                      :range="rule_stats.range" :column="rule_stats.column"
+                                      :cumulative="rule_stats.cumulative"
+                                      :level="rule_stats.level" :region="rule_stats.region"
+                                      :chart-height="150" mode="account-specific"/>
+
+
                 </div>
 
             </div>
@@ -96,7 +103,8 @@ import {Head, Link} from "@inertiajs/inertia-vue3";
 import capitalize from 'lodash/capitalize';
 import pluralize from 'pluralize/pluralize';
 import ClientLayout from '@/Layouts/ClientAccount'
-import RuleStats from "../../Components/Stats/RuleStatsGraph";
+import RuleStatsGraph from "../../Components/Stats/RuleStatsGraph";
+import JobStatsGraph from "../../Components/Stats/JobStatsGraph";
 
 export default {
     props: {
@@ -109,20 +117,15 @@ export default {
         'taxonomiesCount': Number,
         'termsCount': Number,
 
-        'stats': Object,
-        'view_by': String,
-        'range': Number,
-        'column': String,
-        'level': String,
-        'region': String,
-        'cumulative': Number,
-        'mode': String,
+        'rule_stats': Object,
+        'job_stats': Object,
     },
 
     components: {
         Head,
         Link,
-        RuleStats,
+        RuleStatsGraph,
+        JobStatsGraph,
         ClientLayout,
     },
     methods: {
