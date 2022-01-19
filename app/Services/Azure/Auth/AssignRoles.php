@@ -45,7 +45,9 @@ class AssignRoles
     protected static function checkTitleStringForRole(User $user, $title, $role)
     {
         if (Str::contains(Str::lower($user->job_title), Str::lower($title))
-            || Str::contains(Str::lower($title), Str::lower($user->job_title))) {
+            || Str::contains(Str::lower($title), Str::lower($user->job_title))
+            && !$user->roles->pluck('name')->contains($role)
+        ) {
             $user->assignRole($role);
         }
     }
