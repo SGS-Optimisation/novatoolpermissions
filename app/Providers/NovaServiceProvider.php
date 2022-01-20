@@ -16,6 +16,7 @@ use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
 use Laravel\Nova\Panel;
@@ -65,6 +66,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 Text::make('Matomo Site ID', 'matomo_site_id'),
             ])
         ], [], 'features');
+
+        NovaSettings::addSettingsFields([
+            Panel::make('Reporting', [
+                Textarea::make('Emails to send job reports to.', 'job_report_emails')->help('Separate entries by new lines.'),
+            ])
+        ], [], 'reporting');
 
         Nova::style('sgs', asset('css/nova-sgs.css'));
     }
