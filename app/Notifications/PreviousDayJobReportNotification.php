@@ -8,6 +8,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PreviousDayJobReportNotification extends Notification
@@ -45,13 +46,15 @@ class PreviousDayJobReportNotification extends Notification
     {
         $previous_day = Carbon::now()->subDay()->format('Y-m-d');
         $report_path = "exports/job_exports_{$previous_day}.xlsx";
-
-        Excel::store(new JobStageExport(), $report_path);
+        
+        if (!Storage::disk('public')->exists($report_path)) {
+            Excel::store(new JobStageExport(), $report_path, 'public');
+        }
 
         return (new MailMessage)
-            ->subject('Dagobah job report for ' . $previous_day)
-            ->greeting('Hello ' . $notifiable->given_name)
-            ->line('Please find attached the Dagobah job report for ' . $previous_day . '.')
+            ->subject('Dagobah job report for '.$previous_day)
+            ->greeting('Hello '.$notifiable->given_name)
+            ->line('Please find attached the Dagobah job report for '.$previous_day.'.')
             ->attach(storage_path('app/public/'.$report_path), [
                 'as' => "job_exports_{$previous_day}.xlsx",
                 'mime' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
