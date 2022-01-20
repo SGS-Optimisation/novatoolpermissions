@@ -65,4 +65,8 @@ class Job extends Model
     {
         return $query->whereNotNull('client_account_id');
     }
+
+    public function clientAccount(){
+        return $this->belongsTo(ClientAccount::class);
+    }
 }
