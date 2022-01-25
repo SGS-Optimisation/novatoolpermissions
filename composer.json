@@ -39,6 +39,7 @@
         "optimistdigital/nova-sortable": "^2.2",
         "owen-it/laravel-auditing": "^12.0",
         "pusher/pusher-php-server": "^5.0",
+        "robbrazier/piwik": "~4.1",
         "sentry/sentry-laravel": "^2.4",
         "silvanite/brandenburg": "^1.4",
         "silvanite/novatoolpermissions": "^1.0",

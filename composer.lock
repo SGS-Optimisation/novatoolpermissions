@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "87893c53da6d2e6271bc04639759bd22",
+    "content-hash": "12f9057f36354ed29e33fbf9f084847e",
     "packages": [
         {
             "name": "altek/accountant",
@@ -1045,6 +1045,58 @@
                 "source": "https://github.com/DASPRiD/Enum/tree/1.0.3"
             },
             "time": "2020-10-02T16:03:48+00:00"
+        },
+        {
+            "name": "dddeeemmmooonnn/nova-multicolumn-filter",
+            "version": "v0.6.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dddeeemmmooonnn/nova-multicolumn-filter.git",
+                "reference": "94c6d0f809b10d6f17b835ddabd0ed441ca7c590"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dddeeemmmooonnn/nova-multicolumn-filter/zipball/94c6d0f809b10d6f17b835ddabd0ed441ca7c590",
+                "reference": "94c6d0f809b10d6f17b835ddabd0ed441ca7c590",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/nova": ">=2.0.7",
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "dddeeemmmooonnn\\NovaMulticolumnFilter\\FilterServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "dddeeemmmooonnn\\NovaMulticolumnFilter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Turov",
+                    "email": "dddeeemmmooonnntrue@gmail.com"
+                }
+            ],
+            "description": "A Laravel Nova multicolumn filter.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "support": {
+                "issues": "https://github.com/dddeeemmmooonnn/nova-multicolumn-filter/issues",
+                "source": "https://github.com/dddeeemmmooonnn/nova-multicolumn-filter/tree/v0.6.3"
+            },
+            "time": "2020-07-20T17:29:40+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -7634,6 +7686,73 @@
                 }
             ],
             "time": "2021-09-25T23:10:38+00:00"
+        },
+        {
+            "name": "robbrazier/piwik",
+            "version": "4.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RobBrazier/Laravel_Piwik.git",
+                "reference": "ff1c8176c5b2539ed41d11e9fa095b7ad1234e0a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RobBrazier/Laravel_Piwik/zipball/ff1c8176c5b2539ed41d11e9fa095b7ad1234e0a",
+                "reference": "ff1c8176c5b2539ed41d11e9fa095b7ad1234e0a",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.5|^7.3",
+                "illuminate/support": ">=5.0",
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "ext-simplexml": "*",
+                "orchestra/testbench": "^6.19",
+                "phpspec/prophecy": "^1.13",
+                "phpunit/phpcov": "^8.2",
+                "phpunit/phpunit": "^9.5"
+            },
+            "suggest": {
+                "ext-json": "Needed to support JSON formatting",
+                "ext-simplexml": "Needed to support XML formatting"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "RobBrazier\\Piwik\\PiwikServiceProvider"
+                    ],
+                    "aliases": {
+                        "Piwik": "RobBrazier\\Piwik\\Facades\\Piwik"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "RobBrazier\\Piwik": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rob Brazier"
+                }
+            ],
+            "description": "Piwik Package for Laravel",
+            "keywords": [
+                "laravel",
+                "piwik"
+            ],
+            "support": {
+                "issues": "https://github.com/RobBrazier/Laravel_Piwik/issues",
+                "source": "https://github.com/RobBrazier/Laravel_Piwik/tree/4.1.0"
+            },
+            "time": "2021-09-10T18:47:08+00:00"
         },
         {
             "name": "sentry/sdk",

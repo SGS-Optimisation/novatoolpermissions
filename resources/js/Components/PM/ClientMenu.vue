@@ -77,6 +77,9 @@
                         <jet-dropdown-link :href="route('pm.client-account.stats.rules', {clientAccount: clientAccount.slug})">
                             Rules
                         </jet-dropdown-link>
+                        <jet-dropdown-link :href="route('pm.client-account.stats.visits', {clientAccount: clientAccount.slug})">
+                            Visits
+                        </jet-dropdown-link>
                     </template>
                 </jet-dropdown>
             </nav>

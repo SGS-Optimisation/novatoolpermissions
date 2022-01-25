@@ -9,7 +9,9 @@ use App\Features\Stats\RuleCreationPerRegion;
 use App\Features\Stats\RuleCreationPerTeam;
 use App\Http\Controllers\Controller;
 use App\Models\ClientAccount;
+use App\Services\Matomo\Reports\UserVisits;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Laravel\Jetstream\Jetstream;
 
@@ -25,7 +27,7 @@ class StatsController extends Controller
         $column = $request->get('rules_column', 'created_at');
         $level = $request->get('rules_level', 'client');
 
-        if($client_account_slug) {
+        if ($client_account_slug) {
             $client_account = ClientAccount::whereSlug($client_account_slug)->first();
         }
 
@@ -35,13 +37,13 @@ class StatsController extends Controller
             'region' => RuleCreationPerRegion::class,
         };
 
-        if($client_account_slug) {
+        if ($client_account_slug) {
             $client_account = ClientAccount::whereSlug($client_account_slug)->first();
         }
 
         $stats = (new $statsBuilder(
             view_by: $view_by,
-            range:$range,
+            range: $range,
             function: $function,
             cumulative: $cumulative,
             region: $region,
@@ -78,7 +80,7 @@ class StatsController extends Controller
             'global' => JobCreationGlobal::class,
         };
 
-        if($client_account_slug) {
+        if ($client_account_slug) {
             $client_account = ClientAccount::whereSlug($client_account_slug)->first();
         }
 
@@ -102,6 +104,40 @@ class StatsController extends Controller
             'cumulative' => (int) $cumulative,
             'mode' => 'global',
             'clientAccount' => $client_account ?? null,
+        ]);
+    }
+
+    public function visits(Request $request, $client_account_slug = null)
+    {
+        $view_by = Str::lower($request->get('visits_view_by', 'range'));
+
+        $date = $request->get('visits_date', [
+            Carbon::now()->startOfWeek()->format('Y-m-d'),
+            Carbon::now()->startOfWeek()->addDays(6)->format('Y-m-d')
+        ]);
+
+        if (is_array($date)) {
+            $date = implode(',', $date);
+        }
+
+        $level = $request->get('visits_level', 'global');
+
+        if ($slug = $request->get('visits_client_account', $client_account_slug)) {
+            $client_account = ClientAccount::whereSlug($slug)->first();
+            $client_names = array_merge([$client_account->name], preg_split('/\r\n|[\r\n]/', $client_account->alias));
+        }
+
+        $stats = (new UserVisits())->handle($view_by, $date, $slug ? $client_names : null);
+
+        $page_tpl = $client_account_slug ? 'ClientAccount/VisitsStats' : 'Stats/VisitStats';
+
+        return Jetstream::inertia()->render($request, $page_tpl, [
+            'stats' => $stats->visits_list,
+            'view_by' => Str::title($view_by),
+            'date' => $date,
+            'level' => $level,
+            'clientAccount' => $slug ? $client_account : null,
+            'clientAccounts' => ClientAccount::pluck('name', 'slug')->all(),
         ]);
     }
 }
