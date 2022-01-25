@@ -84,7 +84,7 @@
                     </template>
                     <template #groupfooter="slotProps">
                         <td colspan="2" style="text-align: right">Total Visits</td>
-                        <td>{{ calculateUserTotal(slotProps.data[groupBy]) }}</td>
+                        <td>{{ calculateTotal(slotProps.data[groupBy]) }}</td>
                     </template>
 
                 </DataTable>
@@ -175,12 +175,12 @@ export default {
             });
         },
 
-        calculateUserTotal(name) {
+        calculateTotal(val) {
             let total = 0;
 
             if (this.stats) {
                 for (let entry of this.stats) {
-                    if (entry.user === name) {
+                    if (entry[this.groupBy] === val) {
                         total++;
                     }
                 }
