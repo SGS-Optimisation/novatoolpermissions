@@ -79,6 +79,7 @@
                     <Column field="user" header="User"></Column>
                     <Column field="client" header="Client"></Column>
                     <Column field="time" header="Time"></Column>
+                    <Column field="duration" header="Duration"></Column>
                     <template #groupheader="slotProps">
                         <span class="image-text">{{ slotProps.data[groupBy] }}</span>
                     </template>
