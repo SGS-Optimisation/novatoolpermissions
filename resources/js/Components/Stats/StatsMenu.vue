@@ -23,6 +23,12 @@
                 Rules Activity
             </sub-nav-link>
 
+            <sub-nav-link
+                :href="route('stats.visits')"
+                :active="route().current('stats.visits')">
+                Visits
+            </sub-nav-link>
+
         </nav>
     </div>
 </template>

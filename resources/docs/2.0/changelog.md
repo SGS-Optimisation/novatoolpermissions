@@ -1,6 +1,7 @@
 # Changelog
 
 ---
+- [v2.2.4](#v2.2.4)
 - [v2.2.3](#v2.2.3)
 - [v2.2.2](#v2.2.2)
 - [v2.2.1](#v2.2.1)
@@ -8,8 +9,15 @@
 - [v2.1.0](#v2.1.0)
 - [v2.0.0](#v2.0.0)
 
+<a name="v2.2.4"></a>
+## v2.2.4 (2022-01-25)
+- Added Matomo API integration
+- Added stats job activity stats and visits stats 
+- Client Account creation form now allows selecting from existing taxonomies
+- Adds job/client/stage report with emailing to configurable list
+
 <a name="v2.2.3"></a>
-## v2.2.2 (2021-11-11)
+## v2.2.3 (2021-11-11)
 - Add print process endpoint and mapper
 - Fix for auto clearing jobs when customer not found
   

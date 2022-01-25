@@ -192,6 +192,9 @@ Route::name('pm.')
 
                                 Route::get('/rules', [\App\Http\Controllers\Stats\StatsController::class, 'rules'])
                                     ->name('rules');
+
+                                Route::get('/visits', [\App\Http\Controllers\Stats\StatsController::class, 'visits'])
+                                    ->name('visits');
                             });
                     });
 
@@ -238,6 +241,9 @@ Route::name('stats.')
 
         Route::get('/jobs', [\App\Http\Controllers\Stats\StatsController::class, 'jobs'])
             ->name('jobs');
+
+        Route::get('/visits', [\App\Http\Controllers\Stats\StatsController::class, 'visits'])
+            ->name('visits');
     });
 
 Route::get('nova/login', function () {
