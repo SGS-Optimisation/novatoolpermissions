@@ -9,6 +9,7 @@ use App\Features\Stats\RuleCreationPerRegion;
 use App\Features\Stats\RuleCreationPerTeam;
 use App\Http\Controllers\Controller;
 use App\Models\ClientAccount;
+use App\Operations\ClientAccounts\SimplifyAliasesForSearch;
 use App\Services\Matomo\Reports\UserVisits;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -109,6 +110,26 @@ class StatsController extends Controller
 
     public function visits(Request $request, $client_account_slug = null)
     {
+        $grouping =  [
+            'user' => 'User',
+            'job_number' => 'Job Number',
+        ];
+
+        return $this->buildVisitsResponse($request, $client_account_slug, $grouping);
+    }
+
+
+    public function visitsByJobTeam(Request $request, $client_account_slug = null)
+    {
+        $grouping =  [
+            'jobteam' => 'JobTeam',
+        ];
+
+        return $this->buildVisitsResponse($request, $client_account_slug, $grouping);
+    }
+
+    protected function buildVisitsResponse(Request $request, $client_account_slug = null, $grouping = null)
+    {
         $view_by = Str::lower($request->get('visits_view_by', 'range'));
 
         $date = $request->get('visits_date', [
@@ -124,7 +145,8 @@ class StatsController extends Controller
 
         if ($slug = $request->get('visits_client_account', $client_account_slug)) {
             $client_account = ClientAccount::whereSlug($slug)->first();
-            $client_names = array_merge([$client_account->name], preg_split('/\r\n|[\r\n]/', $client_account->alias));
+
+            $client_names = SimplifyAliasesForSearch::handle($client_account);
         }
 
         $stats = (new UserVisits())->handle($view_by, $date, $slug ? $client_names : null);
@@ -138,6 +160,7 @@ class StatsController extends Controller
             'level' => $level,
             'clientAccount' => $slug ? $client_account : null,
             'clientAccounts' => ClientAccount::pluck('name', 'slug')->all(),
+            'grouping' => $grouping
         ]);
     }
 }

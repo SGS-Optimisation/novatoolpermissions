@@ -10,11 +10,10 @@
                 </template>
 
                 <template #form>
-                    <div class="col-span-1 sm:col-span-1">
+                    <div class="col-span-1 sm:col-span-1" v-if="shouldHaveGrouping">
                         <jet-label class="text-xs" for="grouping" value="Grouping"/>
                         <select class="text-xs" id="grouping" v-model="groupBy">
-                            <option value="user">User</option>
-                            <option value="job_number">Job Number</option>
+                            <option v-for="(label, key) in grouping" :value="key">{{label}}</option>
                         </select>
                     </div>
 
@@ -72,13 +71,15 @@
 
             <div class="mt-3">
                 <DataTable :value="stats" rowGroupMode="subheader" :groupRowsBy="groupBy"
-                           sortMode="single" :sortField="groupBy" :sortOrder="1" responsiveLayout="scroll"
+                           removableSort :sortOrder="1" :sortField="groupBy"
+                           responsiveLayout="scroll"
                            :expandableRowGroups="true" v-model:expandedRowGroups="expandedRowGroups"
                 >
-                    <Column field="job_number" header="Job#"></Column>
-                    <Column field="user" header="User"></Column>
+                    <Column field="job_number" header="Job#" :sortable="true"></Column>
+                    <Column field="user" header="User" ></Column>
+                    <Column field="jobteam" header="JobTeam" :sortable="true"></Column>
                     <Column field="client" header="Client"></Column>
-                    <Column field="time" header="Time"></Column>
+                    <Column field="time" header="Time" :sortable="true"></Column>
                     <Column field="duration" header="Duration"></Column>
                     <template #groupheader="slotProps">
                         <span class="image-text">{{ slotProps.data[groupBy] }}</span>
@@ -131,13 +132,13 @@ export default {
         'clientAccount',
         'clientAccounts',
         'mode',
+        'grouping'
     ],
     data() {
         return {
-            customers: null,
             expandedRowGroups: null,
 
-            groupBy: 'user',
+            groupBy: Object.keys(this.grouping)[0],
 
             form: this.$inertia.form({
                 level: this.level,
@@ -192,6 +193,10 @@ export default {
     },
 
     computed: {
+        shouldHaveGrouping() {
+            return Object.keys(this.grouping).length > 1;
+        },
+
         calendarView() {
             switch (this.form.view_by.toLowerCase()) {
                 case 'day':
