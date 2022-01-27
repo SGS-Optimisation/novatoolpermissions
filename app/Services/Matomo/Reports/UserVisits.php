@@ -61,6 +61,7 @@ class UserVisits
                 $time = $visit->lastActionDateTime ?? 'Error';
                 $duration = $visit->visitDurationPretty ?? 'Error';
                 $jobteam = $visit->dimension1 ?? 'Error';
+                $country = $visit->country ?? 'Error';
 
                 if (isset($visit->actionDetails[0])
                     && $visit->actionDetails[0]->type === 'action') {
@@ -76,7 +77,7 @@ class UserVisits
                     $client = $visit->actionDetails[0]->eventAction;
                 }
 
-                $entry = compact('user', 'job_number', 'client', 'jobteam', 'time', 'duration');
+                $entry = compact('user', 'job_number', 'client', 'jobteam', 'country', 'time', 'duration');
 
                 $this->visits_list[] = $entry;
                 $this->visitors[$user]['visits'][] = $entry;

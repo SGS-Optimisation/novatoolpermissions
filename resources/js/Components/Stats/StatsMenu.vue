@@ -35,6 +35,12 @@
                 Visits By JobTeam
             </sub-nav-link>
 
+            <sub-nav-link
+                :href="route('stats.visits-by-country')"
+                :active="route().current('stats.visits-by-country')">
+                Visits By Country
+            </sub-nav-link>
+
         </nav>
     </div>
 </template>

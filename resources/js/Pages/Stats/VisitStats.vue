@@ -8,7 +8,7 @@
         </template>
 
         <visits-stats-table :stats="stats" :view_by="view_by" :date="date" mode="global"
-                            :level="level" :grouping="grouping"
+                            :level="level" :grouping="grouping" :name="name"
                             :client-account="(clientAccount ? clientAccount.slug : null)"
                             :client-accounts="clientAccounts"/>
     </app-layout>
@@ -31,7 +31,8 @@ export default {
         'level',
         'clientAccount',
         'clientAccounts',
-        'grouping'
+        'grouping',
+        'name',
     ],
     components: {
         SubNavLink,

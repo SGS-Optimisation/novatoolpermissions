@@ -8,7 +8,7 @@
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg" v-if="clientAccount != null">
                         <visits-stats-table :stats="stats" :view_by="view_by" :date="date" mode="account-specific"
-                                            level="client" :grouping="grouping"
+                                            level="client" :grouping="grouping" :name="name"
                                             :client-account="clientAccount.slug" :client-accounts="clientAccounts"/>
                     </div>
                 </div>
@@ -41,7 +41,8 @@ export default {
         'level',
         'clientAccount',
         'clientAccounts',
-        'grouping'
+        'grouping',
+        'name',
     ],
 
     components: {

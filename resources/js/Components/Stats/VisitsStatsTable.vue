@@ -3,7 +3,7 @@
         <div class="flex flex-col w-11/12 py-12">
             <jet-form-section @submitted="updateStats">
                 <template #title>
-                    Visits Stats
+                    Visits Stats {{name}}
                 </template>
                 <template #description>
                     Parameters
@@ -78,6 +78,7 @@
                     <Column field="job_number" header="Job#" :sortable="true"></Column>
                     <Column field="user" header="User" ></Column>
                     <Column field="jobteam" header="JobTeam" :sortable="true"></Column>
+                    <Column field="country" header="Country" :sortable="true"></Column>
                     <Column field="client" header="Client"></Column>
                     <Column field="time" header="Time" :sortable="true"></Column>
                     <Column field="duration" header="Duration"></Column>
@@ -132,7 +133,8 @@ export default {
         'clientAccount',
         'clientAccounts',
         'mode',
-        'grouping'
+        'grouping',
+        'name',
     ],
     data() {
         return {

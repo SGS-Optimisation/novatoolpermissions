@@ -125,10 +125,19 @@ class StatsController extends Controller
             'jobteam' => 'JobTeam',
         ];
 
-        return $this->buildVisitsResponse($request, $client_account_slug, $grouping);
+        return $this->buildVisitsResponse($request, $client_account_slug, $grouping, 'By JobTeam');
     }
 
-    protected function buildVisitsResponse(Request $request, $client_account_slug = null, $grouping = null)
+    public function visitsByCountry(Request $request, $client_account_slug = null)
+    {
+        $grouping =  [
+            'country' => 'Country',
+        ];
+
+        return $this->buildVisitsResponse($request, $client_account_slug, $grouping, 'By Country');
+    }
+
+    protected function buildVisitsResponse(Request $request, $client_account_slug = null, $grouping = null, $name = '')
     {
         $view_by = Str::lower($request->get('visits_view_by', 'range'));
 
@@ -160,7 +169,8 @@ class StatsController extends Controller
             'level' => $level,
             'clientAccount' => $slug ? $client_account : null,
             'clientAccounts' => ClientAccount::pluck('name', 'slug')->all(),
-            'grouping' => $grouping
+            'grouping' => $grouping,
+            'name' => $name
         ]);
     }
 }

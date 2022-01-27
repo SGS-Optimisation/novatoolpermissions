@@ -56,7 +56,7 @@
 
                 <jet-dropdown align="right" width="48" class="text-gray-600 block hover:text-blue-500 focus:outline-none">
                     <template #trigger>
-                        <button :class="{'border-b-2 border-blue-500': route().current('pm.client-account.stats.jobs') || route().current('pm.client-account.stats.rules')}"
+                        <button :class="{'border-b-2 border-blue-500': route().current().startsWith('pm.client-account.stats')}"
                                 class="py-4 px-6 flex items-center text-gray-600 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
                             <div class="h-full">Stats</div>
 
@@ -82,6 +82,9 @@
                         </jet-dropdown-link>
                         <jet-dropdown-link :href="route('pm.client-account.stats.visits-by-jobteam', {clientAccount: clientAccount.slug})">
                             Visits by JobTeam
+                        </jet-dropdown-link>
+                        <jet-dropdown-link :href="route('pm.client-account.stats.visits-by-country', {clientAccount: clientAccount.slug})">
+                            Visits by Country
                         </jet-dropdown-link>
                     </template>
                 </jet-dropdown>
