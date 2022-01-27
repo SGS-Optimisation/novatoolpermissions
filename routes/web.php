@@ -195,6 +195,9 @@ Route::name('pm.')
 
                                 Route::get('/visits', [\App\Http\Controllers\Stats\StatsController::class, 'visits'])
                                     ->name('visits');
+
+                                Route::get('/visits-by-jobteam', [\App\Http\Controllers\Stats\StatsController::class, 'visitsByJobTeam'])
+                                    ->name('visits-by-jobteam');
                             });
                     });
 
@@ -244,6 +247,9 @@ Route::name('stats.')
 
         Route::get('/visits', [\App\Http\Controllers\Stats\StatsController::class, 'visits'])
             ->name('visits');
+
+        Route::get('/visits-by-jobteam', [\App\Http\Controllers\Stats\StatsController::class, 'visitsByJobTeam'])
+            ->name('visits-by-jobteam');
     });
 
 Route::get('nova/login', function () {

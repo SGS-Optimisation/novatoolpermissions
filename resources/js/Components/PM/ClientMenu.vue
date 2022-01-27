@@ -80,6 +80,9 @@
                         <jet-dropdown-link :href="route('pm.client-account.stats.visits', {clientAccount: clientAccount.slug})">
                             Visits
                         </jet-dropdown-link>
+                        <jet-dropdown-link :href="route('pm.client-account.stats.visits-by-jobteam', {clientAccount: clientAccount.slug})">
+                            Visits by JobTeam
+                        </jet-dropdown-link>
                     </template>
                 </jet-dropdown>
             </nav>

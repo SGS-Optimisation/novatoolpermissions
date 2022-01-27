@@ -44,7 +44,7 @@ class UserVisits
         logger('searching for live visits with params: ' . print_r($params, true));
 
 
-        $this->raw_data = Cache::remember('live-visits-'.print_r($params, true), Carbon::now()->addMinutes(15),
+        $this->raw_data = Cache::remember('live-visits-v2-'.print_r($params, true), Carbon::now()->addMinutes(15),
             function () use ($params) {
                 return Piwik::getLive()->getLastVisitsDetails(100000, $params);
             });
@@ -59,6 +59,8 @@ class UserVisits
                 $job_number = 'Not Found';
                 $client = 'Not Found';
                 $time = $visit->lastActionDateTime ?? 'Error';
+                $duration = $visit->visitDurationPretty ?? 'Error';
+                $jobteam = $visit->dimension1 ?? 'Error';
 
                 if (isset($visit->actionDetails[0])
                     && $visit->actionDetails[0]->type === 'action') {
@@ -74,7 +76,7 @@ class UserVisits
                     $client = $visit->actionDetails[0]->eventAction;
                 }
 
-                $entry = compact('user', 'job_number', 'client', 'time');
+                $entry = compact('user', 'job_number', 'client', 'jobteam', 'time', 'duration');
 
                 $this->visits_list[] = $entry;
                 $this->visitors[$user]['visits'][] = $entry;

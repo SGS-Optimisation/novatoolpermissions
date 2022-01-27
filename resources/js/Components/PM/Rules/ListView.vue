@@ -20,7 +20,7 @@
                     </h2>
 
                     <div class="flex flex-row">
-                        <a class="inline-flex border-dashed border-b border-gray-500 items-center px-1 pt-1 text-sm font-medium leading-5 text-gray-900 focus:outline-none transition duration-150 ease-in-out"
+                        <Link class="inline-flex border-dashed border-b border-gray-500 items-center px-1 pt-1 text-sm font-medium leading-5 text-gray-900 focus:outline-none transition duration-150 ease-in-out"
                            :href="route('pm.client-account.rules.edit',  {clientAccount: clientAccount.slug, id: rule.id })">
                             <div class="flex-shrink align-bottom text-xs pr-1"
                                  :title="date()">
@@ -31,7 +31,7 @@
                                 <path
                                     d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                             </svg>
-                        </a>
+                        </Link>
                         <template v-if="showContributors && rule.users">
                             <div class="flex flex-row">Contributors:
                                 <div v-for="user in rule.users"
@@ -197,6 +197,7 @@
 <script>
 
 import {defineComponent} from "vue";
+import { Link } from '@inertiajs/inertia-vue3';
 import RuleTags from "@/Components/PM/Rules/RuleTags";
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetButton from '@/Jetstream/Button'
@@ -235,6 +236,7 @@ export default defineComponent({
     },
 
     components: {
+        Link,
         Attachment,
         RuleTags,
         NavLink,

@@ -29,11 +29,13 @@ mix.js('resources/js/app.js', 'public/js').vue({
 
     .browserSync({
         proxy: 'https://' + domain,
+        open: 'external',
         host: domain,
         https: {
             key: homedir + '/.config/valet/Certificates/' + domain + '.key',
             cert: homedir + '/.config/valet/Certificates/' + domain + '.crt',
         },
+        notify: false
     })
 
 
