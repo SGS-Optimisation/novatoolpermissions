@@ -10,12 +10,10 @@
                 </template>
 
                 <template #form>
-                    <div class="col-span-1 sm:col-span-1">
+                    <div class="col-span-1 sm:col-span-1" v-if="shouldHaveGrouping">
                         <jet-label class="text-xs" for="grouping" value="Grouping"/>
                         <select class="text-xs" id="grouping" v-model="groupBy">
-
-                            <option value="job_number">Job Number</option>
-                            <option value="jobteam">JobTeam</option>
+                            <option v-for="(label, key) in grouping" :value="key">{{label}}</option>
                         </select>
                     </div>
 
@@ -140,7 +138,7 @@ export default {
         return {
             expandedRowGroups: null,
 
-            groupBy: 'jobteam',
+            groupBy: Object.keys(this.grouping)[0],
 
             form: this.$inertia.form({
                 level: this.level,
@@ -195,6 +193,10 @@ export default {
     },
 
     computed: {
+        shouldHaveGrouping() {
+            return Object.keys(this.grouping).length > 1;
+        },
+
         calendarView() {
             switch (this.form.view_by.toLowerCase()) {
                 case 'day':

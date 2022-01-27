@@ -32,7 +32,7 @@
             <sub-nav-link
                 :href="route('stats.visits-by-jobteam')"
                 :active="route().current('stats.visits-by-jobteam')">
-                Visits
+                Visits By JobTeam
             </sub-nav-link>
 
         </nav>
