@@ -16,15 +16,15 @@ class MakeTeam extends BaseClientAccountService
         }
 
         if($team_owner && is_int($team_owner)) {
-            $team_owner = User::find($team_owner);
+            $team_owner = User::withRoles()->find($team_owner);
         }
 
         if(!$team_owner) {
             $team_owner = (auth()->guest() ? User::first() : auth()->user());
+        }
 
-            if (!in_array('team-leader', $team_owner->roles->pluck('slug')->all())) {
-                $team_owner->assignRole('team-leader');
-            }
+        if (!in_array('team-leader', $team_owner->roles->pluck('slug')->all())) {
+            $team_owner->assignRole('team-leader');
         }
 
         \Log::debug('making new team with owner ' . $team_owner->name);
