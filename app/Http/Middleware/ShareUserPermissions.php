@@ -23,7 +23,7 @@ class ShareUserPermissions
             $current_team = $request->user()->currentTeam;
 
             Inertia::share([
-                'user_permissions' => \Cache::remember('user-teams-permissions-'.$request->user()->id . '-' . $current_team->id,
+                'user_permissions' => \Cache::tags('roles')->remember('user-teams-permissions-'.$request->user()->id . '-' . $current_team->id,
                     300,
                     function () use ($request, $current_team) {
                         $accumulator = collect();

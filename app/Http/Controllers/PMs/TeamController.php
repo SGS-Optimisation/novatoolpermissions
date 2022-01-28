@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\PMs;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateTeamRequest;
 use App\Models\ClientAccount;
 use App\Models\Rule;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -54,8 +56,11 @@ class TeamController extends Controller
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
         $this->authorize('create', ClientAccount::class);
 
+        $users = User::select(['name', 'id', 'profile_photo_path'])->orderBy('name', 'asc')->get();
+
         return Inertia::render('Teams/Create', [
             'clientAccount' => $client_account,
+            'users' => $users,
         ]);
     }
 
@@ -65,15 +70,21 @@ class TeamController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request, $client_account_slug)
+    public function store(CreateTeamRequest $request, $client_account_slug)
     {
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
         $this->authorize('create', $client_account);
+
+        $owner = User::withRoles()->find($request->get('owner_id'));
+
+        if (!in_array('team-leader', $owner->roles->pluck('slug')->all())) {
+            $owner->assignRole('team-leader');
+        }
 
         $creator = app(CreatesTeams::class);
 
         $team = $creator->create($request->user(), $request->all());
 
-        return redirect(route('teams.show', [$team->id]));
+        return redirect(route('pm.client-account.teams.show', [$client_account_slug, $team->id]));
     }
 }

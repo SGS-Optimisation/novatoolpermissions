@@ -2,6 +2,7 @@
 
 namespace App\Actions\Jetstream;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Jetstream\Contracts\CreatesTeams;
@@ -23,9 +24,16 @@ class CreateTeam implements CreatesTeams
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
             'region' => ['required', 'string', 'max:255'],
+            'owner_id' => ['int'],
         ])->validateWithBag('createTeam');
 
-        return $user->ownedTeams()->create([
+        if (isset($input['owner_id'])) {
+            $owner = User::find($input['owner_id']);
+        } else {
+            $owner = $user;
+        }
+
+        return $owner->ownedTeams()->create([
             'name' => $input['name'],
             'region' => $input['region'],
             'client_account_id' => $input['client_account_id'],

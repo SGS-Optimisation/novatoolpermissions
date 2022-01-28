@@ -7,12 +7,16 @@ use App\Models\Rule;
 use App\Models\Taxonomy;
 use App\Models\Team;
 use App\Models\Term;
+use App\Observers\PermissionObserver;
+use App\Observers\RoleObserver;
 use App\Policies\ClientAccountPolicy;
 use App\Policies\RulePolicy;
 use App\Policies\TaxonomyPolicy;
 use App\Policies\TeamPolicy;
 use App\Policies\TermPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Silvanite\Brandenburg\Permission;
+use Silvanite\Brandenburg\Role;
 use Silvanite\Brandenburg\Traits\ValidatesPermissions;
 
 class AuthServiceProvider extends ServiceProvider
@@ -50,7 +54,7 @@ class AuthServiceProvider extends ServiceProvider
             'viewTerms', 'manageTerms',
             'viewFieldMappings', 'manageFieldMappings',
             'manageSettings',
-            'manageTeams',
+            'manageTeams', 'createTeamsOnBehalfOfUsers',
             'impersonateUsers',
 
         ])->each(function ($permission) {
@@ -64,5 +68,8 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         $this->registerPolicies();
+
+        Role::observe(RoleObserver::class);
+        Permission::observe(PermissionObserver::class);
     }
 }
