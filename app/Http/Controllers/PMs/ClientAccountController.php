@@ -145,7 +145,7 @@ class ClientAccountController extends Controller
 
         $client_account = ClientAccount::create($client_data);
 
-        (new MakeTeam($client_account))->handle($request->get('owner_id'));
+        (new MakeTeam($client_account))->handle( (int) $request->get('owner_id'));
 
         if ($request->has('taxonomy')) {
             logger('taxonomies to associate: ' . print_r($request->get('taxonomy'), true));
