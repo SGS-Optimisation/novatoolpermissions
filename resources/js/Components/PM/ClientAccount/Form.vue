@@ -11,12 +11,12 @@
 
                         </template>
                         <template #form>
-                            <div v-if="!client.id" class="col-span-6 sm:col-span-8">
+                            <div v-if="!client.id" class="col-span-3 sm:col-span-4">
                                 <jet-label for="name" value="Name"/>
                                 <customer-selector @customerSelected="setClient"/>
                             </div>
 
-                            <div v-else class="col-span-6 sm:col-span-8">
+                            <div v-else class="col-span-3 sm:col-span-4">
                                 <jet-label for="name" value="Name"/>
                                 <jet-input id="name" type="text" required
                                            v-model="form.name"
@@ -25,7 +25,7 @@
                                 <jet-input-error :message="form.errors.name" class="mt-2"/>
                             </div>
 
-                            <div class="col-span-6 sm:col-span-8">
+                            <div class="col-span-3 sm:col-span-4">
                                 <jet-label for="slug" value="Page address"/>
                                 <jet-input id="slug" type="text" disabled
                                            class="mt-1 block w-full"
@@ -42,11 +42,19 @@
                                 <jet-input-error :message="form.errors.alias" class="mt-2"/>
                             </div>
 
-                            <div class="col-span-6 sm:col-span-8">
+                            <div class="col-span-3 sm:col-span-4">
                                 <jet-label for="image" value="Logo"/>
                                 <input type="file" id="image" accept="image/*"
                                        @change="addFile($event.target.files);"
                                 />
+                            </div>
+
+                            <div v-if="creatingMode && $page.props.user_permissions.createTeamsOnBehalfOfUsers"
+                                 class="col-span-3 sm:col-span-4">
+                                <MultiSelect required v-model="teamOwner" :options="users" :filter="true"
+                                             :selectionLimit=1
+                                             @change="changeOwner"
+                                             optionLabel="name" placeholder="Select Team Owner" />
                             </div>
 
                             <account-structure-selection v-if="accountStructure"
@@ -81,6 +89,7 @@ import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import CustomerSelector from "@/Components/PM/ClientAccount/CustomerSelector";
 import AccountStructureSelection from "@/Components/PM/ClientAccount/AccountStructureSelection";
+import MultiSelect from 'primevue/multiselect/sfc'
 
 export default {
     name: "ClientAccountForm",
@@ -95,15 +104,19 @@ export default {
         JetSecondaryButton,
         CustomerSelector,
         AccountStructureSelection,
+        MultiSelect,
     },
 
     props: [
         'client',
         'accountStructure',
+        'users',
+        'creatingMode'
     ],
 
     data() {
         return {
+            teamOwner: null,
 
             form: this.$inertia.form({
                 name: this.client.name,
@@ -111,6 +124,7 @@ export default {
                 alias: this.client.alias,
                 image: this.client.image,
                 taxonomy: [],
+                owner_id: null,
             }, {
                 //bag: 'pushClientData',
                 resetOnSuccess: false,
@@ -119,6 +133,10 @@ export default {
     },
 
     methods: {
+        changeOwner(event){
+            this.form.owner_id = event.value.length ? event.value[0].id : null;
+        },
+
         setClient(name, aliases) {
             this.form.name = name;
             this.form.alias = aliases ? aliases.join("\r\n") : '';

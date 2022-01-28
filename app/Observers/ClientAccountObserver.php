@@ -31,7 +31,7 @@ class ClientAccountObserver
     public function created(ClientAccount $clientAccount)
     {
         (new AssociateDefaultVocabulary($clientAccount))->handle();
-        (new MakeTeam($clientAccount))->handle();
+        //(new MakeTeam($clientAccount))->handle();
     }
 
     /**

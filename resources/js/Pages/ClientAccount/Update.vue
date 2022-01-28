@@ -4,7 +4,7 @@
             <title>Settings for {{clientAccount.name}} - Dagobah</title>
         </Head>
         <template #body>
-            <client-account-form :client="client"/>
+            <client-account-form :client="client" :creatingMode=false></client-account-form>
         </template>
 
     </client-layout>

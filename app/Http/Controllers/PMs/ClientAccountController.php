@@ -9,6 +9,7 @@ use App\Http\Requests\CreateClientAccountRequest;
 use App\Http\Requests\UpdateClientAccountRequest;
 use App\Models\ClientAccount;
 use App\Models\Taxonomy;
+use App\Models\User;
 use App\Operations\ClientAccounts\AssociateDefaultTermsToAttachedTaxonomy;
 use App\Services\ClientAccounts\MakeTeam;
 use Illuminate\Http\JsonResponse;
@@ -121,6 +122,7 @@ class ClientAccountController extends Controller
             'team' => $request->user()->currentTeam,
             'client' => (new ClientAccount(['name' => ''])),
             'accountStructure' => Taxonomy::accountStructure()->with('mappings')->get(),
+            'users'=> $users = User::select(['name', 'id', 'profile_photo_path'])->orderBy('name', 'asc')->get(),
         ]);
     }
 
@@ -142,6 +144,8 @@ class ClientAccountController extends Controller
         }
 
         $client_account = ClientAccount::create($client_data);
+
+        (new MakeTeam($client_account))->handle($request->get('owner_id'));
 
         if ($request->has('taxonomy')) {
             logger('taxonomies to associate: ' . print_r($request->get('taxonomy'), true));
