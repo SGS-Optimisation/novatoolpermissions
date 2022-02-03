@@ -6,34 +6,36 @@
                   @click="creatingTaxonomy=true"
             >
                 <i class="text-white w-5 inline-block">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="pt-3 h-6 w-6" viewBox="0 0 18 18" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="pt-3 h-6 w-6" viewBox="0 0 18 18"
+                         fill="currentColor">
                         <path fill-rule="evenodd"
                               d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
                               clip-rule="evenodd"/></svg>
                 </i> New Category
             </span>
 
-                <div class="flex flex-col py-2"
-                     v-for="(taxonomyGroup, index) in taxonomyHierarchy[parentTaxonomy.name].children">
+            <div class="flex flex-col py-2"
+                 v-for="(taxonomyGroup, index) in taxonomyHierarchy[parentTaxonomy.name].children">
 
-                    <template v-for="(taxonomyData, name) in taxonomyGroup">
-                        <taxonomy-definition
-                            :taxonomy-name="name"
-                            :taxonomy-data="taxonomyData"
-                            :client-account="clientAccount"
-                            :parent-taxonomy="parentTaxonomy"
-                        />
+                <template v-for="(taxonomyData, name) in taxonomyGroup">
+                    <taxonomy-definition
+                        :taxonomy-name="name"
+                        :taxonomy-data="taxonomyData"
+                        :client-account="clientAccount"
+                        :parent-taxonomy="parentTaxonomy"
+                    />
 
-                    </template>
+                </template>
 
-                </div>
+            </div>
 
-                <span class="cursor-pointer p-1 text-xs rounded-md bg-blue-300 hover:bg-blue-400"
-                      v-if="$page.props.user_permissions.manageTaxonomies"
-                      @click="creatingTaxonomy=true"
-                >
+            <span class="cursor-pointer p-1 text-xs rounded-md bg-blue-300 hover:bg-blue-400"
+                  v-if="$page.props.user_permissions.manageTaxonomies"
+                  @click="creatingTaxonomy=true"
+            >
                 <i class="text-white w-5 inline-block">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="pt-3 h-6 w-6" viewBox="0 0 18 18" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="pt-3 h-6 w-6" viewBox="0 0 18 18"
+                         fill="currentColor">
                         <path fill-rule="evenodd"
                               d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
                               clip-rule="evenodd"/>
@@ -50,10 +52,16 @@
 
             <template #content>
                 <div class="mt-4">
-                    <jet-input type="text" class="mt-1 block w-3/4"
-                               autofocus
-                               :value="createForm.name"
-                               v-model="createForm.name"/>
+                    <AutoComplete
+                        v-model="createForm.name"
+                        :suggestions="suggestions"
+                        @complete="searchTaxonomies"
+                        placeholder=""/>
+
+                    <!--                    <jet-input type="text" class="mt-1 block w-3/4"
+                                                   autofocus
+                                                   :value="createForm.name"
+                                                   v-model="createForm.name"/>-->
 
                 </div>
             </template>
@@ -83,6 +91,7 @@ import JetInput from '@/Jetstream/Input'
 import JetInputError from '@/Jetstream/InputError'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import TaxonomyDefinition from "./TaxonomyDefinition";
+import AutoComplete from 'primevue/autocomplete/sfc';
 
 export default {
     name: "ChildTaxonomiesSection",
@@ -97,17 +106,19 @@ export default {
         JetInput,
         JetInputError,
         JetSecondaryButton,
+        AutoComplete,
     },
 
     props: [
         'parentTaxonomy',
         'taxonomyHierarchy',
-        'clientAccount'
+        'clientAccount',
     ],
 
     data() {
         return {
             creatingTaxonomy: false,
+            suggestions: [],
 
             confirmingTaxonomyDeletion: false,
             deletingTaxonomyId: null,
@@ -139,12 +150,36 @@ export default {
             }, {
                 bag: 'deleteTaxonomy'
             }),
-
-
         }
     },
 
+    computed: {
+        /*suggestedTaxonomyNames(){
+            let list = [];
+            for(var entry of this.taxonomyHierarchy[this.parentTaxonomy.name].unlinked) {
+                list.push({name: entry, label: entry});
+            }
+
+            return list;
+        }*/
+    },
+
     methods: {
+        searchTaxonomies(event) {
+            setTimeout(() => {
+                    if (!event.query.trim().length) {
+                        this.suggestions = [];
+                    } else {
+                        this.suggestions = [];
+
+                        for (var entry of this.taxonomyHierarchy[this.parentTaxonomy.name].unlinked) {
+                            if (entry.toLowerCase().includes(event.query.trim().toLowerCase()))
+                                this.suggestions.push(entry);
+                        }
+                    }
+                }, 250);
+        },
+
         storeTaxonomy() {
 
             console.log('create taxonomy ' + this.createForm.name);
@@ -153,12 +188,14 @@ export default {
                 preserveScroll: true,
                 onSuccess: () => this.cancelCreateTaxonomy(),
             });
-        },
+        }
+        ,
 
         cancelCreateTaxonomy() {
             this.creatingTaxonomy = false;
             this.createForm.name = null;
-        },
+        }
+        ,
 
         editTaxonomy(id, name) {
             console.log(`editing taxonomy ${id}: ${name}`);
@@ -166,14 +203,16 @@ export default {
             this.editForm.id = id;
             this.editForm.name = name;
             this.editingTaxonomyName = name; //keep original taxonomy for display in modal title
-        },
+        }
+        ,
 
         cancelEditTaxonomy() {
             this.editingTaxonomy = false;
             this.editingTaxonomyName = null
             this.editForm.id = null;
             this.editForm.name = null;
-        },
+        }
+        ,
 
         updateTaxonomy() {
             console.log('updating taxonomy ' + this.editForm.id);
@@ -182,20 +221,23 @@ export default {
                 preserveScroll: true,
                 onSuccess: () => this.cancelEditTaxonomy(),
             });
-        },
+        }
+        ,
 
         confirmTaxonomyDeletion(id, name) {
             console.log('confirming deleting ' + id + ' : ' + name);
             this.confirmingTaxonomyDeletion = true;
             this.deletingTaxonomyId = id;
             this.deletingTaxonomyName = name;
-        },
+        }
+        ,
 
         resetDeleteTaxonomy() {
             this.confirmingTaxonomyDeletion = false;
             this.deletingTaxonomyId = null;
             this.deletingTaxonomyName = null;
-        },
+        }
+        ,
 
         deleteTaxonomy() {
             console.log('delete taxonomy ' + this.deletingTaxonomyId);
@@ -204,7 +246,8 @@ export default {
                 preserveScroll: true,
                 onSuccess: () => this.resetDeleteTaxonomy(),
             });
-        },
+        }
+        ,
     }
 }
 </script>

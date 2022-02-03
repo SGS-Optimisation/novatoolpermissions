@@ -6,6 +6,7 @@ namespace App\Http\Controllers\PMs;
 
 use App\Http\Controllers\Controller;
 use App\Models\ClientAccount;
+use App\Models\Taxonomy;
 use App\Services\Taxonomy\Traits\TaxonomyBuilder;
 use Illuminate\Http\Request;
 use Laravel\Jetstream\Jetstream;

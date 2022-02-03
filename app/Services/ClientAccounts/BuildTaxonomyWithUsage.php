@@ -36,6 +36,11 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
 
                 $this->taxonomy_hierarchy[$top_taxonomy->name]['children'][] = static::processTaxonomy($taxonomy);
             }
+
+            $this->taxonomy_hierarchy[$top_taxonomy->name]['unlinked'] = $top_taxonomy->taxonomies()
+                ->whereDoesntHave('client_accounts', function ($query) use ($client_account) {
+                    return $query->whereIn('id', [$client_account->id]);
+                })->pluck('name')->all();
         }
 
         return $this;
