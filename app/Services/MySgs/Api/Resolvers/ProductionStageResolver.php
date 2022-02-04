@@ -25,7 +25,11 @@ class ProductionStageResolver
     {
         $detected_stages = [];
 
-        $latest_stage_id = max(\Arr::pluck($data, 'jobStageId'));
+        if(count($stages = \Arr::pluck($data, 'jobStageId')) == 0) {
+            return $detected_stages;
+        }
+
+        $latest_stage_id = max($stages);
 
         logger('found latest stage id: '.$latest_stage_id);
 
