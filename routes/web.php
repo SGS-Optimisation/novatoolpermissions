@@ -10,6 +10,7 @@ use App\Http\Controllers\PMs\Rules\RuleController;
 use App\Http\Controllers\PMs\Rules\RuleTaxonomyController;
 use App\Http\Controllers\PMs\TaxonomyController;
 use App\Http\Controllers\PMs\TeamController;
+use App\Http\Controllers\PMs\TeamInvitationController;
 use App\Http\Controllers\PMs\TermController;
 use Illuminate\Support\Facades\Route;
 
@@ -73,6 +74,9 @@ Route::name('pm.')
 
         Route::get('/', [PmHomeController::class, 'index'])
             ->name('landing');
+
+        Route::get('/team-invitations/{invitation}', [TeamInvitationController::class, 'accept'])
+            ->name('team-invitations.accept');
 
         Route::name('client-account.')
             ->group(function () {

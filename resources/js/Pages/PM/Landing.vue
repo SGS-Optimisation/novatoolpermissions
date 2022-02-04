@@ -15,24 +15,26 @@
                     <action-menu/>
                 </div>
             </div>
-
-
         </template>
 
         <div class="bg-white justify-around flex">
         <div class="flex flex-col w-4/5 py-12">
 
             <div class="pl-2 pr-8">
-                <h2 class="text-center bg-gray-100 font-semibold">Your teams</h2>
-                <div class="flex flex-wrap justify-center pt-1">
+                <h2 class="text-center bg-gray-100 font-semibold">Your Teams</h2>
+                <div class="flex flex-wrap justify-start pt-1">
                     <div class="p-3" v-for="team in myTeams">
-                        <client-account-link :team="team"/>
+                        <client-account-link :alwaysShowTeamName="true" :team="team"/>
+                    </div>
+
+                    <div class="p-3" v-for="invite in invitations">
+                        <client-account-link :alwaysShowTeamName="true" :team="invite.team" :invitation="invite"/>
                     </div>
                 </div>
             </div>
             <div class="px-2 mt-8">
-                <h2 class="text-center bg-gray-100 font-semibold">Other teams</h2>
-                <div class="flex flex-wrap justify-center pt-1">
+                <h2 class="text-center bg-gray-100 font-semibold">Other Teams</h2>
+                <div class="flex flex-wrap justify-start pt-1">
                     <div class="p-3" v-for="team in otherTeams">
                         <client-account-link :team="team"/>
                     </div>
@@ -44,7 +46,7 @@
 </template>
 
 <script>
-import {Head} from "@inertiajs/inertia-vue3";
+import {Head, Link} from "@inertiajs/inertia-vue3";
 import AppLayout from '@/Layouts/AppLayout'
 import Welcome from '@/Jetstream/Welcome'
 import JetNavLink from "@/Jetstream/NavLink";
@@ -57,10 +59,12 @@ export default {
         'team',
         'myTeams',
         'otherTeams',
+        'invitations',
     ],
 
     components: {
         Head,
+        Link,
         ClientAccountLink,
         ActionMenu,
         AppLayout,

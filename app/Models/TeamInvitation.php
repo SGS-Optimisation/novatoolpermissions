@@ -5,6 +5,11 @@ namespace App\Models;
 use Laravel\Jetstream\Jetstream;
 use Laravel\Jetstream\TeamInvitation as JetstreamTeamInvitation;
 
+/**
+ * Class TeamInvitation
+ * @package App\Models
+ * @mixin \Eloquent
+ */
 class TeamInvitation extends JetstreamTeamInvitation
 {
     /**

@@ -38,8 +38,10 @@ class TeamInvitation extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        return $this->markdown('jetstream::mail.team-invitation', ['acceptUrl' => URL::signedRoute('team-invitations.accept', [
-            'invitation' => $this->invitation,
-        ])])->subject(__('Team Invitation'));
+        return $this->markdown('jetstream::mail.team-invitation', [
+            'acceptUrl' => route('pm.team-invitations.accept', [
+                'invitation' => $this->invitation,
+            ])
+        ])->subject(__('Team Invitation'));
     }
 }
