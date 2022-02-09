@@ -52,6 +52,17 @@ class ProductionApi extends BaseApi
         return static::buildBaseUrl() . 'TechSpec/barcode/' . $jobVersionId;
     }
 
+    public static function techSpecColour($jobVersionId, $params = [])
+    {
+        logger('tech spec colour prod api');
+        return static::get('TechSpec/colour/', $jobVersionId, $params);
+    }
+
+    public static function techSpecColourRoute($jobVersionId)
+    {
+        return static::buildBaseUrl() . 'TechSpec/colour/' . $jobVersionId;
+    }
+
     public static function techSpecPrintProcess($jobVersionId, $params = [])
     {
         logger('tech spec print process prod api');

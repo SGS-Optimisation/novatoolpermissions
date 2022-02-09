@@ -60,6 +60,9 @@ class ConcurrentDataLoader extends DataLoader
             $pool->as('techSpecBarcode')->withHeaders($headers)->withToken($token)
                 ->get(ProductionApi::techSpecBarcodeRoute($jobVersionId)),
 
+            $pool->as('techSpecColour')->withHeaders($headers)->withToken($token)
+                ->get(ProductionApi::techSpecColourRoute($jobVersionId)),
+
             $pool->as('techSpecPrintProcess')->withHeaders($headers)->withToken($token)
                 ->get(ProductionApi::techSpecPrintProcessRoute($jobVersionId)),
 
@@ -95,6 +98,10 @@ class ConcurrentDataLoader extends DataLoader
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['techSpecBarcode'], false);
             });
+        $techSpecColour = Cache::remember(ProductionApi::techSpecColourRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+            function () use ($responses) {
+                return BaseApi::parseResponse($responses['techSpecColour'], false);
+            });
         $techSpecPrintProcess = Cache::remember(ProductionApi::techSpecPrintProcessRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['techSpecPrintProcess'], false);
@@ -116,6 +123,7 @@ class ConcurrentDataLoader extends DataLoader
         $job_metadata->jobItems = $jobItems;
         $job_metadata->jobTeam = $jobTeam;
         $job_metadata->techSpecBarcode = $techSpecBarcode;
+        $job_metadata->techSpecColour = $techSpecColour;
         $job_metadata->techSpecPrintProcess = $techSpecPrintProcess;
         $job_metadata->techSpecSimple = $techSpecSimple;
         $job_metadata->importedContent = $importedContent;
