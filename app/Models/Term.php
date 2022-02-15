@@ -36,6 +36,9 @@ use Jenssegers\Mongodb\Eloquent\SoftDeletes;
  * @method static \Database\Factories\TermFactory factory(...$parameters)
  * @property-read \Illuminate\Database\Eloquent\Collection|\Altek\Accountant\Models\Ledger[] $ledgers
  * @property-read int|null $ledgers_count
+ * @method static \Illuminate\Database\Query\Builder|Term onlyTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Term withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Term withoutTrashed()
  */
 class Term extends Model implements Recordable
 {

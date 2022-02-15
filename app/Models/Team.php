@@ -39,6 +39,8 @@ use Laravel\Jetstream\Team as JetstreamTeam;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $rules
  * @property-read int|null $rules_count
  * @method static Builder|Team whereRegion($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\TeamInvitation[] $teamInvitations
+ * @property-read int|null $team_invitations_count
  */
 class Team extends JetstreamTeam
 {

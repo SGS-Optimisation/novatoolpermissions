@@ -43,6 +43,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read int|null $root_taxonomies_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Team[] $teams
  * @property-read int|null $teams_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Taxonomy[] $account_structure_child_taxonomies
+ * @property-read int|null $account_structure_child_taxonomies_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Taxonomy[] $job_categorizations_child_taxonomies
+ * @property-read int|null $job_categorizations_child_taxonomies_count
  */
 class ClientAccount extends Model
 {

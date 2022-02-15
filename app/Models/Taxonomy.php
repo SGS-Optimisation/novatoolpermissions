@@ -50,6 +50,8 @@ use Altek\Accountant\Contracts\Recordable;
  * @method static Builder|Taxonomy children()
  * @property-read \Illuminate\Database\Eloquent\Collection|\Altek\Accountant\Models\Ledger[] $ledgers
  * @property-read int|null $ledgers_count
+ * @method static Builder|Taxonomy accountStructure()
+ * @method static Builder|Taxonomy topLevel()
  */
 class Taxonomy extends Model implements Recordable
 {

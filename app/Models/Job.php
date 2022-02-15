@@ -30,6 +30,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static Builder|Rule forClient()
  * @mixin \Eloquent
  * @method static \Database\Factories\JobFactory factory(...$parameters)
+ * @property int|null $client_account_id
+ * @property-read \App\Models\ClientAccount|null $clientAccount
+ * @method static Builder|Job whereClientAccountId($value)
  */
 class Job extends Model
 {
