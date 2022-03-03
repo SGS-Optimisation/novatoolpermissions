@@ -20,8 +20,9 @@ class JobRepository
                 'rules' => null,
                 'processing_mysgs' => true,
                 'error_mysgs' => false,
-                'client_found' => false,
                 'error_mysgs_reason' => null,
+                'client_found' => false,
+                'error_reason' => null,
             ],
         ]);
     }

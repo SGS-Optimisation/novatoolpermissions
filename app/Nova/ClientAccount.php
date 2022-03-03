@@ -78,6 +78,9 @@ class ClientAccount extends Resource
             Textarea::make(__('Alias'), 'alias')
                 ->hideFromIndex()
             ,
+            Textarea::make(__('JobTeam'), 'jobteam')
+                ->hideFromIndex()
+            ,
             Image::make(__('Image'), 'image')->thumbnail(function () {
                 return $this->image;
             })->squared()

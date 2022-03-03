@@ -1,6 +1,8 @@
+
 # Changelog
 
 ---
+- [v2.2.5](#v2.2.5)
 - [v2.2.4](#v2.2.4)
 - [v2.2.3](#v2.2.3)
 - [v2.2.2](#v2.2.2)
@@ -9,6 +11,14 @@
 - [v2.1.0](#v2.1.0)
 - [v2.0.0](#v2.0.0)
 
+<a name="v2.2.5"></a>
+## v2.2.5 (2022-03-03)
+- Adds optional client account matching using jobteam
+- Improved client account creation with taxonomy selection and team owner
+- Adds suggestion of existing taxonomies when adding in client account
+- Improved and simplified team invite
+- Fix for when jobs have no stage
+  
 <a name="v2.2.4"></a>
 ## v2.2.4 (2022-01-25)
 - Added Matomo API integration

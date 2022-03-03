@@ -4,6 +4,7 @@
 namespace App\Operations\Jobs;
 
 
+use App\Exceptions\MultipleClientAccountsMatchedException;
 use App\Models\ClientAccount;
 use App\Models\Job;
 use App\Operations\BaseOperation;
@@ -34,7 +35,16 @@ class MatchClientAccountOperation extends BaseOperation
 
         try {
             $customer_name = $this->job->metadata->basicDetails->retailer->customerName;
+            $jobteam = null;
+
             logger('searching for client name '.$customer_name);
+            if ($this->job->metadata->jobTeam) {
+                $jobteam = collect($this->job->metadata->jobTeam)
+                    ->where('primaryJobTeam', true)
+                    ->first()->teamName;
+
+                logger('searching for team name '.$jobteam);
+            }
 
             if (!$customer_name || trim($customer_name) == '') {
                 $customer_name = ['[NOT SET]'];
@@ -45,13 +55,13 @@ class MatchClientAccountOperation extends BaseOperation
              * Naive search from customer name and user provided aliases
              */
 
-            $client = $this->findFromAlias($customer_name);
+            $client = $this->findFromAlias($customer_name, $jobteam);
 
             /*
              * Let's bust out the warehoused data
              */
             if (!$client) {
-                $client = $this->findFromWarehousedData($customer_name);
+                $client = $this->findFromWarehousedData($customer_name, $jobteam);
             }
 
             if ($client) {
@@ -62,6 +72,11 @@ class MatchClientAccountOperation extends BaseOperation
             } else {
                 throw new \Exception('Client not found');
             }
+        } catch (MultipleClientAccountsMatchedException $multipleMatches) {
+            logger($multipleMatches->getMessage());
+            $job_metadata->client_found = false;
+            $job_metadata->client = ['name' => $customer_name ?? '[Unset]'];
+            $job_metadata->error_reason = $multipleMatches->getMessage();
         } catch (\Exception $e) {
             logger($e->getMessage());
             $job_metadata->client_found = false;
@@ -74,9 +89,9 @@ class MatchClientAccountOperation extends BaseOperation
     }
 
 
-    public static function findFromAlias($customer_name)
+    public static function findFromAlias($customer_name, $jobteam = null)
     {
-        logger('searching to client account with name '.$customer_name);
+        logger('searching for client account with name '.$customer_name);
         $connection = config('database.default');
         $driver = config("database.connections.{$connection}.driver");
 
@@ -90,18 +105,39 @@ class MatchClientAccountOperation extends BaseOperation
         }
         $searchData = ['%'.Str::lower($customer_name).'%'];
 
-        return ClientAccount::where('name', 'LIKE', '%'.$customer_name.'%')
+        /** @var ClientAccount[] $matches */
+        $matches = ClientAccount::where('name', 'LIKE', '%'.$customer_name.'%')
             ->orWhereRaw($search, $searchData)
-            ->first();
+            ->get();
 
+        if (count($matches) === 1) {
+            return $matches[0];
+        }
+
+        if (count($matches) > 1) {
+            if ($jobteam) {
+                foreach ($matches as $match) {
+                    if (Str::contains(Str::lower($match->jobteam), Str::lower($jobteam))) {
+                        return $match;
+                    }
+                }
+            }
+            throw new MultipleClientAccountsMatchedException('Multiple client accounts match. Please add a jobteam to refine the match. Accounts: '
+                .implode(', ', $matches->pluck('name')->all())
+                .'.  Detected jobteam for this job: '.$jobteam
+                .'.  Common end user: '.$customer_name
+            );
+        }
+
+        return null;
     }
 
-    protected function findFromWarehousedData($customer_name)
+    protected function findFromWarehousedData($customer_name, $jobteam = null)
     {
         $portfolio_name = (new PortfolioGroupNameFinder($customer_name))->handle();
 
         if ($portfolio_name) {
-            $customer = $this->findFromAlias($portfolio_name);
+            $customer = $this->findFromAlias($portfolio_name, $jobteam);
 
             if ($customer) {
                 return $customer;

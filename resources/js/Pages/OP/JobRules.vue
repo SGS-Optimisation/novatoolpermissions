@@ -21,34 +21,40 @@
             </div>
         </template>
 
-        <div v-if="searching || !currentJob.hasOwnProperty('metadata')">
-            <loader></loader>
-        </div>
-        <div v-else-if="currentJob.metadata.processing_mysgs">
-            <loader></loader>
-        </div>
-        <div v-else-if="currentJob.metadata.error_mysgs">
-            <div class="h-64 bg-white flex justify-center align-middle">
-                <p class="mt-16 text-red-700">There was an error loading data for the job "{{ currentJob.job_number }}".
-                    <br><span v-if="currentJob.metadata.error_mysgs_reason">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 bg-white relative">
+            <div class="flex flex-col sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px pb-2 mb-2 min-h-screen ">
+
+                <div v-if="searching || !currentJob.hasOwnProperty('metadata')">
+                    <loader></loader>
+                </div>
+                <div v-else-if="currentJob.metadata.processing_mysgs">
+                    <loader></loader>
+                </div>
+                <div v-else-if="currentJob.metadata.error_mysgs">
+                    <div class="h-64 bg-white flex justify-center align-middle">
+                        <p class="mt-16 text-red-700">There was an error loading data for the job
+                            "{{ currentJob.job_number }}".
+                            <br><span v-if="currentJob.metadata.error_mysgs_reason">
                         {{ currentJob.metadata.error_mysgs_reason }}
                     </span>
-                    <span v-else>Please try again later.</span>
-                </p>
-            </div>
-        </div>
-        <div v-else-if="currentJob.metadata.client_found === false">
-            <div class="h-64 bg-white flex justify-center align-middle">
-                <p class="mt-16 text-red-700">
-                    "{{ currentJob.metadata.client.name }}" was not matched with any client account.
-                </p>
-            </div>
-        </div>
-        <div v-else>
-            <job-identification :job="currentJob"/>
+                            <span v-else>Please try again later.</span>
+                        </p>
+                    </div>
+                </div>
+                <div v-else-if="currentJob.metadata.client_found === false">
+                    <div class="h-64 bg-white flex justify-center align-middle">
+                        <Message severity="error" :closable="false">
+                            <span v-if="currentJob.metadata.error_reason">
+                                {{ currentJob.metadata.error_reason }}<br>
+                            </span>
+                            <span v-else>"{{ currentJob.metadata.client.name }}" was not matched with any client account.</span>
+                        </Message>
 
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 bg-white relative">
-                <div class="flex flex-col sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px pb-2 mb-2 min-h-screen ">
+                    </div>
+                </div>
+                <div v-else>
+                    <job-identification :job="currentJob"/>
+
 
                     <!-- All Filters -->
                     <div class="sticky z-50 flex flex-col w-full" style="top:107px;">
@@ -237,6 +243,7 @@ import ViewRuleGroup from "@/Components/OP/ViewRuleGroup";
 import JobSearch from "@/Components/OP/JobSearchForm";
 import moment from "moment";
 import JobIdentification from "@/Components/OP/JobIdentification";
+import Message from 'primevue/message/sfc';
 
 export default {
     props: [
@@ -305,19 +312,22 @@ export default {
         }
     },
 
-    created(){
+    created() {
         console.log('tracking enabled: ' + (this.$page.props.features.matomo_tracking_enabled ? 'yes' : 'no'));
 
-        if(this.$page.props.features.matomo_tracking_enabled) {
-            var _paq = window._paq = window._paq || [];
+        if (this.$page.props.features.matomo_tracking_enabled) {
+            window._paq = window._paq || [];
             (() => {
-                var u=this.$page.props.features.matomo_host;
-                window._paq.push(['setTrackerUrl', u+'/matomo.php']);
+                var u = this.$page.props.features.matomo_host;
+                window._paq.push(['setTrackerUrl', u + '/matomo.php']);
                 window._paq.push(['setSiteId', this.$page.props.features.matomo_site_id]);
                 window._paq.push(['setUserId', this.$page.props.user.email]);
                 window._paq.push(['enableHeartBeatTimer', 10]);
-                var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-                g.type='text/javascript'; g.async=true; g.src=u+'/matomo.js'; s.parentNode.insertBefore(g,s);
+                var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+                g.type = 'text/javascript';
+                g.async = true;
+                g.src = u + '/matomo.js';
+                s.parentNode.insertBefore(g, s);
             })();
         }
     },
@@ -361,17 +371,17 @@ export default {
                 this.jobNumber
             ]);
 
-            if(this.currentJob.metadata.hasOwnProperty('jobTeam')) {
+            if (this.currentJob.metadata.hasOwnProperty('jobTeam')) {
                 let jobTeams = this.currentJob.metadata.jobTeam;
                 let activeJobTeam = null;
-                for(let i in jobTeams) {
-                    if(jobTeams[i].inUse) {
+                for (let i in jobTeams) {
+                    if (jobTeams[i].inUse) {
                         activeJobTeam = jobTeams[i].teamName;
                         console.log('found active job team ' + activeJobTeam);
                     }
                 }
 
-                if(activeJobTeam){
+                if (activeJobTeam) {
                     _paq.push(['setCustomDimension', 1, activeJobTeam]);
                 }
             }
@@ -612,6 +622,7 @@ export default {
         Loader,
         ViewRule,
         JobSearch,
+        Message,
     },
 }
 </script>

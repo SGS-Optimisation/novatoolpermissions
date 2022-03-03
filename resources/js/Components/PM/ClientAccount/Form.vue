@@ -42,6 +42,14 @@
                                 <jet-input-error :message="form.errors.alias" class="mt-2"/>
                             </div>
 
+                            <div class="col-span-6 sm:col-span-8">
+                                <jet-label for="jobteam" value="Jobteam"/>
+                                <textarea class="form-input rounded-md shadow-sm mt-1 block w-full" id="jobteam"
+                                          placeholder="One item per line"
+                                          v-model="form.jobteam"></textarea>
+                                <jet-input-error :message="form.errors.jobteam" class="mt-2"/>
+                            </div>
+
                             <div class="col-span-3 sm:col-span-4">
                                 <jet-label for="image" value="Logo"/>
                                 <input type="file" id="image" accept="image/*"
@@ -122,6 +130,7 @@ export default {
                 name: this.client.name,
                 slug: this.client.slug,
                 alias: this.client.alias,
+                jobteam: this.client.jobteam,
                 image: this.client.image,
                 taxonomy: [],
                 owner_id: null,
