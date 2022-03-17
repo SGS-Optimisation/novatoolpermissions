@@ -18,7 +18,13 @@ class ProductionStageResolver
         ],
         'PF' => [
             '0 - Preflight'
-        ]
+        ],
+        'SIGN-OFF' =>[
+            'Sign Off',
+        ],
+        'CA' =>[
+            'Prod - Creative Services',
+        ],
     ];
 
     public static function handle($data)
