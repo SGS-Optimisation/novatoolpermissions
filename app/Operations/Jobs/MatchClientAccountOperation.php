@@ -117,7 +117,10 @@ class MatchClientAccountOperation extends BaseOperation
         if (count($matches) > 1) {
             if ($jobteam) {
                 foreach ($matches as $match) {
-                    if (Str::contains(Str::lower($match->jobteam), Str::lower($jobteam))) {
+                    if (Str::contains(
+                        Str::lower(trim($match->jobteam)),
+                        Str::lower(trim($jobteam)))
+                    ) {
                         return $match;
                     }
                 }
