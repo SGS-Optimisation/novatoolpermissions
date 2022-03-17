@@ -43,6 +43,10 @@ class JobRepository
         return $job;
     }
 
+    /**
+     * @param $job_number
+     * @return Job|null
+     */
     public static function findByJobNumber($job_number)
     {
         $job = Job::whereJobNumber($job_number)->first();

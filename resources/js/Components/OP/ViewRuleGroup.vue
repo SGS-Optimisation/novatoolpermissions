@@ -30,7 +30,15 @@ import ViewRule from "@/Components/OP/ViewRule";
 export default {
     name: "ViewRuleGroup",
     components: {ViewRule},
-    props: ['group', 'rules', 'filterFlag', 'filterStagePa', 'filterStagePp', 'filterStagePf', 'filterOption', 'job'],
+    props: [
+        'group',
+        'rules',
+        'filterFlag',
+        'filterOption',
+        'filterStageStates',
+        'stages',
+        'job',
+    ],
     data() {
         return {}
     },
@@ -57,8 +65,16 @@ export default {
 
             if (this.filterStage.length) {
                 filteredRules = filteredRules.filter(rule => {
-                    return _.every(rule.job_categorizations_terms, (term) => term.taxonomy.name !== 'Stage')
-                        || _.some(rule.job_categorizations_terms, (term) => this.filterStage.includes(term.name));
+                    return (
+                        _.every(
+                            rule.job_categorizations_terms,
+                            (term) => term.taxonomy.name !== 'Stage'
+                        )
+                        || _.some(
+                            rule.job_categorizations_terms,
+                            (term) => term.taxonomy.name === 'Stage' && this.filterStage.includes(term.name)
+                        )
+                    );
                 });
             }
 
@@ -67,14 +83,11 @@ export default {
 
         filterStage() {
             let stages = [];
-            if (this.filterStagePa) {
-                stages.push('PA');
-            }
-            if (this.filterStagePp) {
-                stages.push('PP');
-            }
-            if (this.filterStagePf) {
-                stages.push('PF');
+
+            for (let stage in this.filterStageStates) {
+                if (this.filterStageStates[stage]) {
+                    stages.push(stage);
+                }
             }
 
             return stages;

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * App\Models\ClientAccount
@@ -174,6 +175,17 @@ class ClientAccount extends Model
     public function omnipresent_rules()
     {
         return $this->rules()->isOmnipresent();
+    }
+
+    public function stages()
+    {
+        return Cache::tags(['taxonomy'])->remember('client-'.$this->id.'-stages', 3600, function () {
+            $stage = Taxonomy::whereName(nova_get_setting('stage_taxonomy_name', 'Stage'))->first();
+            return $stage->terms()->whereHas('client_accounts', function ($query) {
+                $query->where('id', $this->id);
+            })->get()->pluck('name')->all();
+        });
+
     }
 
     /*public function getImageAttribute()

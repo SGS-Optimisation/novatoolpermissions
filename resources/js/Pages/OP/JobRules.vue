@@ -61,14 +61,14 @@
                         <!-- Stage filter -->
                         <div class="flex flex-grow text-xs mx-2 mb-2" role="group" v-if="showStage()">
                             <button
-                                v-for="(stage, index) in stages"
+                                v-for="(stage, index) in processedStages"
                                 @click="filterStageButtonClicked(stage)"
                                 class="flex-grow hover:bg-blue-400 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
                                 :class="[
-                                    {'rounded-l-lg' : index === 0 },
-                                    { 'bg-blue-500 text-white' : $data[`filterStage${stage}`] },
-                                    { 'bg-white text-blue-500' : !$data[`filterStage${stage}`] },
-                                    {'bg-green-100' : !$data[`filterStage${stage}`] && currentJob.metadata.hasOwnProperty('stages') && currentJob.metadata.stages.includes(stage) },
+                                    { 'rounded-l-lg' : index === 0 },
+                                    { 'bg-blue-500 text-white' : stageStates[stage] },
+                                    { 'bg-white text-blue-500' : !stageStates[stage] },
+                                    { 'bg-green-100' : !stageStates[stage] && currentJob.metadata.hasOwnProperty('stages') && currentJob.metadata.stages.includes(stage) },
                                 ]">
                                 {{ stage }}
                             </button>
@@ -127,10 +127,9 @@
                                              :job="currentJob.job_number"
                                              :group="ruleGroup[0]"
                                              :filter-option="filterOptionTracker"
+                                             :filter-stage-states="stageStates"
+                                             :stages="processedStages"
                                              :filter-flag="filterFlag"
-                                             :filter-stage-pa="filterStagePA"
-                                             :filter-stage-pp="filterStagePP"
-                                             :filter-stage-pf="filterStagePF"
                                              @on-click-view="openRuleModal"/>
                         </div>
 
@@ -250,7 +249,8 @@ export default {
         'team',
         'job',
         'jobNumber',
-        'rules'
+        'rules',
+        'stages'
     ],
 
     data() {
@@ -266,16 +266,17 @@ export default {
 
             sortOption: null,
             filterOption: null,
-            filterStagePA: false,
-            filterStagePP: false,
-            filterStagePF: false,
             filterOptionTracker: null,
+
+            stageStates: {},
+
             filterText: "",
             filterObject: {},
 
             /* Contains alls the terms used under job categorizations taxonomies, for indexing */
             artworkStructureTerms: [],
-            stages: ['PA', 'PP', 'PF'],
+
+            all_stages: this.$page.props.all_job_stages,
 
             /* Contains terms grouped by taxonomy under job categoizations, for filtering */
             taxonomies: {},
@@ -293,6 +294,8 @@ export default {
             }),
 
             linkTrackingEnabled: false,
+
+            showRuleId: false,
         }
     },
 
@@ -334,6 +337,20 @@ export default {
 
     mounted() {
         this.initJobLoaded();
+
+        this._keyListener = function (e) {
+            if (e.key === "l" && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault(); // present "Save Page" from getting triggered.
+                console.log('shortcut ctrl+ detected');
+                this.toggleRuleIdVisibility();
+            }
+        };
+
+        document.addEventListener('keydown', this._keyListener.bind(this));
+    },
+
+    beforeDestroy() {
+        document.removeEventListener('keydown', this._keyListener);
     },
 
     destroyed() {
@@ -351,6 +368,17 @@ export default {
             } else {
                 this.waitMode();
             }
+        },
+
+        setupStages() {
+            this.stageStates = {}
+            for(let stage of this.processedStages) {
+                this.stageStates[stage] = false;
+            }
+        },
+
+        toggleRuleIdVisibility() {
+           this.showRuleId = !this.showRuleId;
         },
 
         track() {
@@ -398,9 +426,10 @@ export default {
             this.searchedRules = [..._.orderBy(this.currentRules, 'name', 'asc')];
             this.searching = false;
 
+            this.setupStages();
             if (this.currentJob.metadata.hasOwnProperty('stages') && this.currentJob.metadata.stages.length) {
                 for (let index in this.currentJob.metadata.stages) {
-                    this.$data[`filterStage${this.currentJob.metadata.stages[index]}`] = true;
+                    this.stageStates[this.currentJob.metadata.stages[index]] = true;
                 }
                 this.$forceUpdate();
             }
@@ -548,7 +577,7 @@ export default {
 
         filterStageButtonClicked(stage) {
             console.log('filter stage button clicked', stage);
-            this.$data[`filterStage${stage}`] = !this.$data[`filterStage${stage}`];
+            this.stageStates[stage] = !this.stageStates[stage];
             this.$forceUpdate();
         },
 
@@ -559,15 +588,7 @@ export default {
         },
 
         resetStage() {
-            //console.log('resetting to initial stage', this.filterStage);
-            this.filterStagePA = false;
-            this.filterStagePP = false;
-            this.filterStagePF = false;
-
-            /*for (let index in this.currentJob.metadata.stages) {
-                this.$data[`filterStage${this.currentJob.metadata.stages[index]}`] = true;
-            }*/
-
+            this.setupStages();
             this.$forceUpdate();
         },
 
@@ -603,6 +624,10 @@ export default {
         displayedRules() {
             return _.filter(Object.entries(this.rulesByTaxonomies), this.filterObject[this.filterOption ? this.filterOption : 'all'])
         },
+
+        processedStages() {
+            return this.stages.length ? this.stages : this.all_stages;
+        }
     },
 
     components: {

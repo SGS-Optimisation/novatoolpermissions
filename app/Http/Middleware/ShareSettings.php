@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Taxonomy;
 use Closure;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -30,6 +31,12 @@ class ShareSettings
                     'matomo_site_id' => nova_get_setting('matomo_site_id'),
                 ],
                 'loader_messages' => config('loader'),
+
+                'all_job_stages' => \Cache::tags(['taxonomy'])
+                    ->remember('all-job-stages', 3600, function (){
+                        return Taxonomy::whereName(nova_get_setting('stage_taxonomy_name', 'Stage'))
+                            ->first()->terms->pluck('name')->all();
+                    })
             ]);
         }
         return $next($request);

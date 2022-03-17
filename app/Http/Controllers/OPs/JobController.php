@@ -34,12 +34,14 @@ class JobController extends Controller
             new JsonResponse([
                 'rules' => $rules,
                 'job' => $job,
+                'stages' => optional($job->clientAccount)->stages(),
                 'processing_mysgs' => $job->metadata->processing_mysgs,
                 'error_mysgs' => $job->metadata->error_mysgs,
             ], 200)
             : Jetstream::inertia()->render($request, 'OP/JobRules', [
                 'team' => $request->user()->currentTeam,
                 'jobNumber' => $jobNumber,
+                'stages' => optional($job->clientAccount)->stages(),
                 'job' => $job,
                 'rules' => $rules
             ]);
