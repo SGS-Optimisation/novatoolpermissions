@@ -247,10 +247,10 @@ import Message from 'primevue/message/sfc';
 export default {
     props: [
         'team',
-        'job',
         'jobNumber',
+        'job',
         'rules',
-        'stages'
+        'stages',
     ],
 
     data() {
@@ -626,7 +626,7 @@ export default {
         },
 
         processedStages() {
-            return this.stages.length ? this.stages : this.all_stages;
+            return this.stages && this.stages.length ? this.stages : this.all_stages;
         }
     },
 

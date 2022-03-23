@@ -30,21 +30,20 @@ class JobController extends Controller
             $rules = RuleFilter::handle($job);
         }
 
+        $data = [
+            'team' => $request->user()->currentTeam,
+            'jobNumber' => $jobNumber,
+            'job' => $job,
+            'rules' => $rules
+        ];
+
+        if ($job->clientAccount) {
+            $data['stages'] = optional($job->clientAccount)->stages();
+        }
+
         return $request->wantsJson() ?
-            new JsonResponse([
-                'rules' => $rules,
-                'job' => $job,
-                'stages' => optional($job->clientAccount)->stages(),
-                'processing_mysgs' => $job->metadata->processing_mysgs,
-                'error_mysgs' => $job->metadata->error_mysgs,
-            ], 200)
-            : Jetstream::inertia()->render($request, 'OP/JobRules', [
-                'team' => $request->user()->currentTeam,
-                'jobNumber' => $jobNumber,
-                'stages' => optional($job->clientAccount)->stages(),
-                'job' => $job,
-                'rules' => $rules
-            ]);
+            new JsonResponse($data, 200)
+            : Jetstream::inertia()->render($request, 'OP/JobRules', $data);
     }
 
     public function status(Request $request, $jobNumber)
