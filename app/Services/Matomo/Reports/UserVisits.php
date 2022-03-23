@@ -41,10 +41,12 @@ class UserVisits
             }, $client));
         }
 
-        logger('searching for live visits with params: ' . print_r($params, true));
+        logger('searching for live visits with params: '.print_r($params, true));
 
 
-        $this->raw_data = Cache::remember('live-visits-v2-'.print_r($params, true), Carbon::now()->addMinutes(15),
+        $this->raw_data = Cache::remember(
+            'live-visits-v2-'.print_r($params, true),
+            Carbon::now()->addMinutes(nova_get_setting('matomo_cache_duration')),
             function () use ($params) {
                 return Piwik::getLive()->getLastVisitsDetails(100000, $params);
             });

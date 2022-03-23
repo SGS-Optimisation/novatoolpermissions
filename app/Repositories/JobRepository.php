@@ -8,6 +8,7 @@ use App\Events\Jobs\NewJobSearched;
 use App\Listeners\Jobs\LoadMySgsData;
 use App\Models\Job;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class JobRepository
 {
@@ -59,6 +60,10 @@ class JobRepository
             && $job->created_at->lessThan(Carbon::now()->subMinute())
         ) {
             logger($job_number.' was in error, will prune and recreate');
+
+            $cache_key = 'rules-job-'.$job->job_number;
+            Cache::forget($cache_key);
+
             $job->delete();
             $job = static::createFromJobNumber($job_number);
             event(new NewJobSearched($job));

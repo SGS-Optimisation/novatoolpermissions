@@ -10,6 +10,7 @@ use App\Services\MySgs\Api\IntegrationsApi;
 use App\Services\MySgs\Api\JobApi;
 use App\Services\MySgs\Api\ProductionApi;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
@@ -19,7 +20,7 @@ class ConcurrentDataLoader extends DataLoader
 
     public function handle()
     {
-        logger('concurrent data loader for job ' . $this->job->job_number);
+        logger('concurrent data loader for job '.$this->job->job_number);
         /*
         * Essential as this returns the jobVersionId, required for various other endpoints
         */
@@ -73,44 +74,54 @@ class ConcurrentDataLoader extends DataLoader
                 ->get(IntegrationsApi::importedContentRoute($jobVersionId)),
         ]);
 
-        $basicDetails = Cache::remember(JobApi::basicDetailsRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+        $basicDetails = Cache::remember(JobApi::basicDetailsRoute($jobVersionId).print_r([], true),
+            Carbon::now()->addMinutes(nova_get_setting('mysgs_api_cache_duration')),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['basicDetails'], false);
             });
 
-        $extraDetails = Cache::remember(JobApi::extraDetailsRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+        $extraDetails = Cache::remember(JobApi::extraDetailsRoute($jobVersionId).print_r([], true),
+            Carbon::now()->addMinutes(nova_get_setting('mysgs_api_cache_duration')),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['extraDetails'], false);
             });
-        $jobContacts = Cache::remember(JobApi::jobContactsRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+        $jobContacts = Cache::remember(JobApi::jobContactsRoute($jobVersionId).print_r([], true),
+            Carbon::now()->addMinutes(nova_get_setting('mysgs_api_cache_duration')),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['jobContacts'], false);
             });
-        $jobItems = Cache::remember(ProductionApi::jobItemsRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+        $jobItems = Cache::remember(ProductionApi::jobItemsRoute($jobVersionId).print_r([], true),
+            Carbon::now()->addMinutes(nova_get_setting('mysgs_api_cache_duration')),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['jobItems'], false);
             });
-        $jobTeam = Cache::remember(JobApi::jobTeamRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+        $jobTeam = Cache::remember(JobApi::jobTeamRoute($jobVersionId).print_r([], true),
+            Carbon::now()->addMinutes(nova_get_setting('mysgs_api_cache_duration')),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['jobTeam'], false);
             });
-        $techSpecBarcode = Cache::remember(ProductionApi::techSpecBarcodeRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+        $techSpecBarcode = Cache::remember(ProductionApi::techSpecBarcodeRoute($jobVersionId).print_r([], true),
+            Carbon::now()->addMinutes(nova_get_setting('mysgs_api_cache_duration')),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['techSpecBarcode'], false);
             });
-        $techSpecColour = Cache::remember(ProductionApi::techSpecColourRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+        $techSpecColour = Cache::remember(ProductionApi::techSpecColourRoute($jobVersionId).print_r([], true),
+            Carbon::now()->addMinutes(nova_get_setting('mysgs_api_cache_duration')),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['techSpecColour'], false);
             });
-        $techSpecPrintProcess = Cache::remember(ProductionApi::techSpecPrintProcessRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+        $techSpecPrintProcess = Cache::remember(ProductionApi::techSpecPrintProcessRoute($jobVersionId).print_r([],
+                true), Carbon::now()->addMinutes(nova_get_setting('mysgs_api_cache_duration')),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['techSpecPrintProcess'], false);
             });
-        $techSpecSimple = Cache::remember(ProductionApi::techSpecSimpleRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+        $techSpecSimple = Cache::remember(ProductionApi::techSpecSimpleRoute($jobVersionId).print_r([], true),
+            Carbon::now()->addMinutes(nova_get_setting('mysgs_api_cache_duration')),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['techSpecSimple'], false);
             });
-        $importedContent = Cache::remember(IntegrationsApi::importedContentRoute($jobVersionId).print_r([], true), config('mysgs.default_cache_duration'),
+        $importedContent = Cache::remember(IntegrationsApi::importedContentRoute($jobVersionId).print_r([], true),
+            Carbon::now()->addMinutes(nova_get_setting('mysgs_api_cache_duration')),
             function () use ($responses) {
                 return BaseApi::parseResponse($responses['importedContent'], false);
             });

@@ -7,6 +7,7 @@ namespace App\Services\Taxonomy\Traits;
 use App\Models\ClientAccount;
 use App\Services\ClientAccounts\BuildTaxonomyLists;
 use App\Services\ClientAccounts\BuildTaxonomyWithUsage;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 trait TaxonomyBuilder
@@ -44,7 +45,7 @@ trait TaxonomyBuilder
 
         return Cache::tags('taxonomy')->remember(
             $client_account->slug.'-taxonomy-usage-data',
-            60*60*24*30,
+            Carbon::now()->addHours(nova_get_setting('taxonomy_cache_duration')),
             function () use ($client_account) {
 
                 $taxonomy_builder = (new BuildTaxonomyWithUsage($client_account))->handle();

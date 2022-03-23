@@ -65,7 +65,9 @@ class JobCreationGlobal extends Trend
     {
         $cache_key = 'stats-jobs-global-' . $this->view_by . $this->column . $this->range . $this->cumulative . $this->function;
 
-        return Cache::remember($cache_key, 60*60*24, function() {
+        return Cache::remember($cache_key,
+            Carbon::now()->addMinutes(nova_get_setting('matomo_cache_duration')),
+            function() {
             $query = Job::clientFound();
 
             $request = new Request();

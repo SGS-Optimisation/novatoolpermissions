@@ -68,6 +68,30 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         ], [], 'features');
 
         NovaSettings::addSettingsFields([
+            Panel::make('Cache Durations', [
+                Number::make('Job Rules', 'job_rules_cache_duration')
+                    ->min(0)
+                    ->default(5)
+                    ->help('In minutes'),
+
+                Number::make('Taxonomy', 'taxonomy_cache_duration')
+                    ->min(0)
+                    ->default(720)
+                    ->help('In hours'),
+
+                Number::make('Matomo', 'matomo_cache_duration')
+                    ->min(0)
+                    ->default(15)
+                    ->help('In minutes'),
+
+                Number::make('MySGS API', 'mysgs_api_cache_duration')
+                    ->min(0)
+                    ->default(5)
+                    ->help('In minutes'),
+            ])
+        ], [], 'cache-durations');
+
+        NovaSettings::addSettingsFields([
             Panel::make('Reporting', [
                 Textarea::make('Emails to send job reports to.', 'job_report_emails')->help('Separate entries by new lines.'),
             ])

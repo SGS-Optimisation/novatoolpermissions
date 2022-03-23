@@ -11,6 +11,7 @@ use App\Models\Taxonomy;
 use App\Models\Term;
 use App\Operations\Jobs\MatchClientAccountOperation;
 use App\Services\MySgs\Api\EloquentHelpers\JobFieldsMapper;
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -29,7 +30,7 @@ class RuleFilter
         if ($cached_rules === null || !count($cached_rules)) {
             $cached_rules = \Cache::remember(
                 $cache_key,
-                config('mysgs.default_cache_duration'),
+                Carbon::now()->addMinutes(nova_get_setting('job_rules_cache_duration')),
                 function () use ($job) {
                     $start = microtime(true);
 

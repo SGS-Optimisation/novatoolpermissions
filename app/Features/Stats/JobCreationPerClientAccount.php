@@ -76,7 +76,9 @@ class JobCreationPerClientAccount extends Trend
     {
         $cache_key = 'stats-jobs-' . $client_account->name . $this->view_by . $this->column . $this->range . $this->cumulative . $this->function;
 
-        return Cache::remember($cache_key, 60*60*24, function() use ($client_account) {
+        return Cache::remember($cache_key,
+            Carbon::now()->addMinutes(nova_get_setting('matomo_cache_duration')),
+            function() use ($client_account) {
             $query = Job::forClient($client_account);
 
             $request = new Request();
