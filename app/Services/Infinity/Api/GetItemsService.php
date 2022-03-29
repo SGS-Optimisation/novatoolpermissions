@@ -62,8 +62,9 @@ class GetItemsService extends BaseApi
 
         foreach ($this->items as $item) {
             $sections = collect($item->values);
+            //logger(print_r($sections, true));
 
-            $name = $content = $listname = $attachments = null;
+            $name = $content = $listname = $listid = $attachments = null;
 
             $nameSection = $sections->firstWhere('attribute.name', 'Name');
             if ($nameSection) {
@@ -78,7 +79,9 @@ class GetItemsService extends BaseApi
             $listSection = $sections->firstWhere('attribute.name', 'List');
             if ($listSection) {
                 try {
-                    $listname = $this->listnames->firstWhere('id', $listSection->data[0])->name;
+                    $list = $this->listnames->firstWhere('id', $listSection->data[0]);
+                    $listname = $list->name;
+                    $listid = $list->id;
                 }catch(\Exception $e){}
             }
 
@@ -96,6 +99,7 @@ class GetItemsService extends BaseApi
             $task = [
                 'id' => $item->id,
                 'content' => $content,
+                'listid' => $listid,
                 'list' => $listname,
                 'name' => $name,
                 'attachments' => $attachments,

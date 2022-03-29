@@ -38,7 +38,7 @@ class ImportInfinityTask implements ShouldQueue
     public function handle()
     {
         $task = $this->task;
-        $content = $task['content'];
+        $content = $task['content'] ?? $task['name'];
 
         if ($task['attachments']) {
             foreach ($task['attachments'] as $attachment) {
