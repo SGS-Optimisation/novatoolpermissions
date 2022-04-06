@@ -63,6 +63,7 @@ class ImportInfinityTaskList implements ShouldQueue
 
         $existing_rules_same_name = $this->client->rules()
             ->where('name', $this->listname)
+            ->whereNull('metadata->infinity_import->id')
             ->where('state', DraftState::class)->get();
 
         if (count($existing_rules_same_name)) {
