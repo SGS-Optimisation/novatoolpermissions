@@ -42,6 +42,12 @@ class ImportInfinityTaskList implements ShouldQueue
     {
         $content = "";
 
+        $listid = $this->tasks[0]['listid'];
+
+        if (DB::table('rules')->where('metadata->infinity_import->id', $listid)->count() > 0) {
+            return;
+        }
+
         foreach ($this->tasks as $task) {
             $content .= !empty($task['content']) ? $task['content'] : $task['name'];
 
@@ -72,17 +78,15 @@ class ImportInfinityTaskList implements ShouldQueue
             }
         }
 
-        if (DB::table('rules')->where('metadata->infinity_import->id', $task['listid'])->count() == 0) {
-            $this->client->rules()->create([
-                'content' => $content,
-                'name' => $this->listname,
-                'metadata' => [
-                    'infinity_import' => [
-                        'id' => $task['listid'],
-                        'date' => Carbon::now(),
-                    ]
+        $this->client->rules()->create([
+            'content' => $content,
+            'name' => $this->listname,
+            'metadata' => [
+                'infinity_import' => [
+                    'id' => $task['listid'],
+                    'date' => Carbon::now(),
                 ]
-            ]);
-        }
+            ]
+        ]);
     }
 }
