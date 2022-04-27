@@ -97,13 +97,13 @@ class MatchClientAccountOperation extends BaseOperation
 
         switch ($driver) {
             case 'sqlsrv':
-                $search = 'LOWER("alias") LIKE ?';
+                $search = 'LOWER("alias") LIKE ?'. " ESCAPE '\'";
                 break;
             case 'mysql':
             default:
                 $search = 'LOWER(alias) LIKE ?';
         }
-        $searchData = ['%'.Str::lower($customer_name).'%'];
+        $searchData = ['%'.Str::lower( str_replace('[', '\[', $customer_name)).'%'];
 
         /** @var ClientAccount[] $matches */
         $matches = ClientAccount::where('name', 'LIKE', '%'.$customer_name.'%')
