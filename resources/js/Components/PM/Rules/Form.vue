@@ -45,14 +45,21 @@
                                         :name="'state-'+index"
                                         type="radio"
                                         class="hidden"
+                                        :disabled="state.requiresNoError && hasTaggingError"
                                         :value="state.name">
-                                    <label class="ml-1 flex items-center cursor-pointer" :for="'state-'+index"
+                                    <label :for="'state-'+index"
+                                           class="ml-1 flex items-center cursor-pointer disabled:bg-gray-300"
                                            @click="stateChanged(state)">
                                             <span
                                                 class="w-8 h-8 inline-block mr-2 rounded-full border border-grey flex-no-shrink"></span>
                                         {{ state.name }}
                                     </label>
                                 </div>
+                                <InlineMessage v-if="hasTaggingError && refusedChange"
+                                               @close="refusedChange=false"
+                                               severity="warn">
+                                    There are tagging errors
+                                </InlineMessage>
                             </div>
                             <div class="flex flex-col mt-3" v-if="requiresAssignees">
                                 <h4 class="h4">Reviewers</h4>
@@ -167,6 +174,8 @@
 import {defineComponent} from "vue";
 import {Quill, VueEditor} from "vue3-editor";
 import ImageResize from 'quill-image-resize';
+import InlineMessage from 'primevue/inlinemessage/sfc';
+import Message from 'primevue/message/sfc';
 import Multiselect from '@vueform/multiselect';
 import JetButton from '@/Jetstream/Button'
 import JetConfirmationModal from "@/Jetstream/ConfirmationModal";
@@ -184,6 +193,8 @@ export default defineComponent({
     name: "RuleForm",
     components: {
         VueEditor,
+        InlineMessage,
+        Message,
         Multiselect,
         JetActionMessage,
         JetButton,
@@ -245,6 +256,8 @@ export default defineComponent({
                 bag: 'restoreRule',
                 resetOnSuccess: false,
             }),
+
+            refusedChange: false,
         }
     },
 
@@ -252,12 +265,38 @@ export default defineComponent({
         suggestedReviewers() {
             return _.orderBy(_.filter(this.defaultPublishers, (p) => !this.form.assignees.includes(p.value)), 'suggestion_level', 'desc');
         },
+
+        hasTaggingError() {
+            let noTerms = (this.rule.terms.length === 0
+                || (this.rule.terms.length === 1 && itemElem.terms[0].name === 'No term')
+            );
+
+            if (noTerms) {
+                return true;
+            }
+
+            let hasStructure = _.some(this.rule.terms, function (term) {
+                return term.hasOwnProperty('taxonomy') && term.taxonomy.name === 'Artwork Structure Elements';
+            });
+
+            let atLeastOneTermPerRootTaxonomy = _.uniq(_.map(this.rule.terms, function (term) {
+                return term.hasOwnProperty('taxonomy') && term.taxonomy.parent.name;
+            })).length === this.topTaxonomies.length;
+
+            return !hasStructure || !atLeastOneTermPerRootTaxonomy;
+        }
     },
 
     methods: {
         stateChanged(state) {
+            if(state.requiresNoError && this.hasTaggingError) {
+                this.refusedChange = true;
+                return;
+            }
+
             this.form.state = state.name;
             this.requiresAssignees = state.requiresAssignee;
+            this.refusedChange = false;
         },
 
         assignSuggestedPublisher(assignee) {

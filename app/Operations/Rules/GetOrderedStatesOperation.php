@@ -69,7 +69,8 @@ class GetOrderedStatesOperation extends BaseOperation
             return [
                 'name' => $state->getValue(),
                 'order' => $state->order(),
-                'requiresAssignee' => $state->requiresAssignee
+                'requiresAssignee' => $state->requiresAssignee,
+                'requiresNoError' => $state->requiresNoError,
             ];
         })->sortBy(function ($state, $key) {
             return $state['order'];

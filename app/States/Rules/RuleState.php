@@ -14,6 +14,7 @@ abstract class RuleState extends State
     abstract public static function order(): string;
 
     public $requiresAssignee = false;
+    public $requiresNoError = false;
 
     public static function config(): StateConfig
     {
