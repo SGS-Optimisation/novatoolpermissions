@@ -269,7 +269,7 @@ export default defineComponent({
         hasTaggingError() {
             let noTerms = (!this.rule.hasOwnProperty('terms')
                 || this.rule.terms.length === 0
-                || (this.rule.terms.length === 1 && itemElem.terms[0].name === 'No term')
+                || (this.rule.terms.length === 1 && this.rule.terms[0].name === 'No term')
             );
 
             if (noTerms) {
