@@ -129,6 +129,8 @@ class RuleFilter
                                         }
 
                                         foreach ($mysgsValue as $index => $mysgsValue_single) {
+                                            $mysgsValue_single = trim($mysgsValue_single);
+
                                             if (empty($mysgsValue_single)) {
                                                 continue;
                                             }
