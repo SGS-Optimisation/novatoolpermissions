@@ -18,7 +18,7 @@ class CreateTermService
     public function __construct(
         public string|int|ClientAccount $client,
         public string|int|Taxonomy $taxonomy,
-        public string $term_name,
+        public string $term_line,
         public bool $auto_aliasing = false
     ) {
 
@@ -41,8 +41,12 @@ class CreateTermService
 
     public function handle($sync = true, $clear_cache = true)
     {
+        $term_and_aliases = array_map('trim', explode(',', $this->term_line));
+
+        $term_name = array_shift($term_and_aliases);
+
         /** @var Term $term */
-        $term = $this->taxonomy->terms()->withTrashed()->firstOrCreate(['name' => $this->term_name]);
+        $term = $this->taxonomy->terms()->withTrashed()->firstOrCreate(['name' => $term_name]);
 
         $restored = false;
         if ($term->deleted_at) {
@@ -57,7 +61,7 @@ class CreateTermService
         $this->term = $term;
 
         if (!$restored && $this->auto_aliasing) {
-            $this->makeAliases();
+            $this->makeAliases($term_and_aliases);
         }
 
         if ($clear_cache) {
@@ -68,12 +72,12 @@ class CreateTermService
         return [$term, $restored];
     }
 
-    public function makeAliases(): void
+    public function makeAliases($custom_aliases): void
     {
         $name = trim($this->term->name);
         $term_config = $this->term->config;
 
-        $aliases = [];
+        $aliases = $this->term->config['aliases'] ?? [];
 
         /*
          * Start cleanup
@@ -98,7 +102,7 @@ class CreateTermService
             $aliases[] = join(' ', $parts);
         }
 
-        $term_config['aliases'] = $aliases;
+        $term_config['aliases'] = array_merge($aliases, $custom_aliases);
         $this->term->config = $term_config;
         $this->term->save();
 

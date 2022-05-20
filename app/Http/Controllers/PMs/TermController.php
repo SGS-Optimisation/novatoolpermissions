@@ -28,16 +28,16 @@ class TermController extends Controller
 
         if ($request->get('multiple')) {
             logger('creating multiple terms');
-            $term_names = preg_split('/\r\n|[\r\n]/', $request->get('names'));
+            $term_lines = preg_split('/\r\n|[\r\n]/', $request->get('names'));
         } else {
             logger('creating single term');
-            $term_names = [$request->name];
+            $term_lines = [$request->name];
         }
 
         $terms = collect();
-        foreach ($term_names as $term_name) {
+        foreach ($term_lines as $term_line) {
             /** @var Term $term */
-            list($term, $restore) = (new CreateTermService($client_account, $taxonomy, $term_name, true))->handle(false, false);
+            list($term, $restore) = (new CreateTermService($client_account, $taxonomy, $term_line, true))->handle(false, false);
 
             $terms->add($term);
         }
