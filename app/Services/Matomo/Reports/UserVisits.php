@@ -77,7 +77,10 @@ class UserVisits
                         $country = $visit->country ?? 'Error';
                         $time = $time ?? $pageView->serverTimePretty ?? null;
                         $duration = $duration ?? $pageView->timeSpent ?? null;
-                        $durationPretty = $durationPretty ?? $pageView->timeSpentPretty ?? null;
+                        if($pageView->timeSpent && $pageView->timeSpent > $duration) {
+                            $duration = $pageView->timeSpent;
+                            $durationPretty = $pageView->timeSpentPretty;
+                        }
                     }
 
                     // TODO: Legacy, to remove
