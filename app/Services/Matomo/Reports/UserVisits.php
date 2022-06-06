@@ -76,8 +76,8 @@ class UserVisits
                         $jobteam = $jobteam ?? $pageView->dimension2 ?? null;
                         $country = $visit->country ?? 'Error';
                         $time = $time ?? $pageView->serverTimePretty ?? null;
-                        $duration = $duration ?? $pageView->timeSpent ?? null;
-                        if($pageView->timeSpent && $pageView->timeSpent > $duration) {
+                        //$duration = $duration ?? $pageView->timeSpent ?? null;
+                        if (property_exists($pageView, 'timeSpent') && $pageView->timeSpent > $duration) {
                             $duration = $pageView->timeSpent;
                             $durationPretty = $pageView->timeSpentPretty;
                         }
