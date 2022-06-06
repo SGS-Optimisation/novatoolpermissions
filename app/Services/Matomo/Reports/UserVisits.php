@@ -61,6 +61,10 @@ class UserVisits
 
             foreach ($visits as $visit) {
 
+                if (!property_exists($visit, 'actionDetails') || !$visit->actionDetails) {
+                    continue;
+                }
+
                 $groupedPageViews = collect($visit->actionDetails)->groupBy('idpageview');
 
                 foreach ($groupedPageViews as $pageViewId => $pageViews) {
@@ -77,7 +81,7 @@ class UserVisits
                     }
 
                     // TODO: Legacy, to remove
-                    if(!$jobteam) {
+                    if (!$jobteam) {
                         $jobteam = $visit->dimension1 ?? 'Error';
                     }
 
