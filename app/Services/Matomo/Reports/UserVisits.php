@@ -53,36 +53,40 @@ class UserVisits
 
         $groupedVisits = collect($this->raw_data)->groupBy('userId');
 
+        //dd($this->raw_data);
+
         foreach ($groupedVisits as $user => $visits) {
 
             $this->visitors[$user] = ['visits' => []];
 
             foreach ($visits as $visit) {
-                $job_number = 'Not Found';
-                $client = 'Not Found';
-                $time = $visit->lastActionDateTime ?? 'Error';
-                $duration = $visit->visitDurationPretty ?? 'Error';
-                $jobteam = $visit->dimension1 ?? 'Error';
-                $country = $visit->country ?? 'Error';
 
-                if (isset($visit->actionDetails[0])
-                    && $visit->actionDetails[0]->type === 'action') {
-                    $job_number = $visit->actionDetails[0]->pageTitle;
+                $groupedPageViews = collect($visit->actionDetails)->groupBy('idpageview');
 
-                    if (isset($visit->actionDetails[1])) {
-                        $client = $visit->actionDetails[1]->eventAction ?? 'Not Found';
+                foreach ($groupedPageViews as $pageViewId => $pageViews) {
+                    $job_number = $client = $jobteam = $country = $time = $duration = $durationPretty = null;
+
+                    foreach ($pageViews as $pageView) {
+                        $job_number = $job_number ?? $pageView->pageTitle ?? null;
+                        $client = $client ?? $pageView->eventAction ?? null;
+                        $jobteam = $jobteam ?? $pageView->dimension2 ?? null;
+                        $country = $visit->country ?? 'Error';
+                        $time = $time ?? $pageView->serverTimePretty ?? null;
+                        $duration = $duration ?? $pageView->timeSpent ?? null;
+                        $durationPretty = $durationPretty ?? $pageView->timeSpentPretty ?? null;
                     }
 
-                } elseif (isset($visit->actionDetails[0])
-                    && $visit->actionDetails[0]->type === 'event') {
-                    $job_number = $visit->actionDetails[0]->eventName;
-                    $client = $visit->actionDetails[0]->eventAction;
+                    // TODO: Legacy, to remove
+                    if(!$jobteam) {
+                        $jobteam = $visit->dimension1 ?? 'Error';
+                    }
+
+                    $entry = compact('user', 'job_number', 'client', 'jobteam',
+                        'country', 'time', 'duration', 'durationPretty');
+
+                    $this->visits_list[] = $entry;
+                    $this->visitors[$user]['visits'][] = $entry;
                 }
-
-                $entry = compact('user', 'job_number', 'client', 'jobteam', 'country', 'time', 'duration');
-
-                $this->visits_list[] = $entry;
-                $this->visitors[$user]['visits'][] = $entry;
             }
         }
 

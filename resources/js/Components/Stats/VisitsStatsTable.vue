@@ -13,7 +13,7 @@
                     <div class="col-span-1 sm:col-span-1" v-if="shouldHaveGrouping">
                         <jet-label class="text-xs" for="grouping" value="Grouping"/>
                         <select class="text-xs" id="grouping" v-model="groupBy">
-                            <option v-for="(label, key) in grouping" :value="key">{{label}}</option>
+                            <option v-for="(key, label) in grouping" :value="key">{{label}}</option>
                         </select>
                     </div>
 
@@ -140,7 +140,7 @@ export default {
         return {
             expandedRowGroups: null,
 
-            groupBy: Object.keys(this.grouping)[0],
+            groupBy: Object.values(this.grouping)[0],
 
             form: this.$inertia.form({
                 level: this.level,

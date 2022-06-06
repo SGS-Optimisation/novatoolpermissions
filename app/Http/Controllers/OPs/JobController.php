@@ -22,7 +22,7 @@ class JobController extends Controller
      */
     public function show(Request $request, $jobNumber)
     {
-        $rules = [];
+        $rules = null;
         $job = JobRepository::findByJobNumber($jobNumber);
 
         if (!$job->metadata->processing_mysgs && !$job->metadata->error_mysgs) {

@@ -111,8 +111,8 @@ class StatsController extends Controller
     public function visits(Request $request, $client_account_slug = null)
     {
         $grouping =  [
-            'user' => 'User',
-            'job_number' => 'Job Number',
+            'User' => 'user',
+            'Job Number' => 'job_number',
         ];
 
         return $this->buildVisitsResponse($request, $client_account_slug, $grouping);
@@ -122,7 +122,7 @@ class StatsController extends Controller
     public function visitsByJobTeam(Request $request, $client_account_slug = null)
     {
         $grouping =  [
-            'jobteam' => 'JobTeam',
+            'JobTeam' => 'jobteam',
         ];
 
         return $this->buildVisitsResponse($request, $client_account_slug, $grouping, 'By JobTeam');
@@ -131,7 +131,7 @@ class StatsController extends Controller
     public function visitsByCountry(Request $request, $client_account_slug = null)
     {
         $grouping =  [
-            'country' => 'Country',
+            'Country' => 'country',
         ];
 
         return $this->buildVisitsResponse($request, $client_account_slug, $grouping, 'By Country');

@@ -36,7 +36,7 @@ return [
     /*
      *  The Site ID you want to use
      */
-    'site_id'       => '2',
+    'site_id'       => env('MATOMO_SITE_ID', 2),
 
     /*
      * Indicates if cURL should verify the server certificate

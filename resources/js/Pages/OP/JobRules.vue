@@ -387,32 +387,36 @@ export default {
 
             console.log('tracking');
 
+            let activeJobTeam = [];
+            if (this.currentJob.metadata.hasOwnProperty('jobTeam')) {
+                let jobTeams = this.currentJob.metadata.jobTeam;
+
+                for (let i in jobTeams) {
+                    if (jobTeams[i].inUse) {
+                        activeJobTeam.push(jobTeams[i].teamName);
+                        console.log('found active job team ' + jobTeams[i].teamName);
+                    }
+                }
+            }
+
+            //_paq.push(['setCustomDimension', 2, activeJobTeam]);
+
             window._paq.push(['setCustomUrl', window.location.origin + '/' + this.jobNumber]);
             window._paq.push(['setDocumentTitle', this.jobNumber]);
 
             window._paq.push(['trackPageView', this.jobNumber, {
                 'client': this.currentJob.metadata.client.name,
+                'dimension2': activeJobTeam
             }]);
             window._paq.push(['trackEvent',
                 'OP Viewed Job',
                 this.currentJob.metadata.client.name,
-                this.jobNumber
+                this.jobNumber,
+                '',
+                {
+                    'dimension2': activeJobTeam.join('|'),
+                }
             ]);
-
-            if (this.currentJob.metadata.hasOwnProperty('jobTeam')) {
-                let jobTeams = this.currentJob.metadata.jobTeam;
-                let activeJobTeam = null;
-                for (let i in jobTeams) {
-                    if (jobTeams[i].inUse) {
-                        activeJobTeam = jobTeams[i].teamName;
-                        console.log('found active job team ' + activeJobTeam);
-                    }
-                }
-
-                if (activeJobTeam) {
-                    _paq.push(['setCustomDimension', 1, activeJobTeam]);
-                }
-            }
 
             if (!this.linkTrackingEnabled) {
                 window._paq.push(['enableLinkTracking']);

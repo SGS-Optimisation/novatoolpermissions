@@ -42,7 +42,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::put('/current-team', [CurrentTeamController::class, 'update'])
         ->name('current-team.update');
 
-    Route::get('/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
+    Route::get('/{jobNumber}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
         ->name('job.rules')
         ->where('jobNumber', '[0-9\-]+');
 
@@ -50,7 +50,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         ->name('job.rules.status')
         ->where('jobNumber', '[0-9\-]+');
 
-    Route::post('/{jobNumber?}', [\App\Http\Controllers\OPs\JobController::class, 'search'])
+    Route::post('/{jobNumber}', [\App\Http\Controllers\OPs\JobController::class, 'search'])
         ->name('job.search')
         ->where('jobNumber', '[0-9\-]+');
 
