@@ -30,4 +30,12 @@ class IntegrationsApi extends BaseApi
         return static::buildBaseUrl() . 'ImportedContent/job/2/' . $jobVersionId;
     }
 
+    public static function importedContentV2($jobVersionId, $params = [])
+    {
+        logger('variable imported content integrations api with params: ' . $jobVersionId . ' + ' . print_r($params, true));
+        $ics = $params['importedContentSource'];
+
+        return static::get("ImportedContent/job/$ics/", $jobVersionId, $params);
+    }
+
 }

@@ -2,14 +2,18 @@
 
 namespace App\Nova;
 
+use App\Operations\FieldMappings\GetMethodsPerApi;
+use Hubertnnn\LaravelNova\Fields\DynamicSelect\DynamicSelect;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use OptimistDigital\NovaSortable\Traits\HasSortableRows;
+use Orlyapps\NovaBelongsToDepend\NovaBelongsToDepend;
 
 class FieldMapping extends Resource
 {
@@ -35,7 +39,12 @@ class FieldMapping extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'api_name',
+        'api_version',
+        'api_action',
+        'api_params',
+        'field_path',
+        'resolver_name',
     ];
 
     /**
@@ -46,6 +55,10 @@ class FieldMapping extends Resource
      */
     public function fields(Request $request)
     {
+
+        $apiMethods = GetMethodsPerApi::handle();
+        $apiMethods[""] = ["[Save first]"];
+
         return [
             ID::make(__('Id'), 'id')
                 ->rules('required')
@@ -56,11 +69,11 @@ class FieldMapping extends Resource
                 ->searchable()
                 ->sortable()
             ,
-            Select::make(__('Api Name'), 'api_name')
+            DynamicSelect::make(__('Api Name'), 'api_name')
                 ->options([
                     'JobApi' => 'Job',
                     'ProductionApi' => 'Production',
-                    'CustomerApi' => 'Customer',
+                    //'CustomerApi' => 'Customer',
                     'IntegrationsApi' => 'Integrations',
                 ])
                 ->rules('required')
@@ -73,9 +86,17 @@ class FieldMapping extends Resource
                 ->default('1.0')
                 ->sortable()
             ,
-            Text::make(__('Api Action'), 'api_action')
+            DynamicSelect::make(__('Api Action'), 'api_action')
                 ->rules('required')
+                ->dependsOn(['api_name'])
+                ->options(function($values) use ($apiMethods){
+                    $methods = $apiMethods[$values['api_name']];
+                    return array_combine($methods, $methods);
+                })
                 ->sortable()
+            ,
+            Code::make(__('Api Params'), 'api_params')
+                ->json()
             ,
             Text::make(__('Field Path'), 'field_path')
                 ->rules('required')

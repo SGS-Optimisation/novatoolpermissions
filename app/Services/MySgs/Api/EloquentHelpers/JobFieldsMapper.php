@@ -51,16 +51,16 @@ class JobFieldsMapper
         /*
          * Check if data from API is already stored and still fresh
          */
-        if (isset($job->metadata->{$mapping->api_action})
-            && $job->metadata->{$mapping->api_action} != []
-            && $job->metadata->{$mapping->api_action} != ''
+        if (isset($job->metadata->{$mapping->title})
+            && $job->metadata->{$mapping->title} != []
+            && $job->metadata->{$mapping->title} != ''
             && $job->updated_at->isAfter(Carbon::now()->subHours(1))
         ) {
             //logger('using stored data for mapping ' . $mapping->id);
-            $data = $job->metadata->{$mapping->api_action};
+            $data = $job->metadata->{$mapping->title};
         } else {
             logger('no stored data for mapping ' . $mapping->id);
-            $api_data = (new MysgsApiCaller($job))->handle($mapping->api_name, $mapping->api_action);
+            $api_data = (new MysgsApiCaller($job))->handle($mapping);
             $data = $api_data->response;
         }
 
@@ -74,6 +74,7 @@ class JobFieldsMapper
         }catch (\Exception $e) {
             \Log::error('error running mapping ' . $this->mapping->id );
             \Log::error($e->getMessage());
+            \Log::error(join("\n", $e->getTrace()));
             $value = null;
         }
 
