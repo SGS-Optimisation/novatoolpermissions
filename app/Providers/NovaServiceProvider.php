@@ -10,10 +10,12 @@ use App\Nova\Metrics\NewUsers;
 use App\Nova\Metrics\PublishedRules;
 use App\Nova\Metrics\RulesPerAccount;
 use App\Nova\Metrics\RulesPerWeek;
+use App\Services\MySgs\Api\Resolvers\ProductionStageResolver;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
@@ -55,6 +57,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         NovaSettings::addSettingsFields([
             Text::make('Stage Taxonomy Name', 'stage_taxonomy_name')
                 ->required()->default('Stage'),
+
+            Code::make('Stage Config', 'stage_config')->json()
+                ->default(json_encode(ProductionStageResolver::$stages))
+                ->required()
         ], [], 'taxonomy');
 
         NovaSettings::addSettingsFields([
