@@ -100,7 +100,7 @@ class JobFieldsMapper
                 $dataToResolve = '';
             }
             elseif(count($this->accumulator) == 1) {
-                $dataToResolve = $this->accumulator[0];
+                $dataToResolve = explode('#', $this->accumulator[0]);
             }
         }
 
