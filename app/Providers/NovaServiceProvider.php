@@ -61,7 +61,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             Code::make('Stage Config', 'stage_config')->json()
                 ->default(json_encode(ProductionStageResolver::$stages))
                 ->required()
-            ->getHelpText('Array to JSON converter: https://wtools.io/convert-php-array-to-json')
+            //->getHelpText('Array to JSON converter: https://wtools.io/convert-php-array-to-json')
         ], [], 'taxonomy');
 
         NovaSettings::addSettingsFields([
