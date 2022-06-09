@@ -4,6 +4,7 @@
 namespace App\Services\MySgs\Api\EloquentHelpers;
 
 
+use App\Models\FieldMapping;
 use App\Models\Job;
 use App\Repositories\JobRepository;
 
@@ -32,7 +33,7 @@ class MysgsApiCaller
 
     public function generateUrl($apiName, $apiAction)
     {
-        logger('generating api url call ' . $apiName  . '::' . $apiAction . ' on job ' . $this->job->id);
+        logger('generating api url call '.$apiName.'::'.$apiAction.' on job '.$this->job->id);
 
     }
 
@@ -42,20 +43,33 @@ class MysgsApiCaller
      * @param $apiAction
      * @return MysgsApiCaller
      */
-    public function handle($apiName, $apiAction)
+    public function handle($apiName, $apiAction = null, $apiParams = null)
     {
-        logger('handling api call ' . $apiName  . '::' . $apiAction . ' on job ' . $this->job->id);
+        $fieldMapping = null;
+        if (!is_string($apiName) && get_class($apiName) == FieldMapping::class) {
+            $fieldMapping = $apiName;
 
-        $apiclass = 'App\Services\MySgs\Api\\' . $apiName;
-        $api = new $apiclass;
-        $param = static::getApiParam($apiName, $apiAction, $this->job);
+            $apiName = $fieldMapping->api_name;
+            $apiAction = $fieldMapping->api_action;
+            $apiParams = $fieldMapping->api_params;
+        }
+
+        logger('handling api call '.$apiName.'::'.$apiAction.' on job '.$this->job->id);
+
+        $api_class = 'App\Services\MySgs\Api\\'.$apiName;
+        $api = new $api_class;
+        $id_param = static::getApiIdParam($apiName, $apiAction, $this->job);
 
 
-        $this->response = $api::$apiAction($param);
+        $this->response = $api::$apiAction($id_param, $apiParams);
 
         $job_metadata = $this->job->metadata;
 
-        $job_metadata->$apiAction = $this->response;
+        if ($fieldMapping) {
+            $job_metadata->{$fieldMapping->title} = $this->response;
+        } else {
+            $job_metadata->$apiAction = $this->response;
+        }
 
         $this->job->metadata = $job_metadata;
         $this->job->save();
@@ -64,11 +78,12 @@ class MysgsApiCaller
     }
 
 
-    public static function getApiParam($apiName, $function, $job) {
+    public static function getApiIdParam($apiName, $function, $job)
+    {
         /*
          * Build the appropriate Api object
          */
-        $apiclass = 'App\Services\MySgs\Api\\' . $apiName;
+        $apiclass = 'App\Services\MySgs\Api\\'.$apiName;
         $api = new $apiclass;
 
         /*

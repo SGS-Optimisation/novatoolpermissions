@@ -16,6 +16,7 @@ use Spatie\EloquentSortable\SortableTrait;
  * @property string $api_name
  * @property string|null $api_version
  * @property string $api_action
+ * @property array $api_params
  * @property string $field_path
  * @property string|null $resolver_name
  * @property int $taxonomy_id
@@ -52,14 +53,14 @@ class FieldMapping extends Model implements Sortable
         'api_name',
         'api_version',
         'api_action',
+        'api_params',
         'field_path',
         'resolver_name',
         'taxonomy_id'
     ];
 
     protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'api_params' => 'array',
     ];
 
     public $sortable = [
@@ -70,12 +71,34 @@ class FieldMapping extends Model implements Sortable
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function taxonomy(){
+    public function taxonomy()
+    {
         return $this->belongsTo(Taxonomy::class);
     }
 
     public function getSlugAttribute()
     {
-        return \Str::snake($this->api_name . '_' . $this->api_action);
+        $params_str = "";
+
+        if ($this->api_params) {
+            foreach ($this->api_params as $k => $v) {
+                $params_str .= "[$k=$v]";
+            }
+        }
+        return \Str::snake($this->api_name.'_'.$this->api_action.'_'.$params_str);
     }
+
+    public function getTitleAttribute()
+    {
+        $params_str = "";
+
+        if ($this->api_params) {
+            foreach ($this->api_params as $k => $v) {
+                $params_str .= "[$k=$v]";
+            }
+        }
+        return \Str::camel($this->api_action.' '.$params_str);
+    }
+
+
 }

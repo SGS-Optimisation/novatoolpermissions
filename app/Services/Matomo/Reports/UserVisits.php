@@ -71,7 +71,7 @@ class UserVisits
                     $job_number = $client = $jobteam = $country = $time = $duration = $durationPretty = null;
 
                     foreach ($pageViews as $pageView) {
-                        $job_number = $job_number ?? $pageView->pageTitle ?? null;
+                        $job_number = $job_number ?? $pageView->pageTitle ?? $pageView->eventName ?? null;
                         $client = $client ?? $pageView->eventAction ?? null;
                         $jobteam = $jobteam ?? $pageView->dimension2 ?? null;
                         $country = $visit->country ?? 'Error';
@@ -81,6 +81,11 @@ class UserVisits
                             $duration = $pageView->timeSpent;
                             $durationPretty = $pageView->timeSpentPretty;
                         }
+                    }
+
+                    if(!$duration) {
+                        $duration = $visit->visitDuration;
+                        $durationPretty = $visit->visitDurationPretty;
                     }
 
                     // TODO: Legacy, to remove

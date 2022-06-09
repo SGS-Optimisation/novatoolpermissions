@@ -19,19 +19,33 @@ class ProductionStageResolver
         'PF' => [
             '0 - Preflight'
         ],
-        'SIGN-OFF' =>[
-            'Sign Off',
+
+        'Hybrid' => [
+            '0 - Hybrid PA/PP',
+            '01 - Hybrid PA/PP',
         ],
-        'CA' =>[
-            'Prod - Creative Services',
+
+        '3D' => [
+            'Create 3D',
+            '0 - 3D',
+            '01 - 3D',
         ],
+
+        'Retouch' => [
+            'Retouch'
+        ],
+
+        'Released' => [
+            'Printer File Release',
+        ]
+
     ];
 
     public static function handle($data)
     {
         $detected_stages = [];
 
-        if(count($stages = \Arr::pluck($data, 'jobStageId')) == 0) {
+        if (count($stages = \Arr::pluck($data, 'jobStageId')) == 0) {
             return $detected_stages;
         }
 
@@ -43,8 +57,8 @@ class ProductionStageResolver
             return $value->jobStageId == $latest_stage_id;
         });
 
-        if(count($latest_stage)) {
-            foreach($latest_stage as $stage) {
+        if (count($latest_stage)) {
+            foreach ($latest_stage as $stage) {
                 foreach ($stage->jobTasks as $task) {
                     static::checkTaskStage($task, $detected_stages);
                 }
@@ -53,14 +67,15 @@ class ProductionStageResolver
 
         $detected_stages = array_values(array_unique($detected_stages));
 
-        logger('detected stages:' . print_r($detected_stages, true));
+        logger('detected stages:'.print_r($detected_stages, true));
 
         return $detected_stages;
     }
 
     protected static function checkTaskStage($task, &$detected_stages)
     {
-        foreach(static::$stages as $stage => $names) {
+        $stages = json_decode(nova_get_setting('stage_config'), true);
+        foreach ($stages as $stage => $names) {
             if (\Str::startsWith($task->productionTaskName, $names)) {
                 $detected_stages[] = $stage;
             }
