@@ -388,16 +388,25 @@ export default {
             console.log('tracking');
 
             let activeJobTeam = [];
+            let activeMatchingJobTeams = [];
+
             if (this.currentJob.metadata.hasOwnProperty('jobTeam')) {
                 let jobTeams = this.currentJob.metadata.jobTeam;
+                let userJobTeams = this.$page.props.user.jobteams;
 
                 for (let i in jobTeams) {
                     if (jobTeams[i].inUse) {
                         activeJobTeam.push(jobTeams[i].teamName);
                         console.log('found active job team ' + jobTeams[i].teamName);
+
+                        if(userJobTeams.includes(jobTeams[i].teamName)) {
+                            activeMatchingJobTeams.push(jobTeams[i].teamName);
+                        }
                     }
                 }
             }
+
+            var selectedJobTeams = activeMatchingJobTeams.length ? activeMatchingJobTeams : activeJobTeam;
 
             //_paq.push(['setCustomDimension', 2, activeJobTeam]);
 
@@ -406,7 +415,7 @@ export default {
 
             window._paq.push(['trackPageView', this.jobNumber, {
                 'client': this.currentJob.metadata.client.name,
-                'dimension2': activeJobTeam
+                'dimension2': selectedJobTeams.join('|')
             }]);
             window._paq.push(['trackEvent',
                 'OP Viewed Job',
@@ -414,7 +423,7 @@ export default {
                 this.jobNumber,
                 '',
                 {
-                    'dimension2': activeJobTeam.join('|'),
+                    'dimension2': selectedJobTeams.join('|'),
                 }
             ]);
 

@@ -66,6 +66,7 @@ use Altek\Accountant\Contracts\Identifiable;
  * @property string|null $job_title
  * @property string|null $office_location
  * @property string|null $mobile_phone
+ * @property string[] $jobteams
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereGivenName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereJobTitle($value)
@@ -86,7 +87,7 @@ class User extends Authenticatable implements Identifiable
      * @var array
      */
     protected $fillable = [
-        'name', 'given_name', 'surname', 'job_title', 'email', 'password',
+        'name', 'given_name', 'surname', 'job_title', 'email', 'password', 'jobteams',
     ];
 
     /**
@@ -108,6 +109,7 @@ class User extends Authenticatable implements Identifiable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'jobteams' => 'array',
     ];
 
     /**
