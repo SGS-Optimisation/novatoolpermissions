@@ -42,16 +42,18 @@ class PopulateUserJobTeams extends Command
         $builder = (new BuildUserTeams)->handle();
 
         /** @var User $user */
-        foreach(User::lazy(100) as $user) {
+        foreach (User::lazy(100) as $user) {
             $member = $builder->allMembers
                 ->where('firstName', $user->given_name)
                 ->where('lastName', $user->surname)
                 ->first();
 
-            if($member) {
+            if ($member) {
                 $user->jobteams = $member->teams;
-                $user->save();
+            } else {
+                $user->jobteams = [];
             }
+            $user->save();
         }
 
         return 0;
