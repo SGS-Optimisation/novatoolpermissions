@@ -29,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         \Metrogistics\AzureSocialite\UserFactory::userCallback(function($new_user){
+            $new_user->jobteams = [];
             $new_user->save();
 
             $new_user->ownedTeams()->save(Team::forceCreate([
