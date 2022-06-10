@@ -36,6 +36,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('rules:flagged:remind')->weeklyOn(1, '8:00');
         $schedule->command('cache:clear')->lastDayOfMonth();
         $schedule->command('cache:warmup')->hourly();
+        $schedule->command('user:jobteam:populate')->dailyAt('0:00');
 
     }
 
