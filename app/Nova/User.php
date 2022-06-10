@@ -5,6 +5,7 @@ namespace App\Nova;
 use Illuminate\Http\Request;
 use KABBOUCHI\NovaImpersonate\Impersonate;
 use Laravel\Nova\Fields\BelongsToMany;
+use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
@@ -36,6 +37,7 @@ class User extends Resource
         'id',
         'name',
         'email',
+        'jobteams',
     ];
 
     /**
@@ -76,6 +78,8 @@ class User extends Resource
                 }
             )
                 ->onlyOnIndex(),
+
+            Code::make('JobTeams', 'jobteams')->json(),
 
             Text::make('Email')
                 ->sortable()

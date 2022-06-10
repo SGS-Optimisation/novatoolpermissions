@@ -19,7 +19,7 @@ class JobApi extends BaseApi
 
     public static function basicInfoRoute($formattedJobNumber)
     {
-        return static::buildBaseUrl() . 'Job/basicInfo/formattedJobNumber/' . $formattedJobNumber;
+        return static::buildBaseUrl().'Job/basicInfo/formattedJobNumber/'.$formattedJobNumber;
     }
 
     public static function basicDetails($jobVersionId, $params = [])
@@ -30,7 +30,7 @@ class JobApi extends BaseApi
 
     public static function basicDetailsRoute($jobVersionId)
     {
-        return static::buildBaseUrl() . 'JobVersion/basicDetails/' . $jobVersionId;
+        return static::buildBaseUrl().'JobVersion/basicDetails/'.$jobVersionId;
     }
 
     public static function extraDetails($jobVersionId, $params = [])
@@ -41,7 +41,7 @@ class JobApi extends BaseApi
 
     public static function extraDetailsRoute($jobVersionId)
     {
-        return static::buildBaseUrl() . 'JobVersion/extraDetails/' . $jobVersionId;
+        return static::buildBaseUrl().'JobVersion/extraDetails/'.$jobVersionId;
     }
 
     public static function jobContacts($jobVersionId, $params = [])
@@ -52,7 +52,7 @@ class JobApi extends BaseApi
 
     public static function jobContactsRoute($jobVersionId)
     {
-        return static::buildBaseUrl() . 'JobContacts/' . $jobVersionId;
+        return static::buildBaseUrl().'JobContacts/'.$jobVersionId;
     }
 
     public static function latestStage($jobVersionId, $params = [])
@@ -63,7 +63,7 @@ class JobApi extends BaseApi
 
     public static function latestStageRoute($jobVersionId)
     {
-        return static::buildBaseUrl() . 'JobStage/LatestStage/' . $jobVersionId;
+        return static::buildBaseUrl().'JobStage/LatestStage/'.$jobVersionId;
     }
 
     public static function jobTeam($jobVersionId, $params = [])
@@ -74,6 +74,20 @@ class JobApi extends BaseApi
 
     public static function jobTeamRoute($jobVersionId)
     {
-        return static::buildBaseUrl() . 'JobTeam/' . $jobVersionId;
+        return static::buildBaseUrl().'JobTeam/'.$jobVersionId;
+    }
+
+
+    public static function allTeams($params = [])
+    {
+        logger('all teams job api');
+        return static::get('Teams/', '', $params);
+    }
+
+
+    public static function teamMembers($params = [])
+    {
+        logger('team members job api');
+        return static::post('Teams/teamswithmembers', '', $params);
     }
 }
