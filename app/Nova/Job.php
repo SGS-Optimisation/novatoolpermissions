@@ -31,7 +31,8 @@ class Job extends Resource
      */
     public static $search = [
         'job_number',
-        'metadata'
+        'designation',
+        //'metadata'
     ];
 
     /**
