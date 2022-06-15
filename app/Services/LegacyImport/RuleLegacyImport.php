@@ -10,18 +10,24 @@ use App\Legacy\Models\Specification;
 use App\Models\ClientAccount;
 use App\Services\BaseService;
 use App\Services\Taxonomy\Traits\TaxonomyCreationHelper;
+use Illuminate\Support\Traits\Conditionable;
 use Maatwebsite\Excel\Facades\Excel;
 
 class RuleLegacyImport extends BaseService
 {
-    use TaxonomyCreationHelper;
+    use TaxonomyCreationHelper, Conditionable;
 
-    public $client_name;
+    public $legacy_client_name;
+
+    /** @var ClientAccount */
+    public $client_account;
+
 
     public $imported_rules = [];
     public $problem_rules = [];
     public $num_problems = 0;
     public $problem_file_name = "";
+
 
     /**
      * ClientAccountLegacyImport constructor.
@@ -29,12 +35,27 @@ class RuleLegacyImport extends BaseService
      */
     public function __construct($client_name = null)
     {
-        $this->client_name = $client_name;
+        $this->legacy_client_name = $client_name;
+    }
+
+    /**
+     * @param  ClientAccount|int  $ca
+     * @return $this
+     */
+    public function withClientAccount($ca)
+    {
+        if (is_int($ca)) {
+            $ca = ClientAccount::find($ca);
+        }
+        logger('with client account '.$ca->name);
+        $this->client_account = $ca;
+        return $this;
     }
 
 
     public function handle()
     {
+        logger('importing rules for legacy project '.$this->legacy_client_name);
         $this->processRules();
         $this->exportProblems();
 
@@ -52,10 +73,10 @@ class RuleLegacyImport extends BaseService
             'CreatedAt',
             'UpdatedAt'
         ])
-            ->when($this->client_name, function ($query) {
+            ->when($this->legacy_client_name, function ($query) {
                 $projects = Projet::whereIn(
                     'Name',
-                    array_map('trim', explode(',', $this->client_name))
+                    array_map('trim', explode(',', $this->legacy_client_name))
                 )->get()->pluck('_id');
 
                 return $query->whereIn('Project', $projects);
@@ -65,7 +86,7 @@ class RuleLegacyImport extends BaseService
         logger('found '.count($rules).' matching');
 
         $rules->each(function ($item) {
-            $client_account = ClientAccount::whereLegacyId($item->Project)->first();
+            $client_account = $this->client_account ?? ClientAccount::whereLegacyId($item->Project)->first();
 
             if ($client_account) {
 
@@ -141,15 +162,15 @@ class RuleLegacyImport extends BaseService
 
     public function exportProblems()
     {
-        if(!count($this->problem_rules)) {
+        if (!count($this->problem_rules)) {
             return;
         }
 
         $exporter = new ImportedRulesErrors($this->problem_rules);
 
         $this->problem_file_name = date('Y-m-d-his').'-import_rules_problems.xlsx';
-        if ($this->client_name) {
-            $this->problem_file_name = $this->client_name.'-'.$this->problem_file_name;
+        if ($this->legacy_client_name) {
+            $this->problem_file_name = $this->legacy_client_name.'-'.$this->problem_file_name;
         }
 
         Excel::store($exporter, $this->problem_file_name, 'public');
