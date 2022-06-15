@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Legacy\Models\Projet;
+use App\Models\ClientAccount;
 use App\Services\LegacyImport\RuleLegacyImport;
 use Illuminate\Console\Command;
 
@@ -13,14 +14,16 @@ class ImportRules extends Command
      *
      * @var string
      */
-    protected $signature = 'import:legacy:rules {name?}';
+    protected $signature = 'import:legacy:rules
+                            {name? : The legacy project name from which to import rules}
+                            {--C|client-account= : If the client account already exists, pass in its ID to import the rules there}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Import legacy rules from mongodb';
 
     /**
      * Create a new command instance.
@@ -48,7 +51,10 @@ class ImportRules extends Command
                 ->open();
         }
 
-        $importer = (new RuleLegacyImport($name))->handle();
+        $importer = (new RuleLegacyImport($name))
+            ->when($ca = $this->option('client-account'), function ($importer) use ($ca) {
+                $importer->withClientAccount((int) $ca);
+            })->handle();
 
         $this->info(count($importer->imported_rules).' rules imported');
 
