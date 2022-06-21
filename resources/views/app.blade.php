@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="app_version" content="{{config('app.version')}}">
-
+    <link rel="icon" type="image/svg" href="/favicon.svg">
     <title inertia>{{ config('app.name', 'Dagobah') }}</title>
 
     <!-- Fonts -->
