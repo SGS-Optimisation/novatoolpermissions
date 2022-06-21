@@ -20,7 +20,7 @@ class ProductionStageResolver
             '0 - Preflight'
         ],
 
-        'Hybrid' => [
+        'PH' => [
             '0 - Hybrid PA/PP',
             '01 - Hybrid PA/PP',
         ],
@@ -31,11 +31,13 @@ class ProductionStageResolver
             '01 - 3D',
         ],
 
-        'Retouch' => [
-            'Retouch'
+        'Colourwork' => [
+            'Retouch',
+            'Color',
+            'Colour',
         ],
 
-        'Released' => [
+        'Release' => [
             'Printer File Release',
         ]
 
