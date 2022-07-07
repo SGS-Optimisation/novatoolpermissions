@@ -80,23 +80,27 @@
 
                         <!-- Artwork structure and date Filters -->
                         <div class="flex flex-grow text-xs mx-2 shadow-lg" role="group">
-                            <button @click="filterArtworkStructureButtonClicked('isNew')"
-                                    :title="$page.props.settings.rule_filter_new_duration + ' days'"
+                            <button v-if="numNewRules"
+                                    @click="filterArtworkStructureButtonClicked('isNew')"
+                                    :title=" '< ' + $page.props.settings.rule_filter_new_duration + ' days'"
                                     class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg"
                                     :class="[
                                     { 'bg-blue-500 text-white' : filterOption === 'isNew' },
                                     { 'bg-white text-blue-500' : filterOption !== 'isNew' }
                                 ]">
                                 New
+                                <Tag :value="numNewRules" icon="pi pi-exclamation-circle"></Tag>
                             </button>
-                            <button @click="filterArtworkStructureButtonClicked('isUpdated')"
-                                    :title="$page.props.settings.rule_filter_updated_duration + ' days'"
+                            <button v-if="numUpdatedRules"
+                                    @click="filterArtworkStructureButtonClicked('isUpdated')"
+                                    :title=" '< ' + $page.props.settings.rule_filter_updated_duration + ' days'"
                                     class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
                                     :class="[
                                     { 'bg-blue-500 text-white' : filterOption === 'isUpdated' },
                                     { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }
                                 ]">
                                 Updated
+                                <Tag :value="numUpdatedRules" severity="warning" icon="pi pi-exclamation-triangle"></Tag>
                             </button>
                             <button
                                 v-for="term in artworkStructureTerms"
@@ -243,6 +247,7 @@ import JobSearch from "@/Components/OP/JobSearchForm";
 import moment from "moment";
 import JobIdentification from "@/Components/OP/JobIdentification";
 import Message from 'primevue/message/sfc';
+import Tag from 'primevue/tag';
 
 export default {
     props: [
@@ -640,7 +645,43 @@ export default {
 
         processedStages() {
             return this.stages && this.stages.length ? this.stages : this.all_stages;
-        }
+        },
+
+        numNewRules() {
+            if (!this.currentRules.length) {
+                return;
+            }
+
+            return this.currentRules
+                .filter(rule => {
+                    let time = moment(rule.created_at);
+                    let numDays = this.$page.props.settings.rule_filter_new_duration;
+
+                    return moment().subtract(parseInt(numDays), 'days').isSameOrBefore(time);
+                })
+                .length
+        },
+
+        numUpdatedRules() {
+            if (!this.currentRules.length) {
+                return;
+            }
+
+            return this.currentRules
+                .filter(rule => {
+                    let created_time = moment(rule.created_at);
+                    let updated_time = moment(rule.updated_at);
+
+                    let numDaysNew = parseInt(this.$page.props.settings.rule_filter_new_duration);
+                    let numDaysUpdated = parseInt(this.$page.props.settings.rule_filter_updated_duration);
+
+                    let rule_matches_new = moment().subtract(numDaysNew, 'days').isSameOrBefore(created_time);
+
+                    return moment().subtract(numDaysUpdated, 'days').isSameOrBefore(updated_time)
+                        && !rule_matches_new;
+                })
+                .length
+        },
     },
 
     components: {
@@ -661,6 +702,7 @@ export default {
         ViewRule,
         JobSearch,
         Message,
+        Tag,
     },
 }
 </script>
