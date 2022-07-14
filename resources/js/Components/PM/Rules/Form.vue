@@ -189,6 +189,8 @@ import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 
 Quill.register("modules/imageResize", ImageResize);
 
+Quill.imports['formats/link'].PROTOCOL_WHITELIST = ['http', 'https', 'mailto', 'tel', 'file', 'smb'];
+
 export default defineComponent({
     name: "RuleForm",
     components: {
