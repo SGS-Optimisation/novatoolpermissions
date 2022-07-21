@@ -35,6 +35,18 @@ class MatchClientAccountOperation extends BaseOperation
 
         try {
             $customer_name = $this->job->metadata->basicDetails->retailer->customerName;
+
+            if (!$customer_name) {
+                logger('no retailer in basic details, checking contacts');
+                try {
+                    $customer_name = collect($this->job->metadata->jobContacts)
+                        ->where('contactType', 10)->first()
+                        ->customerName;
+                } catch (\Exception $e) {
+                    logger('No customer name and no contact type "End User"');
+                }
+            }
+
             $jobteam = null;
 
             logger('searching for client name '.$customer_name);
@@ -97,13 +109,13 @@ class MatchClientAccountOperation extends BaseOperation
 
         switch ($driver) {
             case 'sqlsrv':
-                $search = 'LOWER("alias") LIKE ?'. " ESCAPE '\'";
+                $search = 'LOWER("alias") LIKE ?'." ESCAPE '\'";
                 break;
             case 'mysql':
             default:
                 $search = 'LOWER(alias) LIKE ?';
         }
-        $searchData = ['%'.Str::lower( str_replace('[', '\[', $customer_name)).'%'];
+        $searchData = ['%'.Str::lower(str_replace('[', '\[', $customer_name)).'%'];
 
         /** @var ClientAccount[] $matches */
         $matches = ClientAccount::where('name', 'LIKE', '%'.$customer_name.'%')
