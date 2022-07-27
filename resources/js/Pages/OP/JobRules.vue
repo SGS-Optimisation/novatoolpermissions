@@ -10,6 +10,10 @@
                     <h2 v-if="currentJob" class="pt-2 font-bold text-xl text-gray-800 leading-tight">
                         Rules for job {{ currentJob.job_number }}
                     </h2>
+
+                    <manual-account-selection v-if="forcedAccount"
+                                              :initial-selection="forcedAccount"
+                                              :jobNumber="currentJob.job_number"/>
                 </div>
 
                 <div class="flex-grow">
@@ -22,7 +26,7 @@
         </template>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 bg-white relative">
-            <div class="flex flex-col sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px pb-2 mb-2 min-h-screen ">
+            <div class="flex flex-col sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px pb-2 mb-2 min-h-max ">
 
                 <div v-if="searching || !currentJob.hasOwnProperty('metadata')">
                     <loader></loader>
@@ -41,15 +45,25 @@
                         </p>
                     </div>
                 </div>
-                <div v-else-if="currentJob.metadata.client_found === false">
-                    <div class="h-64 bg-white flex justify-center align-middle">
+                <div v-else-if="currentJob.metadata.client_found === false && !forcedAccount">
+                    <div class="h-64 bg-white flex justify-center align-middle items-center">
                         <Message severity="error" :closable="false">
                             <span v-if="currentJob.metadata.error_reason">
                                 {{ currentJob.metadata.error_reason }}<br>
                             </span>
-                            <span v-else>"{{ currentJob.metadata.client.name }}" was not matched with any client account.</span>
+                            <span v-else>
+                                "{{ currentJob.metadata.client.name }}"
+                                was not matched with any client account.
+
+
+                            </span>
                         </Message>
 
+                    </div>
+
+                    <div class="flex justify-center items-center">
+                        <manual-account-selection v-if="!currentJob.metadata.error_reason"
+                                                  :jobNumber="currentJob.job_number"/>
                     </div>
                 </div>
                 <div v-else>
@@ -100,7 +114,8 @@
                                     { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }
                                 ]">
                                 Updated
-                                <Tag :value="numUpdatedRules" severity="warning" icon="pi pi-exclamation-triangle"></Tag>
+                                <Tag :value="numUpdatedRules" severity="warning"
+                                     icon="pi pi-exclamation-triangle"></Tag>
                             </button>
                             <button
                                 v-for="term in artworkStructureTerms"
@@ -248,14 +263,15 @@ import moment from "moment";
 import JobIdentification from "@/Components/OP/JobIdentification";
 import Message from 'primevue/message/sfc';
 import Tag from 'primevue/tag';
+import ManualAccountSelection from "@/Components/OP/ManualAccountSelection";
 
 export default {
     props: [
-        'team',
         'jobNumber',
         'job',
         'rules',
         'stages',
+        'forcedAccount',
     ],
 
     data() {
@@ -377,13 +393,13 @@ export default {
 
         setupStages() {
             this.stageStates = {}
-            for(let stage of this.processedStages) {
+            for (let stage of this.processedStages) {
                 this.stageStates[stage] = false;
             }
         },
 
         toggleRuleIdVisibility() {
-           this.showRuleId = !this.showRuleId;
+            this.showRuleId = !this.showRuleId;
         },
 
         track() {
@@ -404,7 +420,7 @@ export default {
                         activeJobTeam.push(jobTeams[i].teamName);
                         console.log('found active job team ' + jobTeams[i].teamName);
 
-                        if(userJobTeams.includes(jobTeams[i].teamName)) {
+                        if (userJobTeams.includes(jobTeams[i].teamName)) {
                             activeMatchingJobTeams.push(jobTeams[i].teamName);
                         }
                     }
@@ -531,7 +547,11 @@ export default {
                 "Accept": "application/json"
             };
 
-            axios.get(route('job.rules', this.jobNumber), {headers})
+            var rules_route = this.forcedAccount ?
+                route('job.rules.force-account', [this.forcedAccount, this.jobNumber])
+                : route('job.rules', this.jobNumber);
+
+            axios.get(rules_route, {headers})
                 .then(({data}) => {
                     console.log(data);
                     if (data.job && data.job.hasOwnProperty('metadata')
@@ -685,6 +705,7 @@ export default {
     },
 
     components: {
+        ManualAccountSelection,
         Head,
         JobIdentification,
         ViewRuleGroup,

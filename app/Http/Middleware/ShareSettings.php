@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\ClientAccount;
 use App\Models\Taxonomy;
 use Closure;
 use Illuminate\Http\Request;
@@ -29,8 +30,15 @@ class ShareSettings
                     'matomo_tracking_enabled' => nova_get_setting('matomo_tracking_enabled'),
                     'matomo_host' => nova_get_setting('matomo_host'),
                     'matomo_site_id' => nova_get_setting('matomo_site_id'),
+
+                    'allow_force_account' => nova_get_setting('allow_force_account'),
                 ],
                 'loader_messages' => config('loader'),
+
+                'client_accounts' => \Cache::tags(['client-accounts'])
+                    ->remember('all-client-accounts', 3600, function (){
+                        return ClientAccount::pluck('name', 'slug');
+                    }),
 
                 'all_job_stages' => \Cache::tags(['taxonomy'])
                     ->remember('all-job-stages', 3600, function (){

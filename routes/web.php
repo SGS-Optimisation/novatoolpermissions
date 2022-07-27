@@ -42,6 +42,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::put('/current-team', [CurrentTeamController::class, 'update'])
         ->name('current-team.update');
 
+    Route::get('/{slug}/{jobNumber}', [\App\Http\Controllers\OPs\JobController::class, 'showWithClientAccount'])
+        ->name('job.rules.force-account')
+        ->where('jobNumber', '[0-9\-]+');
+
     Route::get('/{jobNumber}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
         ->name('job.rules')
         ->where('jobNumber', '[0-9\-]+');
