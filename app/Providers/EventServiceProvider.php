@@ -53,6 +53,10 @@ class EventServiceProvider extends ServiceProvider
         TeamMemberAdded::class => [
             'App\\Listeners\\Users\\GiveUserRoles'
         ],
+
+        'App\\Events\\Jobs\\ClientAccountNotMatched' => [
+            'App\\Listeners\\Jobs\\NotifyAdminsClientAccountNotMatched',
+        ],
 //        Audited::class => [
 //            AuditedListener::class
 //        ]

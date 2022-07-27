@@ -4,6 +4,7 @@
 namespace App\Operations\Jobs;
 
 
+use App\Events\Jobs\ClientAccountNotMatched;
 use App\Exceptions\MultipleClientAccountsMatchedException;
 use App\Models\ClientAccount;
 use App\Models\Job;
@@ -93,6 +94,10 @@ class MatchClientAccountOperation extends BaseOperation
             logger($e->getMessage());
             $job_metadata->client_found = false;
             $job_metadata->client = ['name' => $customer_name ?? '[Unset]'];
+
+            if($customer_name) {
+                event(new ClientAccountNotMatched($customer_name));
+            }
         }
 
 
