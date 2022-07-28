@@ -20,7 +20,7 @@
         <div class="bg-white justify-around flex">
             <div class="flex flex-col w-4/5 py-12">
 
-                <div class="pl-2 pr-8">
+                <div class="px-2">
                     <h2 class="text-center bg-gray-100 font-semibold">Your Teams</h2>
                     <DataView :value="myTeams" :layout="mlayout">
                         <template #header>
@@ -47,13 +47,11 @@
                     <DataView :value="otherTeamsList" :layout="olayout" :sortOrder="sortOrder" :sortField="sortField">
 
                         <template #header>
-                            <div class="grid grid-nogutter">
-                                <div class="col-6" style="text-align: left">
-                                    <Dropdown v-model="sortKey" :options="sortOptions" optionLabel="label" placeholder="Sort By" @change="onSortChange($event)"/>
-                                </div>
-                                <div class="col-6" style="text-align: right">
-                                    <DataViewLayoutOptions v-model="olayout" />
-                                </div>
+                            <div class="flex justify-between">
+                                <DataViewLayoutOptions v-model="olayout" />
+                                <Dropdown v-model="sortKey" :options="sortOptions"
+                                          optionLabel="label" placeholder="Sort By"
+                                          @change="onSortChange($event)"/>
                             </div>
                         </template>
                         <template #list="slotProps">
@@ -110,13 +108,15 @@ export default {
         return {
             mlayout: 'grid',
             olayout: 'grid',
-            sortKey: null,
-            sortOrder: null,
-            sortField: null,
+            sortKey: {label: 'Name', value: 'name'},
+            sortOrder: 1,
+            sortField: 'name',
             sortOptions: [
+                {label: 'Name', value: 'name'},
                 {label: 'Newest First', value: '!created_at'},
                 {label: 'Oldest First', value: 'created_at'},
-                {label: 'Name', value: 'name'}
+                {label: 'Most rules first', value: '!client_account.rules_count'},
+                {label: 'Least rules first', value: 'client_account.rules_count'},
             ]
         }
     },

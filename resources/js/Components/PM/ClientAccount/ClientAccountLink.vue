@@ -5,7 +5,7 @@
 
             </template>
             <template #content>
-                <div class="card-content flex flex-row">
+                <div class="card-content flex flex-row justify-around">
                     <jet-nav-link
                         class="hover:no-underline border-none block relative"
                         :class="{'bg-green-200': isInvitation}"
