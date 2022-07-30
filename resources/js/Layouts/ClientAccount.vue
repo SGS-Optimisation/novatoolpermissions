@@ -20,10 +20,10 @@
 </template>
 
 <script>
-import AppLayout from '@/Layouts/AppLayout'
-import ClientHeader from "@/Components/PM/ClientHeader";
-import ClientMenu from '@/Components/PM/ClientMenu'
-import ActionMenu from '@/Components/PM/ActionMenu'
+import AppLayout from '@/Layouts/AppLayout.vue'
+import ClientHeader from "@/Components/PM/ClientHeader.vue";
+import ClientMenu from '@/Components/PM/ClientMenu.vue'
+import ActionMenu from '@/Components/PM/ActionMenu.vue'
 
 export default {
     props: [

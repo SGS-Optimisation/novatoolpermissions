@@ -276,7 +276,7 @@ import JetDropdownLink from '@/Jetstream/DropdownLink.vue'
 import JetNavLink from '@/Jetstream/NavLink.vue'
 import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink.vue'
 import { Link } from '@inertiajs/inertia-vue3';
-import About from '@/Components/About';
+import About from '@/Components/About.vue';
 
 export default defineComponent({
     components: {

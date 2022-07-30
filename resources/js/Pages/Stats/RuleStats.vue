@@ -14,10 +14,10 @@
 
 <script>
 import {Head} from "@inertiajs/inertia-vue3";
-import AppLayout from '@/Layouts/AppLayout'
-import RuleStats from "../../Components/Stats/RuleStatsGraph";
-import SubNavLink from "@/Components/SubNavLink";
-import StatsMenu from "@/Components/Stats/StatsMenu";
+import AppLayout from '@/Layouts/AppLayout.vue'
+import RuleStats from "../../Components/Stats/RuleStatsGraph.vue";
+import SubNavLink from "@/Components/SubNavLink.vue";
+import StatsMenu from "@/Components/Stats/StatsMenu.vue";
 
 export default {
     name: "RulesActivityPerClientAccountStats",

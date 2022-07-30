@@ -14,8 +14,8 @@
 <script>
 
 import {Head} from "@inertiajs/inertia-vue3";
-import ClientAccountForm from "@/Components/PM/ClientAccount/Form";
-import ClientLayout from '@/Layouts/ClientAccount'
+import ClientAccountForm from "@/Components/PM/ClientAccount/Form.vue";
+import ClientLayout from '@/Layouts/ClientAccount.vue'
 
 export default {
     name: "UpdateClientAccount",

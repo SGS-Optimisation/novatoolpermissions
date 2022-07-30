@@ -177,15 +177,15 @@ import ImageResize from 'quill-image-resize';
 import InlineMessage from 'primevue/inlinemessage/sfc';
 import Message from 'primevue/message/sfc';
 import Multiselect from '@vueform/multiselect';
-import JetButton from '@/Jetstream/Button'
-import JetConfirmationModal from "@/Jetstream/ConfirmationModal";
-import JetDangerButton from '@/Jetstream/DangerButton'
-import JetFormSection from '@/Jetstream/FormSection'
-import JetInput from '@/Jetstream/Input'
-import JetInputError from '@/Jetstream/InputError'
-import JetLabel from '@/Jetstream/Label'
-import JetActionMessage from '@/Jetstream/ActionMessage'
-import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import JetButton from '@/Jetstream/Button.vue'
+import JetConfirmationModal from "@/Jetstream/ConfirmationModal.vue";
+import JetDangerButton from '@/Jetstream/DangerButton.vue'
+import JetFormSection from '@/Jetstream/FormSection.vue'
+import JetInput from '@/Jetstream/Input.vue'
+import JetInputError from '@/Jetstream/InputError.vue'
+import JetLabel from '@/Jetstream/Label.vue'
+import JetActionMessage from '@/Jetstream/ActionMessage.vue'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
 
 Quill.register("modules/imageResize", ImageResize);
 

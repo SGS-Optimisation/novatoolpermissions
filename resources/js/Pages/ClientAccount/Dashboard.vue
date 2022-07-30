@@ -102,9 +102,9 @@
 import {Head, Link} from "@inertiajs/inertia-vue3";
 import capitalize from 'lodash/capitalize';
 import pluralize from 'pluralize/pluralize';
-import ClientLayout from '@/Layouts/ClientAccount'
-import RuleStatsGraph from "../../Components/Stats/RuleStatsGraph";
-import JobStatsGraph from "../../Components/Stats/JobStatsGraph";
+import ClientLayout from '@/Layouts/ClientAccount.vue'
+import RuleStatsGraph from "../../Components/Stats/RuleStatsGraph.vue";
+import JobStatsGraph from "../../Components/Stats/JobStatsGraph.vue";
 
 export default {
     props: {
