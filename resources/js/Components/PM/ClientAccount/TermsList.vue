@@ -192,18 +192,18 @@
 </template>
 
 <script>
-import JetActionMessage from '@/Jetstream/ActionMessage'
-import JetNavLink from "@/Jetstream/NavLink";
-import JetConfirmationModal from "@/Jetstream/ConfirmationModal";
-import JetDialogModal from '@/Jetstream/DialogModal'
-import JetActionSection from '@/Jetstream/ActionSection'
-import JetButton from '@/Jetstream/Button'
-import JetDangerButton from '@/Jetstream/DangerButton'
-import JetFormSection from '@/Jetstream/FormSection'
-import JetInput from '@/Jetstream/Input'
-import JetInputError from '@/Jetstream/InputError'
-import JetLabel from '@/Jetstream/Label'
-import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import JetActionMessage from '@/Jetstream/ActionMessage.vue'
+import JetNavLink from "@/Jetstream/NavLink.vue";
+import JetConfirmationModal from "@/Jetstream/ConfirmationModal.vue";
+import JetDialogModal from '@/Jetstream/DialogModal.vue'
+import JetActionSection from '@/Jetstream/ActionSection.vue'
+import JetButton from '@/Jetstream/Button.vue'
+import JetDangerButton from '@/Jetstream/DangerButton.vue'
+import JetFormSection from '@/Jetstream/FormSection.vue'
+import JetInput from '@/Jetstream/Input.vue'
+import JetInputError from '@/Jetstream/InputError.vue'
+import JetLabel from '@/Jetstream/Label.vue'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
 import VueTagsInput from '@sipec/vue3-tags-input';
 
 export default {

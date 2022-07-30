@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import SubNavLink from "@/Components/SubNavLink";
+import SubNavLink from "@/Components/SubNavLink.vue";
 export default {
     name: "Menu",
     components: {SubNavLink}

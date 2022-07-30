@@ -38,9 +38,9 @@
 
 <script>
 import {Head} from "@inertiajs/inertia-vue3";
-import ClientLayout from '@/Layouts/ClientAccount'
-import RuleForm from '@/Components/PM/Rules/Form'
-import JetNavLink from "@/Jetstream/NavLink";
+import ClientLayout from '@/Layouts/ClientAccount.vue'
+import RuleForm from '@/Components/PM/Rules/Form.vue'
+import JetNavLink from "@/Jetstream/NavLink.vue";
 
 export default {
     name: "CreateRule",

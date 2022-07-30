@@ -71,10 +71,10 @@
 
 <script>
 import {Head, Link} from "@inertiajs/inertia-vue3";
-import AppLayout from '@/Layouts/AppLayout'
-import JetNavLink from "@/Jetstream/NavLink";
-import ActionMenu from "@/Components/PM/ActionMenu";
-import ClientAccountLink from "@/Components/PM/ClientAccount/ClientAccountLink";
+import AppLayout from '@/Layouts/AppLayout.vue'
+import JetNavLink from "@/Jetstream/NavLink.vue";
+import ActionMenu from "@/Components/PM/ActionMenu.vue";
+import ClientAccountLink from "@/Components/PM/ClientAccount/ClientAccountLink.vue";
 import DataView from 'primevue/dataview/sfc';
 import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions/sfc';
 import Dropdown from 'primevue/dropdown/sfc';

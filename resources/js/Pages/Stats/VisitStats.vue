@@ -16,10 +16,10 @@
 
 <script>
 import {Head} from "@inertiajs/inertia-vue3";
-import AppLayout from '@/Layouts/AppLayout'
-import SubNavLink from "@/Components/SubNavLink";
-import StatsMenu from "@/Components/Stats/StatsMenu";
-import VisitsStatsTable from "@/Components/Stats/VisitsStatsTable";
+import AppLayout from '@/Layouts/AppLayout.vue'
+import SubNavLink from "@/Components/SubNavLink.vue";
+import StatsMenu from "@/Components/Stats/StatsMenu.vue";
+import VisitsStatsTable from "@/Components/Stats/VisitsStatsTable.vue";
 
 export default {
     name: "VisitStats",

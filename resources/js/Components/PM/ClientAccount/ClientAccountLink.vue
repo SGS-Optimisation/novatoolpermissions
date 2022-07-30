@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import JetNavLink from "@/Jetstream/NavLink";
+import JetNavLink from "@/Jetstream/NavLink.vue";
 import {Link} from '@inertiajs/inertia-vue3';
 import Card from 'primevue/card/sfc';
 import Button from 'primevue/button/sfc';
