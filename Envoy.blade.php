@@ -3,10 +3,10 @@
 @task('deploy-staging', ['on' => 'staging'])
     cd /var/www/dagobah
     git pull origin main
-    composer install
-    sudo service php7.4-fpm restart
-    php artisan config:clear
-    php artisan migrate --force
+    php8.1 /usr/local/bin/composer install
+    sudo service php8.1-fpm restart
+    php8.1 artisan config:clear
+    php8.1 artisan migrate --force
     sudo supervisorctl restart dagobah-queue-worker:
     php artisan cache:warmup
 @endtask
