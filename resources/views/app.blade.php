@@ -11,11 +11,9 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
 
     <!-- Styles -->
-    @vite('resources/css/app.css')
-
     <!-- Scripts -->
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @routes
-    @vite('resources/js/app.js')
 </head>
 <body class="font-sans antialiased">
 @inertia

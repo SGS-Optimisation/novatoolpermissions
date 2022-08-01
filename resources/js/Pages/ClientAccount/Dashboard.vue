@@ -1,8 +1,8 @@
 <template>
     <client-layout :client-account="clientAccount">
-        <Head>
-            <title>{{clientAccount.name}} - Dagobah</title>
-        </Head>
+        <Head><title>
+            {{clientAccount.name}} - Dagobah
+        </title></Head>
         <template #body>
             <div class="pb-12 pt-4 flex flex-row">
                 <div class="w-1/2 mr-3">

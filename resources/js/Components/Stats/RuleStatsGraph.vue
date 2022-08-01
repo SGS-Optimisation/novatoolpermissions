@@ -77,7 +77,7 @@
             </jet-form-section>
 
             <div class="small" v-if="datacollection">
-                <rules-line-chart
+                <line-chart
                     :chart-options="chartOptions"
                     :chart-data="datacollection"/>
             </div>
@@ -87,7 +87,6 @@
 
 <script>
 import JetNavLink from "@/Jetstream/NavLink.vue";
-import RulesLineChart from "./ClientAccountRulesLineChart.vue";
 import JetActionMessage from '@/Jetstream/ActionMessage.vue'
 import JetButton from '@/Jetstream/Button.vue'
 import JetFormSection from '@/Jetstream/FormSection.vue'
@@ -95,19 +94,20 @@ import JetInput from '@/Jetstream/Input.vue'
 import JetInputError from '@/Jetstream/InputError.vue'
 import JetLabel from '@/Jetstream/Label.vue'
 import SwitchFlag from "../SwitchFlag.vue";
+import LineChart from "@/Components/Stats/LineChart.vue";
 
 export default {
     name: "RuleStats",
     components: {
         SwitchFlag,
         JetNavLink,
-        RulesLineChart,
         JetActionMessage,
         JetButton,
         JetFormSection,
         JetInput,
         JetInputError,
         JetLabel,
+        LineChart,
     },
     props: {
         stats: {

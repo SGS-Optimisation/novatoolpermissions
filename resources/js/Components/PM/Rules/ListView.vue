@@ -210,8 +210,7 @@ import clip from "text-clipper";
 import NavLink from "@/Jetstream/NavLink.vue";
 import Attachment from "@/Components/PM/Rules/Attachment.vue";
 import {orderBy as _orderBy} from "lodash";
-
-const moment = require('moment');
+import moment from 'moment';
 
 export default defineComponent({
     name: "Rule",

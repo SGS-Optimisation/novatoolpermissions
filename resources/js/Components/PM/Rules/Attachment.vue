@@ -56,8 +56,7 @@ import JetConfirmationModal from '@/Jetstream/ConfirmationModal.vue'
 import JetButton from '@/Jetstream/Button.vue'
 import JetDangerButton from '@/Jetstream/DangerButton.vue'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
-
-const prettyBytes = require('pretty-bytes');
+import prettyBytes from 'pretty-bytes';
 
 export default {
     name: "Attachment",
