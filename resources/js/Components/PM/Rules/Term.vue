@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import JetButton from "@/Jetstream/Button";
+import JetButton from "@/Jetstream/Button.vue";
 import Multiselect from '@vueform/multiselect';
 
 export default {

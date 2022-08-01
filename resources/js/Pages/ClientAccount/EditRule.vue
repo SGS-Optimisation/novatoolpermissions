@@ -60,14 +60,14 @@
 
 import {Head} from "@inertiajs/inertia-vue3";
 import {defineComponent} from "vue";
-import ClientLayout from '@/Layouts/ClientAccount'
-import RuleForm from '@/Components/PM/Rules/Form'
-import MetadataForm from '@/Components/PM/Rules/Meta'
-import JetNavLink from "@/Jetstream/NavLink";
-import JetButton from "@/Jetstream/DangerButton";
-import JetDropdownLink from "@/Jetstream/DropdownLink";
-import Button from "@/Jetstream/Button";
-import AttachmentsForm from "../../Components/PM/Rules/AttachmentsForm";
+import ClientLayout from '@/Layouts/ClientAccount.vue'
+import RuleForm from '@/Components/PM/Rules/Form.vue'
+import MetadataForm from '@/Components/PM/Rules/Meta.vue'
+import JetNavLink from "@/Jetstream/NavLink.vue";
+import JetButton from "@/Jetstream/DangerButton.vue";
+import JetDropdownLink from "@/Jetstream/DropdownLink.vue";
+import Button from "@/Jetstream/Button.vue";
+import AttachmentsForm from "../../Components/PM/Rules/AttachmentsForm.vue";
 
 export default defineComponent({
     name: "EditRule",

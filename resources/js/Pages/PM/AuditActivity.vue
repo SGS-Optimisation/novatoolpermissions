@@ -84,8 +84,8 @@
 
 <script>
 import {defineComponent} from "vue";
-import ClientLayout from '@/Layouts/ClientAccount'
-import JetNavLink from "@/Jetstream/NavLink";
+import ClientLayout from '@/Layouts/ClientAccount.vue'
+import JetNavLink from "@/Jetstream/NavLink.vue";
 import date from '@/filters/Date';
 
 export default defineComponent({

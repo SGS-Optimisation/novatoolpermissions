@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import RuleTags from "@/Components/PM/Rules/RuleTags";
-import Attachment from "@/Components/PM/Rules/Attachment";
+import RuleTags from "@/Components/PM/Rules/RuleTags.vue";
+import Attachment from "@/Components/PM/Rules/Attachment.vue";
 
 export default {
     name: "RuleView",

@@ -198,20 +198,19 @@
 
 import {defineComponent} from "vue";
 import { Link } from '@inertiajs/inertia-vue3';
-import RuleTags from "@/Components/PM/Rules/RuleTags";
-import JetActionMessage from '@/Jetstream/ActionMessage'
-import JetButton from '@/Jetstream/Button'
-import JetDangerButton from '@/Jetstream/DangerButton'
-import JetDialogModal from '@/Jetstream/DialogModal';
-import JetInput from '@/Jetstream/Input'
-import JetLabel from '@/Jetstream/Label'
-import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import RuleTags from "@/Components/PM/Rules/RuleTags.vue";
+import JetActionMessage from '@/Jetstream/ActionMessage.vue'
+import JetButton from '@/Jetstream/Button.vue'
+import JetDangerButton from '@/Jetstream/DangerButton.vue'
+import JetDialogModal from '@/Jetstream/DialogModal.vue';
+import JetInput from '@/Jetstream/Input.vue'
+import JetLabel from '@/Jetstream/Label.vue'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
 import clip from "text-clipper";
-import NavLink from "@/Jetstream/NavLink";
-import Attachment from "@/Components/PM/Rules/Attachment";
+import NavLink from "@/Jetstream/NavLink.vue";
+import Attachment from "@/Components/PM/Rules/Attachment.vue";
 import {orderBy as _orderBy} from "lodash";
-
-const moment = require('moment');
+import moment from 'moment';
 
 export default defineComponent({
     name: "Rule",

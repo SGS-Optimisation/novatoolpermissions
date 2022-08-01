@@ -25,7 +25,7 @@
 <script>
 
 import moment from "moment";
-import ViewRule from "@/Components/OP/ViewRule";
+import ViewRule from "@/Components/OP/ViewRule.vue";
 
 export default {
     name: "ViewRuleGroup",

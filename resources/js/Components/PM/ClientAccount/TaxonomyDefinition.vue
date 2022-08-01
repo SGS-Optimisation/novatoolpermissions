@@ -105,15 +105,15 @@
 </template>
 
 <script>
-import TermsList from "@/Components/PM/ClientAccount/TermsList";
-import JetActionSection from '@/Jetstream/ActionSection';
-import JetConfirmationModal from "@/Jetstream/ConfirmationModal";
-import JetDialogModal from '@/Jetstream/DialogModal';
-import JetButton from '@/Jetstream/Button'
-import JetDangerButton from '@/Jetstream/DangerButton'
-import JetInput from '@/Jetstream/Input'
-import JetInputError from '@/Jetstream/InputError'
-import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import TermsList from "@/Components/PM/ClientAccount/TermsList.vue";
+import JetActionSection from '@/Jetstream/ActionSection.vue';
+import JetConfirmationModal from "@/Jetstream/ConfirmationModal.vue";
+import JetDialogModal from '@/Jetstream/DialogModal.vue';
+import JetButton from '@/Jetstream/Button.vue'
+import JetDangerButton from '@/Jetstream/DangerButton.vue'
+import JetInput from '@/Jetstream/Input.vue'
+import JetInputError from '@/Jetstream/InputError.vue'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
 
 export default {
     name: "TaxonomyDefinition",

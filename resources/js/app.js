@@ -1,4 +1,9 @@
-require('./bootstrap');
+import './bootstrap';
+
+import 'primevue/resources/themes/tailwind-light/theme.css';
+import 'primevue/resources/primevue.min.css';
+import 'primeicons/primeicons.css';
+import '/resources/sass/ribbons.scss';
 
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
@@ -6,13 +11,14 @@ import { InertiaProgress } from '@inertiajs/progress';
 import PrimeVue from 'primevue/config';
 import AutoComplete from 'primevue/autocomplete';
 import Tooltip from 'primevue/tooltip';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Dagobah';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
-    resolve: (name) => require(`./Pages/${name}.vue`),
+    resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, app, props, plugin }) {
 
         return createApp({ render: () => h(app, props) })

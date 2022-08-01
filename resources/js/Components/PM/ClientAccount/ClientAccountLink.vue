@@ -40,22 +40,22 @@
                     </span>
                     </jet-nav-link>
                     <div class="flex flex-col">
-                        <Button icon="pi pi-list" class="p-button-sm p-button-icon-only p-button-rounded p-button-text p-button-plain"
+                        <PButton icon="pi pi-list" class="p-button-sm p-button-icon-only p-button-rounded p-button-text p-button-plain"
                                 v-tooltip="'Rules'"
                                 @click="$inertia.get(
                                     route('pm.client-account.rules.index', {clientAccount: team.client_account.slug})
                                 )"/>
-                        <Button icon="pi pi-tags" class="p-button-sm p-button-icon-only p-button-rounded p-button-text p-button-plain"
+                        <PButton icon="pi pi-tags" class="p-button-sm p-button-icon-only p-button-rounded p-button-text p-button-plain"
                                 v-tooltip="'Categories'"
                                 @click="$inertia.get(
                                     route('pm.client-account.taxonomy', {clientAccount: team.client_account.slug})
                                 )"/>
-                        <Button icon="pi pi-cog" class="p-button-sm p-button-icon-only p-button-rounded p-button-text p-button-plain"
+                        <PButton icon="pi pi-cog" class="p-button-sm p-button-icon-only p-button-rounded p-button-text p-button-plain"
                                 v-tooltip="'Settings'"
                                 @click="$inertia.get(
                                     route('pm.client-account.edit', {clientAccount: team.client_account.slug})
                                 )"/>
-                        <Button v-if="alwaysShowTeamName" icon="pi pi-users" class="p-button-sm p-button-icon-only p-button-rounded p-button-text p-button-plain"
+                        <PButton v-if="alwaysShowTeamName" icon="pi pi-users" class="p-button-sm p-button-icon-only p-button-rounded p-button-text p-button-plain"
                                 v-tooltip="'Team'"
                                 @click="$inertia.get(
                                     route('pm.client-account.teams.show', {clientAccount: team.client_account.slug, teamId: team.id})
@@ -76,10 +76,10 @@
 </template>
 
 <script>
-import JetNavLink from "@/Jetstream/NavLink";
+import JetNavLink from "@/Jetstream/NavLink.vue";
 import {Link} from '@inertiajs/inertia-vue3';
 import Card from 'primevue/card/sfc';
-import Button from 'primevue/button/sfc';
+import PButton from 'primevue/button/sfc';
 
 export default {
     name: "ClientAccountLink",
@@ -87,7 +87,7 @@ export default {
         JetNavLink,
         Link,
         Card,
-        Button,
+        PButton,
     },
     props: {
         team: Object,

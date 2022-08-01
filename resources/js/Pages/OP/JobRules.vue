@@ -245,25 +245,25 @@
 
 <script>
 import {Head} from "@inertiajs/inertia-vue3";
-import AppLayout from '@/Layouts/AppLayout'
-import Input from "@/Jetstream/Input";
-import Button from "@/Jetstream/Button";
-import JetActionMessage from '@/Jetstream/ActionMessage'
-import JetButton from '@/Jetstream/Button'
-import JetDangerButton from '@/Jetstream/DangerButton'
-import JetDialogModal from '@/Jetstream/DialogModal';
-import JetInput from '@/Jetstream/Input'
-import JetLabel from '@/Jetstream/Label'
-import JetSecondaryButton from '@/Jetstream/SecondaryButton'
-import Loader from "@/Components/Loader";
-import ViewRule from '@/Components/PM/Rules/ViewRule'
-import ViewRuleGroup from "@/Components/OP/ViewRuleGroup";
-import JobSearch from "@/Components/OP/JobSearchForm";
+import AppLayout from '@/Layouts/AppLayout.vue'
+import Input from "@/Jetstream/Input.vue";
+import Button from "@/Jetstream/Button.vue";
+import JetActionMessage from '@/Jetstream/ActionMessage.vue'
+import JetButton from '@/Jetstream/Button.vue'
+import JetDangerButton from '@/Jetstream/DangerButton.vue'
+import JetDialogModal from '@/Jetstream/DialogModal.vue';
+import JetInput from '@/Jetstream/Input.vue'
+import JetLabel from '@/Jetstream/Label.vue'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
+import Loader from "@/Components/Loader.vue";
+import ViewRule from '@/Components/PM/Rules/ViewRule.vue'
+import ViewRuleGroup from "@/Components/OP/ViewRuleGroup.vue";
+import JobSearch from "@/Components/OP/JobSearchForm.vue";
 import moment from "moment";
-import JobIdentification from "@/Components/OP/JobIdentification";
+import JobIdentification from "@/Components/OP/JobIdentification.vue";
 import Message from 'primevue/message/sfc';
 import Tag from 'primevue/tag';
-import ManualAccountSelection from "@/Components/OP/ManualAccountSelection";
+import ManualAccountSelection from "@/Components/OP/ManualAccountSelection.vue";
 
 export default {
     props: [

@@ -25,10 +25,10 @@
 
 <script>
 
-import SubNavLink from "@/Components/SubNavLink";
-import JetDropdown from '@/Jetstream/Dropdown';
-import JetDropdownLink from '@/Jetstream/DropdownLink'
-import Button from "@/Jetstream/Button";
+import SubNavLink from "@/Components/SubNavLink.vue";
+import JetDropdown from '@/Jetstream/Dropdown.vue';
+import JetDropdownLink from '@/Jetstream/DropdownLink.vue'
+import Button from "@/Jetstream/Button.vue";
 
 export default {
     name: "ActionMenu",

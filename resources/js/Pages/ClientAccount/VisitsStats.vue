@@ -20,16 +20,16 @@
 
 <script>
 import {Head} from "@inertiajs/inertia-vue3";
-import ClientLayout from '@/Layouts/ClientAccount'
-import JetButton from '@/Jetstream/Button'
-import JetFormSection from '@/Jetstream/FormSectionNoGrid'
-import JetInput from '@/Jetstream/Input'
-import JetInputError from '@/Jetstream/InputError'
-import JetLabel from '@/Jetstream/Label'
-import JetActionMessage from '@/Jetstream/ActionMessage'
-import JetSecondaryButton from '@/Jetstream/SecondaryButton'
-import RuleStatsGraph from "../../Components/Stats/RuleStatsGraph";
-import VisitsStatsTable from "@/Components/Stats/VisitsStatsTable";
+import ClientLayout from '@/Layouts/ClientAccount.vue'
+import JetButton from '@/Jetstream/Button.vue'
+import JetFormSection from '@/Jetstream/FormSectionNoGrid.vue'
+import JetInput from '@/Jetstream/Input.vue'
+import JetInputError from '@/Jetstream/InputError.vue'
+import JetLabel from '@/Jetstream/Label.vue'
+import JetActionMessage from '@/Jetstream/ActionMessage.vue'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
+import RuleStatsGraph from "../../Components/Stats/RuleStatsGraph.vue";
+import VisitsStatsTable from "@/Components/Stats/VisitsStatsTable.vue";
 
 export default {
 

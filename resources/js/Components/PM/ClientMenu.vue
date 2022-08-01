@@ -96,9 +96,9 @@
 
 <script>
 
-import SubNavLink from "@/Components/SubNavLink";
-import JetDropdown from '@/Jetstream/Dropdown';
-import JetDropdownLink from '@/Jetstream/DropdownLink'
+import SubNavLink from "@/Components/SubNavLink.vue";
+import JetDropdown from '@/Jetstream/Dropdown.vue';
+import JetDropdownLink from '@/Jetstream/DropdownLink.vue'
 
 export default {
     name: "ClientMenu",

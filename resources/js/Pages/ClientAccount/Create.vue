@@ -20,8 +20,8 @@
 
 <script>
 import {Head} from "@inertiajs/inertia-vue3";
-import AppLayout from "@/Layouts/AppLayout";
-import ClientAccountForm from "@/Components/PM/ClientAccount/Form";
+import AppLayout from "@/Layouts/AppLayout.vue";
+import ClientAccountForm from "@/Components/PM/ClientAccount/Form.vue";
 
 export default {
     name: "CreateClientAccount",

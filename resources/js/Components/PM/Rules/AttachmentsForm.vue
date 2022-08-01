@@ -96,7 +96,7 @@
 
 <script>
 import {defineComponent} from "vue";
-import Attachment from "@/Components/PM/Rules/Attachment";
+import Attachment from "@/Components/PM/Rules/Attachment.vue";
 import VueUploadComponent from 'vue-upload-component';
 
 export default defineComponent({

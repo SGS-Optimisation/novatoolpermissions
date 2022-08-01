@@ -1,8 +1,8 @@
 <template>
     <client-layout :client-account="clientAccount">
-        <Head>
-            <title>{{clientAccount.name}} - Dagobah</title>
-        </Head>
+        <Head><title>
+            {{clientAccount.name}} - Dagobah
+        </title></Head>
         <template #body>
             <div class="pb-12 pt-4 flex flex-row">
                 <div class="w-1/2 mr-3">
@@ -102,9 +102,9 @@
 import {Head, Link} from "@inertiajs/inertia-vue3";
 import capitalize from 'lodash/capitalize';
 import pluralize from 'pluralize/pluralize';
-import ClientLayout from '@/Layouts/ClientAccount'
-import RuleStatsGraph from "../../Components/Stats/RuleStatsGraph";
-import JobStatsGraph from "../../Components/Stats/JobStatsGraph";
+import ClientLayout from '@/Layouts/ClientAccount.vue'
+import RuleStatsGraph from "../../Components/Stats/RuleStatsGraph.vue";
+import JobStatsGraph from "../../Components/Stats/JobStatsGraph.vue";
 
 export default {
     props: {
