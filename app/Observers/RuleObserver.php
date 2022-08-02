@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Events\Rules\Updated;
+use App\Events\Rules\RuleUpdated;
 use App\Models\Rule;
 
 class RuleObserver
@@ -15,7 +15,7 @@ class RuleObserver
      */
     public function created(Rule $rule)
     {
-        event(new Updated($rule));
+        event(new RuleUpdated($rule));
     }
 
     /**
@@ -26,7 +26,7 @@ class RuleObserver
      */
     public function updated(Rule $rule)
     {
-        event(new Updated($rule));
+        event(new RuleUpdated($rule));
     }
 
     /**
@@ -48,7 +48,7 @@ class RuleObserver
      */
     public function restored(Rule $rule)
     {
-        event(new Updated($rule));
+        event(new RuleUpdated($rule));
     }
 
     /**

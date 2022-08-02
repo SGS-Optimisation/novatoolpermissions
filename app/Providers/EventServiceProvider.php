@@ -36,7 +36,7 @@ class EventServiceProvider extends ServiceProvider
             'App\\Listeners\\Rules\\RebuildRuleCache',
         ],
 
-        'App\\Events\\Rules\\Updated' => [
+        'App\\Events\\Rules\\RuleUpdated' => [
             'App\\Listeners\\Rules\\RebuildRuleCache',
             'App\\Listeners\\Rules\\AddUserAsContributor',
             'App\\Listeners\\Rules\\AddTeamAsContributor',

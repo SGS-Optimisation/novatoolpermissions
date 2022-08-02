@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\PMs\Rules;
 
 use App\Events\Rules\Deleted;
-use App\Events\Rules\Updated;
+use App\Events\Rules\RuleUpdated;
 use App\Features\Rules\AssignAndNotifyRuleReviewersFeature;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateRuleRequest;
@@ -198,7 +198,7 @@ class RuleController extends Controller
         static::processTransitions($request, $rule);
 
         logger('rule added: '.$rule->id);
-        event(new Updated($rule));
+        event(new RuleUpdated($rule));
 
         $request->session()->flash('success', 'Rule successfully created!');
 
@@ -293,7 +293,8 @@ class RuleController extends Controller
         static::extractImages($request, $rule);
         static::processTransitions($request, $rule);
 
-        event(new Updated($rule));
+        //event(new RuleUpdated($rule));
+        RuleUpdated::dispatch($rule);
 
         return back(303);
     }
@@ -307,7 +308,7 @@ class RuleController extends Controller
             $rule->state->transitionTo(PublishedState::class, $request->user());
         }
 
-        event(new Updated($rules->first()));
+        event(new RuleUpdated($rules->first()));
 
         return back(303)->with('status', 'rule-updated');
 
@@ -324,7 +325,7 @@ class RuleController extends Controller
             $rule->state->transitionTo('App\States\Rules\\' . $targetClass, $request->user());
         }
 
-        event(new Updated($rules->first()));
+        event(new RuleUpdated($rules->first()));
 
         return back(303)->with('status', 'rule-updated');
 
@@ -364,7 +365,7 @@ class RuleController extends Controller
         $rule = Rule::withTrashed()->find($id);
         $rule->restore();
 
-        event(new Updated($rule));
+        event(new RuleUpdated($rule));
 
         return $request->wantsJson()
             ? new JsonResponse('', 200)

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\PMs\Rules;
 
-use App\Events\Rules\Updated;
+use App\Events\Rules\RuleUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\Rule;
 use Bnb\Laravel\Attachments\Attachment;

@@ -36,5 +36,12 @@ export default {
         ClientMenu,
         ActionMenu
     },
+
+    mounted(){
+        Echo.channel(`client-account.${this.clientAccount.slug}` )
+            .listen('Rules\\RuleUpdated', (e) => {
+                console.log(e);
+            });
+    }
 }
 </script>
