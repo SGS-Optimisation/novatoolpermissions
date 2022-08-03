@@ -26,7 +26,8 @@ Route::name('api.')
         //'verified',
         //'user.permissions',
         //'cache.headers:public;max_age=3600;etag',
-    ])->group(function () {
+    ])
+    ->group(function () {
 
         Route::name('simplified-customer.')
             ->prefix('/simplified-customer')
@@ -35,4 +36,12 @@ Route::name('api.')
                 Route::get('/', [SimplifiedCustomerController::class, 'index'])->name('index');
             });
 
+        Route::get('pm/', [\App\Http\Controllers\Api\PmHomeController::class, 'index'])
+            ->name('pm.landing');
+
+        Route::get('pm/{clientAccount:slug}/rules', [\App\Http\Controllers\Api\RuleController::class, 'index'])
+            ->name('pm.client-account.rules');
+
+        Route::get('pm/{clientAccount:slug}/taxonomy', [\App\Http\Controllers\Api\TaxonomyController::class, 'show'])
+            ->name('pm.client-account.taxonomy');
     });

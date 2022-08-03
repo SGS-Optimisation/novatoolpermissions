@@ -135,7 +135,7 @@ class RuleController extends Controller
 
         $search_term = $request->query('term');
 
-        $ruleRepo = new RuleRepository($client_account);
+        //$ruleRepo = new RuleRepository($client_account);
 
         return Jetstream::inertia()->render($request, 'ClientAccount/ListRules', [
             'team' => $request->user()->currentTeam,
@@ -144,7 +144,7 @@ class RuleController extends Controller
                 ->merge($client_account->teamOwners->pluck('name', 'id'))
                 ->sort()->values()->all(),
             'clientAccount' => $client_account,
-            'rules' => $ruleRepo->all($search_term),
+            //'rules' => $ruleRepo->all($search_term),
             'states' => (new Rule)->getStatesFor('state'),
             'stateModels' => (new GetOrderedStatesOperation(new Rule))->handle(),
             'search' => optional($search_term)->name,

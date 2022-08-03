@@ -1,254 +1,261 @@
 <template>
-    <client-layout :client-account="clientAccount">
-
-        <template #additionalActions>
-            <div v-if="selectedRules.length > 0" class="ml-auto">
-                {{ selectedRules.length }} rules selected.
-                Possible actions:
-                <template
-                    v-if="$page.props.user_permissions.publishRules && _every(selectedRules, ['state', 'Reviewing'])">
-                    <button @click="confirmingPublish = true"
-                            class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
-                            rounded-md font-semibold text-xs text-white uppercase tracking-widest
-                            hover:bg-gray-700 active:bg-gray-900
-                            focus:outline-none focus:border-gray-900 focus:shadow-outline-gray
-                            transition ease-in-out duration-150">
-                        Publish
-                    </button>
-                </template>
-                <template
-                    v-else-if="$page.props.user_permissions.publishRules && _every(selectedRules, ['state', 'Published'])">
-                    <button @click="confirmingUnpublish = true"
-                            class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
-                            rounded-md font-semibold text-xs text-white uppercase tracking-widest
-                            hover:bg-gray-700 active:bg-gray-900
-                            focus:outline-none focus:border-gray-900 focus:shadow-outline-gray
-                            transition ease-in-out duration-150">
-                        Unpublish
-                    </button>
-                </template>
-                <template v-else>
-                    None
-                </template>
-            </div>
-        </template>
-
+    <div>
         <Head><title>
             Rules for {{clientAccount.name}} - Dagobah
         </title></Head>
 
-        <template #body>
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-gray-50 pt-5">
-                <div class="grid grid-cols-5 gap-1">
+        <client-layout :client-account="clientAccount">
 
-                    <taxonomy-selector v-for="(terms, taxonomyName) in termsByTaxonomies"
-                                       :taxonomy-name="taxonomyName"
-                                       :key="taxonomyName"
-                                       :terms="terms"
-                                       @termSelected="filterByTaxonomyTerm"
-                                       :ref="setTaxonomySelectorRef"
-
-                    />
-                    <taxonomy-selector taxonomy-name="Contributor"
-                                       :terms="users"
-                                       @termSelected="filterByContributor"
-                                       ref="contributorSelector"
-                    />
-                    <taxonomy-selector taxonomy-name="Team"
-                                       :terms="allTeams"
-                                       @termSelected="filterByTeam"
-                                       ref="teamSelector"
-                    />
-
-                    <filter-condition @on-change-filter-condition="onChangeFilterCondition"/>
-
+            <template #additionalActions>
+                <div v-if="selectedRules.length > 0" class="ml-auto">
+                    {{ selectedRules.length }} rules selected.
+                    Possible actions:
+                    <template
+                        v-if="$page.props.user_permissions.publishRules && _every(selectedRules, ['state', 'Reviewing'])">
+                        <button @click="confirmingPublish = true"
+                                class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
+                            rounded-md font-semibold text-xs text-white uppercase tracking-widest
+                            hover:bg-gray-700 active:bg-gray-900
+                            focus:outline-none focus:border-gray-900 focus:shadow-outline-gray
+                            transition ease-in-out duration-150">
+                            Publish
+                        </button>
+                    </template>
+                    <template
+                        v-else-if="$page.props.user_permissions.publishRules && _every(selectedRules, ['state', 'Published'])">
+                        <button @click="confirmingUnpublish = true"
+                                class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
+                            rounded-md font-semibold text-xs text-white uppercase tracking-widest
+                            hover:bg-gray-700 active:bg-gray-900
+                            focus:outline-none focus:border-gray-900 focus:shadow-outline-gray
+                            transition ease-in-out duration-150">
+                            Unpublish
+                        </button>
+                    </template>
+                    <template v-else>
+                        None
+                    </template>
                 </div>
-                <div class="flex flex-row m-2 justify-between">
-                    <div class="flex justify-start m-2 inline-block" id="text-search">
-                        <jet-label class="align-middle mr-2 mt-2" for="text-search" value="Text search:"/>
-                        <jet-input type="text" name="text-search" autocomplete="off" class="block"
-                                   v-model="filterText"
-                                   @input="debounceGetRules"
+            </template>
+
+            <template #body>
+                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-gray-50 pt-5">
+                    <div class="grid grid-cols-5 gap-1">
+
+                        <taxonomy-selector v-for="(terms, taxonomyName) in termsByTaxonomies"
+                                           :taxonomy-name="taxonomyName"
+                                           :key="taxonomyName"
+                                           :terms="terms"
+                                           @termSelected="filterByTaxonomyTerm"
+                                           :ref="setTaxonomySelectorRef"
+
                         />
+                        <taxonomy-selector taxonomy-name="Contributor"
+                                           :terms="users"
+                                           @termSelected="filterByContributor"
+                                           ref="contributorSelector"
+                        />
+                        <taxonomy-selector taxonomy-name="Team"
+                                           :terms="allTeams"
+                                           @termSelected="filterByTeam"
+                                           ref="teamSelector"
+                        />
+
+                        <filter-condition @on-change-filter-condition="onChangeFilterCondition"/>
+
                     </div>
-                    <div id="filter" class="flex justify-end">
-                        <div class="flex text-xs m-2" role="group">
-                            <button @click="setFilterDate('isNew')"
-                                    :title="$page.props.settings.rule_filter_new_duration + ' days'"
-                                    :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
-                                New <span title="Total number of rules considered new"
-                                          class="px-1 rounded-xl bg-pink-300">{{ numNewRules }}</span>
-                            </button>
-                            <button @click="setFilterDate('isUpdated')"
-                                    :title="$page.props.settings.rule_filter_updated_duration + ' days'"
-                                    :class="[{ 'bg-blue-500 text-white' : filterOption === 'isUpdated' }, { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
-                                Updated <span title="Total number of rules considered updated"
-                                              class="px-1 rounded-xl bg-pink-300">{{ numUpdatedRules }}</span>
-                            </button>
-                            <button @click="setFilterDate('isFlagged')"
-                                    :class="[{ 'bg-blue-500 text-white' : filterOption === 'isFlagged' }, { 'bg-white text-blue-500' : filterOption !== 'isFlagged' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
-                                Flagged <span title="Total number of flagged rules" class="px-1 rounded-xl bg-pink-300">{{
-                                    numFlaggedRules
-                                }}</span>
-                            </button>
-                            <button @click="setFilterDate('isTagError')"
-                                    :class="[{ 'bg-blue-500 text-white' : filterOption === 'isTagError' }, { 'bg-white text-blue-500' : filterOption !== 'isTagError' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
-                                Tagging error <span title="Total number of rules with tagging errors"
-                                                    class="px-1 rounded-xl bg-pink-300">{{ numTagError }}</span>
-                            </button>
-                            <button @click="setFilterDate('all')"
-                                    class="bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
-                                Unfilter
-                            </button>
-
-                        </div>
-                        <jet-button class="mt-2 h-2/3" type="button" @click.native="clearAllFilters">
-                            Reset All
-                        </jet-button>
-                    </div>
-
-                </div>
-
-                <div v-if="search">
-                    <p>Showing rules for {{ search }}</p>
-                </div>
-
-                <div class="flex flex-row w-full justify-between">
-                    <div class="flex flex-col">
-                        {{ numFilteredRules }} Rules.
-                        <div>
-                            Select:
-                            <a class="text-blue-500 cursor-pointer pr-1" @click="selectAll">All</a>
-                            <a class="text-blue-500  cursor-pointer pr-1" @click="deselectAll">None</a>
-                        </div>
-                    </div>
-                    <v-pagination v-model="page" :pages="numPages"/>
-
-
-                    <!-- sorting -->
-                    <div class="flex flex-row">
-                        <div class="w-40 mr-4">
-                            <taxonomy-selector taxonomy-name="Rule Status"
-                                               :terms="states"
-                                               @termSelected="filterByState"
-                                               ref="stateSelector"
+                    <div class="flex flex-row m-2 justify-between">
+                        <div class="flex justify-start m-2 inline-block" id="text-search">
+                            <jet-label class="align-middle mr-2 mt-2" for="text-search" value="Text search:"/>
+                            <jet-input type="text" name="text-search" autocomplete="off" class="block"
+                                       v-model="filterText"
+                                       @input="debounceGetRules"
                             />
                         </div>
-                        <div class="flex flex-col">
-                            <span class="text-xs">Sorting</span>
-                            <div class="flex flex-row">
-                                <Dropdown v-model="selectedSortOption"
-                                          panelClass="text-xs"
-                                          @change="updateSort"
-                                          :options="sortFields"
-                                          optionLabel="label"
-                                          placeholder="Sort by…"/>
+                        <div id="filter" class="flex justify-end">
+                            <div class="flex text-xs m-2" role="group">
+                                <button @click="setFilterDate('isNew')"
+                                        :title="$page.props.settings.rule_filter_new_duration + ' days'"
+                                        :class="[{ 'bg-blue-500 text-white' : filterOption === 'isNew' }, { 'bg-white text-blue-500' : filterOption !== 'isNew' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-l-lg']">
+                                    New <span title="Total number of rules considered new"
+                                              class="px-1 rounded-xl bg-pink-300">{{ numNewRules }}</span>
+                                </button>
+                                <button @click="setFilterDate('isUpdated')"
+                                        :title="$page.props.settings.rule_filter_updated_duration + ' days'"
+                                        :class="[{ 'bg-blue-500 text-white' : filterOption === 'isUpdated' }, { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
+                                    Updated <span title="Total number of rules considered updated"
+                                                  class="px-1 rounded-xl bg-pink-300">{{ numUpdatedRules }}</span>
+                                </button>
+                                <button @click="setFilterDate('isFlagged')"
+                                        :class="[{ 'bg-blue-500 text-white' : filterOption === 'isFlagged' }, { 'bg-white text-blue-500' : filterOption !== 'isFlagged' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
+                                    Flagged <span title="Total number of flagged rules"
+                                                  class="px-1 rounded-xl bg-pink-300">{{
+                                        numFlaggedRules
+                                    }}</span>
+                                </button>
+                                <button @click="setFilterDate('isTagError')"
+                                        :class="[{ 'bg-blue-500 text-white' : filterOption === 'isTagError' }, { 'bg-white text-blue-500' : filterOption !== 'isTagError' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
+                                    Tagging error <span title="Total number of rules with tagging errors"
+                                                        class="px-1 rounded-xl bg-pink-300">{{ numTagError }}</span>
+                                </button>
+                                <button @click="setFilterDate('all')"
+                                        class="bg-white text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline rounded-r-lg">
+                                    Unfilter
+                                </button>
 
-                                <div class="flex flex-col">
-                                    <a class="cursor-pointer" @click="sortAsc"
-                                       :class="{'text-blue-500': this.sortOption.direction==='asc'}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-6" fill="none"
-                                             viewBox="0 0 24 24"
-                                             stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M5 15l7-7 7 7"/>
-                                        </svg>
-                                    </a>
-                                    <a class="cursor-pointer" @click="sortDesc"
-                                       :class="{'text-blue-500': this.sortOption.direction==='desc'}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-6" fill="none"
-                                             viewBox="0 0 24 24"
-                                             stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M19 9l-7 7-7-7"/>
-                                        </svg>
-                                    </a>
-                                </div>
+                            </div>
+                            <jet-button class="mt-2 h-2/3" type="button" @click.native="clearAllFilters">
+                                Reset All
+                            </jet-button>
+                        </div>
+
+                    </div>
+
+                    <div v-if="search">
+                        <p>Showing rules for {{ search }}</p>
+                    </div>
+
+                    <div class="flex flex-row w-full justify-between">
+                        <div class="flex flex-col">
+                            {{ numFilteredRules }} Rules.
+                            <div>
+                                Select:
+                                <a class="text-blue-500 cursor-pointer pr-1" @click="selectAll">All</a>
+                                <a class="text-blue-500  cursor-pointer pr-1" @click="deselectAll">None</a>
                             </div>
                         </div>
+                        <v-pagination v-model="page" :pages="numPages"/>
 
-                    </div>
-                </div>
 
-                <div v-for="(rule, ruleKey) in displayedRules"
-                     :key="ruleKey">
-                    <div class="flex flex-row items-center">
-                        <div class="flex-shrink mr-1">
-                            <Checkbox name="selectedRules"
-                                      :value="rule"
-                                      v-model="selectedRules"
-                                      @change="selectRule($event, rule)"
-                            />
-                            <!--                            <input type="checkbox" :value="rule" v-model="selectedRules"
-                                                               @change="selectRule($event, rule)">-->
+                        <!-- sorting -->
+                        <div class="flex flex-row">
+                            <div class="w-40 mr-4">
+                                <taxonomy-selector taxonomy-name="Rule Status"
+                                                   :terms="states"
+                                                   @termSelected="filterByState"
+                                                   ref="stateSelector"
+                                />
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-xs">Sorting</span>
+                                <div class="flex flex-row">
+                                    <Dropdown v-model="selectedSortOption"
+                                              panelClass="text-xs"
+                                              @change="updateSort"
+                                              :options="sortFields"
+                                              optionLabel="label"
+                                              placeholder="Sort by…"/>
+
+                                    <div class="flex flex-col">
+                                        <a class="cursor-pointer" @click="sortAsc"
+                                           :class="{'text-blue-500': this.sortOption.direction==='asc'}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-6" fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M5 15l7-7 7 7"/>
+                                            </svg>
+                                        </a>
+                                        <a class="cursor-pointer" @click="sortDesc"
+                                           :class="{'text-blue-500': this.sortOption.direction==='desc'}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-6" fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M19 9l-7 7-7-7"/>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
-                        <div class="flex-grow">
-                            <view-rule :rule="rule" :client-account="clientAccount"
-                                       :state-models="stateModels"
-                                       :selected="rule.selected"
-                                       ref="viewRule"
-                                       :show-contributors="showContributors" @updated="getRules"/>
+                    </div>
+
+                    <div class="flex justify-center" v-if="!rulesLoaded">
+                        <ProgressSpinner/>
+                    </div>
+
+                    <div v-else v-for="(rule, ruleKey) in displayedRules"
+                         :key="ruleKey">
+                        <div class="flex flex-row items-center">
+                            <div class="flex-shrink mr-1">
+                                <Checkbox name="selectedRules"
+                                          :value="rule"
+                                          v-model="selectedRules"
+                                          @change="selectRule($event, rule)"
+                                />
+                                <!--                            <input type="checkbox" :value="rule" v-model="selectedRules"
+                                                                   @change="selectRule($event, rule)">-->
+                            </div>
+                            <div class="flex-grow">
+                                <view-rule :rule="rule" :client-account="clientAccount"
+                                           :state-models="stateModels"
+                                           :selected="rule.selected"
+                                           ref="viewRule"
+                                           :show-contributors="showContributors" @updated="getFilteredRules"/>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="flex justify-center pb-16 pt-4">
+                        <v-pagination v-model="page" :pages="numPages"/>
+                    </div>
+
                 </div>
 
-                <div class="flex justify-center pb-16 pt-4">
-                    <v-pagination v-model="page" :pages="numPages"/>
-                </div>
+                <!-- Publish confirmation modal -->
+                <jet-confirmation-modal :show="confirmingPublish" @close="cancelPublish">
+                    <template #title>
+                        Publish Rules
+                    </template>
 
-            </div>
+                    <template #content>
+                        Are you sure you want to publish these rules?
+                    </template>
 
-            <!-- Publish confirmation modal -->
-            <jet-confirmation-modal :show="confirmingPublish" @close="cancelPublish">
-                <template #title>
-                    Publish Rules
-                </template>
+                    <template #footer>
+                        <jet-secondary-button @click.native="cancelPublish">
+                            Nevermind
+                        </jet-secondary-button>
 
-                <template #content>
-                    Are you sure you want to publish these rules?
-                </template>
+                        <jet-danger-button class="ml-2" @click.native="publishRules"
+                                           :class="{ 'opacity-25': publishForm.processing }"
+                                           :disabled="publishForm.processing">
+                            Publish
+                        </jet-danger-button>
+                    </template>
+                </jet-confirmation-modal>
 
-                <template #footer>
-                    <jet-secondary-button @click.native="cancelPublish">
-                        Nevermind
-                    </jet-secondary-button>
+                <!-- Unpublish confirmation modal -->
+                <jet-confirmation-modal :show="confirmingUnpublish" @close="cancelUnpublish">
+                    <template #title>
+                        Unpublish Rules
+                    </template>
 
-                    <jet-danger-button class="ml-2" @click.native="publishRules"
-                                       :class="{ 'opacity-25': publishForm.processing }"
-                                       :disabled="publishForm.processing">
-                        Publish
-                    </jet-danger-button>
-                </template>
-            </jet-confirmation-modal>
+                    <template #content>
+                        Are you sure you want to unpublish these rules?
+                        <br>Target status:
+                        <Dropdown v-model="unpublishForm.status"
+                                  panelClass="text-xs"
+                                  :options="['Draft', 'Reviewing']"/>
+                    </template>
 
-            <!-- Unpublish confirmation modal -->
-            <jet-confirmation-modal :show="confirmingUnpublish" @close="cancelUnpublish">
-                <template #title>
-                    Unpublish Rules
-                </template>
+                    <template #footer>
+                        <jet-secondary-button @click.native="cancelUnpublish">
+                            Nevermind
+                        </jet-secondary-button>
 
-                <template #content>
-                    Are you sure you want to unpublish these rules?
-                    <br>Target status:
-                    <Dropdown v-model="unpublishForm.status"
-                              panelClass="text-xs"
-                              :options="['Draft', 'Reviewing']"/>
-                </template>
-
-                <template #footer>
-                    <jet-secondary-button @click.native="cancelPublish">
-                        Nevermind
-                    </jet-secondary-button>
-
-                    <jet-danger-button class="ml-2" @click.native="unpublishRules"
-                                       :class="{ 'opacity-25': unpublishForm.processing }"
-                                       :disabled="unpublishForm.processing">
-                        Unpublish
-                    </jet-danger-button>
-                </template>
-            </jet-confirmation-modal>
-        </template>
-    </client-layout>
+                        <jet-danger-button class="ml-2" @click.native="unpublishRules"
+                                           :class="{ 'opacity-25': unpublishForm.processing }"
+                                           :disabled="unpublishForm.processing">
+                            Unpublish
+                        </jet-danger-button>
+                    </template>
+                </jet-confirmation-modal>
+            </template>
+        </client-layout>
+    </div>
 </template>
 
 <script>
@@ -272,6 +279,8 @@ import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
 import VPagination from "@hennge/vue3-pagination";
 import Checkbox from 'primevue/checkbox/sfc';
 import Dropdown from 'primevue/dropdown/sfc';
+import ProgressSpinner from 'primevue/progressspinner/sfc';
+import useSWRV from 'swrv';
 import {every as _every, drop as _drop} from 'lodash';
 import "@hennge/vue3-pagination/dist/vue3-pagination.css";
 
@@ -280,7 +289,7 @@ export default defineComponent({
         'clientAccount',
         'team',
         'allTeams',
-        'rules',
+        //'rules',
         'search',
         'states',
         'stateModels',
@@ -292,6 +301,7 @@ export default defineComponent({
         FilterCondition,
         Checkbox,
         Dropdown,
+        ProgressSpinner,
         ClientLayout,
         ViewRule,
         TaxonomyFilter,
@@ -313,6 +323,7 @@ export default defineComponent({
             page: 1,
             perPage: 25,
 
+            rules: [],
             //allRules: [..._.orderBy(this.rules, 'created_at', 'desc')],
             filteredRules: [],
             filterOption: 'all',
@@ -324,6 +335,7 @@ export default defineComponent({
             taxonomies: {},
             termsByTaxonomies: {},
             filterCondition: true, // true = AND, false = OR
+            rulesLoaded: false,
 
             showContributors: false,
 
@@ -361,6 +373,7 @@ export default defineComponent({
     },
 
     mounted() {
+        this.loadRules();
         this._keyListener = function (e) {
             if (e.key === "l" && (e.ctrlKey || e.metaKey)) {
                 e.preventDefault(); // present "Save Page" from getting triggered.
@@ -380,8 +393,6 @@ export default defineComponent({
 
     created() {
         this.getSortOption();
-        this.initializeFilters();
-        this.getRules();
     },
 
     updated() {
@@ -391,6 +402,20 @@ export default defineComponent({
     methods: {
         _every,
         _drop,
+
+        loadRules(){
+            const { data, error } = useSWRV(route('api.pm.client-account.rules',[this.clientAccount.slug]), fetcher);
+
+            this.rules = data;
+
+            /*this.rules = axios.get(route('api.pm.client-account.rules', [this.clientAccount.slug]))
+                .then((response) => {
+                    this.rules = response.data;
+                    this.initializeFilters();
+                    this.getFilteredRules();
+                    this.rulesLoaded = true;
+                })*/
+        },
 
         getSortOption() {
             if (localStorage.getItem('pmSortOption')) {
@@ -609,7 +634,7 @@ export default defineComponent({
             this.debounceGetRules();
         },
 
-        getRules() {
+        getFilteredRules() {
             this.filteredRules =
                 _.orderBy(this.rules, [rule => rule[this.sortOption.field].toLowerCase()], [this.sortOption.direction])
                     .filter(this.filterObject['textSearch'])
@@ -623,37 +648,37 @@ export default defineComponent({
         },
 
         debounceGetRules: _.debounce(function (e) {
-            this.getRules()
+            this.getFilteredRules()
         }, 300),
 
         filterByTaxonomyTerm(taxonomy, term) {
             this.taxonomies[taxonomy] = (term ? term : '');
-            this.getRules();
+            this.getFilteredRules();
         },
 
         filterByState(dummy, state) {
             this.filterState = state ? state : '';
-            this.getRules();
+            this.getFilteredRules();
         },
 
         filterByContributor(dummy, contributor) {
             this.filterContributor = contributor ? contributor : '';
-            this.getRules();
+            this.getFilteredRules();
         },
 
         filterByTeam(dummy, team) {
             this.filterTeam = team ? team : '';
-            this.getRules();
+            this.getFilteredRules();
         },
 
         setFilterDate(value) {
             this.filterOption = value;
-            this.getRules();
+            this.getFilteredRules();
         },
 
         onChangeFilterCondition(condition) {
             this.filterCondition = condition;
-            this.getRules();
+            this.getFilteredRules();
         },
 
         clearAllFilters() {
@@ -674,7 +699,7 @@ export default defineComponent({
             this.$refs.contributorSelector.clearSelected();
             this.$refs.teamSelector.clearSelected();
 
-            this.getRules();
+            this.getFilteredRules();
         }
     },
 
@@ -707,6 +732,16 @@ export default defineComponent({
         numTagError: function () {
             return (_.filter(this.rules, this.filterObject.isTagError)).length;
         },
+    },
+
+    watch: {
+        rules: function(newRules, oldRules) {
+            if(Array.isArray(newRules)) {
+                this.initializeFilters();
+                this.getFilteredRules();
+                this.rulesLoaded = true;
+            }
+        }
     },
 })
 </script>
