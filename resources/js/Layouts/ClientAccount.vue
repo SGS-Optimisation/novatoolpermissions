@@ -8,8 +8,10 @@
                 </div>
 
                 <div class="flex flex-col ml-6 justify-end">
-                    <action-menu :client-account="clientAccount"></action-menu>
-                    <slot name="additionalActions"></slot>
+
+                    <slot name="additionalActions">
+                        <action-menu :client-account="clientAccount"></action-menu>
+                    </slot>
                 </div>
             </div>
         </template>

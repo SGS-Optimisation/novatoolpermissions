@@ -6,35 +6,24 @@
 
         <client-layout :client-account="clientAccount">
 
-            <template #additionalActions>
-                <div v-if="selectedRules.length > 0" class="ml-auto">
-                    {{ selectedRules.length }} rules selected.
-                    Possible actions:
+            <template #additionalActions v-if="selectedRules.length > 0">
+                <div class="flex ml-auto items-center">
+                    <span class="mr-1">{{ selectedRules.length }} rules selected.
+                    Possible actions:</span>
                     <template
                         v-if="$page.props.user_permissions.publishRules && _every(selectedRules, ['state', 'Reviewing'])">
-                        <button @click="confirmingPublish = true"
-                                class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
-                            rounded-md font-semibold text-xs text-white uppercase tracking-widest
-                            hover:bg-gray-700 active:bg-gray-900
-                            focus:outline-none focus:border-gray-900 focus:shadow-outline-gray
-                            transition ease-in-out duration-150">
-                            Publish
-                        </button>
+                        <Button label="Publish" class="p-button-success p-button-sm" @click="confirmingPublish = true"/>
                     </template>
                     <template
                         v-else-if="$page.props.user_permissions.publishRules && _every(selectedRules, ['state', 'Published'])">
-                        <button @click="confirmingUnpublish = true"
-                                class="inline-flex items-center px-1 py-1 bg-gray-800 border border-transparent
-                            rounded-md font-semibold text-xs text-white uppercase tracking-widest
-                            hover:bg-gray-700 active:bg-gray-900
-                            focus:outline-none focus:border-gray-900 focus:shadow-outline-gray
-                            transition ease-in-out duration-150">
-                            Unpublish
-                        </button>
+                        <Button label="Unpublish" class="p-button-success p-button-sm" @click="confirmingUnpublish = true"/>
                     </template>
                     <template v-else>
                         None
                     </template>
+                    <Button class="p-button-text p-button-sm" @click="deselectAll">
+                        Clear selection
+                    </Button>
                 </div>
             </template>
 
@@ -277,6 +266,7 @@ import JetLabel from '@/Jetstream/Label.vue'
 import JetActionMessage from '@/Jetstream/ActionMessage.vue'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
 import VPagination from "@hennge/vue3-pagination";
+import Button from 'primevue/button/sfc';
 import Checkbox from 'primevue/checkbox/sfc';
 import Dropdown from 'primevue/dropdown/sfc';
 import ProgressSpinner from 'primevue/progressspinner/sfc';
@@ -299,6 +289,7 @@ export default defineComponent({
     components: {
         Head,
         FilterCondition,
+        Button,
         Checkbox,
         Dropdown,
         ProgressSpinner,
