@@ -71,3 +71,13 @@ button:focus {
         height: 15px;
     }
 }
+
+.Vue-Toastification__toast--info {
+    background-color: rgba(33, 150, 243, 0.85);
+    padding: 8px 20px;
+    min-height: 30px;
+}
+
+.Vue-Toastification__toast-body {
+    font-size: 14px;
+}

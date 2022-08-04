@@ -39,7 +39,7 @@
                         {{ team.client_account.omnipresent_rules_count }}
                     </span>
                     </jet-nav-link>
-                    <div class="flex flex-col">
+                    <div class="grid grid-cols-1 place-content-evenly">
                         <PButton icon="pi pi-list" class="p-button-sm p-button-icon-only p-button-rounded p-button-text p-button-plain"
                                 v-tooltip="'Rules'"
                                 @click="$inertia.get(
@@ -145,6 +145,11 @@ export default {
 .client-logo {
     max-width: 100px;
     max-height: 100px;
+}
+
+.p-button.p-button-icon-only {
+    width: 2rem;
+    height: 2rem;
 }
 
 .num-rules {

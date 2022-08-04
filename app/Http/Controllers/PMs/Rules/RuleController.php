@@ -11,6 +11,7 @@ use App\Models\ClientAccount;
 use App\Models\Rule;
 use App\Models\Team;
 use App\Models\Term;
+use App\Notifications\ClientAccountNotMatchedNotification;
 use App\Operations\Rules\GetDefaultRuleReviewersOperation;
 use App\Operations\Rules\GetOrderedStatesOperation;
 use App\Operations\Rules\GetRuleReviewersOperation;
@@ -28,6 +29,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Jetstream\Jetstream;
 use Laravel\Nova\Fields\Trix;
 use Laravel\Nova\Trix\PendingAttachment;
@@ -294,7 +297,17 @@ class RuleController extends Controller
         static::processTransitions($request, $rule);
 
         //event(new RuleUpdated($rule));
-        RuleUpdated::dispatch($rule);
+
+        //RuleUpdated::dispatch($rule);
+
+        $executed = RateLimiter::attempt(
+            'event-rule-update-'.$rule->id,
+            $perMinute = 1,
+            function() use($rule) {
+                broadcast(new RuleUpdated($rule))->toOthers();
+            },
+            $decaySeconds = 5
+        );
 
         return back(303);
     }
@@ -308,7 +321,7 @@ class RuleController extends Controller
             $rule->state->transitionTo(PublishedState::class, $request->user());
         }
 
-        event(new RuleUpdated($rules->first()));
+        broadcast(new RuleUpdated($rules->first()))->toOthers();
 
         return back(303)->with('status', 'rule-updated');
 
@@ -325,7 +338,7 @@ class RuleController extends Controller
             $rule->state->transitionTo('App\States\Rules\\' . $targetClass, $request->user());
         }
 
-        event(new RuleUpdated($rules->first()));
+        broadcast(new RuleUpdated($rules->first()))->toOthers();
 
         return back(303)->with('status', 'rule-updated');
 
@@ -345,7 +358,7 @@ class RuleController extends Controller
         $rule = Rule::find($id);
         $rule->delete();
 
-        event(new Deleted($rule));
+        broadcast(new Deleted($rule))->toOthers();
 
         return redirect(route('pm.client-account.rules.index', [$client_account_slug]), 303);
 
