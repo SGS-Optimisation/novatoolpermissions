@@ -50,6 +50,10 @@ class EventServiceProvider extends ServiceProvider
             'App\\Listeners\\Jobs\\LoadMySgsData',
         ],
 
+        'App\\Events\\Jobs\\JobLoaded' => [
+
+        ],
+
         TeamMemberAdded::class => [
             'App\\Listeners\\Users\\GiveUserRoles'
         ],
