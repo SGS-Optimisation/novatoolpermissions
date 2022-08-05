@@ -95,9 +95,7 @@ class MatchClientAccountOperation extends BaseOperation
             $job_metadata->client_found = false;
             $job_metadata->client = ['name' => $customer_name ?? '[Unset]'];
 
-            if($customer_name) {
-                event(new ClientAccountNotMatched($customer_name));
-            }
+            event(new ClientAccountNotMatched($customer_name ?? '[Unset'));
         }
 
 

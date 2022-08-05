@@ -1,0 +1,15 @@
+{
+    "debug": true,
+    "port": 6002,
+    "appManager.array.apps": [
+        {
+            "id": "1",
+            "key": "app-key",
+            "secret": "app-secret"
+        }
+    ],
+    "ssl": {
+        "certPath": "/path/to/domain.crt",
+        "keyPath": "/path/to/domain.key"
+    }
+}

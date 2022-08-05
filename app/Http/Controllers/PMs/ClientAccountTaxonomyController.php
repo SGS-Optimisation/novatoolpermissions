@@ -25,10 +25,8 @@ class ClientAccountTaxonomyController extends Controller
     {
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
 
-        return Jetstream::inertia()->render($request, 'ClientAccount/Configuration', array_merge([
-            'team' => $request->user()->currentTeam,
-        ],
-            $this->buildTaxonomyWithUsage($client_account)
-        ));
+        return Jetstream::inertia()->render($request, 'ClientAccount/Configuration', [
+            'clientAccount' => $client_account
+        ]);
     }
 }

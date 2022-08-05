@@ -4,6 +4,8 @@ import 'primevue/resources/themes/tailwind-light/theme.css';
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
 import '/resources/sass/ribbons.scss';
+import "vue-toastification/dist/index.css";
+import '/resources/sass/app.scss';
 
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
@@ -11,10 +13,13 @@ import { InertiaProgress } from '@inertiajs/progress';
 import PrimeVue from 'primevue/config';
 import AutoComplete from 'primevue/autocomplete';
 import Tooltip from 'primevue/tooltip';
+import Toast from "vue-toastification";
+
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
-
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Dagobah';
+
+window.fetcher = url => axios(url).then(res => res.data)
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -24,6 +29,7 @@ createInertiaApp({
         return createApp({ render: () => h(app, props) })
             .use(plugin)
             .use(PrimeVue)
+            .use(Toast)
             .component('AutoComplete', AutoComplete)
             .directive('tooltip', Tooltip)
             .mixin({ methods: { route } })

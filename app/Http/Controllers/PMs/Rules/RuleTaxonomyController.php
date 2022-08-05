@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\PMs\Rules;
 
-use App\Events\Rules\Updated;
+use App\Events\Rules\RuleUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\ClientAccount;
 use App\Models\Rule;
@@ -57,7 +57,7 @@ class RuleTaxonomyController extends Controller
         }
 
         $rule->terms()->sync($term_id);
-        event(new Updated($rule));
+        event(new RuleUpdated($rule));
 
         return back(303);
     }

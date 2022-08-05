@@ -332,6 +332,11 @@ export default {
 
         jobNumber: function (newJobNumber, oldJobNumber) {
             console.log('detected job number change');
+            Echo.leaveChannel(`job-${oldJobNumber}`)
+            Echo.channel(`job-${newJobNumber}`)
+                .listen('Jobs\\JobLoaded', (e) => {
+                    console.log('job ready', e);
+                })
             this.initJobLoaded();
         }
     },
@@ -368,6 +373,11 @@ export default {
         };
 
         document.addEventListener('keydown', this._keyListener.bind(this));
+
+        Echo.channel(`job-${this.jobNumber}`)
+            .listen('Jobs\\JobLoaded', (e) => {
+                console.log('job ready', e);
+            })
     },
 
     beforeDestroy() {

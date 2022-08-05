@@ -7,7 +7,7 @@
             <div class="flex justify-between">
                 <div class="flex flex-row content-center">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                        Welcome
+                        Client Accounts
                     </h2>
                 </div>
 
@@ -18,8 +18,10 @@
         </template>
 
         <div class="bg-white justify-around flex">
-            <div class="flex flex-col w-4/5 py-12">
-
+            <div v-if="!otherTeams" class="flex justify-center">
+                <ProgressSpinner/>
+            </div>
+            <div v-else class="flex flex-col w-4/5 py-12">
                 <div class="px-2">
                     <h2 class="text-center bg-gray-100 font-semibold">Your Teams</h2>
                     <DataView :value="myTeams" :layout="mlayout">
@@ -78,7 +80,8 @@ import ClientAccountLink from "@/Components/PM/ClientAccount/ClientAccountLink.v
 import DataView from 'primevue/dataview/sfc';
 import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions/sfc';
 import Dropdown from 'primevue/dropdown/sfc';
-
+import ProgressSpinner from 'primevue/progressspinner/sfc';
+import useSWRV from 'swrv'
 
 export default {
     name: "Landing",
@@ -92,12 +95,11 @@ export default {
         DataView,
         DataViewLayoutOptions,
         Dropdown,
+        ProgressSpinner,
     },
     props: [
         'team',
-        'myTeams',
-        'otherTeams',
-        'invitations',
+
     ],
     computed: {
         otherTeamsList() {
@@ -106,6 +108,12 @@ export default {
     },
     data() {
         return {
+            myTeams: null,
+            otherTeams: null,
+            invitations: null,
+
+            apiData: null,
+
             mlayout: 'grid',
             olayout: 'grid',
             sortKey: {label: 'Name', value: 'name'},
@@ -120,7 +128,15 @@ export default {
             ]
         }
     },
+    mounted(){
+        this.loadData();
+    },
     methods: {
+        loadData() {
+            const { data, error } = useSWRV(route('api.pm.landing'), fetcher);
+            this.apiData = data;
+        },
+
         onSortChange(event){
             console.log('sort changed', event);
             const value = event.value.value;
@@ -135,6 +151,16 @@ export default {
                 this.sortOrder = 1;
                 this.sortField = value;
                 this.sortKey = sortValue;
+            }
+        }
+    },
+    watch: {
+        apiData: function(newData, oldData) {
+            if(typeof newData === 'object' && newData !== null
+                && newData.hasOwnProperty('otherTeams')) {
+                this.myTeams = newData.myTeams;
+                this.otherTeams = newData.otherTeams;
+                this.invitations = newData.invitations;
             }
         }
     }

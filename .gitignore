@@ -18,3 +18,4 @@ yarn-error.log
 _ide_helper.php
 ERD.png
 .DS_Store
+soketi-config.local.json

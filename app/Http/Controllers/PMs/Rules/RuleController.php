@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\PMs\Rules;
 
 use App\Events\Rules\Deleted;
-use App\Events\Rules\Updated;
+use App\Events\Rules\RuleUpdated;
 use App\Features\Rules\AssignAndNotifyRuleReviewersFeature;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateRuleRequest;
@@ -11,6 +11,7 @@ use App\Models\ClientAccount;
 use App\Models\Rule;
 use App\Models\Team;
 use App\Models\Term;
+use App\Notifications\ClientAccountNotMatchedNotification;
 use App\Operations\Rules\GetDefaultRuleReviewersOperation;
 use App\Operations\Rules\GetOrderedStatesOperation;
 use App\Operations\Rules\GetRuleReviewersOperation;
@@ -28,6 +29,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Jetstream\Jetstream;
 use Laravel\Nova\Fields\Trix;
 use Laravel\Nova\Trix\PendingAttachment;
@@ -135,7 +138,7 @@ class RuleController extends Controller
 
         $search_term = $request->query('term');
 
-        $ruleRepo = new RuleRepository($client_account);
+        //$ruleRepo = new RuleRepository($client_account);
 
         return Jetstream::inertia()->render($request, 'ClientAccount/ListRules', [
             'team' => $request->user()->currentTeam,
@@ -144,7 +147,7 @@ class RuleController extends Controller
                 ->merge($client_account->teamOwners->pluck('name', 'id'))
                 ->sort()->values()->all(),
             'clientAccount' => $client_account,
-            'rules' => $ruleRepo->all($search_term),
+            //'rules' => $ruleRepo->all($search_term),
             'states' => (new Rule)->getStatesFor('state'),
             'stateModels' => (new GetOrderedStatesOperation(new Rule))->handle(),
             'search' => optional($search_term)->name,
@@ -198,7 +201,7 @@ class RuleController extends Controller
         static::processTransitions($request, $rule);
 
         logger('rule added: '.$rule->id);
-        event(new Updated($rule));
+        event(new RuleUpdated($rule));
 
         $request->session()->flash('success', 'Rule successfully created!');
 
@@ -293,7 +296,18 @@ class RuleController extends Controller
         static::extractImages($request, $rule);
         static::processTransitions($request, $rule);
 
-        event(new Updated($rule));
+        //event(new RuleUpdated($rule));
+
+        //RuleUpdated::dispatch($rule);
+
+        $executed = RateLimiter::attempt(
+            'event-rule-update-'.$rule->id,
+            $perMinute = 1,
+            function() use($rule) {
+                broadcast(new RuleUpdated($rule))->toOthers();
+            },
+            $decaySeconds = 5
+        );
 
         return back(303);
     }
@@ -307,7 +321,7 @@ class RuleController extends Controller
             $rule->state->transitionTo(PublishedState::class, $request->user());
         }
 
-        event(new Updated($rules->first()));
+        broadcast(new RuleUpdated($rules->first()))->toOthers();
 
         return back(303)->with('status', 'rule-updated');
 
@@ -324,7 +338,7 @@ class RuleController extends Controller
             $rule->state->transitionTo('App\States\Rules\\' . $targetClass, $request->user());
         }
 
-        event(new Updated($rules->first()));
+        broadcast(new RuleUpdated($rules->first()))->toOthers();
 
         return back(303)->with('status', 'rule-updated');
 
@@ -344,7 +358,7 @@ class RuleController extends Controller
         $rule = Rule::find($id);
         $rule->delete();
 
-        event(new Deleted($rule));
+        broadcast(new Deleted($rule))->toOthers();
 
         return redirect(route('pm.client-account.rules.index', [$client_account_slug]), 303);
 
@@ -364,7 +378,7 @@ class RuleController extends Controller
         $rule = Rule::withTrashed()->find($id);
         $rule->restore();
 
-        event(new Updated($rule));
+        event(new RuleUpdated($rule));
 
         return $request->wantsJson()
             ? new JsonResponse('', 200)
