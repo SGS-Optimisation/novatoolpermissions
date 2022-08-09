@@ -52,12 +52,11 @@
 </template>
 
 <script>
-import JetConfirmationModal from '@/Jetstream/ConfirmationModal'
-import JetButton from '@/Jetstream/Button'
-import JetDangerButton from '@/Jetstream/DangerButton'
-import JetSecondaryButton from '@/Jetstream/SecondaryButton'
-
-const prettyBytes = require('pretty-bytes');
+import JetConfirmationModal from '@/Jetstream/ConfirmationModal.vue'
+import JetButton from '@/Jetstream/Button.vue'
+import JetDangerButton from '@/Jetstream/DangerButton.vue'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
+import prettyBytes from 'pretty-bytes';
 
 export default {
     name: "Attachment",

@@ -2,7 +2,7 @@
 
 namespace App\Listeners\Rules;
 
-use App\Events\Rules\Updated;
+use App\Events\Rules\RuleUpdated;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -21,10 +21,10 @@ class AddTeamAsContributor
     /**
      * Handle the event.
      *
-     * @param  Updated  $event
+     * @param  RuleUpdated  $event
      * @return void
      */
-    public function handle(Updated $event)
+    public function handle(RuleUpdated $event)
     {
         if (!$event->user) {
             return;

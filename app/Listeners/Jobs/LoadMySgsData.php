@@ -2,6 +2,7 @@
 
 namespace App\Listeners\Jobs;
 
+use App\Events\Jobs\JobLoaded;
 use App\Events\Jobs\NewJobSearched;
 use App\Models\Job;
 use App\Services\MySgs\ConcurrentDataLoader;
@@ -50,6 +51,7 @@ class LoadMySgsData implements ShouldQueue, ShouldBeUnique
         (new ConcurrentDataLoader($this->mysgs_job))->handle();
 
         RuleFilter::handle($this->mysgs_job);
+        broadcast(new JobLoaded($this->mysgs_job));
     }
 
     /**

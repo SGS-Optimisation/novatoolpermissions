@@ -69,7 +69,7 @@
                     </template>
                 </jet-dialog-modal>
 
-                <terms-list :terms="taxonomyData.terms"
+                <terms-list :initial-terms="taxonomyData.terms"
                             :taxonomy-name="taxonomyName"
                             :taxonomy-id="taxonomyData.id"
                             :client-account="clientAccount"
@@ -105,15 +105,15 @@
 </template>
 
 <script>
-import TermsList from "@/Components/PM/ClientAccount/TermsList";
-import JetActionSection from '@/Jetstream/ActionSection';
-import JetConfirmationModal from "@/Jetstream/ConfirmationModal";
-import JetDialogModal from '@/Jetstream/DialogModal';
-import JetButton from '@/Jetstream/Button'
-import JetDangerButton from '@/Jetstream/DangerButton'
-import JetInput from '@/Jetstream/Input'
-import JetInputError from '@/Jetstream/InputError'
-import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import TermsList from "@/Components/PM/ClientAccount/TermsList.vue";
+import JetActionSection from '@/Jetstream/ActionSection.vue';
+import JetConfirmationModal from "@/Jetstream/ConfirmationModal.vue";
+import JetDialogModal from '@/Jetstream/DialogModal.vue';
+import JetButton from '@/Jetstream/Button.vue'
+import JetDangerButton from '@/Jetstream/DangerButton.vue'
+import JetInput from '@/Jetstream/Input.vue'
+import JetInputError from '@/Jetstream/InputError.vue'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
 
 export default {
     name: "TaxonomyDefinition",
@@ -129,14 +129,14 @@ export default {
         JetSecondaryButton,
     },
     props: [
-        'taxonomyName',
+        'initialTaxonomyName',
         'taxonomyData',
         'parentTaxonomy',
         'clientAccount'
     ],
     data() {
         return {
-
+            taxonomyName: this.initialTaxonomyName,
             confirmingTaxonomyDeletion: false,
             deletingTaxonomyId: null,
             deletingTaxonomyName: null,
@@ -207,7 +207,10 @@ export default {
 
             this.editForm.put(route('pm.taxonomies.update', this.editForm.id), {
                 preserveScroll: true,
-                onSuccess: () => this.cancelEditTaxonomy(),
+                onSuccess: () => {
+                    this.taxonomyName = this.editForm.taxonomyName;
+                    this.cancelEditTaxonomy();
+                }
             });
         },
 

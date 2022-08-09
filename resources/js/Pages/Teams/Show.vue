@@ -26,11 +26,11 @@
 
 <script>
 import {Head, Link} from "@inertiajs/inertia-vue3";
-import TeamMemberManager from './TeamMemberManager'
-import ClientLayout from '@/Layouts/ClientAccount'
-import DeleteTeamForm from './DeleteTeamForm'
-import JetSectionBorder from '@/Jetstream/SectionBorder'
-import UpdateTeamNameForm from './UpdateTeamNameForm'
+import TeamMemberManager from './TeamMemberManager.vue'
+import ClientLayout from '@/Layouts/ClientAccount.vue'
+import DeleteTeamForm from './DeleteTeamForm.vue'
+import JetSectionBorder from '@/Jetstream/SectionBorder.vue'
+import UpdateTeamNameForm from './UpdateTeamNameForm.vue'
 
 export default {
     props: [

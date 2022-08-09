@@ -1,7 +1,6 @@
 <template>
-    <jet-banner />
-
     <div class="min-h-screen flex flex-col bg-gray-100 justify-between">
+
         <div class="md:sticky md:top-0 z-40">
             <nav class="bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
@@ -27,7 +26,8 @@
                                     Project Manager
                                 </jet-nav-link>
                                 <jet-nav-link v-if="$page.props.user_permissions.accessStats"
-                                              :href="route('stats.jobs')" :active="route().current().startsWith('stats.')">
+                                              :href="route('stats.jobs')"
+                                              :active="route().current().startsWith('stats.')">
                                     Stats
                                 </jet-nav-link>
                                 <a v-if="$page.props.user_permissions.accessBackend"
@@ -38,14 +38,17 @@
 
                         <!-- Settings Dropdown -->
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
-                            <a target="_blank" class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out" href="/docs">Docs</a>
+                            <a target="_blank"
+                               class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out"
+                               href="/docs">Docs</a>
                             <div class="ml-3 relative">
                                 <jet-dropdown align="right" width="48">
                                     <template #trigger>
                                         <button v-if="$page.props.jetstream.managesProfilePhotos"
                                                 class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition duration-150 ease-in-out">
                                             <img class="h-8 w-8 rounded-full object-cover"
-                                                 :src="$page.props.user.profile_photo_url" :alt="$page.props.user.name"/>
+                                                 :src="$page.props.user.profile_photo_url"
+                                                 :alt="$page.props.user.name"/>
                                         </button>
 
                                         <button v-else
@@ -93,14 +96,15 @@
                                             </div>
 
                                             <!-- Team Settings -->
-                                            <jet-dropdown-link :href="route('teams.show', $page.props.user.current_team)">
+                                            <jet-dropdown-link
+                                                :href="route('teams.show', $page.props.user.current_team)">
                                                 Team Settings
                                             </jet-dropdown-link>
 
-<!--                                            <jet-dropdown-link :href="route('teams.create')"
-                                                               v-if="$page.props.jetstream.canCreateTeams">
-                                                Create New Team
-                                            </jet-dropdown-link>-->
+                                            <!--                                            <jet-dropdown-link :href="route('teams.create')"
+                                                                                                           v-if="$page.props.jetstream.canCreateTeams">
+                                                                                            Create New Team
+                                                                                        </jet-dropdown-link>-->
 
                                             <div class="border-t border-gray-100"></div>
 
@@ -110,7 +114,7 @@
                                             </div>
 
                                             <template v-for="team in $page.props.user.all_teams" :key="team.id">
-                                                <form @submit.prevent="switchToTeam(team)" >
+                                                <form @submit.prevent="switchToTeam(team)">
                                                     <jet-dropdown-link as="button">
                                                         <div class="flex items-center">
                                                             <svg v-if="team.id == $page.props.user.current_team_id"
@@ -268,15 +272,16 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import {defineComponent} from 'vue'
 import JetApplicationMark from '@/Jetstream/ApplicationMark.vue'
 import JetBanner from '@/Jetstream/Banner.vue'
 import JetDropdown from '@/Jetstream/Dropdown.vue'
 import JetDropdownLink from '@/Jetstream/DropdownLink.vue'
 import JetNavLink from '@/Jetstream/NavLink.vue'
 import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink.vue'
-import { Link } from '@inertiajs/inertia-vue3';
-import About from '@/Components/About';
+import {Link} from '@inertiajs/inertia-vue3';
+import About from '@/Components/About.vue';
+
 
 export default defineComponent({
     components: {
@@ -318,7 +323,7 @@ export default defineComponent({
             return 'v' + document.querySelector('meta[name="app_version"]').content;
         },
         changelogLink() {
-            return route('larecipe.show', ['2.0', 'changelog'] ) + '#'+this.appVersion;
+            return route('larecipe.show', ['2.0', 'changelog']) + '#' + this.appVersion;
         },
     }
 })

@@ -1,8 +1,8 @@
 <template>
     <app-layout>
-        <Head>
-            <title>Create Client Account - Dagobah</title>
-        </Head>
+        <Head><title>
+            Create Client Account - Dagobah
+        </title></Head>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Create a new Client Account
@@ -20,8 +20,8 @@
 
 <script>
 import {Head} from "@inertiajs/inertia-vue3";
-import AppLayout from "@/Layouts/AppLayout";
-import ClientAccountForm from "@/Components/PM/ClientAccount/Form";
+import AppLayout from "@/Layouts/AppLayout.vue";
+import ClientAccountForm from "@/Components/PM/ClientAccount/Form.vue";
 
 export default {
     name: "CreateClientAccount",

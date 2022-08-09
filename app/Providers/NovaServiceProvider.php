@@ -71,7 +71,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 Text::make('Matomo Host', 'matomo_host')
                     ->default('https://ma.sgsco.com'),
                 Text::make('Matomo Site ID', 'matomo_site_id'),
-            ])
+            ]),
+            Panel::make('Account Matching', [
+                Boolean::make('Allow Manual Select', 'allow_force_account')
+                    ->required()->default(false),
+            ]),
         ], [], 'features');
 
         NovaSettings::addSettingsFields([

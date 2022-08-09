@@ -15,9 +15,9 @@
 </template>
 
 <script>
-    import AppLayout from '@/Layouts/AppLayout'
-    import CreateTeamForm from './CreateTeamForm'
-    import JetSectionBorder from '@/Jetstream/SectionBorder'
+    import AppLayout from '@/Layouts/AppLayout.vue'
+    import CreateTeamForm from './CreateTeamForm.vue'
+    import JetSectionBorder from '@/Jetstream/SectionBorder.vue'
 
     export default {
         props: ['team', 'clientAccount', 'users'],

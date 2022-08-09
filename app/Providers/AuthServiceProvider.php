@@ -56,6 +56,7 @@ class AuthServiceProvider extends ServiceProvider
             'manageSettings',
             'manageTeams', 'createTeamsOnBehalfOfUsers',
             'impersonateUsers',
+            'receivesErrorNotifications',
 
         ])->each(function ($permission) {
             \Gate::define($permission, function ($user) use ($permission) {

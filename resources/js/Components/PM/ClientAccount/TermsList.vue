@@ -192,25 +192,25 @@
 </template>
 
 <script>
-import JetActionMessage from '@/Jetstream/ActionMessage'
-import JetNavLink from "@/Jetstream/NavLink";
-import JetConfirmationModal from "@/Jetstream/ConfirmationModal";
-import JetDialogModal from '@/Jetstream/DialogModal'
-import JetActionSection from '@/Jetstream/ActionSection'
-import JetButton from '@/Jetstream/Button'
-import JetDangerButton from '@/Jetstream/DangerButton'
-import JetFormSection from '@/Jetstream/FormSection'
-import JetInput from '@/Jetstream/Input'
-import JetInputError from '@/Jetstream/InputError'
-import JetLabel from '@/Jetstream/Label'
-import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import JetActionMessage from '@/Jetstream/ActionMessage.vue'
+import JetNavLink from "@/Jetstream/NavLink.vue";
+import JetConfirmationModal from "@/Jetstream/ConfirmationModal.vue";
+import JetDialogModal from '@/Jetstream/DialogModal.vue'
+import JetActionSection from '@/Jetstream/ActionSection.vue'
+import JetButton from '@/Jetstream/Button.vue'
+import JetDangerButton from '@/Jetstream/DangerButton.vue'
+import JetFormSection from '@/Jetstream/FormSection.vue'
+import JetInput from '@/Jetstream/Input.vue'
+import JetInputError from '@/Jetstream/InputError.vue'
+import JetLabel from '@/Jetstream/Label.vue'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
 import VueTagsInput from '@sipec/vue3-tags-input';
 
 export default {
     name: "TermsList",
     props: [
         'taxonomyName',
-        'terms',
+        'initialTerms',
         'taxonomyId',
         'clientAccount'
     ],
@@ -232,6 +232,7 @@ export default {
 
     data() {
         return {
+            terms: this.initialTerms,
             creatingTerm: false,
             creatingMultiple: false,
 
@@ -306,6 +307,12 @@ export default {
         }
     },
 
+    watch: {
+        initialTerms: function(newTerms, oldTerms) {
+            this.terms = newTerms;
+        },
+    },
+
     methods: {
         openCreatingTerm() {
             this.creatingTerm = true;
@@ -329,7 +336,13 @@ export default {
 
             this.createTermForm.post(route('pm.terms.store'), {
                 preserveScroll: true,
-                onSuccess: () => this.cancelCreateTerm(),
+                onSuccess: (response) => {
+                    console.log('store term success', response);
+
+                    //this.terms.push();
+
+                    this.cancelCreateTerm();
+                }
             });
         },
 
@@ -362,10 +375,17 @@ export default {
 
             this.editTermForm.put(route('pm.terms.update', this.editTermForm.termId), {
                 preserveScroll: true,
-                onSuccess: () => this.cancelEditTerm(),
+                onSuccess: () => {
+
+                    let term = this.terms.find(({ id }) => id == this.editTermForm.termId);
+                    console.log('updating term locally', term);
+                    term.name = this.editTermForm.name;
+                    term.aliases = this.editTermForm.aliases;
+
+                    this.cancelEditTerm();
+                }
             });
         },
-
 
         confirmTermDeletion(id, name) {
             console.log('confirming deleting');
@@ -385,7 +405,11 @@ export default {
 
             this.deleteTermForm.put(route('pm.terms.destroy', this.deletingTermId), {
                 preserveScroll: true,
-                onSuccess: () => this.cancelDeleteTerm(),
+                onSuccess: () => {
+                    this.terms = this.terms.filter((term) => term.id !== this.deletingTermId)
+
+                    this.cancelDeleteTerm();
+                }
             });
         }
     },

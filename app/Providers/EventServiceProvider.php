@@ -36,7 +36,7 @@ class EventServiceProvider extends ServiceProvider
             'App\\Listeners\\Rules\\RebuildRuleCache',
         ],
 
-        'App\\Events\\Rules\\Updated' => [
+        'App\\Events\\Rules\\RuleUpdated' => [
             'App\\Listeners\\Rules\\RebuildRuleCache',
             'App\\Listeners\\Rules\\AddUserAsContributor',
             'App\\Listeners\\Rules\\AddTeamAsContributor',
@@ -50,8 +50,19 @@ class EventServiceProvider extends ServiceProvider
             'App\\Listeners\\Jobs\\LoadMySgsData',
         ],
 
+        'App\\Events\\Jobs\\JobLoaded' => [
+
+        ],
+
+        'App\\Events\\ClientAccounts\\TermsUpdated' => [
+        ],
+
         TeamMemberAdded::class => [
             'App\\Listeners\\Users\\GiveUserRoles'
+        ],
+
+        'App\\Events\\Jobs\\ClientAccountNotMatched' => [
+            'App\\Listeners\\Jobs\\NotifyAdminsClientAccountNotMatched',
         ],
 //        Audited::class => [
 //            AuditedListener::class

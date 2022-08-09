@@ -26,9 +26,9 @@
 <script>
 import { defineComponent } from 'vue'
 import {Head} from "@inertiajs/inertia-vue3";
-import AppLayout from '@/Layouts/AppLayout'
-import JobSearch from "@/Components/OP/JobSearchForm";
-import ClientAccountLink from "@/Components/PM/ClientAccount/ClientAccountLink";
+import AppLayout from '@/Layouts/AppLayout.vue'
+import JobSearch from "@/Components/OP/JobSearchForm.vue";
+import ClientAccountLink from "@/Components/PM/ClientAccount/ClientAccountLink.vue";
 
 export default defineComponent({
     props: [

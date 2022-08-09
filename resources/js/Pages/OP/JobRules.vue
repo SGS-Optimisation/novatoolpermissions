@@ -10,6 +10,10 @@
                     <h2 v-if="currentJob" class="pt-2 font-bold text-xl text-gray-800 leading-tight">
                         Rules for job {{ currentJob.job_number }}
                     </h2>
+
+                    <manual-account-selection v-if="forcedAccount"
+                                              :initial-selection="forcedAccount"
+                                              :jobNumber="currentJob.job_number"/>
                 </div>
 
                 <div class="flex-grow">
@@ -22,7 +26,7 @@
         </template>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 bg-white relative">
-            <div class="flex flex-col sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px pb-2 mb-2 min-h-screen ">
+            <div class="flex flex-col sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px pb-2 mb-2 min-h-max ">
 
                 <div v-if="searching || !currentJob.hasOwnProperty('metadata')">
                     <loader></loader>
@@ -41,15 +45,25 @@
                         </p>
                     </div>
                 </div>
-                <div v-else-if="currentJob.metadata.client_found === false">
-                    <div class="h-64 bg-white flex justify-center align-middle">
+                <div v-else-if="currentJob.metadata.client_found === false && !forcedAccount">
+                    <div class="h-64 bg-white flex justify-center align-middle items-center">
                         <Message severity="error" :closable="false">
                             <span v-if="currentJob.metadata.error_reason">
                                 {{ currentJob.metadata.error_reason }}<br>
                             </span>
-                            <span v-else>"{{ currentJob.metadata.client.name }}" was not matched with any client account.</span>
+                            <span v-else>
+                                "{{ currentJob.metadata.client.name }}"
+                                was not matched with any client account.
+
+
+                            </span>
                         </Message>
 
+                    </div>
+
+                    <div class="flex justify-center items-center">
+                        <manual-account-selection v-if="!currentJob.metadata.error_reason"
+                                                  :jobNumber="currentJob.job_number"/>
                     </div>
                 </div>
                 <div v-else>
@@ -100,7 +114,8 @@
                                     { 'bg-white text-blue-500' : filterOption !== 'isUpdated' }
                                 ]">
                                 Updated
-                                <Tag :value="numUpdatedRules" severity="warning" icon="pi pi-exclamation-triangle"></Tag>
+                                <Tag :value="numUpdatedRules" severity="warning"
+                                     icon="pi pi-exclamation-triangle"></Tag>
                             </button>
                             <button
                                 v-for="term in artworkStructureTerms"
@@ -230,32 +245,33 @@
 
 <script>
 import {Head} from "@inertiajs/inertia-vue3";
-import AppLayout from '@/Layouts/AppLayout'
-import Input from "@/Jetstream/Input";
-import Button from "@/Jetstream/Button";
-import JetActionMessage from '@/Jetstream/ActionMessage'
-import JetButton from '@/Jetstream/Button'
-import JetDangerButton from '@/Jetstream/DangerButton'
-import JetDialogModal from '@/Jetstream/DialogModal';
-import JetInput from '@/Jetstream/Input'
-import JetLabel from '@/Jetstream/Label'
-import JetSecondaryButton from '@/Jetstream/SecondaryButton'
-import Loader from "@/Components/Loader";
-import ViewRule from '@/Components/PM/Rules/ViewRule'
-import ViewRuleGroup from "@/Components/OP/ViewRuleGroup";
-import JobSearch from "@/Components/OP/JobSearchForm";
+import AppLayout from '@/Layouts/AppLayout.vue'
+import Input from "@/Jetstream/Input.vue";
+import Button from "@/Jetstream/Button.vue";
+import JetActionMessage from '@/Jetstream/ActionMessage.vue'
+import JetButton from '@/Jetstream/Button.vue'
+import JetDangerButton from '@/Jetstream/DangerButton.vue'
+import JetDialogModal from '@/Jetstream/DialogModal.vue';
+import JetInput from '@/Jetstream/Input.vue'
+import JetLabel from '@/Jetstream/Label.vue'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
+import Loader from "@/Components/Loader.vue";
+import ViewRule from '@/Components/PM/Rules/ViewRule.vue'
+import ViewRuleGroup from "@/Components/OP/ViewRuleGroup.vue";
+import JobSearch from "@/Components/OP/JobSearchForm.vue";
 import moment from "moment";
-import JobIdentification from "@/Components/OP/JobIdentification";
+import JobIdentification from "@/Components/OP/JobIdentification.vue";
 import Message from 'primevue/message/sfc';
 import Tag from 'primevue/tag';
+import ManualAccountSelection from "@/Components/OP/ManualAccountSelection.vue";
 
 export default {
     props: [
-        'team',
         'jobNumber',
         'job',
         'rules',
         'stages',
+        'forcedAccount',
     ],
 
     data() {
@@ -316,6 +332,11 @@ export default {
 
         jobNumber: function (newJobNumber, oldJobNumber) {
             console.log('detected job number change');
+            Echo.leaveChannel(`job-${oldJobNumber}`)
+            Echo.channel(`job-${newJobNumber}`)
+                .listen('Jobs\\JobLoaded', (e) => {
+                    console.log('job ready', e);
+                })
             this.initJobLoaded();
         }
     },
@@ -352,6 +373,11 @@ export default {
         };
 
         document.addEventListener('keydown', this._keyListener.bind(this));
+
+        Echo.channel(`job-${this.jobNumber}`)
+            .listen('Jobs\\JobLoaded', (e) => {
+                console.log('job ready', e);
+            })
     },
 
     beforeDestroy() {
@@ -377,13 +403,13 @@ export default {
 
         setupStages() {
             this.stageStates = {}
-            for(let stage of this.processedStages) {
+            for (let stage of this.processedStages) {
                 this.stageStates[stage] = false;
             }
         },
 
         toggleRuleIdVisibility() {
-           this.showRuleId = !this.showRuleId;
+            this.showRuleId = !this.showRuleId;
         },
 
         track() {
@@ -404,7 +430,7 @@ export default {
                         activeJobTeam.push(jobTeams[i].teamName);
                         console.log('found active job team ' + jobTeams[i].teamName);
 
-                        if(userJobTeams.includes(jobTeams[i].teamName)) {
+                        if (userJobTeams.includes(jobTeams[i].teamName)) {
                             activeMatchingJobTeams.push(jobTeams[i].teamName);
                         }
                     }
@@ -531,7 +557,11 @@ export default {
                 "Accept": "application/json"
             };
 
-            axios.get(route('job.rules', this.jobNumber), {headers})
+            var rules_route = this.forcedAccount ?
+                route('job.rules.force-account', [this.forcedAccount, this.jobNumber])
+                : route('job.rules', this.jobNumber);
+
+            axios.get(rules_route, {headers})
                 .then(({data}) => {
                     console.log(data);
                     if (data.job && data.job.hasOwnProperty('metadata')
@@ -685,6 +715,7 @@ export default {
     },
 
     components: {
+        ManualAccountSelection,
         Head,
         JobIdentification,
         ViewRuleGroup,
