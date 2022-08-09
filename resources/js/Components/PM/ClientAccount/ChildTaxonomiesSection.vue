@@ -19,7 +19,7 @@
 
                 <template v-for="(taxonomyData, name) in taxonomyGroup">
                     <taxonomy-definition
-                        :taxonomy-name="name"
+                        :initial-taxonomy-name="name"
                         :taxonomy-data="taxonomyData"
                         :client-account="clientAccount"
                         :parent-taxonomy="parentTaxonomy"

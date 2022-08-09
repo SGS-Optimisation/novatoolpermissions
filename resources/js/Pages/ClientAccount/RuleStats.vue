@@ -1,19 +1,22 @@
 <template>
-    <client-layout :client-account="clientAccount">
-        <Head>
-            <title>Rules Stats for {{clientAccount.name}} - Dagobah</title>
-        </Head>
-        <template #body>
-            <div class="py-12">
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg" v-if="clientAccount != null">
-                        <rule-stats-graph :stats="stats" :view_by="view_by" :range="range" :column="column" :cumulative="cumulative"
-                                    :level="level" :region="region" mode="account-specific"/>
+    <div>
+        <Head><title>
+            Rules Stats for {{clientAccount.name}} - Dagobah
+        </title></Head>
+        <client-layout :client-account="clientAccount">
+
+            <template #body>
+                <div class="py-12">
+                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg" v-if="clientAccount != null">
+                            <rule-stats-graph :stats="stats" :view_by="view_by" :range="range" :column="column" :cumulative="cumulative"
+                                              :level="level" :region="region" mode="account-specific"/>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </template>
-    </client-layout>
+            </template>
+        </client-layout>
+    </div>
 </template>
 
 

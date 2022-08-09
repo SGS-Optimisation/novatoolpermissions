@@ -1,9 +1,9 @@
 <template>
     <div>
-        <Head>
-            <title>Categories for {{clientAccount.name}} - Dagobah</title>
-        </Head>
-        
+        <Head><title>
+            Categories for {{clientAccount.name}} - Dagobah
+        </title></Head>
+
         <client-layout :client-account="clientAccount">
 
             <template #body>

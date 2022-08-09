@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\PMs;
 
+use App\Events\ClientAccounts\TermsUpdated;
+use App\Events\Rules\RuleUpdated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateTermRequest;
 use App\Models\ClientAccount;
@@ -47,7 +49,9 @@ class TermController extends Controller
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
 
-        return back(303);
+        broadcast(new TermsUpdated($client_account));
+
+        return back(303) ;
     }
 
     /**

@@ -210,7 +210,7 @@ export default {
     name: "TermsList",
     props: [
         'taxonomyName',
-        'terms',
+        'initialTerms',
         'taxonomyId',
         'clientAccount'
     ],
@@ -232,6 +232,7 @@ export default {
 
     data() {
         return {
+            terms: this.initialTerms,
             creatingTerm: false,
             creatingMultiple: false,
 
@@ -306,6 +307,12 @@ export default {
         }
     },
 
+    watch: {
+        initialTerms: function(newTerms, oldTerms) {
+            this.terms = newTerms;
+        },
+    },
+
     methods: {
         openCreatingTerm() {
             this.creatingTerm = true;
@@ -329,7 +336,13 @@ export default {
 
             this.createTermForm.post(route('pm.terms.store'), {
                 preserveScroll: true,
-                onSuccess: () => this.cancelCreateTerm(),
+                onSuccess: (response) => {
+                    console.log('store term success', response);
+
+                    //this.terms.push();
+
+                    this.cancelCreateTerm();
+                }
             });
         },
 
@@ -362,10 +375,17 @@ export default {
 
             this.editTermForm.put(route('pm.terms.update', this.editTermForm.termId), {
                 preserveScroll: true,
-                onSuccess: () => this.cancelEditTerm(),
+                onSuccess: () => {
+
+                    let term = this.terms.find(({ id }) => id == this.editTermForm.termId);
+                    console.log('updating term locally', term);
+                    term.name = this.editTermForm.name;
+                    term.aliases = this.editTermForm.aliases;
+
+                    this.cancelEditTerm();
+                }
             });
         },
-
 
         confirmTermDeletion(id, name) {
             console.log('confirming deleting');
@@ -385,7 +405,11 @@ export default {
 
             this.deleteTermForm.put(route('pm.terms.destroy', this.deletingTermId), {
                 preserveScroll: true,
-                onSuccess: () => this.cancelDeleteTerm(),
+                onSuccess: () => {
+                    this.terms = this.terms.filter((term) => term.id !== this.deletingTermId)
+
+                    this.cancelDeleteTerm();
+                }
             });
         }
     },

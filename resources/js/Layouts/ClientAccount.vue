@@ -66,6 +66,11 @@ export default {
                     })
 
                 this.prefetchRules();
+            })
+            .listen('ClientAccounts\\TermsUpdated', (e) => {
+                console.log(e);
+
+                this.prefetchTaxonomy();
             });
     },
 
@@ -82,6 +87,16 @@ export default {
             mutate(
                 rulesPath,
                 axios(rulesPath).then((res) => res.data)
+            )
+            // the second parameter is a Promise
+            // SWRV will use the result when it resolves
+        },
+
+        prefetchTaxonomy() {
+            const taxonomyPath = route('api.pm.client-account.taxonomy', [this.clientAccount.slug]);
+            mutate(
+                taxonomyPath,
+                axios(taxonomyPath).then((res) => res.data)
             )
             // the second parameter is a Promise
             // SWRV will use the result when it resolves

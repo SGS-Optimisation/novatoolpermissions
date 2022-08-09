@@ -1,8 +1,8 @@
 <template>
     <app-layout>
-        <Head>
-            <title>Create Client Account - Dagobah</title>
-        </Head>
+        <Head><title>
+            Create Client Account - Dagobah
+        </title></Head>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Create a new Client Account

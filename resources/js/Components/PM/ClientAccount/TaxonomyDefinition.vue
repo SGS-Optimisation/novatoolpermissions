@@ -69,7 +69,7 @@
                     </template>
                 </jet-dialog-modal>
 
-                <terms-list :terms="taxonomyData.terms"
+                <terms-list :initial-terms="taxonomyData.terms"
                             :taxonomy-name="taxonomyName"
                             :taxonomy-id="taxonomyData.id"
                             :client-account="clientAccount"
@@ -129,14 +129,14 @@ export default {
         JetSecondaryButton,
     },
     props: [
-        'taxonomyName',
+        'initialTaxonomyName',
         'taxonomyData',
         'parentTaxonomy',
         'clientAccount'
     ],
     data() {
         return {
-
+            taxonomyName: this.initialTaxonomyName,
             confirmingTaxonomyDeletion: false,
             deletingTaxonomyId: null,
             deletingTaxonomyName: null,
@@ -207,7 +207,10 @@ export default {
 
             this.editForm.put(route('pm.taxonomies.update', this.editForm.id), {
                 preserveScroll: true,
-                onSuccess: () => this.cancelEditTaxonomy(),
+                onSuccess: () => {
+                    this.taxonomyName = this.editForm.taxonomyName;
+                    this.cancelEditTaxonomy();
+                }
             });
         },
 

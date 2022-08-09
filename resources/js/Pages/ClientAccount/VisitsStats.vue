@@ -1,20 +1,23 @@
 <template>
-    <client-layout :client-account="clientAccount">
-        <Head>
-            <title>Visits Stats for {{clientAccount.name}} - Dagobah</title>
-        </Head>
-        <template #body>
-            <div class="py-12">
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg" v-if="clientAccount != null">
-                        <visits-stats-table :stats="stats" :view_by="view_by" :date="date" mode="account-specific"
-                                            level="client" :grouping="grouping" :name="name"
-                                            :client-account="clientAccount.slug" :client-accounts="clientAccounts"/>
+    <div>
+        <Head><title>
+            Visits Stats for {{clientAccount.name}} - Dagobah
+        </title></Head>
+        <client-layout :client-account="clientAccount">
+
+            <template #body>
+                <div class="py-12">
+                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg" v-if="clientAccount != null">
+                            <visits-stats-table :stats="stats" :view_by="view_by" :date="date" mode="account-specific"
+                                                level="client" :grouping="grouping" :name="name"
+                                                :client-account="clientAccount.slug" :client-accounts="clientAccounts"/>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </template>
-    </client-layout>
+            </template>
+        </client-layout>
+    </div>
 </template>
 
 

@@ -1,13 +1,16 @@
 <template>
-    <client-layout :client-account="clientAccount">
-        <Head>
-            <title>Settings for {{clientAccount.name}} - Dagobah</title>
-        </Head>
-        <template #body>
-            <client-account-form :client="client" :creatingMode=false></client-account-form>
-        </template>
+    <div>
+        <Head><title>
+            Settings for {{clientAccount.name}} - Dagobah
+        </title></Head>
+        <client-layout :client-account="clientAccount">
 
-    </client-layout>
+            <template #body>
+                <client-account-form :client="client" :creatingMode=false></client-account-form>
+            </template>
+
+        </client-layout>
+    </div>
 
 </template>
 
