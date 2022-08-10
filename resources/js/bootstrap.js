@@ -30,6 +30,7 @@ window.Echo = new Echo({
     broadcaster: 'pusher',
     key: import.meta.env.VITE_PUSHER_APP_KEY,
     wsHost: import.meta.env.VITE_PUSHER_HOST,
+    wsPath: import.meta.env.VITE_PUSHER_PATH,
     wsPort: import.meta.env.VITE_PUSHER_WS_PORT,
     wssPort: import.meta.env.VITE_PUSHER_WSS_PORT,
     forceTLS: false,
