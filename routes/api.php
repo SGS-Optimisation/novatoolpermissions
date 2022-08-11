@@ -25,7 +25,7 @@ Route::name('api.')
         'auth:sanctum',
         //'verified',
         //'user.permissions',
-        //'cache.headers:public;max_age=3600;etag',
+        'cache.headers:public;max_age=3600;etag',
     ])
     ->group(function () {
 
