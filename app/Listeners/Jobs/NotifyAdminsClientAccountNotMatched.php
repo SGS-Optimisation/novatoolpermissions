@@ -30,6 +30,10 @@ class NotifyAdminsClientAccountNotMatched implements ShouldQueue
      */
     public function handle(ClientAccountNotMatched $event)
     {
+        if ($event->enduser_name === '[NOT SET]') {
+            return;
+        }
+
         $maintainers = User::withRoles()
             ->whereHas('roles.getPermissions',
                 function ($q) {
@@ -40,7 +44,7 @@ class NotifyAdminsClientAccountNotMatched implements ShouldQueue
         $executed = RateLimiter::attempt(
             'notify-unmatched-'.$event->enduser_name,
             $perMinute = 1,
-            function() use($maintainers, $event) {
+            function () use ($maintainers, $event) {
                 Notification::send(
                     $maintainers,
                     new ClientAccountNotMatchedNotification($event->enduser_name)
@@ -49,8 +53,8 @@ class NotifyAdminsClientAccountNotMatched implements ShouldQueue
             $decaySeconds = 600
         );
 
-        if (! $executed) {
-            logger('notifications for ' . $event->enduser_name . ' already sent in the last 10min');
+        if (!$executed) {
+            logger('notifications for '.$event->enduser_name.' already sent in the last 10min');
         }
 
     }

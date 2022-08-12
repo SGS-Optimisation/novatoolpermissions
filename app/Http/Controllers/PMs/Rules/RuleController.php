@@ -11,7 +11,6 @@ use App\Models\ClientAccount;
 use App\Models\Rule;
 use App\Models\Team;
 use App\Models\Term;
-use App\Notifications\ClientAccountNotMatchedNotification;
 use App\Operations\Rules\GetDefaultRuleReviewersOperation;
 use App\Operations\Rules\GetOrderedStatesOperation;
 use App\Operations\Rules\GetRuleReviewersOperation;

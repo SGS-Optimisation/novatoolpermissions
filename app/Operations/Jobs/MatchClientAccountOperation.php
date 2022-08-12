@@ -88,14 +88,14 @@ class MatchClientAccountOperation extends BaseOperation
         } catch (MultipleClientAccountsMatchedException $multipleMatches) {
             logger($multipleMatches->getMessage());
             $job_metadata->client_found = false;
-            $job_metadata->client = ['name' => $customer_name ?? '[Unset]'];
+            $job_metadata->client = ['name' => $customer_name ?? '[NOT SET]'];
             $job_metadata->error_reason = $multipleMatches->getMessage();
         } catch (\Exception $e) {
             logger($e->getMessage());
             $job_metadata->client_found = false;
-            $job_metadata->client = ['name' => $customer_name ?? '[Unset]'];
+            $job_metadata->client = ['name' => $customer_name ?? '[NOT SET]'];
             logger('couldn’t find match for ' . print_r($customer_name, true));
-            event(new ClientAccountNotMatched($customer_name ?? '[Unset]'));
+            event(new ClientAccountNotMatched($customer_name ?? '[NOT SET]'));
         }
 
 
