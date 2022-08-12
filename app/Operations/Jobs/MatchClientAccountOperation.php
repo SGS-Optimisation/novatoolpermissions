@@ -60,7 +60,7 @@ class MatchClientAccountOperation extends BaseOperation
             }
 
             if (!$customer_name || trim($customer_name) == '') {
-                $customer_name = ['[NOT SET]'];
+                $customer_name = '[NOT SET]';
                 throw new \Exception('Client not set on job');
             }
 
@@ -94,8 +94,8 @@ class MatchClientAccountOperation extends BaseOperation
             logger($e->getMessage());
             $job_metadata->client_found = false;
             $job_metadata->client = ['name' => $customer_name ?? '[Unset]'];
-
-            event(new ClientAccountNotMatched($customer_name ?? '[Unset'));
+            logger('couldn’t find match for ' . print_r($customer_name, true));
+            event(new ClientAccountNotMatched($customer_name ?? '[Unset]'));
         }
 
 

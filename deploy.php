@@ -34,6 +34,8 @@ host('prod')
     ->set('branch', function () {
         return input()->getOption('branch') ?: 'production';
     })
+    ->set('default_timeout', 600)
+    ->set('keep_releases', 3)
     ;
 
 host('staging')
@@ -46,7 +48,10 @@ host('staging')
     ->set('repository', 'dagobah-git:SGS-Optimisation/dagobah.git')
     ->set('branch', function () {
         return input()->getOption('branch') ?: 'main';
-    });
+    })
+    ->set('default_timeout', 600)
+    ->set('keep_releases', 1)
+    ;
 
 task('js-build', [
     'npm:install',
@@ -82,6 +87,7 @@ task('supervisor:restart:soketi', function() {
 });
 
 task('cache:warmup', function() {
+    cd('{{release_or_current_path}}');
     run('{{bin/php}} artisan cache:warmup');
 });
 
