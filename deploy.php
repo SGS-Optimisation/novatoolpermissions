@@ -66,6 +66,7 @@ task('deploy', [
     'npm:run:prod',
     'deploy:publish',
     'php-fpm:reload',
+    'cache:warmup',
 ]);
 
 task('npm:run:prod', function () {
@@ -78,6 +79,10 @@ task('supervisor:restart:queue', function() {
 });
 task('supervisor:restart:soketi', function() {
     run('sudo {{bin/supervisorctl}} restart soketi:');
+});
+
+task('cache:warmup', function() {
+    run('{{bin/php}} artisan cache:warmup');
 });
 
 // Hooks

@@ -2,6 +2,8 @@
 # Changelog
 
 ---
+- [v2.3.0](#v2.3.0)
+- [v2.2.6](#v2.2.6)
 - [v2.2.5](#v2.2.5)
 - [v2.2.4](#v2.2.4)
 - [v2.2.3](#v2.2.3)
@@ -11,7 +13,23 @@
 - [v2.1.0](#v2.1.0)
 - [v2.0.0](#v2.0.0)
 
-<a name="v2.2.5"></a>
+<a name="v2.3.0"></a>
+## v2.3.0 (2022-08-12)
+- Framework upgrades
+- Client side caching and background update on socket notification
+- Better server side caching
+- Etag on API routes
+- Adds feature to allow users to choose which account to use when no end user match
+- Fix styling for headers in rule content (h1, h2, h3)
+
+<a name="v2.2.6"></a>
+## v2.2.6 (2022-07-07)
+- OP View filters: add counter on number of new or updated items
+- OP View: hide new or updated buttons when no content
+- Better jobteam association by fetching user's jobteams and crossing with jobteams for a job
+
+
+- <a name="v2.2.5"></a>
 ## v2.2.5 (2022-03-03)
 - Adds optional client account matching using jobteam
 - Improved client account creation with taxonomy selection and team owner
