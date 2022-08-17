@@ -27,7 +27,7 @@ import ClientHeader from "@/Components/PM/ClientHeader.vue";
 import ClientMenu from '@/Components/PM/ClientMenu.vue'
 import ActionMenu from '@/Components/PM/ActionMenu.vue'
 import {useToast} from "vue-toastification";
-import {mutate} from 'swrv'
+import {prefetchRules, prefetchTaxonomy} from "@/queries.js"
 
 export default {
     props: [
@@ -65,12 +65,12 @@ export default {
                         rtl: false
                     })
 
-                this.prefetchRules();
+                prefetchRules(this.clientAccount.slug);
             })
             .listen('ClientAccounts\\TermsUpdated', (e) => {
                 console.log(e);
 
-                this.prefetchTaxonomy();
+                prefetchTaxonomy(this.clientAccount.slug);
             });
     },
 
@@ -81,26 +81,6 @@ export default {
 
     methods: {
         toast: useToast(),
-
-        prefetchRules() {
-            const rulesPath = route('api.pm.client-account.rules', [this.clientAccount.slug]);
-            mutate(
-                rulesPath,
-                axios(rulesPath).then((res) => res.data)
-            )
-            // the second parameter is a Promise
-            // SWRV will use the result when it resolves
-        },
-
-        prefetchTaxonomy() {
-            const taxonomyPath = route('api.pm.client-account.taxonomy', [this.clientAccount.slug]);
-            mutate(
-                taxonomyPath,
-                axios(taxonomyPath).then((res) => res.data)
-            )
-            // the second parameter is a Promise
-            // SWRV will use the result when it resolves
-        },
 
         message() {
             console.log('messaging');

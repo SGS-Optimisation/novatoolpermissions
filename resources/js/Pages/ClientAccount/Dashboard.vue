@@ -107,6 +107,7 @@ import pluralize from 'pluralize/pluralize';
 import ClientLayout from '@/Layouts/ClientAccount.vue'
 import RuleStatsGraph from "../../Components/Stats/RuleStatsGraph.vue";
 import JobStatsGraph from "../../Components/Stats/JobStatsGraph.vue";
+import {prefetchRules, prefetchTaxonomy} from "@/queries";
 
 export default {
     props: {
@@ -129,6 +130,10 @@ export default {
         RuleStatsGraph,
         JobStatsGraph,
         ClientLayout,
+    },
+    mounted() {
+        prefetchRules(this.clientAccount.slug);
+        prefetchTaxonomy(this.clientAccount.slug);
     },
     methods: {
         capitalize,

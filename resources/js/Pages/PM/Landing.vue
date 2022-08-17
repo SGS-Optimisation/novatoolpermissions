@@ -82,6 +82,7 @@ import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions/sfc';
 import Dropdown from 'primevue/dropdown/sfc';
 import ProgressSpinner from 'primevue/progressspinner/sfc';
 import useSWRV from 'swrv'
+import {prefetchRules, prefetchTaxonomy} from "@/queries";
 
 export default {
     name: "Landing",
@@ -162,6 +163,14 @@ export default {
                 this.otherTeams = newData.otherTeams;
                 this.invitations = newData.invitations;
             }
+        },
+
+        myTeams: function(newTeams, oldTeams) {
+            console.log('new teams', newTeams)
+            newTeams.forEach((team) => {
+                prefetchRules(team.client_account.slug);
+                prefetchTaxonomy(team.client_account.slug);
+            })
         }
     }
 }
