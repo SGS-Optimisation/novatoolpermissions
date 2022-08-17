@@ -303,7 +303,7 @@ class RuleController extends Controller
             'event-rule-update-'.$rule->id,
             $perMinute = 1,
             function() use($rule) {
-                broadcast(new RuleUpdated($rule))->toOthers();
+                broadcast(new RuleUpdated($rule));
             },
             $decaySeconds = 5
         );
