@@ -11,6 +11,7 @@ set('application', 'Dagobah');
 set('repository', 'https://github.com/SGS-Optimisation/dagobah.git');
 set('php_fpm_version', '8.1');
 set('teams_webhook', 'https://sgsintl.webhook.office.com/webhookb2/c2ed3926-5fb9-4b83-8086-500f53fa2999@8714a216-0445-4269-b96b-7d84bddb6da1/IncomingWebhook/3fd4888ae3044133a1a89ce10125b6f3/e95eed8a-475e-4b4b-885e-d1cee971ac3d');
+set('cleanup_use_sudo', true);
 
 add('shared_files', ['.env', 'soketi-config.json']);
 add('shared_dirs', []);
@@ -18,6 +19,10 @@ add('writable_dirs', []);
 
 before('deploy', 'teams:notify');
 after('deploy:success', 'teams:notify:success');
+after('deploy:success', 'supervisor:restart:queue');
+after('deploy:success', 'supervisor:restart:soketi');
+after('deploy:success', 'teams:notify:success');
+
 after('deploy:failed', 'teams:notify:failure');
 
 // Hosts
@@ -49,7 +54,7 @@ host('staging')
     ->set('branch', function () {
         return input()->getOption('branch') ?: 'main';
     })
-    ->set('default_timeout', 600)
+    ->set('default_timeout', 900)
     ->set('keep_releases', 1)
     ;
 
@@ -65,13 +70,11 @@ task('deploy', [
     'artisan:view:cache',
     'artisan:config:cache',
     'artisan:migrate',
-    'supervisor:restart:queue',
-    'supervisor:restart:soketi',
     'npm:install',
     'npm:run:prod',
     'deploy:publish',
     'php-fpm:reload',
-    'cache:warmup',
+    //'cache:warmup',
 ]);
 
 task('npm:run:prod', function () {
