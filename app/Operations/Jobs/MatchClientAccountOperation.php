@@ -41,7 +41,7 @@ class MatchClientAccountOperation extends BaseOperation
                 logger('no retailer in basic details, checking contacts');
                 try {
                     $customer_name = collect($this->job->metadata->jobContacts)
-                        ->where('contactType', 10)->first()
+                        ->whereIn('contactType', [10, 30])->first()
                         ->customerName;
                 } catch (\Exception $e) {
                     logger('No customer name and no contact type "End User"');
