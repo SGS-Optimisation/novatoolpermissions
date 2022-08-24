@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Cache;
 class JobRepository
 {
 
-    public static function createFromJobNumber($job_number)
+    protected static function createFromJobNumber($job_number)
     {
         return Job::create([
             'job_number' => $job_number,
@@ -28,7 +28,7 @@ class JobRepository
         ]);
     }
 
-    public static function refreshJobFromJobNumber($job_number)
+    protected static function refreshJobFromJobNumber($job_number)
     {
         $job = Job::whereJobNumber($job_number)->first();
 

@@ -15,12 +15,13 @@ class CountryResolver
 
         foreach ($data as $language) {
             if (trim($language) !== "") {
-                $tags = array_map('trim', explode(',', $language));
+                //$tags = array_map('trim', explode(',', $language));
+                $tags = array_map('trim', preg_split("/[|,\,]+/", $language));
 
                 $accumulator = $accumulator->merge(collect($tags));
             }
         }
-        
+
         return $accumulator->toArray();
     }
 
