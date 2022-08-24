@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue';
 import fs from 'fs';
 import {homedir} from 'os'
 import {resolve} from 'path'
+import { webUpdateNotice } from '@plugin-web-update-notification/vite'
 
 let host='dagobah.test'
 
@@ -24,6 +25,15 @@ export default defineConfig({
                 },
             },
         }),
+        webUpdateNotice({
+            logVersion: true,
+            notificationProps: {
+                title: 'Application update',
+                description: 'The application has been updated, please refresh the page',
+                buttonText: 'refresh',
+            },
+        }),
+
     ],
     esbuild: {
         jsxFactory: 'h',
