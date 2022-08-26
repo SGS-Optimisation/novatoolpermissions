@@ -20,46 +20,61 @@
 
                             <span v-if="shouldShowTeamName"
                                   class=" text-xs" :class="{'client-logo' : team.client_account.image}">
-                            {{ team.name }}
-                        </span>
-                        </div>
+                                {{ team.name }}
+                            </span>
 
-                        <span class="num-rules"
-                              :class="{'bg-green-100': hasRules,'bg-pink-100': !hasRules}"
-                              title="Number of rules">
-                        {{ team.client_account.rules_count }}
-                    </span>
-                        <span class="num-rules omnipresent" v-if="team.client_account.omnipresent_rules_count"
-                              :class="{
-                                'bg-green-100': omnipresentRulesInfo,
-                                'bg-yellow-200': omnipresentRulesWarning,
-                                'bg-pink-200': omnipresentRulesDanger,
-                          }"
-                              title="Number of omnipresent rules">
-                        {{ team.client_account.omnipresent_rules_count }}
-                    </span>
+                            <div class="flex mt-5 justify-around">
+                                <div v-tooltip.bottom="'Rules'"
+                                     class="mx-2 text-blue-400 opacity-75 text-xs justify-center align-bottom">
+                                    <i class="pi pi-book"></i>
+                                    {{ team.client_account.rules_count }}
+                                </div>
+
+                                <div v-if="team.client_account.omnipresent_rules_count"
+                                     v-tooltip.bottom="'Omnipresent Rules'"
+                                     class="mx-2 opacity-75 text-xs justify-center align-bottom"
+                                     :class="{
+                                                'text-blue-400': omnipresentRulesInfo,
+                                                'text-amber-400': omnipresentRulesWarning,
+                                                'text-red-400': omnipresentRulesDanger,
+                                            }"
+                                >
+                                    <i class="pi pi-bell"></i>
+                                    {{ team.client_account.omnipresent_rules_count }}
+                                </div>
+
+                                <div v-if="team.client_account.flagged_rules_count"
+                                     v-tooltip.bottom="'Flagged Rules'"
+                                     class="mx-2 text-red-400 opacity-75 text-xs justify-center align-bottom">
+                                    <i class="pi pi-flag"></i>
+                                    {{ team.client_account.flagged_rules_count }}
+                                </div>
+
+                            </div>
+                        </div>
                     </jet-nav-link>
                     <div class="grid grid-cols-1 place-content-evenly">
-                        <PButton icon="pi pi-list" class="p-button-sm p-button-icon-only p-button-rounded p-button-text p-button-plain"
-                                v-tooltip="'Rules'"
-                                @click="$inertia.get(
-                                    route('pm.client-account.rules.index', {clientAccount: team.client_account.slug})
-                                )"/>
-                        <PButton icon="pi pi-tags" class="p-button-sm p-button-icon-only p-button-rounded p-button-text p-button-plain"
-                                v-tooltip="'Categories'"
-                                @click="$inertia.get(
-                                    route('pm.client-account.taxonomy', {clientAccount: team.client_account.slug})
-                                )"/>
-                        <PButton icon="pi pi-cog" class="p-button-sm p-button-icon-only p-button-rounded p-button-text p-button-plain"
-                                v-tooltip="'Settings'"
-                                @click="$inertia.get(
-                                    route('pm.client-account.edit', {clientAccount: team.client_account.slug})
-                                )"/>
-                        <PButton v-if="alwaysShowTeamName" icon="pi pi-users" class="p-button-sm p-button-icon-only p-button-rounded p-button-text p-button-plain"
-                                v-tooltip="'Team'"
-                                @click="$inertia.get(
-                                    route('pm.client-account.teams.show', {clientAccount: team.client_account.slug, teamId: team.id})
-                                )"/>
+                        <Link :href="route('pm.client-account.rules.index', {clientAccount: team.client_account.slug})"
+                              class="account-page"
+                              v-tooltip="'Rules'">
+                            <i class="pi pi-list text-xs "></i>
+                        </Link>
+                        <Link :href="route('pm.client-account.taxonomy', {clientAccount: team.client_account.slug})"
+                              class="account-page"
+                              v-tooltip="'Categories'">
+                            <i class="pi pi-tags text-xs "></i>
+                        </Link>
+                        <Link :href="route('pm.client-account.edit', {clientAccount: team.client_account.slug})"
+                              class="account-page"
+                              v-tooltip="'Settings'">
+                            <i class="pi pi-cog text-xs "></i>
+                        </Link>
+                        <Link v-if="alwaysShowTeamName"
+                              :href="route('pm.client-account.teams.show', {clientAccount: team.client_account.slug, teamId: team.id})"
+                              class="account-page"
+                              v-tooltip="'Team'">
+                            <i class="pi pi-users text-xs "></i>
+                        </Link>
                     </div>
                 </div>
             </template>
@@ -80,6 +95,8 @@ import JetNavLink from "@/Jetstream/NavLink.vue";
 import {Link} from '@inertiajs/inertia-vue3';
 import Card from 'primevue/card/sfc';
 import PButton from 'primevue/button/sfc';
+import Badge from 'primevue/badge';
+import Tag from 'primevue/tag';
 
 export default {
     name: "ClientAccountLink",
@@ -88,6 +105,8 @@ export default {
         Link,
         Card,
         PButton,
+        Badge,
+        Tag,
     },
     props: {
         team: Object,
@@ -101,8 +120,7 @@ export default {
         },
     },
     data() {
-        return {
-        }
+        return {}
     },
     computed: {
         isInvitation() {
@@ -119,6 +137,18 @@ export default {
 
         ratio() {
             return (this.team.client_account.omnipresent_rules_count / this.team.client_account.rules_count)
+        },
+
+        omnipresentSeverity: function () {
+            if (this.omnipresentRulesInfo) {
+                return 'info';
+            }
+            if (this.omnipresentRulesWarning) {
+                return 'warning';
+            }
+            if (this.omnipresentRulesDanger) {
+                return 'danger';
+            }
         },
 
         omnipresentRulesInfo: function () {
@@ -145,6 +175,11 @@ export default {
 .client-logo {
     max-width: 100px;
     max-height: 100px;
+    @apply text-center;
+}
+
+.account-page {
+    @apply flex hover:bg-gray-100 rounded-full justify-center align-bottom items-center w-8 h-8;
 }
 
 .p-button.p-button-icon-only {

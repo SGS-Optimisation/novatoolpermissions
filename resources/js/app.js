@@ -13,6 +13,7 @@ import { InertiaProgress } from '@inertiajs/progress';
 import PrimeVue from 'primevue/config';
 import AutoComplete from 'primevue/autocomplete';
 import Tooltip from 'primevue/tooltip';
+import BadgeDirective from 'primevue/badgedirective';
 import Toast from "vue-toastification";
 
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
@@ -32,6 +33,7 @@ createInertiaApp({
             .use(Toast)
             .component('AutoComplete', AutoComplete)
             .directive('tooltip', Tooltip)
+            .directive('badge', BadgeDirective)
             .mixin({ methods: { route } })
             .mount(el);
     },

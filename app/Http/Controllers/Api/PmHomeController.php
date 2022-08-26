@@ -19,7 +19,7 @@ class PmHomeController extends Controller
         $myClientAccountNames = [];
 
         foreach ($myTeams as $team) {
-            $team->clientAccount->loadCount(['rules', 'omnipresent_rules']);
+            $team->clientAccount->loadCount(['rules', 'omnipresent_rules', 'flagged_rules']);
             $myClientAccountNames[] = $team->clientAccount->name;
         }
 
@@ -29,14 +29,14 @@ class PmHomeController extends Controller
 
         foreach ($invitations as $invitation) {
             if (!in_array($invitation->team->clientAccount->name, $myClientAccountNames)) {
-                $invitation->team->clientAccount->loadCount(['rules', 'omnipresent_rules']);
+                $invitation->team->clientAccount->loadCount(['rules', 'omnipresent_rules', 'flagged_rules']);
                 $myClientAccountNames[] = $invitation->team->clientAccount->name;
             }
         }
 
         $otherTeams = Team::with([
             'clientAccount' => function ($query) {
-                return $query->withCount(['rules', 'omnipresent_rules']);
+                return $query->withCount(['rules', 'omnipresent_rules', 'flagged_rules']);
             }
         ])
             //->whereNotIn('id', $myTeams->pluck('id')->all())
