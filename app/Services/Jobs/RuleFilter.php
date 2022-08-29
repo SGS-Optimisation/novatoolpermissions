@@ -59,7 +59,7 @@ class RuleFilter
                     $start = microtime(true);
 
                     $memoizeMapper = memoize(
-                        function ($job, $mapping) {
+                        function ($mapping) use (&$job) {
                             $mapper = new JobFieldsMapper($job, $mapping);
                             return $mapper->run();
                         }
@@ -99,40 +99,43 @@ class RuleFilter
 
                         /** @var Term $term */
                         foreach ($rule->accountStructureTerms as $term) {
+                            $mappings = $term->taxonomy->mappings;
+                            $taxonomy_name = $term->taxonomy->name;
+
                             /*
                              * Initialize array key, there might be many terms for the same taxonomy
                              */
-                            if (!Arr::exists($matchedTaxonomies, $term->taxonomy->name)) {
-                                $matchedTaxonomies[$term->taxonomy->name] = false;
+                            if (!Arr::exists($matchedTaxonomies, $taxonomy_name)) {
+                                $matchedTaxonomies[$taxonomy_name] = false;
                             }
 
                             /*
                              * If a rule's taxo term applies to any/all jobs, it should be displayed, skip further checks
                              */
                             if (Str::lower($term->name) === 'any' || Str::lower($term->name) === 'all') {
-                                $matchedTaxonomies[$term->taxonomy->name] = true;
+                                $matchedTaxonomies[$taxonomy_name] = true;
                                 continue;
                             }
 
                             /*
                              * Otherwise, check if the field matches
                              */
-                            if (count($term->taxonomy->mappings) > 0) {
+                            if (count($mappings) > 0) {
 
-                                if (!Arr::exists($job_taxonomy_terms_matches, $term->taxonomy->name)) {
-                                    $job_taxonomy_terms_matches[$term->taxonomy->name] = [];
-                                    $job_taxonomy_terms[$term->taxonomy->name] = [];
+                                if (!Arr::exists($job_taxonomy_terms_matches, $taxonomy_name)) {
+                                    $job_taxonomy_terms_matches[$taxonomy_name] = [];
+                                    $job_taxonomy_terms[$taxonomy_name] = [];
                                 }
 
-                                foreach ($term->taxonomy->mappings as $mapping) {
+                                foreach ($mappings as $mapping) {
                                     //logger('rule comparison using mapping '.$mapping->id);
                                     /**
                                      * retrieve value from mysgs response with help of taxonomy
                                      */
-                                    list($mysgsValue, $raw) = $memoizeMapper($job, $mapping);
+                                    list($mysgsValue, $raw) = $memoizeMapper($mapping);
 
                                     $termValue = Str::lower($term->name);
-                                    $job_taxonomy_terms[$term->taxonomy->name] = $raw;
+                                    $job_taxonomy_terms[$taxonomy_name] = $raw;
 
                                     /**
                                      * compare retrieved value with this term
@@ -149,7 +152,7 @@ class RuleFilter
                                             continue;
                                         }
                                         /*logger(sprintf('checking taxo "%s" for term "%s" against mysgs value: "%s"',
-                                                $term->taxonomy->name, $termValue, print_r($mysgsValue_single, true))
+                                                $taxonomy_name, $termValue, print_r($mysgsValue_single, true))
                                         );*/
                                         if (!(Str::is($termValue, Str::lower($mysgsValue_single))
                                             || (isset($term->config['aliases'])
@@ -162,15 +165,15 @@ class RuleFilter
                                             );*/
                                             $matched = false;
                                         } else {
-                                            $matchedTaxonomies[$term->taxonomy->name] = true;
+                                            $matchedTaxonomies[$taxonomy_name] = true;
 
                                             /*logger(sprintf('rule "%s": term "%s" matched with "%s"',
                                                     $rule->id, $termValue, $mysgsValue_single)
                                             );*/
 
                                             if (!in_array($term->name,
-                                                $job_taxonomy_terms_matches[$term->taxonomy->name])) {
-                                                $job_taxonomy_terms_matches[$term->taxonomy->name][] = $term->name;
+                                                $job_taxonomy_terms_matches[$taxonomy_name])) {
+                                                $job_taxonomy_terms_matches[$taxonomy_name][] = $term->name;
                                             }
                                         }
                                     }
@@ -186,15 +189,13 @@ class RuleFilter
 
                         if ($matched || $taxonomyMatch) {
                             $clientRules[] = $rule;
-                            logger(sprintf('rule %s added, matched=%b  taxoMatch=%b ',
+                            /*logger(sprintf('rule %s added, matched=%b  taxoMatch=%b ',
                                     $rule->id, $matched, $taxonomyMatch)
-                            );
-                        } else {
-                            logger(sprintf('rule %s dropped, matched=%b  taxoMatch=%b ',
-                                    $rule->id, $matched, $taxonomyMatch)
-                            );
+                            );*/
                         }
                     }
+
+                    logger('filtering done in '.microtime(true) - $start);
 
                     /*
                      * Fill in any unused taxonomy, for display in job identification section
@@ -205,7 +206,7 @@ class RuleFilter
 
                             foreach ($taxonomy->mappings as $mapping) {
                                 //logger('fill using mapping '.$mapping->id);
-                                list($mysgsValue, $raw) = $memoizeMapper($job, $mapping);
+                                list($mysgsValue, $raw) = $memoizeMapper($mapping);
 
                                 if ($mysgsValue) {
 
@@ -235,8 +236,6 @@ class RuleFilter
 
                     $job->metadata = $metadata;
                     $job->save();
-
-                    logger('filtering done in '.microtime(true) - $start);
 
                     return $clientRules;
                 });

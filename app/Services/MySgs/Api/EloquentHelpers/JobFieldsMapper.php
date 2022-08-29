@@ -44,7 +44,7 @@ class JobFieldsMapper
     {
         $this->accumulator = [];
         $job = $this->job;
-        if(!$mapping) {
+        if (!$mapping) {
             $mapping = $this->mapping;
         }
 
@@ -59,9 +59,14 @@ class JobFieldsMapper
             //logger('using stored data for mapping ' . $mapping->id);
             $data = $job->metadata->{$mapping->title};
         } else {
-            logger('no stored data for mapping ' . $mapping->id);
-            $api_data = (new MysgsApiCaller($job))->handle($mapping);
-            $data = $api_data->response;
+            logger('no stored data for mapping '.$mapping->id);
+
+            if ($job->updated_at->isBefore(Carbon::now()->subMinutes(5))) {
+                $api_data = (new MysgsApiCaller($job))->handle($mapping);
+                $data = $api_data->response;
+            } else {
+                $data = [];
+            }
         }
 
         return static::parseMapping($mapping, $data);
@@ -69,10 +74,10 @@ class JobFieldsMapper
 
     public function run()
     {
-        try{
+        try {
             $value = $this->getMetaValue();
-        }catch (\Exception $e) {
-            \Log::error('error running mapping ' . $this->mapping->id );
+        } catch (\Exception $e) {
+            \Log::error('error running mapping '.$this->mapping->id);
             \Log::error($e->getMessage());
             \Log::error(join("\n", $e->getTrace()));
             $value = null;
@@ -96,10 +101,9 @@ class JobFieldsMapper
             $resolver = new $resolverClass;
             $dataToResolve = $resolver::handle($this->accumulator);
         } else {
-            if(count($this->accumulator) == 0) {
+            if (count($this->accumulator) == 0) {
                 $dataToResolve = '';
-            }
-            elseif(count($this->accumulator) == 1) {
+            } elseif (count($this->accumulator) == 1) {
                 $dataToResolve = explode('#', $this->accumulator[0]);
             }
         }
@@ -118,11 +122,10 @@ class JobFieldsMapper
         if (is_int($section) || $section === "0") {
             if (is_array($data) && isset($data[$section])) {
                 static::parseFieldPathSection($field_path_sections, $data[$section]);
-            } elseif(is_object($data) && isset($data->$section)) {
+            } elseif (is_object($data) && isset($data->$section)) {
                 static::parseFieldPathSection($field_path_sections, $data->$section);
             }
-        }
-        elseif (Str::startsWith($section, '*')) {
+        } elseif (Str::startsWith($section, '*')) {
 
             $section_recursive = ltrim($section, '*');
 
@@ -139,7 +142,7 @@ class JobFieldsMapper
                 /*
                  * Process each key value pair
                  */
-                foreach($attrs_matcher as $attr_matcher) {
+                foreach ($attrs_matcher as $attr_matcher) {
                     $matcher = explode('=', $attr_matcher);
 
                     $field = $matcher[0];
@@ -153,12 +156,12 @@ class JobFieldsMapper
                 }
 
             } else {
-                foreach($data as $item) {
+                foreach ($data as $item) {
                     static::parseFieldPathSection($field_path_sections, $item);
                 }
 
             }
-        } elseif(isset($data->$section)) {
+        } elseif (isset($data->$section)) {
             static::parseFieldPathSection($field_path_sections, $data->$section);
         }
     }
