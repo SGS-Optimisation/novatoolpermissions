@@ -34,7 +34,9 @@ class ProductionStageResolver
         'Colourwork' => [
             'Retouch',
             'Color',
+            '0 - Color',
             'Colour',
+            '0 - Colour'
         ],
 
         'Release' => [
