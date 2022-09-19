@@ -16,7 +16,7 @@
                                               :jobNumber="currentJob.job_number"/>
                 </div>
 
-                <div class="flex-grow">
+                <div class="flex-shrink">
                     <job-search @searching="runningSearch"
                                 classes="bg-white flex"
                                 placeholder="Search another job">
@@ -332,10 +332,12 @@ export default {
 
         jobNumber: function (newJobNumber, oldJobNumber) {
             console.log('detected job number change');
+            this.unfilter();
             Echo.leaveChannel(`job-${oldJobNumber}`)
             Echo.channel(`job-${newJobNumber}`)
                 .listen('Jobs\\JobLoaded', (e) => {
                     console.log('job ready', e);
+                    this.queryRules();
                 })
             this.initJobLoaded();
         }
@@ -377,6 +379,7 @@ export default {
         Echo.channel(`job-${this.jobNumber}`)
             .listen('Jobs\\JobLoaded', (e) => {
                 console.log('job ready', e);
+                this.queryRules();
             })
     },
 
@@ -396,7 +399,8 @@ export default {
                 this.currentRules = this.rules;
                 this.newRulesLoaded();
                 this.initRulesParsing();
-            } else {
+            } else if(window.Echo.connector.pusher.connection.state === 'unavailable'){
+                console.log('socket unavailable, switching to polling mode');
                 this.waitMode();
             }
         },
