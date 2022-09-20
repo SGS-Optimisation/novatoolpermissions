@@ -78,7 +78,8 @@ class ClientAccount extends Model
      */
     public function taxonomies()
     {
-        return $this->belongsToMany(\App\Models\Taxonomy::class);
+        return $this->belongsToMany(\App\Models\Taxonomy::class)
+            ->withPivot('use_for_pm_search', 'metadata');;
     }
 
     /**
@@ -86,7 +87,8 @@ class ClientAccount extends Model
      */
     public function child_taxonomies()
     {
-        return $this->taxonomies()->whereNotNull('parent_id');
+        return $this->taxonomies()->whereNotNull('parent_id')
+            ->withPivot('use_for_pm_search', 'metadata');;
     }
 
     /**
@@ -97,7 +99,8 @@ class ClientAccount extends Model
         return $this->taxonomies()->whereNotNull('parent_id')
             ->whereHas('parent', function (Builder $query) {
                 return $query->where('name', 'Account Structure');
-            });
+            })
+            ->withPivot('use_for_pm_search', 'metadata');;
     }
 
     /**

@@ -33,11 +33,23 @@ Route::get('/login/azure/callback', [\App\Http\Controllers\Auth\AzureAuthControl
     ->middleware(['web']);
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/', [\App\Http\Controllers\HomeController::class, 'prodSearch'])
+        ->name('home');
+
+    /*Route::get('/', function () {
+        return redirect(route('search.op'));
+    })->name('home');*/
 
     Route::get('/dashboard', function () {
         return redirect(route('home'));
     })->name('dashboard');
+
+    Route::get('/search/op', [\App\Http\Controllers\HomeController::class, 'prodSearch'])
+        ->name('search.op');
+
+    Route::get('/search/pm', [\App\Http\Controllers\HomeController::class, 'pmSearch'])
+        ->name('search.pm');
+
 
     Route::put('/current-team', [CurrentTeamController::class, 'update'])
         ->name('current-team.update');
@@ -50,10 +62,16 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         ->name('job.rules')
         ->where('jobNumber', '[0-9\-]+');
 
+    /**
+     * @deprecated
+     */
     Route::get('/{jobNumber}/status', [\App\Http\Controllers\OPs\JobController::class, 'status'])
         ->name('job.rules.status')
         ->where('jobNumber', '[0-9\-]+');
 
+    /**
+     * @deprecated
+     */
     Route::post('/{jobNumber}', [\App\Http\Controllers\OPs\JobController::class, 'search'])
         ->name('job.search')
         ->where('jobNumber', '[0-9\-]+');
@@ -68,8 +86,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         ->where('rule', '[0-9]+');
 });
 
-Route::name('pm.')
-    ->prefix('pm/')
+Route::name('library.')
+    ->prefix('library/')
     ->middleware([
         'auth:sanctum',
         'verified',

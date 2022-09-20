@@ -43,7 +43,7 @@
                                         <div class="text-sm text-gray-600">
                                             <p class="font-bold">
                                                 <Link
-                                                    :href="route('pm.client-account.teams.show', {clientAccount: clientAccount.slug, teamId: team.id })">
+                                                    :href="route('library.client-account.teams.show', {clientAccount: clientAccount.slug, teamId: team.id })">
                                                     {{ team.name }}
                                                 </Link>
                                             </p>

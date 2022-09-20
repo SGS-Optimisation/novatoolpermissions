@@ -8,12 +8,13 @@
                              transition duration-150 ease-in-out"
                      :class="{'text-red-600': !hasMappings}"
                      :title="mappings"
-                     >
+                >
                     {{ taxonomyName }}
                 </div>
 
                 <template v-if="!hasMappings">
-                    <a class="text-xs" :href='`/admin/resources/field-mappings/new?viaResource=taxonomies&viaResourceId=${taxonomyData.id}&viaRelationship=mappings`'>
+                    <a class="text-xs"
+                       :href='`/admin/resources/field-mappings/new?viaResource=taxonomies&viaResourceId=${taxonomyData.id}&viaRelationship=mappings`'>
                         Create mapping
                     </a>
                 </template>
@@ -52,6 +53,14 @@
                             <jet-input type="text" class="mt-1 block w-3/4"
                                        :value="editForm.name"
                                        v-model="editForm.name"/>
+
+                            <div class="mt-2 flex justify-baseline items-baseline align-bottom">
+                                <Checkbox name="search"
+                                          inputId="search"
+                                          v-model="editForm.use_for_pm_search"
+                                          :binary="true"/>
+                                <label class="ml-1" for="search">Use for PM Search</label>
+                            </div>
 
                         </div>
                     </template>
@@ -105,7 +114,7 @@
 </template>
 
 <script>
-import TermsList from "@/Components/PM/ClientAccount/TermsList.vue";
+import TermsList from "@/Components/RulesLibrary/ClientAccount/TermsList.vue";
 import JetActionSection from '@/Jetstream/ActionSection.vue';
 import JetConfirmationModal from "@/Jetstream/ConfirmationModal.vue";
 import JetDialogModal from '@/Jetstream/DialogModal.vue';
@@ -114,6 +123,7 @@ import JetDangerButton from '@/Jetstream/DangerButton.vue'
 import JetInput from '@/Jetstream/Input.vue'
 import JetInputError from '@/Jetstream/InputError.vue'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
+import Checkbox from 'primevue/checkbox/sfc';
 
 export default {
     name: "TaxonomyDefinition",
@@ -127,6 +137,7 @@ export default {
         JetInput,
         JetInputError,
         JetSecondaryButton,
+        Checkbox,
     },
     props: [
         'initialTaxonomyName',
@@ -137,6 +148,7 @@ export default {
     data() {
         return {
             taxonomyName: this.initialTaxonomyName,
+
             confirmingTaxonomyDeletion: false,
             deletingTaxonomyId: null,
             deletingTaxonomyName: null,
@@ -149,6 +161,8 @@ export default {
             editForm: this.$inertia.form({
                 id: null,
                 name: this.taxonomyName,
+                use_for_pm_search: this.taxonomyData.taxonomy.hasOwnProperty('client_accounts') && this.taxonomyData.taxonomy.client_accounts.length ?
+                    this.taxonomyData.taxonomy.client_accounts[0].pivot.use_for_pm_search == 1 : null,
                 clientAccountId: this.clientAccount.id,
             }, {
                 bag: 'updateTaxonomy'
@@ -159,8 +173,6 @@ export default {
             }, {
                 bag: 'deleteTaxonomy'
             }),
-
-
         }
     },
 
@@ -173,7 +185,7 @@ export default {
             for (let i = 0; i < this.taxonomyData.taxonomy.mappings.length; i++) {
                 let mapping = this.taxonomyData.taxonomy.mappings[i];
 
-                mappings_data.push('=>' +mapping.api_name + '/' + mapping.api_action + ':' + mapping.field_path);
+                mappings_data.push('=>' + mapping.api_name + '/' + mapping.api_action + ':' + mapping.field_path);
             }
 
             return mappings_data.join("\r\n");
@@ -204,11 +216,12 @@ export default {
 
         updateTaxonomy() {
             console.log('updating taxonomy ' + this.editForm.id);
-
-            this.editForm.put(route('pm.taxonomies.update', this.editForm.id), {
+            var newName = this.editForm.name;
+            this.editForm.put(route('library.taxonomies.update', this.editForm.id), {
                 preserveScroll: true,
                 onSuccess: () => {
-                    this.taxonomyName = this.editForm.taxonomyName;
+                    console.log('taxonomy updated', newName);
+                    this.taxonomyName = newName;
                     this.cancelEditTaxonomy();
                 }
             });
@@ -230,7 +243,7 @@ export default {
         deleteTaxonomy() {
             console.log('delete taxonomy ' + this.deletingTaxonomyId);
 
-            this.deleteForm.put(route('pm.taxonomies.destroy', this.deletingTaxonomyId), {
+            this.deleteForm.put(route('library.taxonomies.destroy', this.deletingTaxonomyId), {
                 preserveScroll: true,
                 onSuccess: () => this.resetDeleteTaxonomy(),
             });

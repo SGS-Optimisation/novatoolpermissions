@@ -3,27 +3,27 @@
         <div class="flex justify-between">
             <nav class="flex flex-col sm:flex-row">
                 <sub-nav-link
-                    :href="route('pm.client-account.dashboard', {clientAccount: clientAccount ? clientAccount.slug : ''})"
-                    :active="route().current('pm.client-account.dashboard')">
+                    :href="route('library.client-account.dashboard', {clientAccount: clientAccount ? clientAccount.slug : ''})"
+                    :active="route().current('library.client-account.dashboard')">
                     Overview
                 </sub-nav-link>
 
-                <sub-nav-link :href="route('pm.client-account.rules.index', {clientAccount: clientAccount.slug })"
-                              :active="route().current('pm.client-account.rules.index')">
+                <sub-nav-link :href="route('library.client-account.rules.index', {clientAccount: clientAccount.slug })"
+                              :active="route().current('library.client-account.rules.index')">
                     Rules
                 </sub-nav-link>
 
-                <sub-nav-link :href="route('pm.client-account.taxonomy', {clientAccount: clientAccount.slug })"
-                              :active="route().current('pm.client-account.taxonomy')">
+                <sub-nav-link :href="route('library.client-account.taxonomy', {clientAccount: clientAccount.slug })"
+                              :active="route().current('library.client-account.taxonomy')">
                     Categories
                 </sub-nav-link>
-                <sub-nav-link :href="route('pm.client-account.edit', {clientAccount: clientAccount.slug })"
-                              :active="route().current('pm.client-account.edit')">
+                <sub-nav-link :href="route('library.client-account.edit', {clientAccount: clientAccount.slug })"
+                              :active="route().current('library.client-account.edit')">
                     Settings
                 </sub-nav-link>
                 <template v-if="clientAccount.teams.length === 1">
-                    <sub-nav-link :href="route('pm.client-account.teams.show', {clientAccount: clientAccount.slug, teamId: clientAccount.teams[0].id })"
-                        :active="route().current('pm.client-account.teams.show')"
+                    <sub-nav-link :href="route('library.client-account.teams.show', {clientAccount: clientAccount.slug, teamId: clientAccount.teams[0].id })"
+                        :active="route().current('library.client-account.teams.show')"
                     >
                         Team
                     </sub-nav-link>
@@ -31,7 +31,7 @@
                 <template v-else>
                     <jet-dropdown align="right" width="48" class="text-gray-600 block hover:text-blue-500 focus:outline-none">
                         <template #trigger>
-                            <button :class="{'border-b-2 border-blue-500': route().current('pm.client-account.teams.show')}"
+                            <button :class="{'border-b-2 border-blue-500': route().current('library.client-account.teams.show')}"
                                 class="py-4 px-6 flex items-center text-gray-600 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
                                 <div class="h-full">Teams</div>
 
@@ -47,7 +47,7 @@
                         </template>
                         <template #content>
                             <jet-dropdown-link v-for="team in clientAccount.teams" :key=team.id
-                                               :href="route('pm.client-account.teams.show', {clientAccount: clientAccount.slug, teamId: team.id })">
+                                               :href="route('library.client-account.teams.show', {clientAccount: clientAccount.slug, teamId: team.id })">
                                 {{team.name}}
                             </jet-dropdown-link>
                         </template>
@@ -56,7 +56,7 @@
 
                 <jet-dropdown align="right" width="48" class="text-gray-600 block hover:text-blue-500 focus:outline-none">
                     <template #trigger>
-                        <button :class="{'border-b-2 border-blue-500': route().current().startsWith('pm.client-account.stats')}"
+                        <button :class="{'border-b-2 border-blue-500': route().current().startsWith('library.client-account.stats')}"
                                 class="py-4 px-6 flex items-center text-gray-600 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out">
                             <div class="h-full">Stats</div>
 
@@ -71,19 +71,19 @@
                         </button>
                     </template>
                     <template #content>
-                        <jet-dropdown-link :href="route('pm.client-account.stats.jobs', {clientAccount: clientAccount.slug})">
+                        <jet-dropdown-link :href="route('library.client-account.stats.jobs', {clientAccount: clientAccount.slug})">
                             Jobs
                         </jet-dropdown-link>
-                        <jet-dropdown-link :href="route('pm.client-account.stats.rules', {clientAccount: clientAccount.slug})">
+                        <jet-dropdown-link :href="route('library.client-account.stats.rules', {clientAccount: clientAccount.slug})">
                             Rules
                         </jet-dropdown-link>
-                        <jet-dropdown-link :href="route('pm.client-account.stats.visits', {clientAccount: clientAccount.slug})">
+                        <jet-dropdown-link :href="route('library.client-account.stats.visits', {clientAccount: clientAccount.slug})">
                             Visits
                         </jet-dropdown-link>
-                        <jet-dropdown-link :href="route('pm.client-account.stats.visits-by-jobteam', {clientAccount: clientAccount.slug})">
+                        <jet-dropdown-link :href="route('library.client-account.stats.visits-by-jobteam', {clientAccount: clientAccount.slug})">
                             Visits by JobTeam
                         </jet-dropdown-link>
-                        <jet-dropdown-link :href="route('pm.client-account.stats.visits-by-country', {clientAccount: clientAccount.slug})">
+                        <jet-dropdown-link :href="route('library.client-account.stats.visits-by-country', {clientAccount: clientAccount.slug})">
                             Visits by Country
                         </jet-dropdown-link>
                     </template>

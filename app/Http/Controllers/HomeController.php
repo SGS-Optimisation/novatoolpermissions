@@ -14,13 +14,25 @@ class HomeController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Inertia\Response
      */
-    public function index(Request $request)
+    public function prodSearch(Request $request)
     {
         $invitations = TeamInvitation::with('team.clientAccount')
             ->where('email', $request->user()->email)
             ->get();
 
-        return Jetstream::inertia()->render($request, 'Dashboard', [
+        return Jetstream::inertia()->render($request, 'ProdSearch', [
+            'team' => optional($request->user())->currentTeam,
+            'invitations' => $invitations,
+        ]);
+    }
+
+    public function pmSearch(Request $request)
+    {
+        $invitations = TeamInvitation::with('team.clientAccount')
+            ->where('email', $request->user()->email)
+            ->get();
+
+        return Jetstream::inertia()->render($request, 'PMSearch', [
             'team' => optional($request->user())->currentTeam,
             'invitations' => $invitations,
         ]);

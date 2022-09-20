@@ -85,6 +85,6 @@ class TeamController extends Controller
 
         $team = $creator->create($request->user(), $request->all());
 
-        return redirect(route('pm.client-account.teams.show', [$client_account_slug, $team->id]));
+        return redirect(route('library.client-account.teams.show', [$client_account_slug, $team->id]));
     }
 }

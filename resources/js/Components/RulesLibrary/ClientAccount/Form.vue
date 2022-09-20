@@ -95,8 +95,8 @@ import JetInputError from '@/Jetstream/InputError.vue'
 import JetLabel from '@/Jetstream/Label.vue'
 import JetActionMessage from '@/Jetstream/ActionMessage.vue'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
-import CustomerSelector from "@/Components/PM/ClientAccount/CustomerSelector.vue";
-import AccountStructureSelection from "@/Components/PM/ClientAccount/AccountStructureSelection.vue";
+import CustomerSelector from "@/Components/RulesLibrary/ClientAccount/CustomerSelector.vue";
+import AccountStructureSelection from "@/Components/RulesLibrary/ClientAccount/AccountStructureSelection.vue";
 import MultiSelect from 'primevue/multiselect/sfc'
 
 export default {
@@ -164,11 +164,11 @@ export default {
         pushClientData: function () {
 
             if (this.client.id) {
-                this.form.post(route('pm.client-account.update', {clientAccount: this.client.slug}), {
+                this.form.post(route('library.client-account.update', {clientAccount: this.client.slug}), {
                     preserveScroll: true
                 })
             } else {
-                this.form.post(route('pm.client-account.store'), {
+                this.form.post(route('library.client-account.store'), {
                     preserveScroll: true
                 })
             }

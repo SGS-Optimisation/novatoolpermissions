@@ -75,8 +75,8 @@
 import {Head, Link} from "@inertiajs/inertia-vue3";
 import AppLayout from '@/Layouts/AppLayout.vue'
 import JetNavLink from "@/Jetstream/NavLink.vue";
-import ActionMenu from "@/Components/PM/ActionMenu.vue";
-import ClientAccountLink from "@/Components/PM/ClientAccount/ClientAccountLink.vue";
+import ActionMenu from "@/Components/RulesLibrary/ActionMenu.vue";
+import ClientAccountLink from "@/Components/RulesLibrary/ClientAccount/ClientAccountLink.vue";
 import DataView from 'primevue/dataview/sfc';
 import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions/sfc';
 import Dropdown from 'primevue/dropdown/sfc';
@@ -134,7 +134,7 @@ export default {
     },
     methods: {
         loadData() {
-            const { data, error } = useSWRV(route('api.pm.landing'), fetcher);
+            const { data, error } = useSWRV(route('api.library.index'), fetcher);
             this.apiData = data;
         },
 

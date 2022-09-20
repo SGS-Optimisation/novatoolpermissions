@@ -91,7 +91,7 @@ export default {
         },
 
         deleteAttachment() {
-            const url = route('pm.client-account.rules.attachments.delete', [this.clientAccount.slug, this.rule.id, this.attachment.id]);
+            const url = route('library.client-account.rules.attachments.delete', [this.clientAccount.slug, this.rule.id, this.attachment.id]);
             const headers = {
                 "content-type": "application/json",
                 "Accept": "application/json"

@@ -21,6 +21,8 @@ use Altek\Accountant\Contracts\Recordable;
  *
  * @property int $id
  * @property int $client_account_id
+ * @property bool $is_op
+ * @property bool $is_pm
  * @property string $name
  * @property string $content
  * @property array $metadata
@@ -136,6 +138,16 @@ class Rule extends Model implements Recordable
     public function scopeIsPublished(Builder $query)
     {
         return $query->whereState('state', PublishedState::class);
+    }
+
+    public function scopeForOp(Builder $query)
+    {
+        return $query->where('is_op', true);
+    }
+
+    public function scopeForPm(Builder $query)
+    {
+        return $query->where('is_pm', true);
     }
 
     /**
@@ -296,7 +308,7 @@ class Rule extends Model implements Recordable
 
     public function getUrlAttribute()
     {
-        return route('pm.client-account.rules.edit', [$this->clientAccount->slug, $this->id]);
+        return route('library.client-account.rules.edit', [$this->clientAccount->slug, $this->id]);
     }
 
     public function isPublishable()

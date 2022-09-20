@@ -17,7 +17,7 @@
 <script>
 
 import {Head} from "@inertiajs/inertia-vue3";
-import ClientAccountForm from "@/Components/PM/ClientAccount/Form.vue";
+import ClientAccountForm from "@/Components/RulesLibrary/ClientAccount/Form.vue";
 import ClientLayout from '@/Layouts/ClientAccount.vue'
 
 export default {

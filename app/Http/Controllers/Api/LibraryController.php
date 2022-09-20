@@ -7,7 +7,7 @@ use App\Models\Team;
 use App\Models\TeamInvitation;
 use Illuminate\Http\Request;
 
-class PmHomeController extends Controller
+class LibraryController extends Controller
 {
     public function index(Request $request)
     {

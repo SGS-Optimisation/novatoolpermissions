@@ -204,7 +204,7 @@ class RuleController extends Controller
 
         $request->session()->flash('success', 'Rule successfully created!');
 
-        return redirect(route('pm.client-account.rules.edit', [$client_account_slug, $rule->id]))
+        return redirect(route('library.client-account.rules.edit', [$client_account_slug, $rule->id]))
             ->with('success', 'Rule successfully created!');
     }
 
@@ -359,7 +359,7 @@ class RuleController extends Controller
 
         broadcast(new Deleted($rule))->toOthers();
 
-        return redirect(route('pm.client-account.rules.index', [$client_account_slug]), 303);
+        return redirect(route('library.client-account.rules.index', [$client_account_slug]), 303);
 
     }
 

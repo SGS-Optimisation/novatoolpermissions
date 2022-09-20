@@ -251,11 +251,11 @@
 import {defineComponent} from "vue";
 import {Head} from "@inertiajs/inertia-vue3";
 import ClientLayout from '@/Layouts/ClientAccount.vue'
-import ViewRule from '@/Components/PM/Rules/ListView.vue'
+import ViewRule from '@/Components/RulesLibrary/Rules/ListView.vue'
 import moment from 'moment'
-import TaxonomyFilter from '@/Components/PM/Rules/TaxonomyFilter.vue'
-import TaxonomySelector from "@/Components/PM/Rules/TaxonomySelector.vue";
-import FilterCondition from "@/Components/PM/Rules/FilterCondition.vue";
+import TaxonomyFilter from '@/Components/RulesLibrary/Rules/TaxonomyFilter.vue'
+import TaxonomySelector from "@/Components/RulesLibrary/Rules/TaxonomySelector.vue";
+import FilterCondition from "@/Components/RulesLibrary/Rules/FilterCondition.vue";
 import JetButton from '@/Jetstream/Button.vue'
 import JetConfirmationModal from "@/Jetstream/ConfirmationModal.vue";
 import JetDangerButton from '@/Jetstream/DangerButton.vue'
@@ -395,11 +395,11 @@ export default defineComponent({
         _drop,
 
         loadRules(){
-            const { data, error } = useSWRV(route('api.pm.client-account.rules',[this.clientAccount.slug]), fetcher);
+            const { data, error } = useSWRV(route('api.library.client-account.rules',[this.clientAccount.slug]), fetcher);
 
             this.rules = data;
 
-            /*this.rules = axios.get(route('api.pm.client-account.rules', [this.clientAccount.slug]))
+            /*this.rules = axios.get(route('api.library.client-account.rules', [this.clientAccount.slug]))
                 .then((response) => {
                     this.rules = response.data;
                     this.initializeFilters();
@@ -573,7 +573,7 @@ export default defineComponent({
             this.publishForm.rule_ids = _.map(this.selectedRules, 'id');
 
             this.publishForm.post(
-                route('pm.client-account.rules.publish', {clientAccount: this.clientAccount.slug}),
+                route('library.client-account.rules.publish', {clientAccount: this.clientAccount.slug}),
                 {
                     onSuccess: () => {
                         this.confirmingPublish = false;
@@ -592,7 +592,7 @@ export default defineComponent({
             this.unpublishForm.rule_ids = _.map(this.selectedRules, 'id');
 
             this.unpublishForm.post(
-                route('pm.client-account.rules.unpublish', {clientAccount: this.clientAccount.slug}),
+                route('library.client-account.rules.unpublish', {clientAccount: this.clientAccount.slug}),
                 {
                     onSuccess: () => {
                         this.confirmingUnpublish = false;

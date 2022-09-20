@@ -96,7 +96,7 @@
 
 <script>
 import {defineComponent} from "vue";
-import Attachment from "@/Components/PM/Rules/Attachment.vue";
+import Attachment from "@/Components/RulesLibrary/Rules/Attachment.vue";
 import VueUploadComponent from 'vue-upload-component';
 
 export default defineComponent({
@@ -112,7 +112,7 @@ export default defineComponent({
     data: function () {
         return {
             files: [],
-            postUrl: route('pm.client-account.rules.attachments.store', [this.clientAccount.slug, this.rule.id]),
+            postUrl: route('library.client-account.rules.attachments.store', [this.clientAccount.slug, this.rule.id]),
             headers: {
                 'X-XSRF-TOKEN': this.xsrf(),
             },

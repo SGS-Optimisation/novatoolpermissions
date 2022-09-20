@@ -31,7 +31,7 @@ class TeamInvitationController extends Controller
 
         Cache::tags('roles')->clear();
 
-        return redirect(route('pm.client-account.dashboard', $invitation->team->clientAccount->slug))->banner(
+        return redirect(route('library.client-account.dashboard', $invitation->team->clientAccount->slug))->banner(
             __('Great! You have accepted the invitation to join :team.', ['team' => $invitation->team->name]),
         );
     }

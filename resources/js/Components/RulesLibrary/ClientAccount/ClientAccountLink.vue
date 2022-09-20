@@ -9,7 +9,7 @@
                     <jet-nav-link
                         class="hover:no-underline border-none block relative"
                         :class="{'bg-green-200': isInvitation}"
-                        :href="route('pm.client-account.dashboard', {clientAccount: team.client_account.slug })">
+                        :href="route('library.client-account.dashboard', {clientAccount: team.client_account.slug })">
 
                         <div class="flex flex-col">
                             <img v-if="team.client_account.image"
@@ -54,23 +54,23 @@
                         </div>
                     </jet-nav-link>
                     <div class="grid grid-cols-1 place-content-evenly">
-                        <Link :href="route('pm.client-account.rules.index', {clientAccount: team.client_account.slug})"
+                        <Link :href="route('library.client-account.rules.index', {clientAccount: team.client_account.slug})"
                               class="account-page"
                               v-tooltip="'Rules'">
                             <i class="pi pi-list text-xs "></i>
                         </Link>
-                        <Link :href="route('pm.client-account.taxonomy', {clientAccount: team.client_account.slug})"
+                        <Link :href="route('library.client-account.taxonomy', {clientAccount: team.client_account.slug})"
                               class="account-page"
                               v-tooltip="'Categories'">
                             <i class="pi pi-tags text-xs "></i>
                         </Link>
-                        <Link :href="route('pm.client-account.edit', {clientAccount: team.client_account.slug})"
+                        <Link :href="route('library.client-account.edit', {clientAccount: team.client_account.slug})"
                               class="account-page"
                               v-tooltip="'Settings'">
                             <i class="pi pi-cog text-xs "></i>
                         </Link>
                         <Link v-if="alwaysShowTeamName"
-                              :href="route('pm.client-account.teams.show', {clientAccount: team.client_account.slug, teamId: team.id})"
+                              :href="route('library.client-account.teams.show', {clientAccount: team.client_account.slug, teamId: team.id})"
                               class="account-page"
                               v-tooltip="'Team'">
                             <i class="pi pi-users text-xs "></i>
@@ -79,7 +79,7 @@
                 </div>
             </template>
             <template #footer v-if="isInvitation">
-                <Link :href="route('pm.team-invitations.accept', invitation.id)"
+                <Link :href="route('library.team-invitations.accept', invitation.id)"
                       class="mt-1 inline-flex text-center p-1 bg-gray-800 border border-transparent rounded-md text-xs text-white tracking-widest hover:bg-green-600 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 disabled:opacity-25 transition"
                       :class="{'client-logo' : team.client_account.image}">
                     Accept Invitation

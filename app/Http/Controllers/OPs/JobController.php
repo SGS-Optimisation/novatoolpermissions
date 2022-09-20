@@ -45,7 +45,7 @@ class JobController extends Controller
 
         return $request->wantsJson() ?
             new JsonResponse($data, 200)
-            : Jetstream::inertia()->render($request, 'OP/JobRules', $data);
+            : Jetstream::inertia()->render($request, 'Search/JobRules', $data);
     }
 
     public function showWithClientAccount(Request $request, $client_slug, $jobNumber)
@@ -70,7 +70,7 @@ class JobController extends Controller
 
         return $request->wantsJson() ?
             new JsonResponse($data, 200)
-            : Jetstream::inertia()->render($request, 'OP/JobRules', $data);
+            : Jetstream::inertia()->render($request, 'Search/JobRules', $data);
     }
 
     public function status(Request $request, $jobNumber)

@@ -2,7 +2,7 @@
     <app-layout>
 
         <Head>
-            <title>Dagobah</title>
+            <title>Prod Job Search</title>
         </Head>
 
         <div class="p-2" v-if="hasInvitations">

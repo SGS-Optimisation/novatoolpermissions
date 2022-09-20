@@ -114,7 +114,7 @@ export default {
             this.form.owner_id = event.value.length ? event.value[0].id : null;
         },
         createTeam() {
-            this.form.post(route('pm.client-account.teams.store', {clientAccount: this.clientAccount.slug}), {
+            this.form.post(route('library.client-account.teams.store', {clientAccount: this.clientAccount.slug}), {
                 preserveScroll: true
             });
         },

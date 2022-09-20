@@ -21,7 +21,7 @@
 
                     <div class="flex flex-row">
                         <Link class="inline-flex border-dashed border-b border-gray-500 items-center px-1 pt-1 text-sm font-medium leading-5 text-gray-900 focus:outline-none transition duration-150 ease-in-out"
-                           :href="route('pm.client-account.rules.edit',  {clientAccount: clientAccount.slug, id: rule.id })">
+                           :href="route('library.client-account.rules.edit',  {clientAccount: clientAccount.slug, id: rule.id })">
                             <div class="flex-shrink align-bottom text-xs pr-1"
                                  :title="date()">
                                 Last updated {{ humanDate() }}
@@ -198,7 +198,7 @@
 
 import {defineComponent} from "vue";
 import { Link } from '@inertiajs/inertia-vue3';
-import RuleTags from "@/Components/PM/Rules/RuleTags.vue";
+import RuleTags from "@/Components/RulesLibrary/Rules/RuleTags.vue";
 import JetActionMessage from '@/Jetstream/ActionMessage.vue'
 import JetButton from '@/Jetstream/Button.vue'
 import JetDangerButton from '@/Jetstream/DangerButton.vue'
@@ -208,7 +208,7 @@ import JetLabel from '@/Jetstream/Label.vue'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
 import clip from "text-clipper";
 import NavLink from "@/Jetstream/NavLink.vue";
-import Attachment from "@/Components/PM/Rules/Attachment.vue";
+import Attachment from "@/Components/RulesLibrary/Rules/Attachment.vue";
 import {orderBy as _orderBy} from "lodash";
 import moment from 'moment';
 

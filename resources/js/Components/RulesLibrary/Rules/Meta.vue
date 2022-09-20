@@ -50,7 +50,7 @@ import JetInputError from '@/Jetstream/InputError.vue'
 import JetLabel from '@/Jetstream/Label.vue'
 import JetActionMessage from '@/Jetstream/ActionMessage.vue'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
-import Term from "@/Components/PM/Rules/Term.vue";
+import Term from "@/Components/RulesLibrary/Rules/Term.vue";
 
 export default {
     name: "Meta",
@@ -107,7 +107,7 @@ export default {
         pushRuleMeta: function () {
             this.form.taxonomy = this.taxonomy;
 
-            this.form.put(route('pm.client-account.rules.taxonomy.update', {
+            this.form.put(route('library.client-account.rules.taxonomy.update', {
                 clientAccount: this.clientAccount.slug,
                 id: this.rule.id
             }), {

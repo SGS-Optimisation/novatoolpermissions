@@ -45,7 +45,7 @@ class ClientAccountNotMatchedNotification extends Notification
             ->subject('End user not matched')
             ->line("The end user $this->enduser_name was not matched with any client account.")
             ->line('Please add it as alias to the relevant client account')
-            ->action('Access PM section', url(route('pm.landing')));
+            ->action('Access PM section', url(route('library.landing')));
     }
 
     /**

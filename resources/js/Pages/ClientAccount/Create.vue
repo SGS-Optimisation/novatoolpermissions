@@ -21,7 +21,7 @@
 <script>
 import {Head} from "@inertiajs/inertia-vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
-import ClientAccountForm from "@/Components/PM/ClientAccount/Form.vue";
+import ClientAccountForm from "@/Components/RulesLibrary/ClientAccount/Form.vue";
 
 export default {
     name: "CreateClientAccount",

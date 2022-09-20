@@ -136,7 +136,8 @@ class Taxonomy extends Model implements Recordable
      */
     public function client_accounts()
     {
-        return $this->belongsToMany(\App\Models\ClientAccount::class);
+        return $this->belongsToMany(\App\Models\ClientAccount::class)
+            ->withPivot('use_for_pm_search', 'metadata');
     }
 
     /**

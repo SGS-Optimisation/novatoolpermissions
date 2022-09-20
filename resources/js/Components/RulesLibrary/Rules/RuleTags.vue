@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import RuleTag from "@/Components/PM/Rules/RuleTag.vue";
+import RuleTag from "@/Components/RulesLibrary/Rules/RuleTag.vue";
 
 export default {
     name: "RuleTags",

@@ -23,7 +23,7 @@
 
                 <span v-if="termData.globalRulesCount" class="text-xs px-2 bg-red-200 text-red-800 rounded-full">
                     <jet-nav-link
-                        :href="route('pm.client-account.rules.index', {clientAccount: clientAccount.slug }) + `?term=${termData.id}`">
+                        :href="route('library.client-account.rules.index', {clientAccount: clientAccount.slug }) + `?term=${termData.id}`">
                         <span title="Number of rules using this term for this client account. Click to view rules.">
                             {{ termData.clientRulesCount }}
                         </span>
@@ -334,7 +334,7 @@ export default {
         storeTerm() {
             console.log('create term ' + this.createTermForm.name + ' for taxonomy id ' + this.createTermForm.taxonomyId);
 
-            this.createTermForm.post(route('pm.terms.store'), {
+            this.createTermForm.post(route('library.terms.store'), {
                 preserveScroll: true,
                 onSuccess: (response) => {
                     console.log('store term success', response);
@@ -373,7 +373,7 @@ export default {
 
             this.editTermForm.aliases = this.tags.map((item) => item.text);
 
-            this.editTermForm.put(route('pm.terms.update', this.editTermForm.termId), {
+            this.editTermForm.put(route('library.terms.update', this.editTermForm.termId), {
                 preserveScroll: true,
                 onSuccess: () => {
 
@@ -403,7 +403,7 @@ export default {
         deleteTerm() {
             console.log('delete term ' + this.deletingTermId);
 
-            this.deleteTermForm.put(route('pm.terms.destroy', this.deletingTermId), {
+            this.deleteTermForm.put(route('library.terms.destroy', this.deletingTermId), {
                 preserveScroll: true,
                 onSuccess: () => {
                     this.terms = this.terms.filter((term) => term.id !== this.deletingTermId)

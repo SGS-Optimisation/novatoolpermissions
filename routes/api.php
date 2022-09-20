@@ -36,12 +36,12 @@ Route::name('api.')
                 Route::get('/', [SimplifiedCustomerController::class, 'index'])->name('index');
             });
 
-        Route::get('pm/', [\App\Http\Controllers\Api\PmHomeController::class, 'index'])
-            ->name('pm.landing');
+        Route::get('library/', [\App\Http\Controllers\Api\LibraryController::class, 'index'])
+            ->name('library.index');
 
-        Route::get('pm/{clientAccount:slug}/rules', [\App\Http\Controllers\Api\RuleController::class, 'index'])
-            ->name('pm.client-account.rules');
+        Route::get('library/{clientAccount:slug}/rules', [\App\Http\Controllers\Api\RuleController::class, 'index'])
+            ->name('library.client-account.rules');
 
-        Route::get('pm/{clientAccount:slug}/taxonomy', [\App\Http\Controllers\Api\TaxonomyController::class, 'show'])
-            ->name('pm.client-account.taxonomy');
+        Route::get('library/{clientAccount:slug}/taxonomy', [\App\Http\Controllers\Api\TaxonomyController::class, 'show'])
+            ->name('library.client-account.taxonomy');
     });

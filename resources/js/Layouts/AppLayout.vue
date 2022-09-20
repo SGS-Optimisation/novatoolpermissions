@@ -17,13 +17,16 @@
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <jet-nav-link :href="route('home')" :active="route().current('home')">
-                                    Home
+                                    Prod Job Search
+                                </jet-nav-link>
+                                <jet-nav-link :href="route('search.pm')" :active="route().current('search.pm')">
+                                    PM Rules Search
                                 </jet-nav-link>
                                 <jet-nav-link v-if="$page.props.user_permissions.accessPM"
-                                              :href="route('pm.landing')"
-                                              :active="route().current().startsWith('pm.')"
+                                              :href="route('library.landing')"
+                                              :active="route().current().startsWith('library.')"
                                 >
-                                    Project Manager
+                                    Rules Library
                                 </jet-nav-link>
                                 <jet-nav-link v-if="$page.props.user_permissions.accessStats"
                                               :href="route('stats.jobs')"

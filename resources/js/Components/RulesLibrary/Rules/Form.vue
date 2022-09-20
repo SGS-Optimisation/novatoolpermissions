@@ -313,7 +313,7 @@ export default defineComponent({
 
         restoreRule() {
             if (this.rule.id) {
-                this.restoreForm.put(route('pm.client-account.rules.restore', {
+                this.restoreForm.put(route('library.client-account.rules.restore', {
                     clientAccount: this.clientAccount.slug,
                     id: this.rule.id
                 }), {
@@ -329,7 +329,7 @@ export default defineComponent({
 
         deleteRule() {
             if (this.rule.id) {
-                this.deleteForm.delete(route('pm.client-account.rules.delete', {
+                this.deleteForm.delete(route('library.client-account.rules.delete', {
                     clientAccount: this.clientAccount.slug,
                     id: this.rule.id
                 }), {
@@ -341,14 +341,14 @@ export default defineComponent({
         pushRuleData: function () {
 
             if (this.rule.id) {
-                this.form.put(route('pm.client-account.rules.update', {
+                this.form.put(route('library.client-account.rules.update', {
                     clientAccount: this.clientAccount.slug,
                     id: this.rule.id
                 }), {
                     preserveScroll: true
                 })
             } else {
-                this.form.post(route('pm.client-account.rules.store', {clientAccount: this.clientAccount.slug}), {
+                this.form.post(route('library.client-account.rules.store', {clientAccount: this.clientAccount.slug}), {
                     preserveScroll: true
                 });
             }

@@ -44,7 +44,7 @@ import JetInputError from '@/Jetstream/InputError.vue'
 import JetLabel from '@/Jetstream/Label.vue'
 import JetActionMessage from '@/Jetstream/ActionMessage.vue'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
-import ChildTaxonomiesSection from "@/Components/PM/ClientAccount/ChildTaxonomiesSection.vue";
+import ChildTaxonomiesSection from "@/Components/RulesLibrary/ClientAccount/ChildTaxonomiesSection.vue";
 import TabView from 'primevue/tabview/sfc';
 import TabPanel from 'primevue/tabpanel/sfc';
 import ProgressSpinner from 'primevue/progressspinner/sfc';
@@ -86,18 +86,21 @@ export default {
 
     methods: {
         loadData() {
-            const { data, error } = useSWRV(route('api.pm.client-account.taxonomy',[this.clientAccount.slug]), fetcher);
+            const { data, error } = useSWRV(route('api.library.client-account.taxonomy',[this.clientAccount.slug]), fetcher);
             this.apiData = data;
         },
     },
 
     watch: {
-        apiData: function(newData, oldData) {
-            if(typeof newData === 'object' && newData !== null
-                && newData.hasOwnProperty('taxonomyHierarchy')) {
-                this.taxonomyHierarchy = newData.taxonomyHierarchy;
-                this.topTaxonomies = newData.topTaxonomies;
-            }
+        apiData: {
+            handler(newData, oldData) {
+                if(typeof newData === 'object' && newData !== null
+                    && newData.hasOwnProperty('taxonomyHierarchy')) {
+                    this.taxonomyHierarchy = newData.taxonomyHierarchy;
+                    this.topTaxonomies = newData.topTaxonomies;
+                }
+            },
+            deep: true,
         }
     }
 }

@@ -198,7 +198,7 @@
 
                 <a v-if="currentRule && $page.props.user_permissions.updateRules" target="_blank"
                    class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150"
-                   :href="route('pm.client-account.rules.edit', {clientAccount: currentJob.metadata.client.slug, id: currentRule.id})">
+                   :href="route('library.client-account.rules.edit', {clientAccount: currentJob.metadata.client.slug, id: currentRule.id})">
                     Edit
                 </a>
 
@@ -256,14 +256,14 @@ import JetInput from '@/Jetstream/Input.vue'
 import JetLabel from '@/Jetstream/Label.vue'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
 import Loader from "@/Components/Loader.vue";
-import ViewRule from '@/Components/PM/Rules/ViewRule.vue'
-import ViewRuleGroup from "@/Components/OP/ViewRuleGroup.vue";
-import JobSearch from "@/Components/OP/JobSearchForm.vue";
+import ViewRule from '@/Components/RulesLibrary/Rules/ViewRule.vue'
+import ViewRuleGroup from "@/Components/Search/ViewRuleGroup.vue";
+import JobSearch from "@/Components/Search/JobSearchForm.vue";
 import moment from "moment";
-import JobIdentification from "@/Components/OP/JobIdentification.vue";
+import JobIdentification from "@/Components/Search/JobIdentification.vue";
 import Message from 'primevue/message/sfc';
 import Tag from 'primevue/tag';
-import ManualAccountSelection from "@/Components/OP/ManualAccountSelection.vue";
+import ManualAccountSelection from "@/Components/Search/ManualAccountSelection.vue";
 
 export default {
     props: [
@@ -453,7 +453,7 @@ export default {
                 'dimension2': selectedJobTeams.join('|')
             }]);
             window._paq.push(['trackEvent',
-                'OP Viewed Job',
+                'Search Viewed Job',
                 this.currentJob.metadata.client.name,
                 this.jobNumber,
                 '',

@@ -27,7 +27,7 @@ class ClientAccountController extends Controller
     {
         $client_account = ClientAccount::find($id);
 
-        return redirect(route('pm.client-account.dashboard', [$client_account->slug]));
+        return redirect(route('library.client-account.dashboard', [$client_account->slug]));
     }
 
     /**
@@ -155,7 +155,7 @@ class ClientAccountController extends Controller
             (new AssociateDefaultTermsToAttachedTaxonomy($client_account))->handle();
         }
 
-        return redirect(route('pm.client-account.dashboard', [$client_account->slug]));
+        return redirect(route('library.client-account.dashboard', [$client_account->slug]));
     }
 
     /**
@@ -200,7 +200,7 @@ class ClientAccountController extends Controller
 
         return $request->wantsJson()
             ? new JsonResponse('', 200)
-            : redirect(route('pm.client-account.edit', [$client_account->slug]));
+            : redirect(route('library.client-account.edit', [$client_account->slug]));
     }
 
     /**

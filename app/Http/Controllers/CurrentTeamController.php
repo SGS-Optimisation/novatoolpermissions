@@ -24,10 +24,10 @@ class CurrentTeamController extends Controller
         }
 
         if($team->clientAccount){
-            return redirect(route('pm.client-account.dashboard', [$team->clientAccount->slug]), 303);
+            return redirect(route('library.client-account.dashboard', [$team->clientAccount->slug]), 303);
         }
         else {
-            return redirect(route('pm.landing'), 303);
+            return redirect(route('library.landing'), 303);
         }
 
     }
