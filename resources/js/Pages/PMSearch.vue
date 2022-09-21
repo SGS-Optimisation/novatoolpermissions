@@ -16,7 +16,7 @@
 
         <div class="flex lg:pt-36 pt-12">
             <div class="m-auto lg:w-2/5">
-                    <job-search></job-search>
+                <pm-search-form :suggestions="suggestions"/>
             </div>
         </div>
 
@@ -29,14 +29,17 @@ import {Head} from "@inertiajs/inertia-vue3";
 import AppLayout from '@/Layouts/AppLayout.vue'
 import JobSearch from "@/Components/Search/JobSearchForm.vue";
 import ClientAccountLink from "@/Components/RulesLibrary/ClientAccount/ClientAccountLink.vue";
+import PmSearchForm from "@/Components/Search/PmSearchForm.vue";
 
 export default defineComponent({
     props: [
         'team',
-        'invitations'
+        'invitations',
+        'suggestions',
     ],
 
     components: {
+        PmSearchForm,
         ClientAccountLink,
         AppLayout,
         JobSearch,

@@ -100,7 +100,20 @@ class ClientAccount extends Model
             ->whereHas('parent', function (Builder $query) {
                 return $query->where('name', 'Account Structure');
             })
-            ->withPivot('use_for_pm_search', 'metadata');;
+            ->withPivot('use_for_pm_search', 'metadata');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function pm_searchable_account_structure_child_taxonomies()
+    {
+        return $this->taxonomies()->whereNotNull('parent_id')
+            ->whereHas('parent', function (Builder $query) {
+                return $query->where('name', 'Account Structure');
+            })
+            ->withPivot('use_for_pm_search', 'metadata')
+            ->wherePivot('use_for_pm_search', true);
     }
 
     /**
