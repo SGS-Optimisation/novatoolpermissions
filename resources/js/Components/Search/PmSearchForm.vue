@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="findJob">
+    <form @submit.prevent="runSearch">
         <div :class="classes">
 
             <span class="w-auto flex justify-end items-center text-gray-500 p-2">
@@ -112,7 +112,12 @@ export default defineComponent({
 
         runSearch() {
             this.$emit('searching')
-            //this.form.post(route('job.rules', this.jobNumber));
+            if(this.search.type === 'bu') {
+
+            }else {
+                this.$inertia.get(route('pm.rules', this.search.value));
+            }
+
         }
     },
 

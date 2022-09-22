@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\OPs;
+namespace App\Http\Controllers\Search;
 
 use App\Http\Controllers\Controller;
 use App\Models\ClientAccount;
@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Jetstream\Jetstream;
 
-class JobController extends Controller
+class ProdJobController extends Controller
 {
 
     /**
@@ -45,7 +45,7 @@ class JobController extends Controller
 
         return $request->wantsJson() ?
             new JsonResponse($data, 200)
-            : Jetstream::inertia()->render($request, 'Search/JobRules', $data);
+            : Jetstream::inertia()->render($request, 'ProdJobRules', $data);
     }
 
     public function showWithClientAccount(Request $request, $client_slug, $jobNumber)
@@ -70,7 +70,7 @@ class JobController extends Controller
 
         return $request->wantsJson() ?
             new JsonResponse($data, 200)
-            : Jetstream::inertia()->render($request, 'Search/JobRules', $data);
+            : Jetstream::inertia()->render($request, 'ProdJobRules', $data);
     }
 
     public function status(Request $request, $jobNumber)

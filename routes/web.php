@@ -44,46 +44,55 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         return redirect(route('home'));
     })->name('dashboard');
 
-    Route::get('/search/op', [\App\Http\Controllers\HomeController::class, 'prodSearch'])
+    Route::get('/prod', [\App\Http\Controllers\HomeController::class, 'prodSearch'])
         ->name('search.op');
 
-    Route::get('/search/pm', [\App\Http\Controllers\HomeController::class, 'pmSearch'])
+    Route::get('/pm', [\App\Http\Controllers\HomeController::class, 'pmSearch'])
         ->name('search.pm');
 
 
     Route::put('/current-team', [CurrentTeamController::class, 'update'])
         ->name('current-team.update');
 
-    Route::get('/{slug}/{jobNumber}', [\App\Http\Controllers\OPs\JobController::class, 'showWithClientAccount'])
-        ->name('job.rules.force-account')
-        ->where('jobNumber', '[0-9\-]+');
+    Route::get('/pm/{slug}', [\App\Http\Controllers\Search\PMRuleController::class, 'showClient'])
+        ->name('pm.rules');
 
-    Route::get('/{jobNumber}', [\App\Http\Controllers\OPs\JobController::class, 'show'])
-        ->name('job.rules')
-        ->where('jobNumber', '[0-9\-]+');
+    Route::get('/pm/{slug}/{jobNumber}', [\App\Http\Controllers\Search\PMRuleController::class, 'showClientJob'])
+        ->where('jobNumber', '[0-9\-]+')
+        ->name('pm.job-rules');
+
+    Route::get('/{slug}/{jobNumber}', [\App\Http\Controllers\Search\ProdJobController::class, 'showWithClientAccount'])
+        ->where('jobNumber', '[0-9\-]+')
+        ->name('job.rules.force-account');
+
+    Route::get('/{jobNumber}', [\App\Http\Controllers\Search\ProdJobController::class, 'show'])
+        ->where('jobNumber', '[0-9\-]+')
+        ->name('job.rules');
+
+
 
     /**
      * @deprecated
      */
-    Route::get('/{jobNumber}/status', [\App\Http\Controllers\OPs\JobController::class, 'status'])
-        ->name('job.rules.status')
-        ->where('jobNumber', '[0-9\-]+');
+    Route::get('/{jobNumber}/status', [\App\Http\Controllers\Search\ProdJobController::class, 'status'])
+        ->where('jobNumber', '[0-9\-]+')
+        ->name('job.rules.status');
 
     /**
      * @deprecated
      */
-    Route::post('/{jobNumber}', [\App\Http\Controllers\OPs\JobController::class, 'search'])
-        ->name('job.search')
-        ->where('jobNumber', '[0-9\-]+');
+    Route::post('/{jobNumber}', [\App\Http\Controllers\Search\ProdJobController::class, 'search'])
+        ->where('jobNumber', '[0-9\-]+')
+        ->name('job.search');
 
 
     Route::post('/rule/{rule}/flag', [\App\Http\Controllers\RuleFlaggingController::class, 'flag'])
-        ->name('rule.flag')
-        ->where('rule', '[0-9]+');
+        ->where('rule', '[0-9]+')
+        ->name('rule.flag');
 
     Route::post('/rule/{rule}/unflag', [\App\Http\Controllers\RuleFlaggingController::class, 'unflag'])
-        ->name('rule.unflag')
-        ->where('rule', '[0-9]+');
+        ->where('rule', '[0-9]+')
+        ->name('rule.unflag');
 });
 
 Route::name('library.')
