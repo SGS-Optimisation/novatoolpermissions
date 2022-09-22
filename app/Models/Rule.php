@@ -94,6 +94,8 @@ class Rule extends Model implements Recordable
         'metadata' => 'array',
         'flagged' => 'boolean',
         'state' => RuleState::class,
+        'is_op' => 'boolean',
+        'is_pm' => 'boolean',
     ];
 
     protected $recordableEvents = [
@@ -313,6 +315,11 @@ class Rule extends Model implements Recordable
 
     public function isPublishable()
     {
+
+        if(!($this->is_op || $this->is_pm)) {
+            return false;
+        }
+
         $account_terms_count = $this->accountStructureTerms()->count();
         $categorization_terms = $this->jobCategorizationsTerms()->with('taxonomy')->get();
 

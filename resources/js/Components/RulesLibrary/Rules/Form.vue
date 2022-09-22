@@ -32,6 +32,17 @@
                                     v-model="form.content"
                                     useCustomImageHandler
                                     @image-added="handleImageAdded"/>
+
+                        <div class="mt-5 flex">
+                                <div class="px-2 flex items-center">
+                                    <Checkbox id="is_pm" v-model="form.is_pm" :binary="true"/>
+                                    <label class="ml-1 cursor-pointer" for="is_pm">PM Rule</label>
+                                </div>
+                                <div class="px-2 flex items-center">
+                                    <Checkbox id="is_op" v-model="form.is_op" :binary="true"/>
+                                    <label class="ml-1 cursor-pointer" for="is_op">OP Rule</label>
+                                </div>
+                        </div>
                     </div>
 
                     <input type="hidden" v-model="form.ContentDraftId">
@@ -39,7 +50,7 @@
                     <section class="col-span-6">
                         <div class="flex flex-col justify-between">
                             <div class="flex flex-row">
-                                <div v-for="(state, index) in stateObjects" class="flex flew-row px-4">
+                                <div v-for="(state, index) in stateObjects" class="flex flew-row pr-5">
                                     <input
                                         v-model="form.state"
                                         :name="'state-'+index"
@@ -58,7 +69,8 @@
                                 <InlineMessage v-if="hasTaggingError && refusedChange"
                                                @close="refusedChange=false"
                                                severity="warn">
-                                    There are tagging errors
+                                    The rule cannot be published.
+                                    Please check for tagging errors or select OP and/or PM rule
                                 </InlineMessage>
                             </div>
                             <div class="flex flex-col mt-3" v-if="requiresAssignees">
@@ -174,6 +186,7 @@
 import {defineComponent} from "vue";
 import {Quill, VueEditor} from "vue3-editor";
 import ImageResize from 'quill-image-resize';
+import Checkbox from 'primevue/checkbox/sfc';
 import InlineMessage from 'primevue/inlinemessage/sfc';
 import Message from 'primevue/message/sfc';
 import Multiselect from '@vueform/multiselect';
@@ -196,6 +209,7 @@ export default defineComponent({
     components: {
         VueEditor,
         InlineMessage,
+        Checkbox,
         Message,
         Multiselect,
         JetActionMessage,
@@ -237,6 +251,8 @@ export default defineComponent({
             form: this.$inertia.form({
                 name: this.rule.name,
                 content: this.rule.content,
+                is_op: this.rule.is_op,
+                is_pm: this.rule.is_pm,
                 ContentDraftId: uuidv4(),
                 state: this.rule.state,
                 assignees: _.map(this.initialAssignees, 'value'),
@@ -292,7 +308,7 @@ export default defineComponent({
 
     methods: {
         stateChanged(state) {
-            if(state.requiresNoError && this.hasTaggingError) {
+            if (state.requiresNoError && this.hasTaggingError) {
                 this.refusedChange = true;
                 return;
             }

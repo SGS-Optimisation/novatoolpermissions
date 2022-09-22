@@ -192,7 +192,7 @@ class RuleController extends Controller
     {
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
 
-        $rule_fields = $request->only(['name', 'flagged', 'metadata']);
+        $rule_fields = $request->only(['name', 'flagged', 'metadata', 'is_op', 'is_pm']);
         $rule_fields['content'] = (new ExtractImages($request->get('content')))->handle()->updated_content;
 
         $rule = $client_account->rules()->create($rule_fields);
@@ -287,7 +287,7 @@ class RuleController extends Controller
      */
     public function update(Request $request, $client_account_slug, $id)
     {
-        $rule_fields = $request->only(['name', 'flagged', 'metadata']);
+        $rule_fields = $request->only(['name', 'flagged', 'metadata', 'is_op', 'is_pm']);
         $rule_fields['content'] = (new ExtractImages($request->get('content')))->handle()->updated_content;
 
         $rule = Rule::find($id);
