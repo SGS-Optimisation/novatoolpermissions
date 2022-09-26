@@ -193,7 +193,8 @@ export default {
 
         hasMappings() {
             return this.taxonomyData.taxonomy.mappings.length > 0
-                || this.taxonomyData.taxonomy.name === 'Artwork Structure Elements';
+                || this.taxonomyData.taxonomy.name === 'Artwork Structure Elements'
+                || this.taxonomyData.taxonomy.name === 'PM Section Elements';
         },
     },
 

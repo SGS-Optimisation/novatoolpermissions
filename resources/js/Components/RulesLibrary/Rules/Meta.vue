@@ -1,7 +1,7 @@
 <template>
     <div class="pb-36">
         <div v-for="(topTaxonomy, index) in topTaxonomies"
-              class="mx-auto sm:px-6 lg:px-8">
+             class="mx-auto sm:px-6 lg:px-8">
             <jet-form-section @submitted="pushRuleMeta" :class="{'mb-4': (index !== topTaxonomies.length - 1)}">
                 <template #title>
                     {{ topTaxonomy.name }}
@@ -15,8 +15,10 @@
                             <div class="flex flex-col py-2"
                                  v-for="(taxonomyGroup, index) in taxonomyHierarchy[topTaxonomy.name].children">
                                 <template v-for="(taxonomyData, name) in taxonomyGroup">
-                                    <term :terms="taxonomyData.terms"
+                                    <term v-if="!shouldHide(taxonomyData.taxonomy)"
+                                        :terms="taxonomyData.terms"
                                           :taxonomy-name="name"
+                                          :taxonomyData="taxonomyData.taxonomy"
                                           :multiple="getMultipleMode(taxonomyData)"
                                           :rule="rule"
                                           @selected="termSelected"
@@ -91,8 +93,29 @@ export default {
     },
 
     methods: {
+        shouldHide(taxonomyData) {
+            //return false;
+            if (taxonomyData.config
+                && taxonomyData.config.hasOwnProperty('restrict')) {
+                if (
+                    (taxonomyData.config.restrict.hasOwnProperty('is_pm')
+                        && taxonomyData.config.restrict.is_pm
+                        && !this.rule.is_pm
+                    )
+                    || (taxonomyData.config.restrict.hasOwnProperty('is_op')
+                        && taxonomyData.config.restrict.is_op
+                        && !this.rule.is_op
+                    )
+                ){
+                    return true;
+                }
+            }
+
+            return false;
+        },
+
         getMultipleMode(taxonomyData) {
-            if(! taxonomyData.taxonomy.config || !taxonomyData.taxonomy.config.hasOwnProperty('multiple')) {
+            if (!taxonomyData.taxonomy.config || !taxonomyData.taxonomy.config.hasOwnProperty('multiple')) {
                 return 'tags';
             }
 
@@ -100,7 +123,6 @@ export default {
         },
 
         termSelected(data) {
-            console.log('term updated', data);
             this.taxonomy[data.taxonomy] = data.terms;
         },
 

@@ -49,6 +49,7 @@ export default {
     props: [
         'rule',
         'taxonomyName',
+        'taxonomyData',
         'terms',
         'multiple'
     ],

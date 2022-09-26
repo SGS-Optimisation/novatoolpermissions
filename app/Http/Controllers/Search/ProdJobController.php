@@ -30,7 +30,7 @@ class ProdJobController extends Controller
 
         if (!$job->metadata->processing_mysgs && !$job->metadata->error_mysgs) {
             logger('mysgs data available for '.$jobNumber);
-            $rules = RuleFilter::handle($job);
+            $rules = RuleFilter::handle($job, RuleFilter::FILTER_MODE_PROD);
         }
 
         $data = [
@@ -58,7 +58,7 @@ class ProdJobController extends Controller
         $job->client_account_id = $clientAccount->id;
         $job->load('clientAccount');
 
-        $rules = RuleFilter::handle($job, $clientAccount->id);
+        $rules = RuleFilter::handle($job, RuleFilter::FILTER_MODE_PROD, $clientAccount->id);
 
         $data = [
             'jobNumber' => $jobNumber,

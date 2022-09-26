@@ -177,6 +177,22 @@ class ClientAccount extends Model
         return $this->hasMany(Rule::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function prodRules()
+    {
+        return $this->hasMany(Rule::class)->forOp();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function pmRules()
+    {
+        return $this->hasMany(Rule::class)->forPm();
+    }
+
 
     public function flagged_rules()
     {

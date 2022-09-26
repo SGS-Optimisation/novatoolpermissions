@@ -69,8 +69,9 @@
                                 <InlineMessage v-if="hasTaggingError && refusedChange"
                                                @close="refusedChange=false"
                                                severity="warn">
-                                    The rule cannot be published.
-                                    Please check for tagging errors or select OP and/or PM rule
+                                    <template v-for="errorReason in errorReasons">
+                                        {{errorReason}}<br>
+                                    </template>
                                 </InlineMessage>
                             </div>
                             <div class="flex flex-col mt-3" v-if="requiresAssignees">
@@ -276,6 +277,7 @@ export default defineComponent({
             }),
 
             refusedChange: false,
+            errorReasons: [],
         }
     },
 
@@ -285,24 +287,53 @@ export default defineComponent({
         },
 
         hasTaggingError() {
+            this.errorReasons = [];
+            var hasError = false;
+
+            if(!this.rule.is_op && !this.rule.is_pm) {
+                this.errorReasons.push('No rule type selected (OP or PM)');
+                hasError |=true;
+            }
+
             let noTerms = (!this.rule.hasOwnProperty('terms')
                 || this.rule.terms.length === 0
                 || (this.rule.terms.length === 1 && this.rule.terms[0].name === 'No term')
             );
 
             if (noTerms) {
-                return true;
+                this.errorReasons.push('No tags applied');
+                hasError |=true;
             }
 
-            let hasStructure = _.some(this.rule.terms, function (term) {
+            let hasArtworkStructure = _.some(this.rule.terms, function (term) {
                 return term.hasOwnProperty('taxonomy') && term.taxonomy.name === 'Artwork Structure Elements';
+            });
+
+            let hasPmSection = _.some(this.rule.terms, function (term) {
+                return term.hasOwnProperty('taxonomy') && term.taxonomy.name === 'PM Section Elements';
             });
 
             let atLeastOneTermPerRootTaxonomy = _.uniq(_.map(this.rule.terms, function (term) {
                 return term.hasOwnProperty('taxonomy') && term.taxonomy.parent.name;
             })).length === this.topTaxonomies.length;
 
-            return !hasStructure || !atLeastOneTermPerRootTaxonomy;
+            if(this.rule.is_op && !hasArtworkStructure) {
+                this.errorReasons.push('Artwork Structure Element required');
+                hasError |=true;
+            }
+
+            if(this.rule.is_pm && !hasPmSection) {
+                this.errorReasons.push('PM Section Element required');
+                hasError |=true;
+            }
+
+            if(!atLeastOneTermPerRootTaxonomy) {
+                this.errorReasons.push('At least one tag is required');
+                hasError |=true;
+            }
+
+            return hasError;
+
         }
     },
 

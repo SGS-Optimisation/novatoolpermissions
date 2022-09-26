@@ -330,13 +330,17 @@ class Rule extends Model implements Recordable
 
         /* if no Artwork Structure Elements, unpublishable */
         $found_artwork_structure = false;
+        $found_pm_section = false;
         /** @var Term $term */
         foreach ($categorization_terms as $term) {
             if ($term->taxonomy->name === 'Artwork Structure Elements') {
                 $found_artwork_structure = true;
             }
+            if ($term->taxonomy->name === 'PM Section Elements') {
+                $found_pm_section = true;
+            }
         }
-        if (!$found_artwork_structure) {
+        if ( ($this->is_op && !$found_artwork_structure) || ($this->is_pm && !$found_pm_section)) {
             return false;
         }
 
