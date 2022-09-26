@@ -33,13 +33,13 @@ class RuleRepository
      */
     public function all($search_term = null)
     {
-        $cacheTag = 'rules-'.$this->client_account->slug;
+        $cache_key = 'rules-'.$this->client_account->slug;
         $tags = ['rules', $this->client_account->slug];
 
         $term = null;
         if ($search_term) {
             $term = Term::find($search_term);
-            $cacheTag .= '-'.optional($term)->name;
+            $cache_key .= '-'.optional($term)->name;
         }
 
         $cache_duration = app()->environment('production') ? 60 * 60 * 24 : 60 * 60 * 24 * 30;
@@ -48,7 +48,9 @@ class RuleRepository
          *
          */
         return Cache::tags($tags)
-            ->remember($cacheTag, $cache_duration, function () use ($term) {
+            ->remember($cache_key, $cache_duration, function () use ($term) {
+
+                logger('rebuilding rule repo for '.$this->client_account->name);
 
                 $rules_query = Rule::forClient($this->client_account)
                     ->with(['terms.taxonomy', 'users', 'teams', 'attachments'])
@@ -60,7 +62,7 @@ class RuleRepository
                     });
                 }
 
-                logger('built rule repo for '.$this->client_account->name);
+
 
                 $rules = $rules_query->get()->each(function ($rule) {
                     $rule->content = str_replace('<img', '<img loading="lazy"', $rule->content);

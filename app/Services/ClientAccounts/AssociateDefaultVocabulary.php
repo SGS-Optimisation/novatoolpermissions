@@ -10,18 +10,19 @@ use App\Models\Taxonomy;
 class AssociateDefaultVocabulary extends BaseClientAccountService
 {
 
-    public function handle(){
+    public function handle()
+    {
         //$vocabularies = Taxonomy::whereJsonContains('config', ['default' => true])->get(); // BOOL FAILS IN SQLSRV
         $vocabularies = Taxonomy::all()->where('config.default', true);
 
 
-        $vocabularies->each(function($vocabulary) {
+        $vocabularies->each(function ($vocabulary) {
             $this->clientAccount->taxonomies()->attach($vocabulary);
 
             $vocabulary->terms
                 ->where('config.default', true)
                 //->whereJsonContains('config', ['default' => true]) // BOOL FAILS IN SQLSRV
-                ->each(function($term){
+                ->each(function ($term) {
                     $this->clientAccount->terms()->attach($term);
                 });
         });

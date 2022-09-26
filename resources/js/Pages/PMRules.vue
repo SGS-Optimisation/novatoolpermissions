@@ -278,7 +278,6 @@ export default {
         return {
             currentJob: this.job,
             currentRules: this.rules,
-            searchJobKey: this.jobNumber,
             searching: false,
             searchedRules: [..._.orderBy(this.rules, 'name', 'asc')],
             isOpen: false,
@@ -321,14 +320,6 @@ export default {
     },
 
     watch: {
-        searchJobKey() {
-            if (this.searchJobKey) {
-                Echo.channel(`rules-filtered.${this.searchJobKey}`)
-                    .listen('.rules-updated', (e) => {
-                        this.rulesUpdated = true;
-                    });
-            }
-        },
 
         jobNumber: function (newJobNumber, oldJobNumber) {
             console.log('detected job number change');
