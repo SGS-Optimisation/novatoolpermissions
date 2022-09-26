@@ -22,6 +22,7 @@ return new class extends Migration
         });
 
         Artisan::call('migrate:rules:opify');
+        Artisan::call('db:seed', ['--class', 'AddPmSectionJobCategorization']);
     }
 
     /**
