@@ -16,7 +16,8 @@
                     </template>
                     <template
                         v-else-if="$page.props.user_permissions.publishRules && _every(selectedRules, ['state', 'Published'])">
-                        <Button label="Unpublish" class="p-button-success p-button-sm" @click="confirmingUnpublish = true"/>
+                        <Button label="Unpublish" class="p-button-success p-button-sm"
+                                @click="confirmingUnpublish = true"/>
                     </template>
                     <template v-else>
                         None
@@ -28,30 +29,60 @@
             </template>
 
             <template #body>
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-gray-50 pt-5">
-                    <div class="grid grid-cols-5 gap-1">
+                <div class="max-w-7xl mx-auto sm:px-4 lg:px-2 bg-gray-50 pt-5">
+                    <div class="search-wrapper transition transition-all duration-250 ease-out" :class="{'active': showAdvancedSearch}">
+                        <div class="cursor-pointer w-full text-xs text-center bg-gray-400"
+                             @click="showAdvancedSearch=!showAdvancedSearch">
+                            <span v-if="!showAdvancedSearch">⌄</span>
+                            <span v-else>⌃</span>
+                            Advanced
+                            <span v-if="!showAdvancedSearch">⌄</span>
+                            <span v-else>⌃</span>
+                        </div>
+                        <div :class="{'hidden': !showAdvancedSearch}">
+                            <template v-for="(childTaxonomies, parentTaxonomy) in groupedTaxonomies">
+                                <div class="search-section grid grid-cols-5 gap-1">
+                                    <template v-for="(terms, taxonomyName) in termsByTaxonomies">
+                                        <taxonomy-selector v-if="childTaxonomies.includes(taxonomyName)"
+                                                           :taxonomy-name="taxonomyName"
+                                                           :key="taxonomyName"
+                                                           :terms="terms"
+                                                           @termSelected="filterByTaxonomyTerm"
+                                                           :ref="setTaxonomySelectorRef"
+                                        />
+                                    </template>
+                                </div>
+                            </template>
 
-                        <taxonomy-selector v-for="(terms, taxonomyName) in termsByTaxonomies"
-                                           :taxonomy-name="taxonomyName"
-                                           :key="taxonomyName"
-                                           :terms="terms"
-                                           @termSelected="filterByTaxonomyTerm"
-                                           :ref="setTaxonomySelectorRef"
+                            <div class="search-section mt-2 grid grid-cols-5 gap-1">
+                                <taxonomy-selector taxonomy-name="Contributor"
+                                                   :terms="users"
+                                                   @termSelected="filterByContributor"
+                                                   ref="contributorSelector"
+                                />
+                                <taxonomy-selector taxonomy-name="Team"
+                                                   :terms="allTeams"
+                                                   @termSelected="filterByTeam"
+                                                   ref="teamSelector"
+                                />
 
-                        />
-                        <taxonomy-selector taxonomy-name="Contributor"
-                                           :terms="users"
-                                           @termSelected="filterByContributor"
-                                           ref="contributorSelector"
-                        />
-                        <taxonomy-selector taxonomy-name="Team"
-                                           :terms="allTeams"
-                                           @termSelected="filterByTeam"
-                                           ref="teamSelector"
-                        />
+                                <filter-condition @on-change-filter-condition="onChangeFilterCondition"/>
+                            </div>
 
-                        <filter-condition @on-change-filter-condition="onChangeFilterCondition"/>
+                            <div class="search-section mt-2 grid grid-cols-5 gap-1">
+                                <taxonomy-selector taxonomy-name="Rule Status"
+                                                   :terms="states"
+                                                   @termSelected="filterByState"
+                                                   ref="stateSelector"
+                                />
 
+                                <taxonomy-selector taxonomy-name="Rule Type"
+                                                   :terms="[{value: 'is_op', 'label': 'Production'}, {value:'is_pm', label: 'PM'}]"
+                                                   @termSelected="filterByRuleType"
+                                                   ref="stateSelector"
+                                />
+                            </div>
+                        </div>
                     </div>
                     <div class="flex flex-row m-2 justify-between">
                         <div class="flex justify-start m-2 inline-block" id="text-search">
@@ -78,9 +109,9 @@
                                 <button @click="setFilterDate('isFlagged')"
                                         :class="[{ 'bg-blue-500 text-white' : filterOption === 'isFlagged' }, { 'bg-white text-blue-500' : filterOption !== 'isFlagged' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
                                     Flagged <span title="Total number of flagged rules"
-                                                  class="px-1 rounded-xl bg-pink-300">{{
-                                        numFlaggedRules
-                                    }}</span>
+                                                  class="px-1 rounded-xl bg-pink-300">
+                                            {{ numFlaggedRules }}
+                                            </span>
                                 </button>
                                 <button @click="setFilterDate('isTagError')"
                                         :class="[{ 'bg-blue-500 text-white' : filterOption === 'isTagError' }, { 'bg-white text-blue-500' : filterOption !== 'isTagError' }, 'hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-4 py-2 mx-0 outline-none focus:shadow-outline']">
@@ -119,11 +150,7 @@
                         <!-- sorting -->
                         <div class="flex flex-row">
                             <div class="w-40 mr-4">
-                                <taxonomy-selector taxonomy-name="Rule Status"
-                                                   :terms="states"
-                                                   @termSelected="filterByState"
-                                                   ref="stateSelector"
-                                />
+
                             </div>
                             <div class="flex flex-col">
                                 <span class="text-xs">Sorting</span>
@@ -193,57 +220,58 @@
 
                 </div>
 
-                <!-- Publish confirmation modal -->
-                <jet-confirmation-modal :show="confirmingPublish" @close="cancelPublish">
-                    <template #title>
-                        Publish Rules
-                    </template>
-
-                    <template #content>
-                        Are you sure you want to publish these rules?
-                    </template>
-
-                    <template #footer>
-                        <jet-secondary-button @click.native="cancelPublish">
-                            Nevermind
-                        </jet-secondary-button>
-
-                        <jet-danger-button class="ml-2" @click.native="publishRules"
-                                           :class="{ 'opacity-25': publishForm.processing }"
-                                           :disabled="publishForm.processing">
-                            Publish
-                        </jet-danger-button>
-                    </template>
-                </jet-confirmation-modal>
-
-                <!-- Unpublish confirmation modal -->
-                <jet-confirmation-modal :show="confirmingUnpublish" @close="cancelUnpublish">
-                    <template #title>
-                        Unpublish Rules
-                    </template>
-
-                    <template #content>
-                        Are you sure you want to unpublish these rules?
-                        <br>Target status:
-                        <Dropdown v-model="unpublishForm.status"
-                                  panelClass="text-xs"
-                                  :options="['Draft', 'Reviewing']"/>
-                    </template>
-
-                    <template #footer>
-                        <jet-secondary-button @click.native="cancelUnpublish">
-                            Nevermind
-                        </jet-secondary-button>
-
-                        <jet-danger-button class="ml-2" @click.native="unpublishRules"
-                                           :class="{ 'opacity-25': unpublishForm.processing }"
-                                           :disabled="unpublishForm.processing">
-                            Unpublish
-                        </jet-danger-button>
-                    </template>
-                </jet-confirmation-modal>
             </template>
         </client-layout>
+
+        <!-- Publish confirmation modal -->
+        <jet-confirmation-modal :show="confirmingPublish" @close="cancelPublish">
+            <template #title>
+                Publish Rules
+            </template>
+
+            <template #content>
+                Are you sure you want to publish these rules?
+            </template>
+
+            <template #footer>
+                <jet-secondary-button @click.native="cancelPublish">
+                    Nevermind
+                </jet-secondary-button>
+
+                <jet-danger-button class="ml-2" @click.native="publishRules"
+                                   :class="{ 'opacity-25': publishForm.processing }"
+                                   :disabled="publishForm.processing">
+                    Publish
+                </jet-danger-button>
+            </template>
+        </jet-confirmation-modal>
+
+        <!-- Unpublish confirmation modal -->
+        <jet-confirmation-modal :show="confirmingUnpublish" @close="cancelUnpublish">
+            <template #title>
+                Unpublish Rules
+            </template>
+
+            <template #content>
+                Are you sure you want to unpublish these rules?
+                <br>Target status:
+                <Dropdown v-model="unpublishForm.status"
+                          panelClass="text-xs"
+                          :options="['Draft', 'Reviewing']"/>
+            </template>
+
+            <template #footer>
+                <jet-secondary-button @click.native="cancelUnpublish">
+                    Nevermind
+                </jet-secondary-button>
+
+                <jet-danger-button class="ml-2" @click.native="unpublishRules"
+                                   :class="{ 'opacity-25': unpublishForm.processing }"
+                                   :disabled="unpublishForm.processing">
+                    Unpublish
+                </jet-danger-button>
+            </template>
+        </jet-confirmation-modal>
     </div>
 </template>
 
@@ -251,7 +279,7 @@
 import {defineComponent} from "vue";
 import {Head} from "@inertiajs/inertia-vue3";
 import ClientLayout from '@/Layouts/ClientAccount.vue'
-import ViewRule from '@/Components/RulesLibrary/Rules/ListView.vue'
+import ViewRule from '@/Components/RulesLibrary/Rules/RuleInList.vue'
 import moment from 'moment'
 import TaxonomyFilter from '@/Components/RulesLibrary/Rules/TaxonomyFilter.vue'
 import TaxonomySelector from "@/Components/RulesLibrary/Rules/TaxonomySelector.vue";
@@ -266,6 +294,7 @@ import JetLabel from '@/Jetstream/Label.vue'
 import JetActionMessage from '@/Jetstream/ActionMessage.vue'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
 import VPagination from "@hennge/vue3-pagination";
+import Multiselect from '@vueform/multiselect';
 import Button from 'primevue/button/sfc';
 import Checkbox from 'primevue/checkbox/sfc';
 import Dropdown from 'primevue/dropdown/sfc';
@@ -307,6 +336,7 @@ export default defineComponent({
         JetLabel,
         JetSecondaryButton,
         VPagination,
+        Multiselect,
     },
 
     data() {
@@ -314,17 +344,21 @@ export default defineComponent({
             page: 1,
             perPage: 25,
 
+            showAdvancedSearch: false,
+
             rules: [],
             //allRules: [..._.orderBy(this.rules, 'created_at', 'desc')],
             filteredRules: [],
             filterOption: 'all',
             filterText: "",
             filterState: "",
+            filterRuleType: null,
             filterContributor: "",
             filterTeam: "",
             filterObject: {},
             taxonomies: {},
             termsByTaxonomies: {},
+            groupedTaxonomies: {},
             filterCondition: true, // true = AND, false = OR
             rulesLoaded: false,
 
@@ -394,8 +428,11 @@ export default defineComponent({
         _every,
         _drop,
 
-        loadRules(){
-            const { data, error } = useSWRV(route('api.library.client-account.rules',[this.clientAccount.slug]), fetcher);
+        loadRules() {
+            const {
+                data,
+                error
+            } = useSWRV(route('api.library.client-account.rules', [this.clientAccount.slug]), fetcher);
 
             this.rules = data;
 
@@ -457,6 +494,14 @@ export default defineComponent({
                     if (!this.termsByTaxonomies[term.taxonomy.name].includes(term.name)) {
                         this.termsByTaxonomies[term.taxonomy.name].push(term.name);
                     }
+
+                    if (this.groupedTaxonomies[term.taxonomy.parent.name] === undefined) {
+                        this.groupedTaxonomies[term.taxonomy.parent.name] = []
+                    }
+
+                    if (!this.groupedTaxonomies[term.taxonomy.parent.name].includes(term.taxonomy.name)) {
+                        this.groupedTaxonomies[term.taxonomy.parent.name].push(term.taxonomy.name);
+                    }
                 })
             });
 
@@ -489,6 +534,10 @@ export default defineComponent({
 
             this.filterObject['filterState'] = (itemElem) => {
                 return !this.filterState || itemElem.state === this.filterState;
+            };
+
+            this.filterObject['filterRuleType'] = (itemElem) => {
+                return !this.filterRuleType || itemElem[this.filterRuleType];
             };
 
             this.filterObject['isNew'] = (itemElem) => {
@@ -632,6 +681,7 @@ export default defineComponent({
                     .filter(this.filterObject['filterByTaxonomyTerm'])
                     .filter(this.filterObject[this.filterOption])
                     .filter(this.filterObject['filterState'])
+                    .filter(this.filterObject['filterRuleType'])
                     .filter(this.filterObject['filterContributor'])
                     .filter(this.filterObject['filterTeam']);
 
@@ -649,6 +699,11 @@ export default defineComponent({
 
         filterByState(dummy, state) {
             this.filterState = state ? state : '';
+            this.getFilteredRules();
+        },
+
+        filterByRuleType(dummy, type) {
+            this.filterRuleType = type ? type : '';
             this.getFilteredRules();
         },
 
@@ -679,6 +734,7 @@ export default defineComponent({
             this.filterOption = 'all';
             this.filterText = '';
             this.filterState = '';
+            this.filterRuleType = null;
             this.filterTeam = '';
             this.filterContributor = '';
 
@@ -726,8 +782,8 @@ export default defineComponent({
     },
 
     watch: {
-        rules: function(newRules, oldRules) {
-            if(Array.isArray(newRules)) {
+        rules: function (newRules, oldRules) {
+            if (Array.isArray(newRules)) {
                 this.initializeFilters();
                 this.getFilteredRules();
                 this.rulesLoaded = true;
@@ -738,6 +794,14 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.search-wrapper.active {
+    @apply border-0 border-r-2 border-b-2 border-blue-300;
+}
+
+.search-section {
+    @apply border-0 border-l-2 border-blue-300 shadow px-2 my-2 pb-2 pt-1 ;
+}
+
 ::v-deep(.p-dropdown-label) {
     @apply text-sm;
 }

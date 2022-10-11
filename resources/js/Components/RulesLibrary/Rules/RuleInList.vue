@@ -16,7 +16,13 @@
                 <div class="description">
                     <h2 @click="detailsOpen = !detailsOpen; $emit('toggle')" class="cursor-pointer">
                         <span class="text-xs pr-1" title="Rule ID">{{ rule.dagId }}</span>
-                        <span class="text-xl font-bold">{{ rule.name }}</span>
+                        <span class="pr-1 text-xs">
+                            <Tag v-if="rule.is_op" severity="success" value="OP"></Tag>
+                            <Tag v-if="rule.is_pm" severity="info" value="PM"></Tag>
+                        </span>
+                        <span class="text-xl font-bold break-all">{{ rule.name }}</span>
+
+
                     </h2>
 
                     <div class="flex flex-row">
@@ -103,7 +109,7 @@
                     </div>
                 </template>
                 <template v-else>
-                    <div class="flex flex-col cursor-pointer" @click="detailsOpen = !detailsOpen; $emit('toggle')">
+                    <div class="flex flex-col cursor-pointer break-all" @click="detailsOpen = !detailsOpen; $emit('toggle')">
                         <div v-html="excerpt"/>
                         <span class="ml-3 flex flex-row" v-if="rule.attachments && rule.attachments.length">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -210,6 +216,7 @@ import clip from "text-clipper";
 import NavLink from "@/Jetstream/NavLink.vue";
 import Attachment from "@/Components/RulesLibrary/Rules/Attachment.vue";
 import {orderBy as _orderBy} from "lodash";
+import Tag from 'primevue/tag';
 import moment from 'moment';
 
 export default defineComponent({
@@ -246,6 +253,7 @@ export default defineComponent({
         JetInput,
         JetLabel,
         JetSecondaryButton,
+        Tag,
     },
 
     data() {

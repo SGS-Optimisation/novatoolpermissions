@@ -19,7 +19,6 @@
 <script>
 
 import {defineComponent} from "vue";
-//import Multiselect from 'vue-multiselect';
 import Multiselect from '@vueform/multiselect';
 
 export default defineComponent({
