@@ -134,7 +134,7 @@
                         <!-- End Filters -->
                     </div>
 
-                    <div class="box-border mx-autobefore:box-inherit after:box-inherit mt-2"
+                    <div class="box-border mx-auto before:box-inherit after:box-inherit mt-2"
                          :class="{
                         'md:masonry': !termFocus
                     }">

@@ -79,7 +79,7 @@
                                 <taxonomy-selector taxonomy-name="Rule Type"
                                                    :terms="[{value: 'is_op', 'label': 'Production'}, {value:'is_pm', label: 'PM'}]"
                                                    @termSelected="filterByRuleType"
-                                                   ref="stateSelector"
+                                                   ref="ruleTypeSelector"
                                 />
                             </div>
                         </div>
@@ -351,8 +351,8 @@ export default defineComponent({
             filteredRules: [],
             filterOption: 'all',
             filterText: "",
-            filterState: "",
-            filterRuleType: null,
+            filterRuleStatus: "",
+            filterRuleType: "",
             filterContributor: "",
             filterTeam: "",
             filterObject: {},
@@ -418,6 +418,25 @@ export default defineComponent({
 
     created() {
         this.getSortOption();
+
+        let qp = new URLSearchParams(window.location.search);
+        let filterText = qp.get('filterText');
+        if(filterText) this.filterText = qp.get('filterText');
+        let filterRuleStatus = qp.get('filterRuleStatus');
+        if(filterRuleStatus) this.filterRuleStatus = qp.get('filterRuleStatus');
+        let filterRuleType = qp.get('filterRuleType');
+        if(filterRuleType) this.filterRuleType = qp.get('filterRuleType');
+        let filterContributor = qp.get('filterContributor');
+        if(filterContributor) this.filterContributor = qp.get('filterContributor');
+        let filterTeam = qp.get('filterTeam');
+        if(filterTeam) this.filterTeam = qp.get('filterTeam');
+
+        qp.forEach((value, key) => {
+            if(!['filterText', 'filterRuleStatus', 'filterRuleStatus', 'filterRuleType', 'filterContributor', 'filterTeam'].includes(key)) {
+                var taxonomy = key.replace('filter', '');
+                this.taxonomies[taxonomy] = value;
+            }
+        });
     },
 
     updated() {
@@ -427,6 +446,24 @@ export default defineComponent({
     methods: {
         _every,
         _drop,
+
+        updateURL() {
+            let qp = new URLSearchParams();
+            if(this.filterText !== '') qp.set('filterText', this.filterText);
+            if(this.filterRuleStatus  !== '') qp.set('filterRuleStatus', this.filterRuleStatus);
+            if(this.filterRuleType !== '') qp.set('filterRuleType', this.filterRuleType);
+            if(this.filterContributor !== '') qp.set('filterContributor', this.filterContributor);
+            if(this.filterTeam !== '') qp.set('filterTeam', this.filterTeam);
+
+            console.log(this.taxonomies);
+            for(var taxonomy in this.taxonomies) {
+                if(this.taxonomies[taxonomy] !== '') {
+                    qp.set(('filter' + taxonomy), this.taxonomies[taxonomy]);
+                }
+            }
+
+            history.replaceState(null, null, "?"+qp.toString());
+        },
 
         loadRules() {
             const {
@@ -532,8 +569,8 @@ export default defineComponent({
                 return !this.filterTeam || itemElem.teams.some(team => team.name === this.filterTeam);
             };
 
-            this.filterObject['filterState'] = (itemElem) => {
-                return !this.filterState || itemElem.state === this.filterState;
+            this.filterObject['filterRuleStatus'] = (itemElem) => {
+                return !this.filterRuleStatus || itemElem.state === this.filterRuleStatus;
             };
 
             this.filterObject['filterRuleType'] = (itemElem) => {
@@ -574,9 +611,19 @@ export default defineComponent({
                     return true;
                 }
 
-                let hasStructure = _.some(itemElem.terms, function (term) {
-                    return term.hasOwnProperty('taxonomy') && term.taxonomy.name === 'Artwork Structure Elements';
-                });
+                let hasStructure = true;
+
+                if(itemElem.is_op) {
+                    hasStructure &= _.some(itemElem.terms, function (term) {
+                        return term.hasOwnProperty('taxonomy') && term.taxonomy.name === 'Artwork Structure Elements';
+                    });
+                }
+                if(itemElem.is_pm) {
+                    hasStructure &= _.some(itemElem.terms, function (term) {
+                        return term.hasOwnProperty('taxonomy') && term.taxonomy.name === 'PM Section Elements';
+                    });
+                }
+
 
                 let atLeastOneTermPerRootTaxonomy = _.uniq(_.map(itemElem.terms, function (term) {
                     return term.hasOwnProperty('taxonomy') && term.taxonomy.parent.name;
@@ -680,7 +727,7 @@ export default defineComponent({
                     .filter(this.filterObject['textSearch'])
                     .filter(this.filterObject['filterByTaxonomyTerm'])
                     .filter(this.filterObject[this.filterOption])
-                    .filter(this.filterObject['filterState'])
+                    .filter(this.filterObject['filterRuleStatus'])
                     .filter(this.filterObject['filterRuleType'])
                     .filter(this.filterObject['filterContributor'])
                     .filter(this.filterObject['filterTeam']);
@@ -698,7 +745,7 @@ export default defineComponent({
         },
 
         filterByState(dummy, state) {
-            this.filterState = state ? state : '';
+            this.filterRuleStatus = state ? state : '';
             this.getFilteredRules();
         },
 
@@ -733,8 +780,8 @@ export default defineComponent({
             }
             this.filterOption = 'all';
             this.filterText = '';
-            this.filterState = '';
-            this.filterRuleType = null;
+            this.filterRuleStatus = '';
+            this.filterRuleType = '';
             this.filterTeam = '';
             this.filterContributor = '';
 
@@ -743,6 +790,7 @@ export default defineComponent({
             })
 
             this.$refs.stateSelector.clearSelected();
+            this.$refs.ruleTypeSelector.clearSelected();
             this.$refs.contributorSelector.clearSelected();
             this.$refs.teamSelector.clearSelected();
 
@@ -752,6 +800,7 @@ export default defineComponent({
 
     computed: {
         displayedRules() {
+            this.updateURL();
             return _.drop(this.filteredRules, ((this.page - 1) * this.perPage)).slice(0, this.perPage);
         },
 

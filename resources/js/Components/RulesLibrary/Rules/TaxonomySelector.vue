@@ -36,6 +36,18 @@ export default defineComponent({
             selection: null,
         }
     },
+    created() {
+        let qp = new URLSearchParams(window.location.search);
+
+        let urlParam = 'filter' + this.taxonomyName;
+        let field = qp.get(urlParam);
+        if(field) {
+            console.log('param loaded from url for ' + this.taxonomyName, field);
+            this.selection = qp.get(urlParam);
+        }
+
+
+    },
     methods: {
         clearSelected: function () {
             console.log("clearing selection on " + this.taxonomyName);
