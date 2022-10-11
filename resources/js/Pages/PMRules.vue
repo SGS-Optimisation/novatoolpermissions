@@ -1,19 +1,21 @@
 <template>
     <app-layout>
         <Head><title>
-            PM Rules - Dagobah
+            PM Rules {{ clientAccount.name }} - Dagobah
         </title></Head>
         <template #header>
             <div class="flex justify-between align-middle">
 
                 <div class="flex-grow">
-                    <h2 v-if="currentJob" class="pt-2 font-bold text-xl text-gray-800 leading-tight">
-                        Rules for {{ clientAccount.name }}
+                    <h2 class="pt-2 font-bold text-xl text-gray-800 leading-tight">
+                        PM Rules for
+                        <span v-if="currentJob"></span>
+                        <span v-else>{{ clientAccount.name }}</span>
                     </h2>
 
-<!--                    <manual-account-selection v-if="forcedAccount"
-                                              :initial-selection="forcedAccount"
-                                              :jobNumber="currentJob.job_number"/>-->
+                    <!--                    <manual-account-selection v-if="forcedAccount"
+                                                                  :initial-selection="forcedAccount"
+                                                                  :jobNumber="currentJob.job_number"/>-->
                 </div>
 
                 <div class="flex-shrink">
@@ -118,7 +120,7 @@
                                      icon="pi pi-exclamation-triangle"></Tag>
                             </button>
                             <button
-                                v-for="term in artworkStructureTerms"
+                                v-for="term in pmSectionTerms"
                                 @click="filterArtworkStructureButtonClicked(term)"
                                 class="flex-grow hover:bg-blue-500 hover:text-white border border-r-0 border-blue-500 px-1 py-2 mx-0 outline-none focus:shadow-outline"
                                 :class="[
@@ -134,7 +136,7 @@
                         <!-- End Filters -->
                     </div>
 
-                    <div class="box-border mx-autobefore:box-inherit after:box-inherit mt-2"
+                    <div class="box-border mx-auto before:box-inherit after:box-inherit mt-2"
                          :class="{
                         'md:masonry': !termFocus
                     }">
@@ -143,7 +145,7 @@
                              class="break-inside">
 
                             <view-rule-group :rules="ruleGroup[1]"
-                                             :job="currentJob.job_number"
+                                             :job="currentJob ? currentJob.job_number: ''"
                                              :group="ruleGroup[0]"
                                              :filter-option="filterOptionTracker"
                                              :filter-stage-states="stageStates"
@@ -198,7 +200,7 @@
 
                 <a v-if="currentRule && $page.props.user_permissions.updateRules" target="_blank"
                    class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150"
-                   :href="route('library.client-account.rules.edit', {clientAccount: currentJob.metadata.client.slug, id: currentRule.id})">
+                   :href="route('library.client-account.rules.edit', {clientAccount: clientAccount.slug, id: currentRule.id})">
                     Edit
                 </a>
 
@@ -267,8 +269,8 @@ import ManualAccountSelection from "@/Components/Search/ManualAccountSelection.v
 
 export default {
     props: [
-        //'jobNumber',
-        //'job',
+        'jobNumber',
+        'job',
         'rules',
         'clientAccount',
         'stages',
@@ -294,7 +296,7 @@ export default {
             filterObject: {},
 
             /* Contains alls the terms used under job categorizations taxonomies, for indexing */
-            artworkStructureTerms: [],
+            pmSectionTerms: [],
 
             all_stages: this.$page.props.all_job_stages,
 
@@ -355,7 +357,14 @@ export default {
     },
 
     mounted() {
-        //this.initJobLoaded();
+
+        if (this.job) {
+            this.initJobLoaded();
+        } else if (this.rules.length) {
+            this.currentRules = this.rules;
+            this.newRulesLoaded();
+            this.initRulesParsing();
+        }
 
         this._keyListener = function (e) {
             if (e.key === "l" && (e.ctrlKey || e.metaKey)) {
@@ -383,14 +392,15 @@ export default {
     },
 
     methods: {
+
+
         initJobLoaded() {
+
             this.currentJob = this.job;
-            if (this.currentJob.metadata.processing_mysgs === false) {
+            if (this.currentJob && this.currentJob.metadata.processing_mysgs === false) {
                 console.log('job rules already loaded');
-                this.currentRules = this.rules;
-                this.newRulesLoaded();
-                this.initRulesParsing();
-            } else if(window.Echo.connector.pusher.connection.state === 'unavailable'){
+
+            } else if (window.Echo.connector.pusher.connection.state === 'unavailable') {
                 console.log('socket unavailable, switching to polling mode');
                 this.waitMode();
             }
@@ -416,7 +426,7 @@ export default {
             let activeJobTeam = [];
             let activeMatchingJobTeams = [];
 
-            if (this.currentJob.metadata.hasOwnProperty('jobTeam')) {
+            if (this.currentJob && this.currentJob.metadata.hasOwnProperty('jobTeam')) {
                 let jobTeams = this.currentJob.metadata.jobTeam;
                 let userJobTeams = this.$page.props.user.jobteams;
 
@@ -440,12 +450,12 @@ export default {
             window._paq.push(['setDocumentTitle', this.jobNumber]);
 
             window._paq.push(['trackPageView', this.jobNumber, {
-                'client': this.currentJob.metadata.client.name,
+                'client': this.clientAccount.name,
                 'dimension2': selectedJobTeams.join('|')
             }]);
             window._paq.push(['trackEvent',
                 'Search Viewed Job',
-                this.currentJob.metadata.client.name,
+                this.clientAccount.name,
                 this.jobNumber,
                 '',
                 {
@@ -466,7 +476,9 @@ export default {
             this.searching = false;
 
             this.setupStages();
-            if (this.currentJob.metadata.hasOwnProperty('stages') && this.currentJob.metadata.stages.length) {
+            if (this.currentJob
+                && this.currentJob.metadata.hasOwnProperty('stages')
+                && this.currentJob.metadata.stages.length) {
                 for (let index in this.currentJob.metadata.stages) {
                     this.stageStates[this.currentJob.metadata.stages[index]] = true;
                 }
@@ -477,15 +489,15 @@ export default {
         initRulesParsing() {
             this.searchedRules.forEach(rule => {
                 rule.job_categorizations_terms.forEach(term => {
-                    //if (term.taxonomy.name === 'Artwork Structure Elements') {
+                    //if (term.taxonomy.name === 'PM Section Elements') {
 
                     /*
                     Collect filterable terms
                     */
-                    if (!this.artworkStructureTerms.includes(term.name)
-                        && term.taxonomy.name === 'Artwork Structure Elements'
+                    if (!this.pmSectionTerms.includes(term.name)
+                        && term.taxonomy.name === 'PM Section Elements'
                     ) {
-                        this.artworkStructureTerms.push(term.name);
+                        this.pmSectionTerms.push(term.name);
                     }
 
                     /*
@@ -499,9 +511,9 @@ export default {
                     }
 
                     /*
-                    Group rules by Artwork Structure Elements terms
+                    Group rules by PM Section Elements terms
                      */
-                    if (term.taxonomy.name === 'Artwork Structure Elements') {
+                    if (term.taxonomy.name === 'PM Section Elements') {
                         if (this.rulesByTaxonomies[term.name] === undefined) {
                             this.rulesByTaxonomies[term.name] = [];
                         }
@@ -510,7 +522,7 @@ export default {
                     }
                 });
 
-                this.artworkStructureTerms.forEach(taxonomy => {
+                this.pmSectionTerms.forEach(taxonomy => {
                     this.filterObject[taxonomy] = itemElem => {
                         return itemElem[0] === taxonomy;
                     }
@@ -582,7 +594,7 @@ export default {
         runningSearch() {
             this.currentJob = {metadata: {}};
             this.searching = true;
-            this.artworkStructureTerms = [];
+            this.pmSectionTerms = [];
             this.rulesByTaxonomies = {};
         },
         openRuleModal(rule) {

@@ -20,7 +20,12 @@ class PMRuleController
     {
         $clientAccount = ClientAccount::whereSlug($client_slug)->first();
 
-        $rules = []; //RuleFilter::handle($job, $clientAccount->id);
+        $rules = $clientAccount->pmRules()->with([
+            'accountStructureTerms.taxonomy.mappings',
+            'jobCategorizationsTerms',
+            'attachments'
+        ])
+            ->isPublished()->get();
 
         $data = [
             //'jobNumber' => $jobNumber,
