@@ -30,9 +30,26 @@
 
             <template #body>
                 <div class="max-w-7xl mx-auto sm:px-4 lg:px-2 bg-gray-50 pt-5">
-                    <div class="search-wrapper transition transition-all duration-250 ease-out" :class="{'active': showAdvancedSearch}">
+                    <div class="search-section mt-2 grid grid-cols-5 gap-1">
+                        <taxonomy-selector taxonomy-name="Rule Status"
+                                           url-param="filterRuleStatus"
+                                           :terms="states"
+                                           @termSelected="filterByState"
+                                           ref="stateSelector"
+                        />
+
+                        <taxonomy-selector taxonomy-name="Rule Type"
+                                           url-param="filterRuleType"
+                                           :terms="[{value: 'is_op', 'label': 'Production'}, {value:'is_pm', label: 'PM'}]"
+                                           @termSelected="filterByRuleType"
+                                           ref="ruleTypeSelector"
+                        />
+                    </div>
+
+                    <div class="search-wrapper transition transition-all duration-250 ease-out"
+                         :class="{'active': showAdvancedSearch}">
                         <div class="cursor-pointer w-full text-xs text-center bg-gray-400"
-                             @click="showAdvancedSearch=!showAdvancedSearch">
+                             @click="toggleAdvancedSearch()">
                             <span v-if="!showAdvancedSearch">⌄</span>
                             <span v-else>⌃</span>
                             Advanced
@@ -69,21 +86,10 @@
                                 <filter-condition @on-change-filter-condition="onChangeFilterCondition"/>
                             </div>
 
-                            <div class="search-section mt-2 grid grid-cols-5 gap-1">
-                                <taxonomy-selector taxonomy-name="Rule Status"
-                                                   :terms="states"
-                                                   @termSelected="filterByState"
-                                                   ref="stateSelector"
-                                />
 
-                                <taxonomy-selector taxonomy-name="Rule Type"
-                                                   :terms="[{value: 'is_op', 'label': 'Production'}, {value:'is_pm', label: 'PM'}]"
-                                                   @termSelected="filterByRuleType"
-                                                   ref="ruleTypeSelector"
-                                />
-                            </div>
                         </div>
                     </div>
+
                     <div class="flex flex-row m-2 justify-between">
                         <div class="flex justify-start m-2 inline-block" id="text-search">
                             <jet-label class="align-middle mr-2 mt-2" for="text-search" value="Text search:"/>
@@ -420,19 +426,22 @@ export default defineComponent({
         this.getSortOption();
 
         let qp = new URLSearchParams(window.location.search);
+        let advancedOpen = qp.has('advanced');
+        if (advancedOpen) this.showAdvancedSearch = true;
         let filterText = qp.get('filterText');
-        if(filterText) this.filterText = qp.get('filterText');
+        if (filterText) this.filterText = qp.get('filterText');
         let filterRuleStatus = qp.get('filterRuleStatus');
-        if(filterRuleStatus) this.filterRuleStatus = qp.get('filterRuleStatus');
+        if (filterRuleStatus) this.filterRuleStatus = qp.get('filterRuleStatus');
         let filterRuleType = qp.get('filterRuleType');
-        if(filterRuleType) this.filterRuleType = qp.get('filterRuleType');
+        if (filterRuleType) this.filterRuleType = qp.get('filterRuleType');
         let filterContributor = qp.get('filterContributor');
-        if(filterContributor) this.filterContributor = qp.get('filterContributor');
+        if (filterContributor) this.filterContributor = qp.get('filterContributor');
         let filterTeam = qp.get('filterTeam');
-        if(filterTeam) this.filterTeam = qp.get('filterTeam');
+        if (filterTeam) this.filterTeam = qp.get('filterTeam');
 
         qp.forEach((value, key) => {
-            if(!['filterText', 'filterRuleStatus', 'filterRuleStatus', 'filterRuleType', 'filterContributor', 'filterTeam'].includes(key)) {
+            if (!['filterText', 'advanced', 'filterRuleStatus', 'filterRuleStatus',
+                'filterRuleType', 'filterContributor', 'filterTeam'].includes(key)) {
                 var taxonomy = key.replace('filter', '');
                 this.taxonomies[taxonomy] = value;
             }
@@ -447,22 +456,27 @@ export default defineComponent({
         _every,
         _drop,
 
+        toggleAdvancedSearch() {
+            this.showAdvancedSearch = !this.showAdvancedSearch;
+            this.updateURL();
+        },
+
         updateURL() {
             let qp = new URLSearchParams();
-            if(this.filterText !== '') qp.set('filterText', this.filterText);
-            if(this.filterRuleStatus  !== '') qp.set('filterRuleStatus', this.filterRuleStatus);
-            if(this.filterRuleType !== '') qp.set('filterRuleType', this.filterRuleType);
-            if(this.filterContributor !== '') qp.set('filterContributor', this.filterContributor);
-            if(this.filterTeam !== '') qp.set('filterTeam', this.filterTeam);
+            if (this.showAdvancedSearch) qp.set('advanced', true);
+            if (this.filterText !== '') qp.set('filterText', this.filterText);
+            if (this.filterRuleStatus !== '') qp.set('filterRuleStatus', this.filterRuleStatus);
+            if (this.filterRuleType !== '') qp.set('filterRuleType', this.filterRuleType);
+            if (this.filterContributor !== '') qp.set('filterContributor', this.filterContributor);
+            if (this.filterTeam !== '') qp.set('filterTeam', this.filterTeam);
 
-            console.log(this.taxonomies);
-            for(var taxonomy in this.taxonomies) {
-                if(this.taxonomies[taxonomy] !== '') {
+            for (var taxonomy in this.taxonomies) {
+                if (this.taxonomies[taxonomy] !== '') {
                     qp.set(('filter' + taxonomy), this.taxonomies[taxonomy]);
                 }
             }
 
-            history.replaceState(null, null, "?"+qp.toString());
+            history.replaceState(null, null, "?" + qp.toString());
         },
 
         loadRules() {
@@ -613,12 +627,12 @@ export default defineComponent({
 
                 let hasStructure = true;
 
-                if(itemElem.is_op) {
+                if (itemElem.is_op) {
                     hasStructure &= _.some(itemElem.terms, function (term) {
                         return term.hasOwnProperty('taxonomy') && term.taxonomy.name === 'Artwork Structure Elements';
                     });
                 }
-                if(itemElem.is_pm) {
+                if (itemElem.is_pm) {
                     hasStructure &= _.some(itemElem.terms, function (term) {
                         return term.hasOwnProperty('taxonomy') && term.taxonomy.name === 'PM Section Elements';
                     });

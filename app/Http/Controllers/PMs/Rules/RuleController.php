@@ -272,7 +272,8 @@ class RuleController extends Controller
             'initialAssignees' => collect((new \App\Operations\Rules\GetRuleReviewersOperation($rule))->handle())
                 ->map(function ($user) {
                     return ['value' => $user->id, 'label' => $user->name];
-                })
+                }),
+            'referer'=> $request->headers->get('referer'),
         ],
             $this->buildTaxonomyLists($client_account_slug)
         ));

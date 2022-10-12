@@ -25,6 +25,7 @@ export default defineComponent({
     name: "TaxonomySelector",
     props: [
         'taxonomyName',
+        'urlParam',
         'terms',
         'filters',
     ],
@@ -39,7 +40,7 @@ export default defineComponent({
     created() {
         let qp = new URLSearchParams(window.location.search);
 
-        let urlParam = 'filter' + this.taxonomyName;
+        let urlParam = this.urlParam ? this.urlParam : 'filter' + this.taxonomyName;
         let field = qp.get(urlParam);
         if(field) {
             console.log('param loaded from url for ' + this.taxonomyName, field);
