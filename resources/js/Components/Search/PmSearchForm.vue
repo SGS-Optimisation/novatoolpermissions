@@ -113,7 +113,9 @@ export default defineComponent({
         runSearch() {
             this.$emit('searching')
             if(this.search.type === 'bu') {
-
+                let parameters = {slug: this.search.slug}
+                parameters[this.search.taxonomy] = this.search.value
+                this.$inertia.get(route('pm.rules', parameters));
             }else {
                 this.$inertia.get(route('pm.rules', this.search.value));
             }
