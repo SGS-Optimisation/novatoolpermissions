@@ -40,7 +40,7 @@ export default defineComponent({
     created() {
         let qp = new URLSearchParams(window.location.search);
 
-        let urlParam = this.urlParam ? this.urlParam : 'filter' + this.taxonomyName;
+        let urlParam = this.urlParam ? this.urlParam : this.taxonomyName;
         let field = qp.get(urlParam);
         if(field) {
             console.log('param loaded from url for ' + this.taxonomyName, field);

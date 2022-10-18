@@ -72,8 +72,18 @@
                     <job-identification v-if="currentJob" :job="currentJob"/>
 
 
-                    <!-- All Filters -->
+
                     <div class="sticky z-50 flex flex-col w-full" style="top:107px;">
+                        <!-- Selectable Filters -->
+                        <div class="search-section grid grid-cols-5 gap-1 mx-2 mb-2 ">
+                            <taxonomy-selector v-for="(terms, taxonomyName) in accountStructureTaxonomies"
+                                               :taxonomy-name="taxonomyName"
+                                               :key="taxonomyName"
+                                               :terms="terms"
+                                               @termSelected="filterByTaxonomyTerm"
+                                               :ref="setTaxonomySelectorRef"
+                            />
+                        </div>
                         <!-- Stage filter -->
                         <div class="flex flex-grow text-xs mx-2 mb-2" role="group" v-if="showStage()">
                             <button
@@ -93,7 +103,7 @@
                                 Clear
                             </button>
                         </div>
-
+                        <!-- Clickable Filters -->
                         <!-- Artwork structure and date Filters -->
                         <div class="flex flex-grow text-xs mx-2 shadow-lg" role="group">
                             <button v-if="numNewRules"
@@ -141,12 +151,12 @@
                         'md:masonry': !termFocus
                     }">
 
-                        <div v-for="(ruleGroup, ruleIndex) in displayedRules" :key="ruleIndex"
+                        <div v-for="(ruleGroup, groupName) in displayedRules" :key="groupName"
                              class="break-inside">
 
-                            <view-rule-group :rules="ruleGroup[1]"
+                            <view-rule-group :rules="ruleGroup"
                                              :job="currentJob ? currentJob.job_number: ''"
-                                             :group="ruleGroup[0]"
+                                             :group="groupName"
                                              :filter-option="filterOptionTracker"
                                              :filter-stage-states="stageStates"
                                              :stages="processedStages"
@@ -261,6 +271,9 @@ import Loader from "@/Components/Loader.vue";
 import ViewRule from '@/Components/RulesLibrary/Rules/ViewRule.vue'
 import ViewRuleGroup from "@/Components/Search/ViewRuleGroup.vue";
 import JobSearch from "@/Components/Search/JobSearchForm.vue";
+import TaxonomyFilter from '@/Components/RulesLibrary/Rules/TaxonomyFilter.vue'
+import TaxonomySelector from "@/Components/RulesLibrary/Rules/TaxonomySelector.vue";
+import FilterCondition from "@/Components/RulesLibrary/Rules/FilterCondition.vue";
 import moment from "moment";
 import JobIdentification from "@/Components/Search/JobIdentification.vue";
 import Message from 'primevue/message/sfc';
@@ -275,6 +288,30 @@ export default {
         'clientAccount',
         'stages',
     ],
+    components: {
+        ManualAccountSelection,
+        Head,
+        JobIdentification,
+        ViewRuleGroup,
+        Button,
+        Input,
+        AppLayout,
+        JetActionMessage,
+        JetButton,
+        JetDangerButton,
+        JetDialogModal,
+        JetInput,
+        JetLabel,
+        JetSecondaryButton,
+        Loader,
+        ViewRule,
+        JobSearch,
+        Message,
+        Tag,
+        TaxonomyFilter,
+        TaxonomySelector,
+        FilterCondition,
+    },
 
     data() {
         return {
@@ -302,6 +339,10 @@ export default {
 
             /* Contains terms grouped by taxonomy under job categoizations, for filtering */
             taxonomies: {},
+            accountStructureTaxonomies: {},
+            accountStructureTaxonomyFilter: {},
+            groupedTaxonomies: {},
+            termsByTaxonomies: {},
 
             rulesByTaxonomies: {},
 
@@ -318,6 +359,7 @@ export default {
             linkTrackingEnabled: false,
 
             showRuleId: false,
+            taxonomySelectorRefs: [],
         }
     },
 
@@ -337,6 +379,18 @@ export default {
     },
 
     created() {
+        this.initSearchFunctions();
+
+        let qp = new URLSearchParams(window.location.search);
+
+        qp.forEach((value, key) => {
+            if (!['filterText', 'advanced', 'filterRuleStatus', 'filterRuleStatus',
+                'filterRuleType', 'filterContributor', 'filterTeam'].includes(key)) {
+                var taxonomy = key.replace('filter', '');
+                this.accountStructureTaxonomyFilter[taxonomy] = value;
+            }
+        });
+
         console.log('tracking enabled: ' + (this.$page.props.features.matomo_tracking_enabled ? 'yes' : 'no'));
 
         if (this.$page.props.features.matomo_tracking_enabled) {
@@ -383,6 +437,10 @@ export default {
             })*/
     },
 
+    beforeUpdate() {
+        this.taxonomySelectorRefs = []
+    },
+
     beforeDestroy() {
         document.removeEventListener('keydown', this._keyListener);
     },
@@ -392,7 +450,6 @@ export default {
     },
 
     methods: {
-
 
         initJobLoaded() {
 
@@ -404,6 +461,18 @@ export default {
                 console.log('socket unavailable, switching to polling mode');
                 this.waitMode();
             }
+        },
+
+        updateURL() {
+            let qp = new URLSearchParams();
+
+            for (var taxonomy in this.accountStructureTaxonomyFilter) {
+                if (this.accountStructureTaxonomyFilter[taxonomy] !== '') {
+                    qp.set((taxonomy), this.accountStructureTaxonomyFilter[taxonomy]);
+                }
+            }
+
+            history.replaceState(null, null, "?" + qp.toString());
         },
 
         setupStages() {
@@ -522,29 +591,53 @@ export default {
                     }
                 });
 
-                this.pmSectionTerms.forEach(taxonomy => {
-                    this.filterObject[taxonomy] = itemElem => {
-                        return itemElem[0] === taxonomy;
+                rule.account_structure_terms.forEach(term => {
+                    var taxonomy = term.taxonomy.name;
+                    if (!this.accountStructureTaxonomies.hasOwnProperty(taxonomy)) {
+                        this.accountStructureTaxonomies[taxonomy] = [];
+                    }
+
+                    if (!this.accountStructureTaxonomies[taxonomy].includes(term.name)) {
+                        this.accountStructureTaxonomies[taxonomy].push(term.name);
                     }
                 });
-            });
 
-            this.initSearchFunctions();
+                this.pmSectionTerms.forEach(taxonomy => {
+                    this.filterObject[taxonomy] = (rule) => {
+                        var pmElmTerms = rule.job_categorizations_terms.filter((term) => term.taxonomy.name === 'PM Section Elements');
+
+                        return pmElmTerms.length && pmElmTerms[0].name === taxonomy;
+                    }
+                })
+            });
         },
 
         initSearchFunctions() {
-            this.filterObject['isNew'] = (itemElem) => {
-                return itemElem[1].filter(rule => moment()
+            this.filterObject['isNew'] = (rule) => {
+                return moment()
                     .subtract(parseInt(this.$page.props.settings.rule_filter_new_duration), 'days')
                     .isSameOrBefore(moment(rule.created_at))
-                ).length > 0;
             };
 
-            this.filterObject['isUpdated'] = (itemElem) => {
-                return itemElem[1].filter(rule => moment()
+            this.filterObject['isUpdated'] = (rule) => {
+                return moment()
                     .subtract(parseInt(this.$page.props.settings.rule_filter_updated_duration), 'days')
                     .isSameOrBefore(moment(rule.updated_at))
-                ).length > 0;
+            };
+
+            this.filterObject['filterByTaxonomyTerm'] = (rule) => {
+                let taxonomies = Object.entries(this.accountStructureTaxonomyFilter);
+                if (taxonomies.length === 0)
+                    return true;
+                for (const taxonomy of taxonomies) {
+                    if (taxonomy[1] !== '') {
+                        let matchingTaxonomy = rule.account_structure_terms.map(term => term.taxonomy.name).includes(taxonomy[0])
+                        if (!matchingTaxonomy) return true
+                        let matchingTerms = rule.account_structure_terms.map(term => term.name).includes(taxonomy[1])
+                        if (!matchingTerms) return false
+                    }
+                }
+                return true;
             };
 
             this.filterObject['all'] = (itemElem) => {
@@ -607,7 +700,7 @@ export default {
         },
 
         filterArtworkStructureButtonClicked(filterName) {
-            console.log('filter taxomy button clicked', filterName);
+            console.log('filter taxonomy button clicked', filterName);
 
             if (this.filterOptionTracker !== '' && this.filterOptionTracker === filterName) {
                 this.unfilter();
@@ -634,6 +727,16 @@ export default {
             console.log('filter stage button clicked', stage);
             this.stageStates[stage] = !this.stageStates[stage];
             this.$forceUpdate();
+        },
+
+        filterByTaxonomyTerm(taxonomy, term) {
+            this.accountStructureTaxonomyFilter[taxonomy] = (term ? term : '');
+        },
+
+        setTaxonomySelectorRef(el) {
+            if (el) {
+                this.taxonomySelectorRefs.push(el)
+            }
         },
 
         unfilter() {
@@ -676,8 +779,25 @@ export default {
             return this.filterOption && this.filterOption !== 'isNew' && this.filterOption !== 'isUpdated';
         },
 
-        displayedRules() {
+        /*displayedRules() {
             return _.filter(Object.entries(this.rulesByTaxonomies), this.filterObject[this.filterOption ? this.filterOption : 'all'])
+        },*/
+
+        displayedRules() {
+            this.updateURL();
+            var passedRules = _.filter(this.rules, this.filterObject['filterByTaxonomyTerm'])
+                .filter(this.filterObject[this.filterOption ? this.filterOption : 'all'])
+
+
+            return _.groupBy(passedRules, (rule) => {
+                var pmElmTerms = rule.job_categorizations_terms.filter((term) => term.taxonomy.name === 'PM Section Elements');
+
+                if (pmElmTerms.length) {
+                    return pmElmTerms[0].name;
+                } else {
+                    console.log('error, rule with no pm section elements taxonomy');
+                }
+            });
         },
 
         processedStages() {
@@ -719,28 +839,6 @@ export default {
                 })
                 .length
         },
-    },
-
-    components: {
-        ManualAccountSelection,
-        Head,
-        JobIdentification,
-        ViewRuleGroup,
-        Button,
-        Input,
-        AppLayout,
-        JetActionMessage,
-        JetButton,
-        JetDangerButton,
-        JetDialogModal,
-        JetInput,
-        JetLabel,
-        JetSecondaryButton,
-        Loader,
-        ViewRule,
-        JobSearch,
-        Message,
-        Tag,
     },
 }
 </script>

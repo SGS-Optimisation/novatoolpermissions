@@ -472,7 +472,7 @@ export default defineComponent({
 
             for (var taxonomy in this.taxonomies) {
                 if (this.taxonomies[taxonomy] !== '') {
-                    qp.set(('filter' + taxonomy), this.taxonomies[taxonomy]);
+                    qp.set((taxonomy), this.taxonomies[taxonomy]);
                 }
             }
 
