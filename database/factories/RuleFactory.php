@@ -25,10 +25,10 @@ class RuleFactory extends Factory
     {
         return [
             'client_account_id' => ClientAccount::factory(),
-            'name' => $this->faker->name,
-            'content' => $this->faker->paragraphs(3, true),
+            'name' => fake()->words(random_int(3,5), true),
+            'content' => fake()->paragraphs(3, true),
             'metadata' => '{}',
-            'flagged' => $this->faker->boolean,
+            'flagged' => fake()->boolean(10),
         ];
     }
 }

@@ -40,8 +40,29 @@ class PMRuleController
             : Jetstream::inertia()->render($request, 'PMRules', $data);
     }
 
-    public function showClientJob(Request $request, $slug, $jobNumber)
+    public function showJob(Request $request, $jobNumber)
     {
+        $rules = null;
+        $job = JobRepository::findByJobNumber($jobNumber);
 
+        if (!$job->metadata->processing_mysgs && !$job->metadata->error_mysgs) {
+            logger('mysgs data available for '.$jobNumber);
+            $rules = RuleFilter::handle($job, RuleFilter::FILTER_MODE_PM);
+        }
+
+        $data = [
+            'jobNumber' => $jobNumber,
+            'job' => $job,
+            'rules' => $rules
+        ];
+
+        if ($job->clientAccount) {
+            $data['stages'] = optional($job->clientAccount)->stages();
+            $data['clientAccount'] = $job->clientAccount;
+        }
+
+        return $request->wantsJson() ?
+            new JsonResponse($data, 200)
+            : Jetstream::inertia()->render($request, 'PMRules', $data);
     }
 }

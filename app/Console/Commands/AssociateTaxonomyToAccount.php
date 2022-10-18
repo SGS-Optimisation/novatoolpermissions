@@ -65,9 +65,12 @@ class AssociateTaxonomyToAccount extends Command
                 $clientAccount->terms()->attach($term);
             });
 
+        $this->info(('done'));
+
         \Cache::tags('taxonomy')->forget($clientAccount->slug.'-taxonomy-usage-data');
         \Cache::tags('taxonomy')->forget($clientAccount->slug.'-rules-data');
 
+        $this->info(('cache cleared'));
 
         return 0;
     }

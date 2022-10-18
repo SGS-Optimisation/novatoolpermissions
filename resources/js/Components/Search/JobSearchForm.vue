@@ -1,6 +1,6 @@
 <template>
-    <form @submit.prevent="findJob">
-        <div :class="classes">
+  <form @submit.prevent="findJob">
+    <div :class="classes">
 
             <span class="w-auto flex justify-end items-center text-gray-500 p-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -10,59 +10,64 @@
                 </svg>
             </span>
 
-            <input v-model="jobNumber" autofocus class="w-full shadow rounded p-2 focus:outline-none" type="text"
-                   :placeholder="placeholder">
+      <input v-model="jobNumber" autofocus class="w-full shadow rounded p-2 focus:outline-none" type="text"
+             :placeholder="placeholder">
 
-            <jet-button :type="'submit'" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                Search
-            </jet-button>
-        </div>
-    </form>
+      <jet-button :type="'submit'" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+        Search
+      </jet-button>
+    </div>
+  </form>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import {defineComponent} from 'vue'
 import JetButton from "@/Jetstream/Button.vue";
 
 export default defineComponent({
-    name: "SearchBar",
-    props: {
-        classes: {
-            type: String,
-            default: "bg-white flex p-4",
-        },
-        placeholder: {
-            type: String,
-            default: "Enter a MySGS job number"
-        }
+  name: "SearchBar",
+  props: {
+    classes: {
+      type: String,
+      default: "bg-white flex p-4",
     },
-    components: {
-        JetButton,
+    placeholder: {
+      type: String,
+      default: "Enter a MySGS job number"
     },
-    data() {
-        return {
-            jobNumber: "",
-
-            form: this.$inertia.form({}, {
-                    //bag: 'findJob'
-                }
-            ),
-        }
-    },
-
-    methods: {
-        findJob() {
-            this.$emit('searching')
-            this.form.post(route('job.rules', this.jobNumber));
-        }
-    },
-
-    watch: {
-        jobNumber(newVal) {
-            let re = /[^0-9\-]/gi;
-            this.jobNumber = newVal.replace(re, '');
-        }
+    searchRoute: {
+      type: String,
+      default: 'job.rules',
     }
+  },
+  components: {
+    JetButton,
+  },
+  data() {
+    return {
+      jobNumber: "",
+
+      form: this.$inertia.form({}, {
+            //bag: 'findJob'
+          }
+      ),
+    }
+  },
+
+  methods: {
+    findJob() {
+      this.$emit('searching')
+      //this.form.post(route(this.searchRoute, this.jobNumber));
+      this.$inertia.get(route(this.searchRoute, this.jobNumber));
+    }
+  },
+
+  watch: {
+    jobNumber(newVal) {
+      let re = /[^0-9\-]/gi;
+      this.jobNumber = newVal.replace(re, '');
+    }
+  }
 })
 </script>
 

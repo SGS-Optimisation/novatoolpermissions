@@ -55,9 +55,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         ->name('current-team.update');
 
     Route::get('/pm/{slug}', [\App\Http\Controllers\Search\PMRuleController::class, 'showClient'])
+        ->where('slug', '[a-z\-]+')
         ->name('pm.rules');
 
-    Route::get('/pm/{slug}/{jobNumber}', [\App\Http\Controllers\Search\PMRuleController::class, 'showClientJob'])
+    Route::get('/pm/{jobNumber}', [\App\Http\Controllers\Search\PMRuleController::class, 'showJob'])
         ->where('jobNumber', '[0-9\-]+')
         ->name('pm.job-rules');
 

@@ -37,7 +37,8 @@ class RuleFilter
         int $client_id = null
     ): array {
 
-        $cache_key = 'rules-job-'.$job->job_number;
+        $cache_key = $mode.'-rules-job-'.$job->job_number;
+        logger('FILTER RULES CACHE KEY: ' . $cache_key);
         $cached_rules = cache($cache_key);
 
         if (!$job->metadata->client_found && !$client_id) {

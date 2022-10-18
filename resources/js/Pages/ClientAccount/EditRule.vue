@@ -105,7 +105,7 @@ export default defineComponent({
     computed: {
         backRoute() {
             var mainBack = route('library.client-account.rules.index', {clientAccount: this.clientAccount.slug });
-            if(this.referer && this.referer !== mainBack) {
+            if(this.referer && this.referer !== mainBack && this.referer !== window.location.href) {
                 return this.referer;
             }
             return mainBack;
