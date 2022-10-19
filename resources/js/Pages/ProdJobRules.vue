@@ -7,13 +7,21 @@
       <div class="flex justify-between align-middle">
 
         <div class="flex-grow">
-          <h2 v-if="currentJob" class="pt-2 font-bold text-xl text-gray-800 leading-tight">
-            Prod Rules for job {{ currentJob.job_number }}
-          </h2>
+          <div class="flex flex-row align-baseline items-baseline">
+            <h2 v-if="currentJob" class="pt-2 font-bold text-xl text-gray-800 leading-tight">
+              Prod Rules for job {{ currentJob.job_number }}
+            </h2>
 
-          <manual-account-selection v-if="forcedAccount"
-                                    :initial-selection="forcedAccount"
-                                    :jobNumber="currentJob.job_number"/>
+            <template v-if="jobNumber && clientHasPmRules">
+              <Link :href="route('pm.job-rules', jobNumber)" class="ml-2 text-xs text-blue-400 hover:text-blue-600 underline">
+                Switch to PM Rules
+              </Link>
+            </template>
+
+            <manual-account-selection v-if="forcedAccount"
+                                      :initial-selection="forcedAccount"
+                                      :jobNumber="currentJob.job_number"/>
+          </div>
         </div>
 
         <div class="flex-shrink">
@@ -257,7 +265,7 @@
 </template>
 
 <script>
-import {Head} from "@inertiajs/inertia-vue3";
+import {Head, Link} from "@inertiajs/inertia-vue3";
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Input from "@/Jetstream/Input.vue";
 import Button from "@/Jetstream/Button.vue";
@@ -672,6 +680,14 @@ export default {
   },
 
   computed: {
+    clientHasPmRules() {
+      try {
+        return this.currentJob.client_account.is_pm_rules_enabled;
+      } catch (e) {
+        return false;
+      }
+    },
+
     termFocus() {
       return this.filterOption && this.filterOption !== 'isNew' && this.filterOption !== 'isUpdated';
     },
@@ -708,7 +724,7 @@ export default {
       return _.filter(Object.entries(this.rulesByTaxonomies), this.filterObject[this.filterOption ? this.filterOption : 'all'])
           .reduce((result, group, key) => {
             var rules = group[1];
-            if(stages.length) {
+            if (stages.length) {
               rules = rules.filter(rule => {
                 return (
                     _.every(
@@ -766,6 +782,7 @@ export default {
   components: {
     ManualAccountSelection,
     Head,
+    Link,
     JobIdentification,
     ViewRuleGroup,
     Button,

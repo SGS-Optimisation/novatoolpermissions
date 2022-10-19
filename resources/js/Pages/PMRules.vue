@@ -9,15 +9,24 @@
       <div class="flex justify-between align-middle">
 
         <div class="flex-grow">
-          <h2 class="pt-2 font-bold text-xl text-gray-800 leading-tight">
-            PM Rules for
-            <span v-if="currentJob">job {{ jobNumber }}</span>
-            <span v-else>{{ clientAccount.name }}</span>
-          </h2>
+          <div class="flex flex-row align-baseline items-baseline">
+            <h2 class="pt-2 font-bold text-xl text-gray-800 leading-tight">
+              PM Rules for
+              <span v-if="currentJob">job {{ jobNumber }}</span>
+              <span v-else>{{ clientAccount.name }}</span>
+            </h2>
 
-          <!--                    <manual-account-selection v-if="forcedAccount"
-                                                        :initial-selection="forcedAccount"
-                                                        :jobNumber="currentJob.job_number"/>-->
+            <template v-if="jobNumber">
+              <Link :href="route('job.rules', jobNumber)"
+                    class="ml-2 text-xs text-blue-400 hover:text-blue-600 underline">
+                Switch to Prod Rules
+              </Link>
+            </template>
+
+            <!--                    <manual-account-selection v-if="forcedAccount"
+                                                          :initial-selection="forcedAccount"
+                                                          :jobNumber="currentJob.job_number"/>-->
+          </div>
         </div>
 
         <div class="flex-shrink">
@@ -271,7 +280,7 @@
 </template>
 
 <script>
-import {Head} from "@inertiajs/inertia-vue3";
+import {Head, Link} from "@inertiajs/inertia-vue3";
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Input from "@/Jetstream/Input.vue";
 import Button from "@/Jetstream/Button.vue";
@@ -306,6 +315,7 @@ export default {
   components: {
     ManualAccountSelection,
     Head,
+    Link,
     JobIdentification,
     ViewRuleGroup,
     Button,
