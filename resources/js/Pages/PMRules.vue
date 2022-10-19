@@ -1,7 +1,9 @@
 <template>
   <app-layout>
     <Head><title>
-      PM Rules {{ clientAccount.name }} - Dagobah
+      PM Rules
+      {{currentJob ? jobNumber : clientAccount.name }}
+      - Dagobah
     </title></Head>
     <template #header>
       <div class="flex justify-between align-middle">
@@ -9,7 +11,7 @@
         <div class="flex-grow">
           <h2 class="pt-2 font-bold text-xl text-gray-800 leading-tight">
             PM Rules for
-            <span v-if="currentJob">{{jobNumber}}</span>
+            <span v-if="currentJob">job {{ jobNumber }}</span>
             <span v-else>{{ clientAccount.name }}</span>
           </h2>
 
@@ -146,14 +148,16 @@
             <!-- End Filters -->
           </div>
 
-          <div class="flex flex-row text-xs" v-if="numRules">
-            Displaying {{ numDisplayedRules }} {{ numDisplayedRules > 1 ? 'rules' : 'rule' }}
-            <template v-if="numDisplayedRules != numFilteredRules">
-              of {{ numFilteredRules }} filtered rules
+          <div class="flex flex-row justify-end text-xs mx-2" v-if="numRules">
+            <template v-if="numDisplayedRules != numRules">
+              Displaying {{ numDisplayedRules }} {{ numDisplayedRules > 1 ? 'rules' : 'rule' }}
+              <template v-if="numDisplayedRules != numFilteredRules">
+                of {{ numFilteredRules }} filtered rules
+              </template>
+              .
             </template>
-            .
 
-            <template v-if="numFilteredRules != numRules">
+            <template v-if="true">
               All rules: {{ numRules }}.
             </template>
           </div>
