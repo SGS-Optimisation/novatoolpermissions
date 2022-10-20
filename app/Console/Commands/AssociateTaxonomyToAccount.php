@@ -29,7 +29,7 @@ class AssociateTaxonomyToAccount extends Command
      */
     public function handle()
     {
-        if ($accountId = !$this->argument('accountId')) {
+        if (! $accountId = $this->argument('accountId')) {
 
             $accountId = $this->menu(
                 'Select Client Account',
@@ -40,8 +40,8 @@ class AssociateTaxonomyToAccount extends Command
         }
 
         $clientAccount = ClientAccount::find($accountId);
-
-        if ($taxonomyId = !$this->argument('taxonomyId')) {
+        
+        if (!$taxonomyId = $this->argument('taxonomyId')) {
 
             $taxonomyId = $this->menu(
                 'Select Taxonomy',
@@ -51,7 +51,7 @@ class AssociateTaxonomyToAccount extends Command
                 ->open();
         }
 
-        $taxonomy = Taxonomy::find($taxonomyId);
+        $taxonomy = Taxonomy::find((int)$taxonomyId);
 
         $this->info($taxonomy->name.' selected to be added to '.$clientAccount->name);
 

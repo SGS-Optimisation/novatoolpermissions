@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\EnablePmElements;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
@@ -134,6 +135,8 @@ class ClientAccount extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            new EnablePmElements,
+        ];
     }
 }
