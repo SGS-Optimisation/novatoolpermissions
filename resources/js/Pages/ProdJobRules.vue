@@ -9,17 +9,23 @@
         <div class="flex-grow">
           <div class="flex flex-row align-baseline items-baseline">
             <h2 v-if="currentJob" class="pt-2 font-bold text-xl text-gray-800 leading-tight">
-              Prod Rules for job {{ currentJob.job_number }}
+              Prod Rules for job
+              <Link :href="route('job.rules', jobNumber)+'?refresh'">
+                {{ currentJob.job_number }}
+              </Link>
+
             </h2>
 
             <template v-if="jobNumber && clientHasPmRules">
-              <Link :href="route('pm.job-rules', jobNumber)" class="ml-2 text-xs text-blue-400 hover:text-blue-600 underline">
+              <Link :href="route('pm.job-rules', jobNumber)"
+                    class="ml-2 text-xs text-blue-400 hover:text-blue-600 underline">
                 Switch to PM Rules
               </Link>
             </template>
 
             <manual-account-selection v-if="forcedAccount"
                                       :initial-selection="forcedAccount"
+                                      :matched-accounts="matchedAccounts"
                                       :jobNumber="currentJob.job_number"/>
           </div>
         </div>
@@ -36,44 +42,46 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 bg-white relative">
       <div class="flex flex-col sm:-mx-px md:-mx-px lg:-mx-px xl:-mx-px pb-2 mb-2 min-h-max ">
 
-        <div v-if="searching || !currentJob.hasOwnProperty('metadata')">
+        <div v-if="searching || !currentJob.hasOwnProperty('metadata') || currentJob.metadata.processing_mysgs">
           <loader></loader>
         </div>
-        <div v-else-if="currentJob.metadata.processing_mysgs">
-          <loader></loader>
-        </div>
+
+        <!-- Error Situation: MySGS -->
         <div v-else-if="currentJob.metadata.error_mysgs">
           <div class="h-64 bg-white flex justify-center align-middle">
             <p class="mt-16 text-red-700">There was an error loading data for the job
               "{{ currentJob.job_number }}".
-              <br><span v-if="currentJob.metadata.error_mysgs_reason">
+              <br>
+              <span v-if="currentJob.metadata.error_mysgs_reason">
                         {{ currentJob.metadata.error_mysgs_reason }}
-                    </span>
+              </span>
               <span v-else>Please try again later.</span>
             </p>
           </div>
         </div>
+
+        <!-- Error Situation: Dagobah -->
         <div v-else-if="currentJob.metadata.client_found === false && !forcedAccount">
           <div class="h-64 bg-white flex justify-center align-middle items-center">
             <Message severity="error" :closable="false">
-                            <span v-if="currentJob.metadata.error_reason">
-                                {{ currentJob.metadata.error_reason }}<br>
-                            </span>
+              <span v-if="currentJob.metadata.error_reason">
+                  {{ currentJob.metadata.error_reason }}<br>
+              </span>
               <span v-else>
-                                "{{ currentJob.metadata.client.name }}"
-                                was not matched with any client account.
-
-
-                            </span>
+                "{{ currentJob.metadata.client.name }}"
+                was not matched with any client account.
+              </span>
             </Message>
 
           </div>
 
           <div class="flex justify-center items-center">
-            <manual-account-selection v-if="!currentJob.metadata.error_reason"
+            <manual-account-selection v-if="currentJob.metadata.allow_account_selection"
                                       :jobNumber="currentJob.job_number"/>
           </div>
         </div>
+
+        <!-- No Error: Normal display -->
         <div v-else>
           <job-identification :job="currentJob"/>
 
@@ -433,27 +441,6 @@ export default {
 
       console.log('tracking');
 
-      let activeJobTeam = [];
-      let activeMatchingJobTeams = [];
-
-      if (this.currentJob.metadata.hasOwnProperty('jobTeam')) {
-        let jobTeams = this.currentJob.metadata.jobTeam;
-        let userJobTeams = this.$page.props.user.jobteams;
-
-        for (let i in jobTeams) {
-          if (jobTeams[i].inUse) {
-            activeJobTeam.push(jobTeams[i].teamName);
-            console.log('found active job team ' + jobTeams[i].teamName);
-
-            if (userJobTeams.includes(jobTeams[i].teamName)) {
-              activeMatchingJobTeams.push(jobTeams[i].teamName);
-            }
-          }
-        }
-      }
-
-      var selectedJobTeams = activeMatchingJobTeams.length ? activeMatchingJobTeams : activeJobTeam;
-
       //_paq.push(['setCustomDimension', 2, activeJobTeam]);
 
       window._paq.push(['setCustomUrl', window.location.origin + '/' + this.jobNumber]);
@@ -461,7 +448,7 @@ export default {
 
       window._paq.push(['trackPageView', this.jobNumber, {
         'client': this.currentJob.metadata.client.name,
-        'dimension2': selectedJobTeams.join('|')
+        'dimension2': this.userJobTeamMatches.join('|')
       }]);
       window._paq.push(['trackEvent',
         'Search Viewed Job',
@@ -469,7 +456,7 @@ export default {
         this.jobNumber,
         '',
         {
-          'dimension2': selectedJobTeams.join('|'),
+          'dimension2': this.userJobTeamMatches.join('|'),
         }
       ]);
 
@@ -479,7 +466,42 @@ export default {
       }
     },
 
+    checkClientFoundOrAutoForce() {
+      if (this.forcedAccount) {
+        return true;
+      }
+
+      if (!this.currentJob.metadata.client_found
+          && this.currentJob.metadata.allow_account_selection
+          && this.currentJob.metadata.possible_accounts
+          && this.currentJob.metadata.possible_accounts.length) {
+
+        let userJobTeams = this.$page.props.user.jobteams;
+
+        for (let account of this.currentJob.metadata.possible_accounts) {
+          for (let team of account.jobteams)
+            if (userJobTeams.includes(team)) {
+              this.$inertia.get(route('job.rules.force-account', [account.slug, this.jobNumber]))
+            }
+        }
+        console.log('no matching jobteam for user :(');
+
+        for (let account of this.currentJob.metadata.possible_accounts) {
+          for (let team of account.jobteams)
+            if (this.userJobTeamMatches.includes(team)) {
+              this.$inertia.get(route('job.rules.force-account', [account.slug, this.jobNumber]))
+            }
+        }
+
+        console.log('no active jobteam either :((');
+      }
+
+      return true;
+    },
+
     newRulesLoaded() {
+      this.checkClientFoundOrAutoForce();
+
       this.track();
 
       this.searchedRules = [..._.orderBy(this.currentRules, 'name', 'asc')];
@@ -680,6 +702,40 @@ export default {
   },
 
   computed: {
+    userJobTeamMatches() {
+      let activeJobTeam = [];
+      let activeMatchingJobTeams = [];
+
+      if (this.currentJob.metadata.hasOwnProperty('jobTeam')) {
+        let jobTeams = this.currentJob.metadata.jobTeam;
+        let userJobTeams = this.$page.props.user.jobteams;
+
+        for (let i in jobTeams) {
+          if (jobTeams[i].inUse) {
+            activeJobTeam.push(jobTeams[i].teamName);
+            console.log('found active job team ' + jobTeams[i].teamName);
+
+            if (userJobTeams.includes(jobTeams[i].teamName)) {
+              activeMatchingJobTeams.push(jobTeams[i].teamName);
+            }
+          }
+        }
+      }
+
+      return activeMatchingJobTeams.length ? activeMatchingJobTeams : activeJobTeam;
+    },
+
+    matchedAccounts() {
+      if (!this.currentJob.metadata.client_found
+          && this.currentJob.metadata.allow_account_selection
+          && this.currentJob.metadata.possible_accounts
+          && this.currentJob.metadata.possible_accounts.length){
+        return this.currentJob.metadata.possible_accounts;
+      }
+
+      return null;
+    },
+
     clientHasPmRules() {
       try {
         return this.currentJob.client_account.is_pm_rules_enabled;

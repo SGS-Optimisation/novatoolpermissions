@@ -1,25 +1,27 @@
 <template>
-    <div v-if="$page.props.features.allow_force_account" class="">
+  <div v-if="$page.props.features.allow_force_account" class="">
         <span class="px-2">
             <span class="font-bold text-red-500" v-if="initialSelection">
                 Forced account selection
             </span>
             <span v-else>Manual account selection</span>
         </span>
-        <Dropdown
-            class="mx-2"
-            v-model="selected"
-            :options="clientAccounts"
-            optionValue="slug"
-            optionLabel="label"
-            :filter="true"
-        />
-        <Button :label="initialSelection ? 'Change' : 'Go'"
-                :disabled="!selected"
-                class="pl-2"
-                @click="handleClick($event)"></Button>
+    <Dropdown
+        class="mx-2"
+        v-model="selected"
+        :options="options"
+        optionGroupLabel="label"
+        optionGroupChildren="items"
+        optionValue="slug"
+        optionLabel="label"
+        :filter="true"
+    />
+    <Button :label="initialSelection ? 'Change' : 'Go'"
+            :disabled="!selected"
+            class="pl-2"
+            @click="handleClick($event)"></Button>
 
-    </div>
+  </div>
 </template>
 
 <script>
@@ -27,35 +29,58 @@ import Dropdown from 'primevue/dropdown/sfc';
 import Button from "primevue/button/sfc";
 
 export default {
-    name: "ManualAccountSelection",
-    components: {
-        Dropdown,
-        Button,
+  name: "ManualAccountSelection",
+  components: {
+    Dropdown,
+    Button,
+  },
+  props: {
+    initialSelection: {
+      type: String,
+      default: null,
     },
-    props: {
-        initialSelection: {
-            type: String,
-            default: null,
-        },
-        jobNumber: {
-            type: String,
-            required: true,
-        },
+    matchedAccounts: {
+      type: Object,
+      default: null,
     },
-    data() {
-        return {
-            clientAccounts: Object.keys(this.$page.props.client_accounts).map((key) => {
-                return {slug: key, label: this.$page.props.client_accounts[key]}
-            }),
-            selected: this.initialSelection ? this.initialSelection : null,
-        }
+    jobNumber: {
+      type: String,
+      required: true,
     },
-    methods: {
-        handleClick($event) {
-            console.log('go');
-            this.$inertia.get(route('job.rules.force-account', [this.selected, this.jobNumber]))
-        }
+  },
+  data() {
+    return {
+      clientAccounts: Object.keys(this.$page.props.client_accounts).map((key) => {
+        return {slug: key, label: this.$page.props.client_accounts[key]}
+      }),
+      selected: this.initialSelection ? this.initialSelection : null,
     }
+  },
+  computed: {
+    options() {
+      var options = [];
+
+      if (this.matchedAccounts) {
+        options.push({
+          label: 'Matched client accounts',
+          items: this.matchedAccounts,
+        })
+      }
+
+      options.push({
+        label: 'All Client Accounts',
+        items: this.clientAccounts,
+      });
+
+      return options;
+    },
+  },
+  methods: {
+    handleClick($event) {
+      console.log('go');
+      this.$inertia.get(route('job.rules.force-account', [this.selected, this.jobNumber]))
+    }
+  }
 }
 </script>
 

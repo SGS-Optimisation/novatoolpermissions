@@ -12,6 +12,7 @@ use App\Operations\BaseOperation;
 use App\Services\MySgs\WarehousedData\Customers\PortfolioGroupNameFinder;
 use App\Services\MySgs\WarehousedData\Customers\SimplifiedGroupNameFinder;
 use Illuminate\Support\Str;
+
 use function config;
 use function logger;
 
@@ -90,11 +91,14 @@ class MatchClientAccountOperation extends BaseOperation
             $job_metadata->client_found = false;
             $job_metadata->client = ['name' => $customer_name ?? '[NOT SET]'];
             $job_metadata->error_reason = $multipleMatches->getMessage();
+            $job_metadata->allow_account_selection = true;
+            $job_metadata->possible_accounts = $multipleMatches->possible_accounts;
         } catch (\Exception $e) {
             logger($e->getMessage());
             $job_metadata->client_found = false;
+            $job_metadata->allow_account_selection = true;
             $job_metadata->client = ['name' => $customer_name ?? '[NOT SET]'];
-            logger('couldn’t find match for ' . print_r($customer_name, true));
+            logger('couldn’t find match for '.print_r($customer_name, true));
             event(new ClientAccountNotMatched($customer_name ?? '[NOT SET]'));
         }
 
@@ -120,30 +124,51 @@ class MatchClientAccountOperation extends BaseOperation
         }
         $searchData = ['%'.Str::lower(str_replace('[', '\[', $customer_name)).'%'];
 
-        /** @var ClientAccount[] $matches */
-        $matches = ClientAccount::where('name', 'LIKE', '%'.$customer_name.'%')
+        /** @var ClientAccount[] $matches_by_end_user */
+        $matches_by_end_user = ClientAccount::where('name', 'LIKE', '%'.$customer_name.'%')
             ->orWhereRaw($search, $searchData)
             ->get();
 
-        if (count($matches) === 1) {
-            return $matches[0];
+        if (count($matches_by_end_user) === 1) {
+            return $matches_by_end_user[0];
         }
 
-        if (count($matches) > 1) {
+        if (count($matches_by_end_user) > 1) {
             if ($jobteam) {
-                foreach ($matches as $match) {
+                $matches_by_jobteam = [];
+                foreach ($matches_by_end_user as $match) {
                     if (Str::contains(
                         Str::lower(trim($match->jobteam)),
-                        Str::lower(trim($jobteam)))
-                    ) {
-                        return $match;
+                        Str::lower(trim($jobteam))
+                    )) {
+                        $matches_by_jobteam[] = $match;
                     }
                 }
+
+                if (count($matches_by_jobteam) == 1) {
+                    return $matches_by_jobteam[0];
+                }
             }
-            throw new MultipleClientAccountsMatchedException('Multiple client accounts match. Please add a jobteam to refine the match. Accounts: '
-                .implode(', ', $matches->pluck('name')->all())
-                .'.  Detected jobteam for this job: '.$jobteam
-                .'.  Common end user: '.$customer_name
+
+            $possible_accounts = collect($matches_by_jobteam)->map(function ($client) {
+                return [
+                    'slug' => $client->slug,
+                    'label' => $client->name,
+                    'jobteams' => array_map(function ($line) {
+                        return trim($line);
+                    }, explode("\n", $client->jobteam)),
+                ];
+            })->toArray();
+
+
+            throw new MultipleClientAccountsMatchedException(
+                message: 'Multiple client accounts match. '
+                .(count($matches_by_jobteam) == 0 ? 'Please add a jobteam to refine the match. ' : '')
+                .'Accounts: '.implode(', ', $matches_by_end_user->pluck('name')->all())
+                .'. Detected jobteam for this job: '.$jobteam
+                .'. Common end user: '.$customer_name,
+
+                possible_accounts: $possible_accounts
             );
         }
 

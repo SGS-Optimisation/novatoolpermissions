@@ -233,7 +233,7 @@ class ClientAccount extends Model
             get: fn() => $this->job_categorizations_child_taxonomies()
                     ->where('name', 'PM Section Elements')
                     ->count() != 0
-        );
+        )->shouldCache();
     }
 
     /*public function getImageAttribute()

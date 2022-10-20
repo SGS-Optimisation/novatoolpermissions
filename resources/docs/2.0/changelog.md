@@ -2,6 +2,7 @@
 # Changelog
 
 ---
+- [v2.4.0](#v2.4.0)
 - [v2.3.0](#v2.3.0)
 - [v2.2.6](#v2.2.6)
 - [v2.2.5](#v2.2.5)
@@ -12,6 +13,14 @@
 - [v2.2.0](#v2.2.0)
 - [v2.1.0](#v2.1.0)
 - [v2.0.0](#v2.0.0)
+
+<a name="v2.4.0"></a>
+## v2.4.0 (2022-11-01)
+- Added PM Rules
+- PM Rules search allows search by job number, client account, or selected taxonomy terms
+- From client account taxonomies, select which taxonomy to use for autocomplete in PM Search 
+- Prod rules: Detect end user and job team conflict, and match job team to that of user, else to the job team marked "in use" in MySGS.   
+  Fallback to manual account selection.
 
 <a name="v2.3.0"></a>
 ## v2.3.0 (2022-08-12)

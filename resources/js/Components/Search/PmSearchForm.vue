@@ -61,7 +61,7 @@ export default defineComponent({
       default: "Enter a MySGS job number"
     },
     suggestions: {
-      type: Object,
+      type: Object|null,
       required: true,
     }
   },

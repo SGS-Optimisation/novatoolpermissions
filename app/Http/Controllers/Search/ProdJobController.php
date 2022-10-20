@@ -26,7 +26,7 @@ class ProdJobController extends Controller
     public function show(Request $request, $jobNumber)
     {
         $rules = null;
-        $job = JobRepository::findByJobNumber($jobNumber);
+        $job = JobRepository::findByJobNumber($jobNumber, $request->has('refresh'));
 
         if (!$job->metadata->processing_mysgs && !$job->metadata->error_mysgs) {
             logger('mysgs data available for '.$jobNumber);
