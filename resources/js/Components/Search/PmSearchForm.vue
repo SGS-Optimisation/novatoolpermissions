@@ -18,6 +18,7 @@
                     inputClass="w-full shadow rounded p-2 focus:outline-none"
                     placeholder="Job Number, Client or Business Unit"
                     :forceSelection="!isInputJobNumber"
+                    scrollHeight="415px"
                     autofocus
       >
         <template #optiongroup="slotProps">
@@ -48,6 +49,7 @@ import {defineComponent} from 'vue'
 import JetButton from "@/Jetstream/Button.vue";
 import AutoComplete from 'primevue/autocomplete/sfc';
 import {FilterService, FilterMatchMode} from 'primevue/api';
+const ANY_FILTER = 'ANY';
 
 export default defineComponent({
   name: "PmSearchForm",
@@ -91,6 +93,19 @@ export default defineComponent({
       return false;
     },
   },
+  mounted(){
+    FilterService.register(ANY_FILTER, (value, filter) => {
+      if (filter === undefined || filter === null || filter.trim() === '') {
+        return true;
+      }
+
+      if (value === undefined || value === null) {
+        return false;
+      }
+
+      return filter.toString().split(' ').includes(value.toString());
+    });
+  },
 
   methods: {
     labelize(item) {
@@ -108,7 +123,13 @@ export default defineComponent({
 
       for (let group of this.suggestions) {
         //console.log('searching in ', group.items);
-        let filteredItems = FilterService.filter(group.items, ['label'], query, FilterMatchMode.CONTAINS);
+        const query_parts = query.split(' ');
+
+        let filteredItems = FilterService.filter(
+            group.items,
+            ['label', 'client', 'taxonomy'],
+            query,
+            FilterMatchMode.CONTAINS);
 
         if (filteredItems && filteredItems.length) {
           filteredSuggestions.push({...group, ...{items: filteredItems}});
