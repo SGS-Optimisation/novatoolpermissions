@@ -48,7 +48,7 @@ export default {
             .listen('Rules\\RuleUpdated', (e) => {
                 console.log(e);
 
-                if (e.user.id !== this.$page.props.user.id)
+                if (e.user && e.user.id !== this.$page.props.user.id)
                     this.toast(`Rule [${e.rule.dagId}] "${e.rule.name}" updated by ${e.user.name}`, {
                         type: "info",
                         position: "top-right",
