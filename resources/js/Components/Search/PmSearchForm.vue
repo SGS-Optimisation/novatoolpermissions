@@ -16,7 +16,7 @@
                     :field="labelize" optionLabel="label"
                     optionGroupLabel="label" optionGroupChildren="items"
                     inputClass="w-full shadow rounded p-2 focus:outline-none"
-                    placeholder="Job Number, Client or Business Unit"
+                    placeholder="Job Number, Client or Brand"
                     :forceSelection="!isInputJobNumber"
                     scrollHeight="415px"
                     autofocus
