@@ -105,7 +105,7 @@
                                     { 'rounded-l-lg' : index === 0 },
                                     { 'bg-blue-500 text-white' : stageStates[stage] },
                                     { 'bg-white text-blue-500' : !stageStates[stage] },
-                                    { 'bg-green-100' : !stageStates[stage] && currentJob.metadata.hasOwnProperty('stages') && currentJob.metadata.stages.includes(stage) },
+                                    { 'bg-green-100' : !stageStates[stage] && currentJob && currentJob.metadata.hasOwnProperty('stages') && currentJob.metadata.stages.includes(stage) },
                                 ]">
                 {{ stage }}
               </button>
