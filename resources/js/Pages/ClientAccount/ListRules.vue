@@ -581,6 +581,15 @@ export default defineComponent({
         })
       });
 
+      this.termsByTaxonomies = Object.keys(this.termsByTaxonomies).sort().reduce(
+          (obj, key) => {
+            obj[key] = this.termsByTaxonomies[key];
+            return obj;
+          },
+          {}
+      );
+
+
       this.filterObject['filterByTaxonomyTerm'] = (itemElem) => {
         //return this.filterCondition ? itemElem.terms.every(term => this.taxonomies[term.taxonomy.name] === term.name) : itemElem.terms.some(term => this.taxonomies[term.taxonomy.name] === term.name);
         if (this.filterCondition) {

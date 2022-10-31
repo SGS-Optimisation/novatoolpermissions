@@ -49,7 +49,9 @@ import {defineComponent} from 'vue'
 import JetButton from "@/Jetstream/Button.vue";
 import AutoComplete from 'primevue/autocomplete/sfc';
 import {FilterService, FilterMatchMode} from 'primevue/api';
-const ANY_FILTER = 'ANY';
+import {ObjectUtils} from 'primevue/utils';
+
+const CONTAINS_ALL = 'CONTAINS ALL';
 
 export default defineComponent({
   name: "PmSearchForm",
@@ -93,9 +95,10 @@ export default defineComponent({
       return false;
     },
   },
-  mounted(){
-    FilterService.register(ANY_FILTER, (value, filter) => {
-      if (filter === undefined || filter === null || filter.trim() === '') {
+  mounted() {
+    FilterService.register(CONTAINS_ALL, (value, filter, filterLocale) => {
+      console.log('value', value);
+      if (filter === undefined || filter === null || (typeof filter === 'string' && filter.trim() === '')) {
         return true;
       }
 
@@ -103,8 +106,19 @@ export default defineComponent({
         return false;
       }
 
-      return filter.toString().split(' ').includes(value.toString());
-    });
+      let filterValue = ObjectUtils.removeAccents(filter.toString()).toLocaleLowerCase(filterLocale);
+      let stringValue = ObjectUtils.removeAccents(value.toString()).toLocaleLowerCase(filterLocale);
+
+      var hasAll = true;
+
+      const filter_parts = filterValue.split(' ');
+      for (const part of filter_parts) {
+        console.log('filter part', part)
+        hasAll &= stringValue.indexOf(part) !== -1;
+      }
+
+      return hasAll
+    })
   },
 
   methods: {
@@ -122,14 +136,15 @@ export default defineComponent({
       let filteredSuggestions = [];
 
       for (let group of this.suggestions) {
-        //console.log('searching in ', group.items);
-        const query_parts = query.split(' ');
+        let filteredItems = group.items;
 
-        let filteredItems = FilterService.filter(
-            group.items,
-            ['label', 'client', 'taxonomy'],
-            query,
-            FilterMatchMode.CONTAINS);
+        for (const part of query) {
+          filteredItems = FilterService.filter(
+              filteredItems,
+              ['search'],
+              query,
+              CONTAINS_ALL);
+        }
 
         if (filteredItems && filteredItems.length) {
           filteredSuggestions.push({...group, ...{items: filteredItems}});

@@ -40,6 +40,7 @@ class HomeController extends Controller
                 return [
                     'label' => $name,
                     'value' => $slug,
+                    'search' => $slug . ' ' . $name,
                     'type' => 'ca',
                 ];
             })->toArray());
@@ -66,6 +67,7 @@ class HomeController extends Controller
                             'slug' => $client_account->slug,
                             'type' => 'bu',
                             'taxonomy' => $taxonomy->name,
+                            'search' => $client_account->slug . ' ' . $client_account->name . ' ' . $term . ' ' . $taxonomy->name
                         ];
                     })->toArray());
 
