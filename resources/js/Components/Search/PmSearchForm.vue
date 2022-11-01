@@ -97,7 +97,6 @@ export default defineComponent({
   },
   mounted() {
     FilterService.register(CONTAINS_ALL, (value, filter, filterLocale) => {
-      console.log('value', value);
       if (filter === undefined || filter === null || (typeof filter === 'string' && filter.trim() === '')) {
         return true;
       }
@@ -113,7 +112,6 @@ export default defineComponent({
 
       const filter_parts = filterValue.split(' ');
       for (const part of filter_parts) {
-        console.log('filter part', part)
         hasAll &= stringValue.indexOf(part) !== -1;
       }
 

@@ -35,7 +35,7 @@ class HomeController extends Controller
 
         $suggestions = [];
 
-        $client_accounts = array_values(ClientAccount::pluck('name', 'slug')
+        $client_accounts = array_values(ClientAccount::orderBy('name')->pluck('name', 'slug')
             ->map(function ($name, $slug) {
                 return [
                     'label' => $name,
@@ -59,7 +59,9 @@ class HomeController extends Controller
 
                 $client_terms = array_values($taxonomy->terms()->whereHas('client_accounts', function ($query) use ($client_account) {
                         $query->where('id', $client_account->id);
-                    })->pluck('name', 'id')->map(function($term, $id) use($taxonomy, $client_account) {
+                    })
+                    ->orderBy('name')
+                    ->pluck('name', 'id')->map(function($term, $id) use($taxonomy, $client_account) {
                         return [
                             'client' => $client_account->name,
                             'label' => $term,
