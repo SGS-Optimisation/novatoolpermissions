@@ -637,8 +637,11 @@ export default {
 
             return pmElmTerms.length && pmElmTerms[0].name === taxonomy;
           }
-        })
+        });
       });
+
+      this.pmSectionTerms.sort();
+
     },
 
     initSearchFunctions() {
@@ -816,7 +819,7 @@ export default {
           .filter(this.filterObject[this.filterOption ? this.filterOption : 'all'])
 
 
-      return _.groupBy(passedRules, (rule) => {
+      var groupedRules = _.groupBy(passedRules, (rule) => {
         var pmElmTerms = rule.job_categorizations_terms.filter((term) => term.taxonomy.name === 'PM Section Elements');
 
         if (pmElmTerms.length) {
@@ -825,6 +828,15 @@ export default {
           console.log('error, rule with no pm section elements taxonomy');
         }
       });
+
+      return Object.keys(groupedRules).sort().reduce(
+          (obj, key) => {
+            obj[key] = groupedRules[key];
+            return obj;
+          },
+          {}
+      );
+
     },
 
     processedStages() {
