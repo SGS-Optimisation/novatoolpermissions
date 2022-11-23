@@ -31,7 +31,7 @@ class PmRulesSeeder extends Seeder
             ->create([
                 'is_pm' => true,
             ])
-            ->each(function ($rule) use ($acct_structure_taxonomies, $pm_elements) {
+            ->each(function ($rule) use ($acct_structure_taxonomies, $pm_elements, $ca) {
                 $term_ids = [];
 
                 $pm_term = $pm_elements->terms->random();
@@ -41,7 +41,14 @@ class PmRulesSeeder extends Seeder
 
                 $num_tags = random_int(2, 5);
                 for($i = 0; $i < $num_tags; $i++) {
-                    $term = $acct_structure_taxonomies->random()->terms->random();
+                    $client_terms = $acct_structure_taxonomies->terms()
+                        ->whereHas('client_accounts', function ($query) use ($ca) {
+                            $query->where('id', $ca->id);
+                        })
+                        ->withCount('rules')
+                        ->get();
+
+                    $term = $client_terms->random();
                     $term_ids[] = $term->id;
                 }
 

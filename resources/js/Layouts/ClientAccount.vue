@@ -65,18 +65,18 @@ export default {
                         rtl: false
                     })
 
-                setTimeout(() => prefetchRules(this.clientAccount.slug), 1000);
+                setTimeout(() => prefetchRules(this.clientAccount.slug), 5000);
             })
             .listen('ClientAccounts\\TermsUpdated', (e) => {
                 console.log(e);
 
-                setTimeout(() => prefetchTaxonomy(this.clientAccount.slug), 1000);
+                setTimeout(() => prefetchTaxonomy(this.clientAccount.slug), 5000);
 
             })
             .listen('ClientAccounts\\TaxonomyUpdated', (e) => {
                 console.log(e);
 
-                setTimeout(() => prefetchTaxonomy(this.clientAccount.slug), 1000);
+                setTimeout(() => prefetchTaxonomy(this.clientAccount.slug), 5000);
             });
     },
 
