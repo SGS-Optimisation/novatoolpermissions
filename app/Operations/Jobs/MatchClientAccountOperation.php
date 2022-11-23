@@ -52,9 +52,9 @@ class MatchClientAccountOperation extends BaseOperation
 
             logger('searching for client name '.$customer_name);
             if ($this->job->metadata->jobTeam) {
-                $jobteam = collect($this->job->metadata->jobTeam)
+                $jobteam = optional(collect($this->job->metadata->jobTeam)
                     ->where('primaryJobTeam', true)
-                    ->first()->teamName;
+                    ->first())->teamName;
 
                 logger('searching for team name '.$jobteam);
             }
@@ -107,6 +107,8 @@ class MatchClientAccountOperation extends BaseOperation
     public static function findFromAlias($customer_name, $jobteam = null)
     {
         logger('searching for client account with name '.$customer_name);
+        // Sanitize for unicode chars
+        $customer_name = html_entity_decode(preg_replace("/\\\\u([0-9a-f]{4})/", "&#x\\1;", $customer_name), ENT_NOQUOTES, 'UTF-8');
         $connection = config('database.default');
         $driver = config("database.connections.{$connection}.driver");
 
