@@ -80,7 +80,7 @@
 
           <div class="search-wrapper transition transition-all duration-250 ease-out"
                :class="{'active': showAdvancedSearch}">
-            <div class="cursor-pointer w-full text-xs text-center bg-gray-400"
+            <div class="cursor-pointer w-full text-sm text-center py-1 bg-blue-400 text-white font-bold"
                  @click="toggleAdvancedSearch()">
               <span v-if="!showAdvancedSearch">⌄</span>
               <span v-else>⌃</span>
