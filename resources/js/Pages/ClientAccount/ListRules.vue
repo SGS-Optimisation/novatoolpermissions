@@ -40,7 +40,7 @@
               />
             </div>
 
-            <div class="col-span-2">
+            <div class="col-span-2" v-if="$page.props.features.enable_pm_module" >
               <taxonomy-selector taxonomy-name="Rule Type"
                                  url-param="filterRuleType"
                                  :terms="[{value: 'is_op', 'label': 'Production'}, {value:'is_pm', label: 'PM'}, {value:['is_pm', 'is_op'], label: 'Both'}]"
