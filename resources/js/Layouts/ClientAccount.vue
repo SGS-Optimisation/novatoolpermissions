@@ -23,9 +23,9 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue'
-import ClientHeader from "@/Components/PM/ClientHeader.vue";
-import ClientMenu from '@/Components/PM/ClientMenu.vue'
-import ActionMenu from '@/Components/PM/ActionMenu.vue'
+import ClientHeader from "@/Components/RulesLibrary/ClientHeader.vue";
+import ClientMenu from '@/Components/RulesLibrary/ClientMenu.vue'
+import ActionMenu from '@/Components/RulesLibrary/ActionMenu.vue'
 import {useToast} from "vue-toastification";
 import {prefetchRules, prefetchTaxonomy} from "@/queries.js"
 
@@ -48,7 +48,7 @@ export default {
             .listen('Rules\\RuleUpdated', (e) => {
                 console.log(e);
 
-                if (e.user.id !== this.$page.props.user.id)
+                if (e.user && e.user.id !== this.$page.props.user.id)
                     this.toast(`Rule [${e.rule.dagId}] "${e.rule.name}" updated by ${e.user.name}`, {
                         type: "info",
                         position: "top-right",
@@ -65,12 +65,18 @@ export default {
                         rtl: false
                     })
 
-                prefetchRules(this.clientAccount.slug);
+                setTimeout(() => prefetchRules(this.clientAccount.slug), 5000);
             })
             .listen('ClientAccounts\\TermsUpdated', (e) => {
                 console.log(e);
 
-                prefetchTaxonomy(this.clientAccount.slug);
+                setTimeout(() => prefetchTaxonomy(this.clientAccount.slug), 5000);
+
+            })
+            .listen('ClientAccounts\\TaxonomyUpdated', (e) => {
+                console.log(e);
+
+                setTimeout(() => prefetchTaxonomy(this.clientAccount.slug), 5000);
             });
     },
 

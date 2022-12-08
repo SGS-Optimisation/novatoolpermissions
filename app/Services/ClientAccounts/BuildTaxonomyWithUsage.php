@@ -18,9 +18,11 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
     {
         $client_account = $this->clientAccount;
 
-        $this->top_taxonomies = $this->clientAccount->taxonomies()
+        $this->top_taxonomies = $this->clientAccount
+            //->taxonomies()
             //->with('taxonomies.terms')
-            ->whereNull('parent_id')
+            //->whereNull('parent_id')
+            ->root_taxonomies()
             ->orderBy('name')
             ->get();
 
@@ -28,12 +30,18 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
         foreach ($this->top_taxonomies as $top_taxonomy) {
             $this->taxonomy_hierarchy[$top_taxonomy->name]['children'] = [];
 
-            foreach ($top_taxonomy->taxonomies()
-                         ->whereHas('client_accounts', function ($query) use ($client_account) {
-                             return $query->whereIn('id', [$client_account->id]);
-                         })->with('mappings')
-                         ->get() as $taxonomy) {
+            $children = $top_taxonomy->taxonomies()
+                ->whereHas('client_accounts', function ($query) use ($client_account) {
+                    return $query->whereIn('id', [$client_account->id]);
+                })->with([
+                    'mappings',
+                    'client_accounts' => function ($query) use($client_account) {
+                        return $query->where('id', $client_account->id);
+                    }
+                ])
+                ->get();
 
+            foreach ($children as $taxonomy) {
                 $this->taxonomy_hierarchy[$top_taxonomy->name]['children'][] = static::processTaxonomy($taxonomy);
             }
 
@@ -79,14 +87,15 @@ class BuildTaxonomyWithUsage extends BaseClientAccountService
             /** @var Term $term */
             foreach ($client_terms as $term) {
 
-                $client_rules_count = $term->rules()->with(['terms'])->where('client_account_id', $this->clientAccount->id)
+                $client_rules_count = $term->rules()->with(['terms'])
+                    ->where('client_account_id', $this->clientAccount->id)
                     ->count();
 
                 $data[$taxonomy->name]['terms'][] = [
                     'id' => $term->id,
                     'name' => $term->name,
                     'globalRulesCount' => (int) $term->rules_count,
-                    'clientRulesCount' =>  (int) $client_rules_count,
+                    'clientRulesCount' => (int) $client_rules_count,
                     'aliases' => $term->config['aliases'] ?? []
                 ];
             }

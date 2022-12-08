@@ -1,7 +1,7 @@
 import {mutate} from "swrv";
 
 function prefetchRules(account) {
-    const rulesPath = route('api.pm.client-account.rules', [account]);
+    const rulesPath = route('api.library.client-account.rules', [account]);
     mutate(
         rulesPath,
         axios(rulesPath).then((res) => res.data)
@@ -9,7 +9,8 @@ function prefetchRules(account) {
 }
 
 function prefetchTaxonomy(account) {
-    const taxonomyPath = route('api.pm.client-account.taxonomy', [account]);
+    const taxonomyPath = route('api.library.client-account.taxonomy', [account]);
+    console.log('prefetching taxo for ' + account);
     mutate(
         taxonomyPath,
         axios(taxonomyPath).then((res) => res.data)

@@ -20,8 +20,11 @@ class JobLoaded implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(public MySgsJob $mysgsJob)
-    {
+    public function __construct(
+        public $mysgsJobNumber,
+        public $mysgs_loading_duration = null,
+        public $rule_filtering_duration = null
+    ) {
         //
     }
 
@@ -32,6 +35,6 @@ class JobLoaded implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('job-' . $this->mysgsJob->job_number);
+        return new Channel('job-'.$this->mysgsJobNumber);
     }
 }

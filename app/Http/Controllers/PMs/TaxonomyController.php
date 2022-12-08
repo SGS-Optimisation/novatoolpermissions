@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\PMs;
 
+use App\Events\ClientAccounts\TaxonomyUpdated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateTaxonomyRequest;
 use App\Http\Requests\CreateTermRequest;
@@ -55,9 +56,15 @@ class TaxonomyController extends Controller
         $client_account = ClientAccount::find($request->clientAccountId);
 
         $taxonomy->update(['name' => $request->name]);
+        logger("taxonomy $id updated to {$request->name}");
+
+        $client_account->taxonomies()
+            ->updateExistingPivot($taxonomy, ['use_for_pm_search' => $request->use_for_pm_search]);
 
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-taxonomy-usage-data');
         Cache::tags(['taxonomy'])->forget($client_account->slug.'-rules-data');
+
+        broadcast(new TaxonomyUpdated($client_account));
 
         return back(303);
     }

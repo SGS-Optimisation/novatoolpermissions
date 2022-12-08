@@ -17,13 +17,7 @@ add('shared_files', ['.env', 'soketi-config.json']);
 add('shared_dirs', []);
 add('writable_dirs', []);
 
-before('deploy', 'teams:notify');
-after('deploy:success', 'teams:notify:success');
-after('deploy:success', 'supervisor:restart:queue');
-after('deploy:success', 'supervisor:restart:soketi');
-after('deploy:success', 'teams:notify:success');
 
-after('deploy:failed', 'teams:notify:failure');
 
 // Hosts
 
@@ -96,4 +90,11 @@ task('cache:warmup', function() {
 
 // Hooks
 
+before('deploy', 'teams:notify');
+
+after('deploy:success', 'supervisor:restart:queue');
+after('deploy:success', 'supervisor:restart:soketi');
+after('deploy:success', 'teams:notify:success');
+
 after('deploy:failed', 'deploy:unlock');
+after('deploy:failed', 'teams:notify:failure');

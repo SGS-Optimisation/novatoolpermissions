@@ -26,8 +26,8 @@ return [
                 'Home' => [
                     '_url'    => '/',
                 ],
-                'Project Manager' => [
-                    '_url'    => '/pm',
+                'Rule Library' => [
+                    '_url'    => '/library',
                     '_target' => '_self'
                 ],
             ],

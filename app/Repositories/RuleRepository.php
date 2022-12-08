@@ -24,7 +24,6 @@ class RuleRepository
         } else {
             $this->client_account = $client_account;
         }
-
     }
 
     /**
@@ -33,48 +32,54 @@ class RuleRepository
      */
     public function all($search_term = null)
     {
-        $cacheTag = 'rules-'.$this->client_account->slug;
+        $cache_key = 'rules-'.$this->client_account->slug;
         $tags = ['rules', $this->client_account->slug];
 
         $term = null;
         if ($search_term) {
             $term = Term::find($search_term);
-            $cacheTag .= '-'.optional($term)->name;
+            $cache_key .= '-'.optional($term)->name;
         }
 
-        $cache_duration = app()->environment('production') ? 60 * 60 * 24 : 60 * 60 * 24 * 30;
+        $cache_duration = app()->environment('production') ? 60 * 60 * 24 : 60;
 
         /**
          *
          */
-        return Cache::tags($tags)
-            ->remember($cacheTag, $cache_duration, function () use ($term) {
+        $rules = null;
 
-                $rules_query = Rule::forClient($this->client_account)
-                    ->with(['terms.taxonomy', 'users', 'teams', 'attachments'])
-                    ->withCount('terms');
+        Cache::lock('lock-'.$cache_key)
+            ->get(function () use (&$rules, $tags, $cache_key, $cache_duration, $term) {
+                $rules = Cache::tags($tags)
+                    ->remember($cache_key, $cache_duration, function () use ($term) {
+                        logger('rebuilding rule repo for '.$this->client_account->name);
 
-                if ($term) {
-                    $rules_query->whereHas('terms', function ($query) use ($term) {
-                        return $query->where('terms.id', '=', $term->id);
+                        $rules_query = Rule::forClient($this->client_account)
+                            ->with(['terms.taxonomy', 'users', 'teams', 'attachments'])
+                            ->withCount('terms');
+
+                        if ($term) {
+                            $rules_query->whereHas('terms', function ($query) use ($term) {
+                                return $query->where('terms.id', '=', $term->id);
+                            });
+                        }
+
+
+                        $rules = $rules_query->get()->each(function ($rule) {
+                            $rule->content = str_replace('<img', '<img loading="lazy"', $rule->content);
+                            /*if ($rule->terms_count == 0) {
+                                $term = (new Term([
+                                    'name' => 'No term', 'taxonomy_id' => 0,
+                                    'taxonomy' => new Taxonomy(['name' => 'No category'])
+                                ]));
+                                $rule->terms->add($term);
+                            }*/
+                        });
+
+                        return $rules->toJson();
                     });
-                }
-
-                logger('built rule repo for '.$this->client_account->name);
-
-                $rules = $rules_query->get()->each(function ($rule) {
-                    $rule->content = str_replace('<img', '<img loading="lazy"', $rule->content);
-
-                    if ($rule->terms_count == 0) {
-                        $term = (new Term([
-                            'name' => 'No term', 'taxonomy_id' => 0,
-                            'taxonomy' => new Taxonomy(['name' => 'No category'])
-                        ]));
-                        $rule->terms->add($term);
-                    }
-                });
-
-                return $rules->toJson();
             });
+
+        return $rules;
     }
 }

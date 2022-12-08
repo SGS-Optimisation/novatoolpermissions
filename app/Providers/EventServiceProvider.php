@@ -57,6 +57,9 @@ class EventServiceProvider extends ServiceProvider
         'App\\Events\\ClientAccounts\\TermsUpdated' => [
         ],
 
+        'App\\Events\\ClientAccounts\\TaxonomyUpdated' => [
+        ],
+
         TeamMemberAdded::class => [
             'App\\Listeners\\Users\\GiveUserRoles'
         ],

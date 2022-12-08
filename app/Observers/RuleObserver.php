@@ -15,7 +15,7 @@ class RuleObserver
      */
     public function created(Rule $rule)
     {
-        event(new RuleUpdated($rule));
+        //event(new RuleUpdated($rule));
     }
 
     /**
@@ -26,7 +26,7 @@ class RuleObserver
      */
     public function updated(Rule $rule)
     {
-        event(new RuleUpdated($rule));
+        //event(new RuleUpdated($rule));
     }
 
     /**
@@ -48,7 +48,7 @@ class RuleObserver
      */
     public function restored(Rule $rule)
     {
-        event(new RuleUpdated($rule));
+        //event(new RuleUpdated($rule));
     }
 
     /**

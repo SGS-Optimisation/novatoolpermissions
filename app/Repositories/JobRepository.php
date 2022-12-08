@@ -7,6 +7,7 @@ namespace App\Repositories;
 use App\Events\Jobs\NewJobSearched;
 use App\Listeners\Jobs\LoadMySgsData;
 use App\Models\Job;
+use App\Services\Jobs\RuleFilter;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
@@ -24,6 +25,8 @@ class JobRepository
                 'error_mysgs_reason' => null,
                 'client_found' => false,
                 'error_reason' => null,
+                'allow_account_selection' => false,
+                'possible_accounts' => null,
             ],
         ]);
     }
@@ -38,9 +41,12 @@ class JobRepository
         $metadata->error_mysgs = false;
         $metadata->error_mysgs_reason = null;
         $metadata->client_found = null;
+        $metadata->allow_account_selection = false;
+        $metadata->possible_accounts = null;
 
         $job->metadata = $metadata;
         $job->save();
+        event(new NewJobSearched($job));
 
         return $job;
     }
@@ -49,8 +55,19 @@ class JobRepository
      * @param $job_number
      * @return Job|null
      */
-    public static function findByJobNumber($job_number)
+    public static function findByJobNumber($job_number, $force_clear = false)
     {
+        $cache_key = 'rules-job-'. $job_number;
+
+        if($force_clear) {
+            logger('forcing clear on ' . $job_number);
+            Cache::forget($cache_key);
+            Cache::forget(RuleFilter::FILTER_MODE_PROD.'-rules-job-'.$job_number);
+            Cache::forget(RuleFilter::FILTER_MODE_PM.'-rules-job-'.$job_number);
+
+            return static::refreshJobFromJobNumber($job_number);
+        }
+
         $job = Job::whereJobNumber($job_number)->first();
 
         if (!$job) {
@@ -62,7 +79,7 @@ class JobRepository
         ) {
             logger($job_number.' was in error, will prune and recreate');
 
-            $cache_key = 'rules-job-'.$job->job_number;
+
             Cache::forget($cache_key);
 
             $job->delete();
@@ -75,7 +92,6 @@ class JobRepository
         } elseif ($job->updated_at->lessThan(Carbon::now()->subHour())) {
             logger($job_number.' is old, refreshing');
             $job = static::refreshJobFromJobNumber($job_number);
-            event(new NewJobSearched($job));
         }
 
         return $job;

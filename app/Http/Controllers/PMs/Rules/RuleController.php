@@ -192,7 +192,11 @@ class RuleController extends Controller
     {
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
 
-        $rule_fields = $request->only(['name', 'flagged', 'metadata']);
+        $rule_fields = $request->only(['name', 'flagged', 'metadata', 'is_op', 'is_pm']);
+
+        if(!nova_get_setting('enable_pm_module')) {
+            $rule_fields['is_op'] = true;
+        }
         $rule_fields['content'] = (new ExtractImages($request->get('content')))->handle()->updated_content;
 
         $rule = $client_account->rules()->create($rule_fields);
@@ -204,7 +208,7 @@ class RuleController extends Controller
 
         $request->session()->flash('success', 'Rule successfully created!');
 
-        return redirect(route('pm.client-account.rules.edit', [$client_account_slug, $rule->id]))
+        return redirect(route('library.client-account.rules.edit', [$client_account_slug, $rule->id]))
             ->with('success', 'Rule successfully created!');
     }
 
@@ -272,7 +276,8 @@ class RuleController extends Controller
             'initialAssignees' => collect((new \App\Operations\Rules\GetRuleReviewersOperation($rule))->handle())
                 ->map(function ($user) {
                     return ['value' => $user->id, 'label' => $user->name];
-                })
+                }),
+            'referer'=> $request->headers->get('referer'),
         ],
             $this->buildTaxonomyLists($client_account_slug)
         ));
@@ -287,7 +292,7 @@ class RuleController extends Controller
      */
     public function update(Request $request, $client_account_slug, $id)
     {
-        $rule_fields = $request->only(['name', 'flagged', 'metadata']);
+        $rule_fields = $request->only(['name', 'flagged', 'metadata', 'is_op', 'is_pm']);
         $rule_fields['content'] = (new ExtractImages($request->get('content')))->handle()->updated_content;
 
         $rule = Rule::find($id);
@@ -359,7 +364,7 @@ class RuleController extends Controller
 
         broadcast(new Deleted($rule))->toOthers();
 
-        return redirect(route('pm.client-account.rules.index', [$client_account_slug]), 303);
+        return redirect(route('library.client-account.rules.index', [$client_account_slug]), 303);
 
     }
 

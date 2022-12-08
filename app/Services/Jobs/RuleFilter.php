@@ -18,6 +18,9 @@ use Illuminate\Support\Str;
 class RuleFilter
 {
 
+    const FILTER_MODE_PROD = "prod";
+    const FILTER_MODE_PM = "pm";
+
     protected static function noClientAccount()
     {
         logger('no matching client account');
@@ -28,9 +31,14 @@ class RuleFilter
      * @param  Job  $job
      * @return array
      */
-    public static function handle(Job $job, $client_id = null): array
-    {
-        $cache_key = 'rules-job-'.$job->job_number;
+    public static function handle(
+        Job $job,
+        string $mode = RuleFilter::FILTER_MODE_PROD, //
+        int $client_id = null
+    ): array {
+
+        $cache_key = $mode.'-rules-job-'.$job->job_number;
+        logger('FILTER RULES CACHE KEY: ' . $cache_key);
         $cached_rules = cache($cache_key);
 
         if (!$job->metadata->client_found && !$client_id) {
@@ -55,7 +63,7 @@ class RuleFilter
             $cached_rules = \Cache::remember(
                 $cache_key,
                 Carbon::now()->addMinutes(nova_get_setting('job_rules_cache_duration')),
-                function () use ($job, $client) {
+                function () use ($job, $client, $mode) {
                     $start = microtime(true);
 
                     $memoizeMapper = memoize(
@@ -87,7 +95,7 @@ class RuleFilter
                      *  Match rules against job's metadata
                      */
                     /** @var Rule $rule */
-                    foreach ($client->rules()
+                    foreach ($client->{$mode.'Rules'}()
                                  ->with([
                                      'accountStructureTerms.taxonomy.mappings',
                                      'jobCategorizationsTerms',

@@ -48,10 +48,19 @@ class LoadMySgsData implements ShouldQueue, ShouldBeUnique
 
         logger('handling job '.$this->mysgs_job->job_number);
 
+        $start_loading = microtime(true);
         (new ConcurrentDataLoader($this->mysgs_job))->handle();
 
+        $start_filtering = microtime(true);
         RuleFilter::handle($this->mysgs_job);
-        broadcast(new JobLoaded($this->mysgs_job));
+
+        $end = microtime(true);
+
+        broadcast(new JobLoaded(
+            $this->mysgs_job->job_number,
+            $start_filtering - $start_loading,
+            $end - $start_filtering
+        ));
     }
 
     /**

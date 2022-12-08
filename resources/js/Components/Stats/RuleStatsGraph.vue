@@ -70,7 +70,7 @@
                 </template>
 
                 <template #actions>
-                    <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    <jet-button preserve-scroll :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                         Update
                     </jet-button>
                 </template>
@@ -183,7 +183,10 @@ export default {
                 rules_level: this.form.level,
                 rules_region: this.form.region,
                 rules_cumulative: this.form.cumulative,
-            });
+            },
+                {
+                  preserveScroll: true,
+                });
         },
 
         onChangeCumul(state) {

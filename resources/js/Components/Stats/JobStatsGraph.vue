@@ -173,6 +173,8 @@ export default {
                 jobs_level: this.form.level,
                 jobs_region: this.form.region,
                 jobs_cumulative: this.form.cumulative,
+            },{
+                preserveScroll: true,
             });
         },
 

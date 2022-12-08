@@ -31,7 +31,8 @@ class ShareSettings
                     'matomo_host' => nova_get_setting('matomo_host'),
                     'matomo_site_id' => nova_get_setting('matomo_site_id'),
 
-                    'allow_force_account' => nova_get_setting('allow_force_account'),
+                    'allow_force_account' => (bool) nova_get_setting('allow_force_account'),
+                    'enable_pm_module' => (bool) nova_get_setting('enable_pm_module'),
                 ],
                 'loader_messages' => config('loader'),
 

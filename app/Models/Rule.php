@@ -21,6 +21,8 @@ use Altek\Accountant\Contracts\Recordable;
  *
  * @property int $id
  * @property int $client_account_id
+ * @property bool $is_op
+ * @property bool $is_pm
  * @property string $name
  * @property string $content
  * @property array $metadata
@@ -92,6 +94,8 @@ class Rule extends Model implements Recordable
         'metadata' => 'array',
         'flagged' => 'boolean',
         'state' => RuleState::class,
+        'is_op' => 'boolean',
+        'is_pm' => 'boolean',
     ];
 
     protected $recordableEvents = [
@@ -136,6 +140,16 @@ class Rule extends Model implements Recordable
     public function scopeIsPublished(Builder $query)
     {
         return $query->whereState('state', PublishedState::class);
+    }
+
+    public function scopeForOp(Builder $query)
+    {
+        return $query->where('is_op', true);
+    }
+
+    public function scopeForPm(Builder $query)
+    {
+        return $query->where('is_pm', true);
     }
 
     /**
@@ -296,11 +310,16 @@ class Rule extends Model implements Recordable
 
     public function getUrlAttribute()
     {
-        return route('pm.client-account.rules.edit', [$this->clientAccount->slug, $this->id]);
+        return route('library.client-account.rules.edit', [$this->clientAccount->slug, $this->id]);
     }
 
     public function isPublishable()
     {
+
+        if(!($this->is_op || $this->is_pm)) {
+            return false;
+        }
+
         $account_terms_count = $this->accountStructureTerms()->count();
         $categorization_terms = $this->jobCategorizationsTerms()->with('taxonomy')->get();
 
@@ -311,13 +330,17 @@ class Rule extends Model implements Recordable
 
         /* if no Artwork Structure Elements, unpublishable */
         $found_artwork_structure = false;
+        $found_pm_section = false;
         /** @var Term $term */
         foreach ($categorization_terms as $term) {
             if ($term->taxonomy->name === 'Artwork Structure Elements') {
                 $found_artwork_structure = true;
             }
+            if ($term->taxonomy->name === 'PM Section Elements') {
+                $found_pm_section = true;
+            }
         }
-        if (!$found_artwork_structure) {
+        if ( ($this->is_op && !$found_artwork_structure) || ($this->is_pm && !$found_pm_section)) {
             return false;
         }
 
