@@ -15,6 +15,7 @@ import AutoComplete from 'primevue/autocomplete';
 import Tooltip from 'primevue/tooltip';
 import BadgeDirective from 'primevue/badgedirective';
 import Toast from "vue-toastification";
+import MasonryWall from '@yeger/vue-masonry-wall'
 
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
@@ -31,6 +32,7 @@ createInertiaApp({
             .use(plugin)
             .use(PrimeVue)
             .use(Toast)
+            .use(MasonryWall)
             .component('AutoComplete', AutoComplete)
             .directive('tooltip', Tooltip)
             .directive('badge', BadgeDirective)

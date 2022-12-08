@@ -84,7 +84,7 @@
           <job-identification v-if="currentJob" :job="currentJob"/>
 
 
-          <div class="sticky z-50 flex flex-col w-full" style="top:107px;">
+          <div class="bg-white sticky z-50 flex flex-col w-full" style="top:107px;">
             <!-- Selectable Filters -->
             <div v-if="!currentJob" class="search-section grid grid-cols-5 gap-1 mx-2 mb-2">
               <taxonomy-selector v-for="(terms, taxonomyName) in accountStructureTaxonomies"
@@ -170,14 +170,23 @@
               All rules: {{ numRules }}.
             </template>
           </div>
-          <div class="box-border mx-auto before:box-inherit after:box-inherit mt-2"
-               :class="{
-                        'md:masonry': !termFocus
-                    }">
 
+          <masonry-wall v-if="!termFocus" :items="displayedRulesList" :ssr-columns="1" :column-width="300" :gap="16">
+            <template #default="{ item, index }">
+              <view-rule-group :rules="item[1]"
+                               :job="currentJob ? currentJob.job_number: ''"
+                               :group="item[0]"
+                               :filter-option="filterOptionTracker"
+                               :filter-stage-states="stageStates"
+                               :stages="processedStages"
+                               :filter-flag="filterFlag"
+                               @on-click-view="openRuleModal"/>
+            </template>
+          </masonry-wall>
+
+          <div v-else class="box-border mx-auto before:box-inherit after:box-inherit mt-2">
             <div v-for="(ruleGroup, groupName) in displayedRules" :key="groupName"
                  class="break-inside">
-
               <view-rule-group :rules="ruleGroup"
                                :job="currentJob ? currentJob.job_number: ''"
                                :group="groupName"
@@ -187,7 +196,6 @@
                                :filter-flag="filterFlag"
                                @on-click-view="openRuleModal"/>
             </div>
-
           </div>
 
         </div>
@@ -837,6 +845,10 @@ export default {
           {}
       );
 
+    },
+
+    displayedRulesList() {
+      return Object.entries(this.displayedRules);
     },
 
     processedStages() {

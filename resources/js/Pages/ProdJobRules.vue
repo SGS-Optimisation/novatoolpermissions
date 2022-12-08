@@ -163,10 +163,20 @@
               All rules: {{ numRules }}.
             </template>
           </div>
-          <div class="box-border mx-auto before:box-inherit after:box-inherit mt-2"
-               :class="{
-                        'md:masonry': !termFocus
-                    }">
+
+          <masonry-wall v-if="!termFocus" :items="displayedRules" :ssr-columns="1" :column-width="300" :gap="16">
+            <template #default="{ item, index }">
+              <view-rule-group :rules="item[1]"
+                               :job="currentJob ? currentJob.job_number: ''"
+                               :group="item[0]"
+                               :filter-option="filterOptionTracker"
+                               :filter-stage-states="stageStates"
+                               :stages="processedStages"
+                               :filter-flag="filterFlag"
+                               @on-click-view="openRuleModal"/>
+            </template>
+          </masonry-wall>
+          <div v-else class="box-border mx-auto before:box-inherit after:box-inherit mt-2">
 
             <div v-for="(ruleGroup, ruleIndex) in displayedRules" :key="ruleIndex"
                  class="break-inside">
@@ -750,6 +760,10 @@ export default {
 
     displayedRules() {
       return _.filter(Object.entries(this.rulesByTaxonomies), this.filterObject[this.filterOption ? this.filterOption : 'all'])
+    },
+
+    displayedRulesList() {
+      return Object.entries(this.displayedRules);
     },
 
     processedStages() {

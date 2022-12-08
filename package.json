@@ -17,6 +17,7 @@
         "@vitejs/plugin-vue": "^3.0.1",
         "@vue/compiler-sfc": "^3.0.5",
         "@vueform/multiselect": "^2.2.0",
+        "@yeger/vue-masonry-wall": "^3.4.2",
         "axios": ">=0.24",
         "axios-etag-cache": "^1.2.2",
         "bootstrap": "^4.6.0",
