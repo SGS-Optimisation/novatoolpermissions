@@ -63,13 +63,13 @@ button:focus {
     }
 
     h1 {
-        @apply text-3xl font-normal leading-normal mt-0 mb-2 ;
+        @apply text-2xl font-normal leading-normal mt-0 mb-2 ;
     }
     h2 {
-        @apply text-2xl font-normal leading-normal mt-0 mb-2;
+        @apply text-xl font-normal leading-normal mt-0 mb-2;
     }
     h3 {
-        @apply text-xl font-normal leading-normal mt-0 mb-2;
+        @apply text-lg font-normal leading-normal mt-0 mb-2;
     }
 
     a[href^="http://"]:after,
