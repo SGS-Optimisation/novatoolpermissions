@@ -19,7 +19,7 @@
                                 <jet-nav-link :href="route('home')" :active="route().current('home')">
                                     Prod Job Search
                                 </jet-nav-link>
-                                <jet-nav-link :href="route('search.pm')" :active="route().current('search.pm')">
+                                <jet-nav-link v-if="$page.props.features.enable_pm_module" :href="route('search.pm')" :active="route().current('search.pm')">
                                     PM Rules Search
                                 </jet-nav-link>
                                 <jet-nav-link v-if="$page.props.user_permissions.accessPM"

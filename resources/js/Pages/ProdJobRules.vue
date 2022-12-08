@@ -16,7 +16,7 @@
 
             </h2>
 
-            <template v-if="jobNumber && clientHasPmRules">
+            <template v-if="$page.props.features.enable_pm_module && jobNumber && clientHasPmRules">
               <Link :href="route('pm.job-rules', jobNumber)"
                     class="ml-2 text-xs text-blue-400 hover:text-blue-600 underline">
                 Switch to PM Rules

@@ -193,6 +193,10 @@ class RuleController extends Controller
         $client_account = ClientAccount::whereSlug($client_account_slug)->first();
 
         $rule_fields = $request->only(['name', 'flagged', 'metadata', 'is_op', 'is_pm']);
+
+        if(!nova_get_setting('enable_pm_module')) {
+            $rule_fields['is_op'] = true;
+        }
         $rule_fields['content'] = (new ExtractImages($request->get('content')))->handle()->updated_content;
 
         $rule = $client_account->rules()->create($rule_fields);

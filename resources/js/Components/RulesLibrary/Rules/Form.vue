@@ -33,7 +33,7 @@
                                     useCustomImageHandler
                                     @image-added="handleImageAdded"/>
 
-                        <div class="mt-5 flex">
+                        <div class="mt-5 flex" v-if="$page.props.features.enable_pm_module" >
                                 <div class="px-2 flex items-center">
                                     <Checkbox id="is_pm" v-model="form.is_pm" :binary="true"/>
                                     <label class="ml-1 cursor-pointer" for="is_pm">PM Rule</label>

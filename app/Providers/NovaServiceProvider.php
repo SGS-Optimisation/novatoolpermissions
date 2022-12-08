@@ -76,6 +76,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 Boolean::make('Allow Manual Select', 'allow_force_account')
                     ->required()->default(false),
             ]),
+            Panel::make('PM Module', [
+                Boolean::make('Enable PM Module', 'enable_pm_module')
+                    ->required()->default(false),
+            ]),
         ], [], 'features');
 
         NovaSettings::addSettingsFields([
