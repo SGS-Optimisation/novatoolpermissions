@@ -98,7 +98,7 @@ class MatchClientAccountOperation extends BaseOperation
             $job_metadata->client_found = false;
             $job_metadata->allow_account_selection = true;
             $job_metadata->client = ['name' => $customer_name ?? '[NOT SET]'];
-            logger('couldn’t find match for '.print_r($customer_name, true));
+            logger('couldn’t find match for customer in job '. $this->job->job_number);
             event(new ClientAccountNotMatched($customer_name ?? '[NOT SET]'));
         }
 
